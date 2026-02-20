@@ -8,20 +8,31 @@ pub const compute = struct {
     pub const holographic = @import("compute/holographic.zig");
     pub const simd_cosine = @import("compute/simd_cosine.zig");
     pub const holographic_5d = @import("compute/holographic_5d.zig");
+pub const compute = struct {
+    pub const holographic = @import("compute/holographic.zig");
+    pub const simd_cosine = @import("compute/simd_cosine.zig");
+    pub const holographic_5d = @import("compute/holographic_5d.zig");
     pub const constellation = @import("compute/constellation.zig");
     pub const vector_batch = @import("compute/vector_batch.zig");
     pub const keyword_extract = @import("compute/keyword_extract.zig");
     pub const distance_matrix = @import("compute/distance_matrix.zig");
-};
-pub const iching = @import("iching.zig");
-pub const genomics = struct {
-    pub const metabolic = @import("genomics/metabolic.zig");
+    pub const graph_transitions = @import("compute/graph_transitions.zig");
+    pub const embedding_quant = @import("compute/embedding_quant.zig");
 };
 pub const io = struct {
     pub const bridge = @import("io/bridge.zig");
     pub const network = @import("io/network.zig");
 };
 pub const dispatch_core = @import("dispatch_core.zig");
+pub const graph = struct {
+    pub const parallel_walk = @import("graph/parallel_walk.zig");
+    pub const edge_index = @import("graph/edge_index.zig");
+};
+pub const search = struct {
+    pub const simd_similarity = @import("search/simd_similarity.zig");
+    pub const batch_search = @import("search/batch_search.zig");
+    pub const tokenizer = @import("search/tokenizer.zig");
+};
 
 // --- Re-exporting from submodules to ensure FFI symbols are visible ---
 
@@ -120,6 +131,41 @@ export fn wm_cosine_similarity(
     return compute.distance_matrix.wm_cosine_similarity(a_ptr, b_ptr, dim);
 }
 
+// From search/simd_similarity.zig
+export fn wm_simd_cosine_f32(
+    a_ptr: [*]const f32,
+    b_ptr: [*]const f32,
+    dim: usize,
+) f32 {
+    return search.simd_similarity.SimdSimilarity.cosineSimilarity(
+        a_ptr[0..dim],
+        b_ptr[0..dim],
+    );
+}
+
+export fn wm_simd_dot_f32(
+    a_ptr: [*]const f32,
+    b_ptr: [*]const f32,
+    dim: usize,
+) f32 {
+    return search.simd_similarity.SimdSimilarity.dotProduct(
+        a_ptr[0..dim],
+        b_ptr[0..dim],
+    );
+}
+
+// From search/tokenizer.zig — token count for BM25
+export fn wm_tokenize_count(
+    text_ptr: [*]const u8,
+    text_len: usize,
+) usize {
+    var buf: [65536]u8 = undefined;
+    var fba = std.heap.FixedBufferAllocator.init(&buf);
+    var tok = search.tokenizer.Tokenizer.init(fba.allocator());
+    const tokens = tok.tokenize(text_ptr[0..text_len]) catch return 0;
+    return tokens.len;
+}
+
 // Force inclusion of all modules and their exported symbols
 comptime {
     _ = memory.unified;
@@ -132,9 +178,15 @@ comptime {
     _ = compute.vector_batch;
     _ = compute.keyword_extract;
     _ = compute.distance_matrix;
+    _ = compute.graph_transitions;
     _ = iching;
     _ = genomics.metabolic;
     _ = io.bridge;
     _ = io.network;
     _ = dispatch_core;
+    _ = graph.parallel_walk;
+    _ = graph.edge_index;
+    _ = search.simd_similarity;
+    _ = search.batch_search;
+    _ = search.tokenizer;
 }

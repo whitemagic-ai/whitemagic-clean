@@ -565,9 +565,9 @@ DISPATCH_TABLE: dict[str, Callable[..., dict[str, Any]]] = {
     "reconsolidation.mark": LazyHandler("cognitive_extensions", "handle_reconsolidation_mark"),
     "reconsolidation.update": LazyHandler("cognitive_extensions", "handle_reconsolidation_update"),
     "reconsolidation.status": LazyHandler("cognitive_extensions", "handle_reconsolidation_status"),
-    "community.propagate": LazyHandler("cognitive_extensions", "handle_community_propagate"),
-    "community.status": LazyHandler("cognitive_extensions", "handle_community_status"),
-    "community.health": LazyHandler("cognitive_extensions", "handle_community_health"),
+    "community.propagate": LazyHandler("living_graph", "handle_community_propagate"),
+    "community.status": LazyHandler("living_graph", "handle_community_status"),
+    "community.health": LazyHandler("living_graph", "handle_community_health"),
 
     # --- v15.2: Marketplace Bridge ---
     "marketplace.publish": LazyHandler("marketplace", "handle_marketplace_publish"),
@@ -630,15 +630,41 @@ DISPATCH_TABLE: dict[str, Callable[..., dict[str, Any]]] = {
 # circular imports — middleware.py has no dependency on this module)
 # ---------------------------------------------------------------------------
 
+_gana_invoke: Callable | None = None
+_bridge_execute: Callable | None = None
+_router_cached = False
+
+
+def _ensure_router_cached() -> None:
+    """Cache gana_invoke and bridge fallback once."""
+    global _gana_invoke, _bridge_execute, _router_cached
+    if _router_cached:
+        return
+    try:
+        from whitemagic.core.bridge.gana import gana_invoke
+        _gana_invoke = gana_invoke
+    except Exception:
+        pass
+    try:
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            from whitemagic.core.bridge.tools import execute_mcp_tool
+        _bridge_execute = execute_mcp_tool
+    except ImportError:
+        pass
+    _router_cached = True
+
+
 def _mw_core_router(ctx: Any, next_fn: Callable[[Any], dict[str, Any] | None]) -> dict[str, Any] | None:
     """Gana prefix → Dispatch table → Bridge fallback."""
+    _ensure_router_cached()
     result = None
 
     # 1. Gana prefix routing
-    if ctx.tool_name.startswith("gana_"):
+    if ctx.tool_name.startswith("gana_") and _gana_invoke is not None:
         try:
-            from whitemagic.core.bridge.gana import gana_invoke
-            result = gana_invoke(tool_name=ctx.tool_name, args=ctx.kwargs)
+            result = _gana_invoke(tool_name=ctx.tool_name, args=ctx.kwargs)
         except Exception as e:
             result = {"status": "error", "error": f"Gana invocation failed: {str(e)}"}
 
@@ -649,16 +675,12 @@ def _mw_core_router(ctx: Any, next_fn: Callable[[Any], dict[str, Any] | None]) -
             result = handler(**ctx.kwargs)
 
     # 3. Bridge delegation fallback (legacy v1 dispatch path)
-    if result is None:
+    if result is None and _bridge_execute is not None:
         try:
-            import warnings
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore", DeprecationWarning)
-                from whitemagic.core.bridge.tools import execute_mcp_tool
-            bridge_result = execute_mcp_tool(ctx.tool_name, **ctx.kwargs)
+            bridge_result = _bridge_execute(ctx.tool_name, **ctx.kwargs)
             if bridge_result:
                 result = bridge_result
-        except ImportError:
+        except Exception:
             pass
 
     if result is None:

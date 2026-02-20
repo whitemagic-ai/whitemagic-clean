@@ -1,7 +1,8 @@
 
-import json
 import logging
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ def ensure_string(value: Any, **kwargs: Any) -> str | None:
         return None
     if isinstance(value, (dict, list)):
         try:
-            return json.dumps(value)
+            return _json_dumps(value)
         except (TypeError, ValueError):
             return str(value)
     return str(value)

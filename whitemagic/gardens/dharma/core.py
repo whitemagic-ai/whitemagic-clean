@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-import json
 from datetime import datetime
 from pathlib import Path
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from typing import Any
 
 
@@ -47,7 +48,7 @@ class DharmaCore:
 
         # Log to history
         with open(self.history_file, "a") as f:
-            f.write(json.dumps(result) + "\n")
+            f.write(_json_dumps(result) + "\n")
 
         return result
 
@@ -60,7 +61,7 @@ class DharmaCore:
         with open(self.history_file, "r") as f:
             for line in f:
                 if line.strip():
-                    history.append(json.loads(line))
+                    history.append(_json_loads(line))
 
         return history[-limit:]
 

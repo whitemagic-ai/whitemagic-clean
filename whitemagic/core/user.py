@@ -4,9 +4,10 @@ Manages user preferences, learning patterns, and adaptation history.
 Used by GirlGana (Nurture) to adapt the system to the user.
 """
 
-import json
 from dataclasses import dataclass, field
 from datetime import datetime
+
+from whitemagic.utils.fast_json import loads as _json_loads
 from typing import Any
 
 from whitemagic.config.paths import USER_PROFILE_PATH
@@ -30,7 +31,7 @@ class UserManager:
     def _load_profile(self) -> UserProfile:
         if self.profile_path.exists():
             try:
-                data = json.loads(self.profile_path.read_text())
+                data = _json_loads(self.profile_path.read_text())
                 return UserProfile(**data)
             except Exception:
                 pass
@@ -47,7 +48,8 @@ class UserManager:
                 "adaptation_history": self.profile.adaptation_history,
                 "last_active": datetime.now().isoformat(),
             }
-            json.dump(data, f, indent=2)
+            from whitemagic.utils.fast_json import dumps_str as _json_dumps
+            f.write(_json_dumps(data, indent=2))
 
     def update_preference(self, key: str, value: Any) -> Any:
         self.profile.preferences[key] = value

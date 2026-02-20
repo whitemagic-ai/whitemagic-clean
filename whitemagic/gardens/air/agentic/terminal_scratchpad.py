@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import json
 import sqlite3
 import time
 import uuid
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
@@ -130,7 +131,7 @@ class TerminalScratchpad:
                 md_content,
                 "scratchpad_session",
                 (self.start_time or datetime.now()).isoformat(),
-                json.dumps(metadata),
+                _json_dumps(metadata),
                 f"Scratchpad: {self.task_name}",
                 1.0, 1.0, 1.0,
             ))

@@ -35,10 +35,11 @@ Usage:
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import os
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -390,7 +391,7 @@ class HermitCrab:
 
         # Chain hash
         prev_hash = self._ledger_chain[-1] if self._ledger_chain else "genesis"
-        entry_json = json.dumps(entry, sort_keys=True, default=str)
+        entry_json = _json_dumps(entry, sort_keys=True, default=str)
         chain_hash = hashlib.sha256(
             f"{prev_hash}|{entry_json}".encode()
         ).hexdigest()[:16]
@@ -402,7 +403,7 @@ class HermitCrab:
         # Persist to JSONL
         try:
             with open(self._ledger_path, "a", encoding="utf-8") as f:
-                f.write(json.dumps(entry, default=str) + "\n")
+                f.write(_json_dumps(entry, default=str) + "\n")
         except Exception as e:
             logger.debug(f"Failed to persist ledger entry: {e}")
 
@@ -451,7 +452,7 @@ class HermitCrab:
                 for line in f:
                     line = line.strip()
                     if line:
-                        entries.append(json.loads(line))
+                        entries.append(_json_loads(line))
 
             if not entries:
                 return {"valid": True, "entries": 0}
@@ -460,7 +461,7 @@ class HermitCrab:
             prev_hash = "genesis"
             for i, entry in enumerate(entries):
                 stored_hash = entry.pop("chain_hash", "")
-                entry_json = json.dumps(entry, sort_keys=True, default=str)
+                entry_json = _json_dumps(entry, sort_keys=True, default=str)
                 expected = hashlib.sha256(
                     f"{prev_hash}|{entry_json}".encode()
                 ).hexdigest()[:16]
@@ -498,7 +499,7 @@ class HermitCrab:
                 "saved_at": datetime.now().isoformat(),
             }
             self._state_path.write_text(
-                json.dumps(state, indent=2), encoding="utf-8",
+                _json_dumps(state, indent=2), encoding="utf-8",
             )
         except Exception as e:
             logger.debug(f"Failed to save hermit state: {e}")
@@ -507,7 +508,7 @@ class HermitCrab:
         """Load persisted state from disk."""
         try:
             if self._state_path.exists():
-                data = json.loads(self._state_path.read_text(encoding="utf-8"))
+                data = _json_loads(self._state_path.read_text(encoding="utf-8"))
                 self._state = HermitState(data.get("state", "open"))
                 self._guarded_since = data.get("guarded_since")
                 self._withdrawn_since = data.get("withdrawn_since")

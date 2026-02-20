@@ -15,9 +15,10 @@ This tracker monitors activity and suggests transitions to maintain harmony.
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -102,12 +103,12 @@ class YinYangBalanceTracker:
                 for line in f:
                     if line.strip():
                         try:
-                            data = json.loads(line)
+                            data = _json_loads(line)
                             timestamp = parse_datetime(data["timestamp"])
                             if timestamp >= cutoff:
                                 activity = ActivityType[data["activity"]]
                                 self.activity_log.append((timestamp, activity))
-                        except (json.JSONDecodeError, KeyError, ValueError):
+                        except (ValueError, KeyError):
                             continue
 
     def record_activity(self, activity: str) -> BalanceMetrics:
@@ -245,7 +246,7 @@ class YinYangBalanceTracker:
         """Persist activity to history"""
         history_file = self.storage_dir / "activity_log.jsonl"
         with open(history_file, "a") as f:
-            f.write(json.dumps({
+            f.write(_json_dumps({
                 "timestamp": timestamp.isoformat(),
                 "activity": activity.name,
             }) + "\n")

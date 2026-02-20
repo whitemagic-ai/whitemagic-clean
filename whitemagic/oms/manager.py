@@ -10,10 +10,11 @@ and a manifest with metadata, quality metrics, and Merkle verification.
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import sqlite3
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import time
 import zipfile
 from dataclasses import dataclass, field
@@ -182,7 +183,7 @@ class OMSManager:
                         "x": row["x"], "y": row["y"], "z": row["z"],
                         "w": row["w"], "v": row["v"],
                     }
-                    line = json.dumps(entry, ensure_ascii=False)
+                    line = _json_dumps(entry)
                     memory_lines.append(line)
                     content_hash = hashlib.sha256(line.encode()).hexdigest()
                     memory_hashes.append(content_hash)
@@ -206,7 +207,7 @@ class OMSManager:
                         "relation_type": row["relation_type"] or "associated_with",
                         "edge_type": row["edge_type"] or "semantic",
                     }
-                    assoc_lines.append(json.dumps(entry, ensure_ascii=False))
+                    assoc_lines.append(_json_dumps(entry))
 
         except Exception as e:
             return {"status": "error", "reason": f"Database read failed: {e}"}
@@ -245,10 +246,10 @@ class OMSManager:
         # Write ZIP
         try:
             with zipfile.ZipFile(str(output), "w", zipfile.ZIP_DEFLATED) as zf:
-                zf.writestr("manifest.json", json.dumps(manifest.to_dict(), indent=2))
+                zf.writestr("manifest.json", _json_dumps(manifest.to_dict(), indent=2))
                 zf.writestr("memories.jsonl", "\n".join(memory_lines))
                 zf.writestr("associations.jsonl", "\n".join(assoc_lines))
-                zf.writestr("verification.json", json.dumps({
+                zf.writestr("verification.json", _json_dumps({
                     "merkle_root": merkle_root,
                     "content_hash": content_hash,
                     "memory_count": len(memory_lines),
@@ -293,7 +294,7 @@ class OMSManager:
 
         try:
             with zipfile.ZipFile(str(mem_path), "r") as zf:
-                manifest = json.loads(zf.read("manifest.json"))
+                manifest = _json_loads(zf.read("manifest.json"))
                 # Count lines in JSONL files
                 mem_count = len(zf.read("memories.jsonl").decode().strip().split("\n"))
                 assoc_count = len(zf.read("associations.jsonl").decode().strip().split("\n"))
@@ -324,7 +325,7 @@ class OMSManager:
 
         try:
             with zipfile.ZipFile(str(mem_path), "r") as zf:
-                verification = json.loads(zf.read("verification.json"))
+                verification = _json_loads(zf.read("verification.json"))
                 memories_data = zf.read("memories.jsonl").decode()
 
                 # Recompute content hash
@@ -383,7 +384,7 @@ class OMSManager:
 
         try:
             with zipfile.ZipFile(str(mem_path), "r") as zf:
-                manifest = json.loads(zf.read("manifest.json"))
+                manifest = _json_loads(zf.read("manifest.json"))
                 memories_data = zf.read("memories.jsonl").decode()
                 assoc_data = zf.read("associations.jsonl").decode()
         except Exception as e:
@@ -405,7 +406,7 @@ class OMSManager:
                 if not line.strip():
                     continue
                 try:
-                    entry = json.loads(line)
+                    entry = _json_loads(line)
                     tags_raw = entry.get("tags", "")
                     if isinstance(tags_raw, str):
                         tags = set(t.strip() for t in tags_raw.split(",") if t.strip())
@@ -437,7 +438,7 @@ class OMSManager:
                     if not line.strip():
                         continue
                     try:
-                        entry = json.loads(line)
+                        entry = _json_loads(line)
                         conn.execute(
                             """INSERT OR IGNORE INTO associations
                                (source_id, target_id, strength, direction,

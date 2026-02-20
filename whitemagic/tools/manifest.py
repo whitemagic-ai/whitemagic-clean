@@ -20,9 +20,10 @@ from __future__ import annotations
 
 import base64
 import hashlib
-import json
 import logging
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -108,7 +109,7 @@ class ManifestEntry:
 
     def compute_entry_hash(self) -> str:
         """Compute the deterministic hash of this entry."""
-        canonical = json.dumps({
+        canonical = _json_dumps({
             "tool_name": self.tool_name,
             "category": self.category,
             "safety": self.safety,
@@ -294,7 +295,7 @@ def generate_manifest() -> ToolManifest:
         handler_hash = _hash_file(handler_path) if handler_path else "no_handler"
 
         # Hash input schema
-        schema_json = json.dumps(td.input_schema, sort_keys=True)
+        schema_json = _json_dumps(td.input_schema, sort_keys=True)
         schema_hash = hashlib.sha256(schema_json.encode()).hexdigest()
 
         entry = ManifestEntry(

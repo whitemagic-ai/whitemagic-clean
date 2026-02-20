@@ -2,6 +2,8 @@ import json
 import logging
 import sqlite3
 from pathlib import Path
+
+from whitemagic.utils.fast_json import loads as _json_loads
 from typing import Any
 
 from whitemagic.core.intelligence.confidence import ConfidenceLearner
@@ -128,8 +130,8 @@ class AcceleratorBridge:
             return False
 
         try:
-            payload = json.loads(snippet)
-        except json.JSONDecodeError as e:
+            payload = _json_loads(snippet)
+        except (json.JSONDecodeError, ValueError) as e:
             logger.error(f"Snippet rejected: expected JSON declarative format ({e})")
             return False
 

@@ -5,7 +5,7 @@ from typing import Any
 
 def handle_simd_cosine(**kwargs: Any) -> dict[str, Any]:
     """Compute cosine similarity between two vectors using SIMD acceleration."""
-    from whitemagic.core.acceleration.simd_cosine import cosine_similarity
+    from whitemagic.core.acceleration import cosine_similarity
     a = kwargs.get("a", [])
     b = kwargs.get("b", [])
     if not a or not b:

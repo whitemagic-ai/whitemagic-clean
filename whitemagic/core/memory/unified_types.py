@@ -139,12 +139,14 @@ class Memory:
     @property
     def age_days(self) -> float:
         """Age of memory in days."""
-        return (datetime.now() - self.created_at).total_seconds() / 86400
+        created = self.created_at.replace(tzinfo=None) if self.created_at.tzinfo else self.created_at
+        return (datetime.now() - created).total_seconds() / 86400
 
     @property
     def days_since_recall(self) -> float:
         """Days since last recall."""
         ref_time = self.last_recalled or self.created_at
+        ref_time = ref_time.replace(tzinfo=None) if ref_time.tzinfo else ref_time
         return (datetime.now() - ref_time).total_seconds() / 86400
 
     def access(self) -> None:

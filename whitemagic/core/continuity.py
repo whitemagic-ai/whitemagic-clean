@@ -7,6 +7,8 @@ import json
 import logging
 import platform
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -73,7 +75,7 @@ class ContinuitySuite:
         try:
             # We don't need a lock for this as it's a single writer (daemon) usually,
             # but atomic_write handles the swap safely.
-            atomic_write(GROUNDING_FILE, json.dumps(state, indent=2))
+            atomic_write(GROUNDING_FILE, _json_dumps(state, indent=2))
         except Exception as e:
             logger.info(f"⚠️ Failed to update grounding file: {e}")
 
@@ -169,7 +171,7 @@ def update_session(
             current["context"] = current_context
 
         try:
-            atomic_write(SESSION_FILE, json.dumps(current, indent=2))
+            atomic_write(SESSION_FILE, _json_dumps(current, indent=2))
         except Exception as e:
             logger.info(f" Error updating session file: {e}")
 
@@ -195,7 +197,7 @@ def log_event(
     try:
         with file_lock(EVENTS_FILE):
             with open(EVENTS_FILE, "a") as f:
-                f.write(json.dumps(event) + "\n")
+                f.write(_json_dumps(event) + "\n")
     except Exception as e:
         logger.info(f" Error logging event: {e}")
 
@@ -213,7 +215,7 @@ def get_recent_events(limit: int = 10) -> list[dict[str, Any]]:
                 lines = f.readlines()
                 for line in lines[-limit:]:
                     try:
-                        events.append(json.loads(line))
+                        events.append(_json_loads(line))
                     except json.JSONDecodeError:
                         continue
     except Exception as e:

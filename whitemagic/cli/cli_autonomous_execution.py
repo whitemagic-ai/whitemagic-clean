@@ -2,8 +2,9 @@
 """CLI commands for autonomous execution."""
 
 import asyncio
-import json
 from datetime import datetime
+
+from whitemagic.utils.fast_json import loads as _json_loads
 from pathlib import Path
 
 import click
@@ -54,7 +55,7 @@ def status():
         click.echo("No autonomous execution running.")
         return
 
-    checkpoint = json.loads(checkpoint_path.read_text())
+    checkpoint = _json_loads(checkpoint_path.read_text())
 
     click.echo("\n🤖 Autonomous Execution Status")
     click.echo("=" * 50)

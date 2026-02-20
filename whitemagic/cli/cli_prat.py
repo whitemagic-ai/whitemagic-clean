@@ -21,7 +21,7 @@ def prat() -> None:
 @click.option("--json", "as_json", is_flag=True, help="Output as JSON")
 def context(as_json: bool) -> None:
     """Show current unified consciousness context"""
-    import json
+    from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
     from whitemagic.cascade.context_synthesizer import get_context_synthesizer
 
@@ -46,7 +46,7 @@ def context(as_json: bool) -> None:
             "recommended_morphology": ctx.get_recommended_morphology(),
             "time_of_day": ctx.time_of_day,
         }
-        click.echo(json.dumps(output, indent=2))
+        click.echo(_json_dumps(output, indent=2))
     else:
         click.echo(synth.get_summary())
 

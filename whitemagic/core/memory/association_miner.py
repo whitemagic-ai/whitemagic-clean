@@ -227,6 +227,7 @@ class AssociationMiner:
                 rows = conn.execute(
                     """SELECT * FROM memories
                        WHERE galactic_distance < 0.40
+                         AND memory_type != 'quarantined'
                        ORDER BY RANDOM() LIMIT ?""",
                     (sample_size // 4,),
                 ).fetchall()
@@ -235,6 +236,7 @@ class AssociationMiner:
                 rows = conn.execute(
                     """SELECT * FROM memories
                        WHERE galactic_distance BETWEEN 0.40 AND 0.70
+                         AND memory_type != 'quarantined'
                        ORDER BY RANDOM() LIMIT ?""",
                     (sample_size // 4,),
                 ).fetchall()
@@ -243,6 +245,7 @@ class AssociationMiner:
                 rows = conn.execute(
                     """SELECT * FROM memories
                        WHERE galactic_distance > 0.70
+                         AND memory_type != 'quarantined'
                        ORDER BY RANDOM() LIMIT ?""",
                     (sample_size // 4,),
                 ).fetchall()

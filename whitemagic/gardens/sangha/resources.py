@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import json
 from collections.abc import Generator
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -66,7 +68,7 @@ class ResourceManager:
             return {}
         try:
             with file_lock(self.registry_file):
-                loaded = json.loads(self.registry_file.read_text())
+                loaded = _json_loads(self.registry_file.read_text())
                 if isinstance(loaded, dict):
                     return {
                         str(k): v for k, v in loaded.items() if isinstance(v, dict)
@@ -78,7 +80,7 @@ class ResourceManager:
     def _save_registry(self, registry: dict[str, dict[str, Any]]) -> None:
         """Save lock registry safely."""
         with file_lock(self.registry_file):
-            atomic_write(self.registry_file, json.dumps(registry, indent=2))
+            atomic_write(self.registry_file, _json_dumps(registry, indent=2))
 
     def acquire_lock(self,
                      resource_id: str,
@@ -92,7 +94,7 @@ class ResourceManager:
 
         with file_lock(self.registry_file):
             if self.registry_file.exists():
-                registry = json.loads(self.registry_file.read_text())
+                registry = _json_loads(self.registry_file.read_text())
             else:
                 registry = {}
 
@@ -119,7 +121,7 @@ class ResourceManager:
                 "reason": reason,
             }
 
-            atomic_write(self.registry_file, json.dumps(registry, indent=2))
+            atomic_write(self.registry_file, _json_dumps(registry, indent=2))
             return True
 
     def heartbeat(self, resource_id: str, agent_id: str, ttl_seconds: int = 300) -> bool:
@@ -129,12 +131,12 @@ class ResourceManager:
             if not self.registry_file.exists():
                 return False
 
-            registry = json.loads(self.registry_file.read_text())
+            registry = _json_loads(self.registry_file.read_text())
             if resource_id in registry and registry[resource_id]["locked_by"] == agent_id:
                 now = datetime.now()
                 expires_at = now + timedelta(seconds=ttl_seconds)
                 registry[resource_id]["expires_at"] = expires_at.isoformat()
-                atomic_write(self.registry_file, json.dumps(registry, indent=2))
+                atomic_write(self.registry_file, _json_dumps(registry, indent=2))
                 return True
             return False
 
@@ -144,14 +146,14 @@ class ResourceManager:
 
         with file_lock(self.registry_file):
             if self.registry_file.exists():
-                registry = json.loads(self.registry_file.read_text())
+                registry = _json_loads(self.registry_file.read_text())
             else:
                 return True
 
             if resource_id in registry:
                 if registry[resource_id]["locked_by"] == agent_id:
                     del registry[resource_id]
-                    atomic_write(self.registry_file, json.dumps(registry, indent=2))
+                    atomic_write(self.registry_file, _json_dumps(registry, indent=2))
                     return True
                 else:
                     return False
@@ -204,7 +206,7 @@ class ResourceManager:
         for resource_id in expired:
             del registry[resource_id]
         if expired:
-            atomic_write(self.registry_file, json.dumps(registry, indent=2))
+            atomic_write(self.registry_file, _json_dumps(registry, indent=2))
 
 
 # Global instance

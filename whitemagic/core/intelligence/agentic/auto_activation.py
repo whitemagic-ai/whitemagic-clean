@@ -6,9 +6,10 @@ This module ensures MANDATORY FULL ACTIVATION.
 """
 from __future__ import annotations
 
-import json
 from datetime import datetime
 from pathlib import Path
+
+from whitemagic.utils.fast_json import loads as _json_loads
 from typing import Any
 
 
@@ -38,7 +39,7 @@ class AutoActivation:
         # Step 1: Load pattern database
         pattern_db = self.base_dir / "pattern_database_MEGA.json"
         if pattern_db.exists():
-            data = json.loads(pattern_db.read_text())
+            data = _json_loads(pattern_db.read_text())
             self.loaded_resources["patterns"] = data
             results["steps"].append(f"✅ Loaded {data.get('total_patterns', 0):,} patterns")
             results["powers_loaded"] += 1
@@ -46,7 +47,7 @@ class AutoActivation:
         # Step 2: Load predictive models
         models_file = self.base_dir / "predictive_models.json"
         if models_file.exists():
-            data = json.loads(models_file.read_text())
+            data = _json_loads(models_file.read_text())
             self.loaded_resources["models"] = data
             results["steps"].append(f"✅ Loaded {len(data.get('models', {}))} predictive models")
             results["powers_loaded"] += 1
@@ -54,7 +55,7 @@ class AutoActivation:
         # Step 3: Load coherence state
         coherence_file = self.base_dir / "coherence_report.json"
         if coherence_file.exists():
-            data = json.loads(coherence_file.read_text())
+            data = _json_loads(coherence_file.read_text())
             results["coherence"] = data.get("coherence_level", 100)
             results["steps"].append(f"✅ Coherence: {results['coherence']}%")
             results["powers_loaded"] += 1

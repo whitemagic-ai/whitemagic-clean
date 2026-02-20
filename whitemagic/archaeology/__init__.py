@@ -52,14 +52,22 @@ try:
 except ImportError:
     WindsurfConversationReader = None  # type: ignore[assignment,misc]
 
-from .wisdom_extractor import (
-    WisdomExtractor,
-    create_daily_wisdom_digest,
-    extract_wisdom,
-    get_wisdom_extractor,
-    process_wisdom_archives,
-    wisdom_report,
-)
+try:
+    from .wisdom_extractor import (
+        WisdomExtractor,
+        create_daily_wisdom_digest,
+        extract_wisdom,
+        get_wisdom_extractor,
+        process_wisdom_archives,
+        wisdom_report,
+    )
+except ImportError:
+    WisdomExtractor = None  # type: ignore[assignment,misc]
+    create_daily_wisdom_digest = None  # type: ignore[assignment]
+    extract_wisdom = None  # type: ignore[assignment]
+    get_wisdom_extractor = None  # type: ignore[assignment]
+    process_wisdom_archives = None  # type: ignore[assignment]
+    wisdom_report = None  # type: ignore[assignment]
 
 __all__ = [
     "FileArchaeologist",

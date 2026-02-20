@@ -13,10 +13,11 @@ Usage:
         result = infer("Summarize this code")
 """
 
-import json
 import logging
 import os
 import subprocess
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import time
 import uuid
 from pathlib import Path
@@ -96,7 +97,7 @@ def _infer_redis(prompt: str, n_predict: int, temp: float) -> Dict[str, Any]:
     pubsub.subscribe(CHANNEL)
 
     # Publish request
-    r.publish(CHANNEL, json.dumps({
+    r.publish(CHANNEL, _json_dumps({
         "event_type": "INFERENCE_REQUEST",
         "target": "bitnet",
         "request_id": request_id,
@@ -111,7 +112,7 @@ def _infer_redis(prompt: str, n_predict: int, temp: float) -> Dict[str, Any]:
         msg = pubsub.get_message(timeout=1)
         if msg and msg["type"] == "message":
             try:
-                data = json.loads(msg["data"])
+                data = _json_loads(msg["data"])
                 if (data.get("event_type") == "INFERENCE_RESULT" and
                         data.get("request_id") == request_id):
                     pubsub.unsubscribe()
@@ -123,7 +124,7 @@ def _infer_redis(prompt: str, n_predict: int, temp: float) -> Dict[str, Any]:
                         "model": result.get("model", "bitnet_b1_58-3B"),
                         "mode": "redis",
                     }
-            except json.JSONDecodeError:
+            except ValueError:
                 continue
 
     pubsub.unsubscribe()

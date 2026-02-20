@@ -14,10 +14,11 @@ The marketplace supports:
 
 from __future__ import annotations
 
-import json
 import logging
 import threading
 import uuid
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -157,7 +158,7 @@ class MarketplaceBridge:
             path = self._get_persist_path() / "listings.jsonl"
             with open(path, "w", encoding="utf-8") as f:
                 for listing in self._listings.values():
-                    f.write(json.dumps(listing.to_dict()) + "\n")
+                    f.write(_json_dumps(listing.to_dict()) + "\n")
         except Exception as e:
             logger.debug(f"Listing persist failed: {e}")
 
@@ -170,7 +171,7 @@ class MarketplaceBridge:
             for line in path.read_text(encoding="utf-8").strip().split("\n"):
                 if not line.strip():
                     continue
-                data = json.loads(line)
+                data = _json_loads(line)
                 listing = ServiceListing(
                     listing_id=data["listing_id"],
                     service_type=data.get("service_type", ""),

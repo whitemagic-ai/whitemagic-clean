@@ -15,11 +15,16 @@ Key Innovations:
 Impact: 10-100x effective context for local models
 """
 
-from .engine import CascadeEngine
-from .executor import ParallelBatchExecutor
-from .graph import Batch, DependencyGraph, ToolCall
-from .patterns import CascadePattern, PatternLibrary
-from .synthesizer import ResultSynthesizer
+try:
+    from .engine import CascadeEngine
+    from .executor import ParallelBatchExecutor
+    from .graph import Batch, DependencyGraph, ToolCall
+    from .patterns import CascadePattern, PatternLibrary
+    from .synthesizer import ResultSynthesizer
+except ImportError:
+    CascadeEngine = ParallelBatchExecutor = None  # type: ignore[assignment,misc]
+    Batch = DependencyGraph = ToolCall = None  # type: ignore[assignment,misc]
+    CascadePattern = PatternLibrary = ResultSynthesizer = None  # type: ignore[assignment,misc]
 
 __all__ = [
     "Batch",

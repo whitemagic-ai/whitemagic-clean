@@ -337,35 +337,56 @@ class CoreAccessLayer:
             current_depth += 1
             next_frontier = []
 
-            for mem_id in frontier:
+            # Batch all frontier association queries into one IN(...) query per depth level
+            frontier_neighbors: dict[str, list[tuple[str, float]]] = {mid: [] for mid in frontier}
+            if frontier:
                 try:
-                    rows = conn.execute("""
-                        SELECT target_id as neighbor_id, strength FROM associations
-                        WHERE source_id = ? AND strength >= ?
+                    ph = ",".join("?" * len(frontier))
+                    frontier_list = list(frontier)
+                    batch_rows = conn.execute(
+                        f"""
+                        SELECT source_id, target_id as neighbor_id, strength FROM associations
+                        WHERE source_id IN ({ph}) AND strength >= ?
                         UNION
-                        SELECT source_id as neighbor_id, strength FROM associations
-                        WHERE target_id = ? AND strength >= ?
+                        SELECT target_id as source_id, source_id as neighbor_id, strength FROM associations
+                        WHERE target_id IN ({ph}) AND strength >= ?
                         ORDER BY strength DESC
-                        LIMIT 20
-                    """, (mem_id, min_strength, mem_id, min_strength)).fetchall()
+                        """,
+                        frontier_list + [min_strength] + frontier_list + [min_strength],
+                    ).fetchall()
+                    for r in batch_rows:
+                        src = r["source_id"]
+                        if src in frontier_neighbors:
+                            frontier_neighbors[src].append((r["neighbor_id"], r["strength"]))
                 except Exception:
-                    continue
+                    pass
 
-                for row in rows:
-                    nid = row["neighbor_id"]
+            # Collect all new neighbor IDs, then batch-fetch titles (N+1 fix)
+            new_nids = [
+                nid
+                for neighbors in frontier_neighbors.values()
+                for nid, _ in neighbors
+                if nid not in visited
+            ]
+            neighbor_titles: dict[str, str | None] = {}
+            if new_nids:
+                try:
+                    ph = ",".join("?" * len(new_nids))
+                    title_rows = conn.execute(
+                        f"SELECT id, title FROM memories WHERE id IN ({ph})",
+                        new_nids,
+                    ).fetchall()
+                    neighbor_titles = {r["id"]: r["title"] for r in title_rows}
+                except Exception:
+                    pass
+
+            for neighbors in frontier_neighbors.values():
+                for nid, strength in neighbors:
                     if nid not in visited and len(visited) < max_nodes:
-                        try:
-                            mem_row = conn.execute(
-                                "SELECT title FROM memories WHERE id = ?", (nid,)
-                            ).fetchone()
-                            title = mem_row["title"] if mem_row else None
-                        except Exception:
-                            title = None
-
                         visited[nid] = AssociationNode(
                             memory_id=nid,
-                            title=title,
-                            strength=row["strength"],
+                            title=neighbor_titles.get(nid),
+                            strength=strength,
                             depth=current_depth,
                         )
                         next_frontier.append(nid)
@@ -386,17 +407,20 @@ class CoreAccessLayer:
         """Update last_traversed_at and traversal_count for walked edges."""
         now = datetime.now().isoformat()
         try:
+            batch_params: list[tuple[str, str, str]] = []
             for node in visited.values():
                 if node.depth == 0:
                     continue  # Skip seeds
-                conn.execute("""
+                batch_params.append((now, node.memory_id, node.memory_id))
+            if batch_params:
+                conn.executemany("""
                     UPDATE associations
                     SET last_traversed_at = ?,
                         traversal_count = COALESCE(traversal_count, 0) + 1
                     WHERE (source_id = ? OR target_id = ?)
                     AND strength >= 0.3
-                """, (now, node.memory_id, node.memory_id))
-            conn.commit()
+                """, batch_params)
+                conn.commit()
         except Exception:
             pass  # Non-critical — don't break the query
 
@@ -747,33 +771,44 @@ class CoreAccessLayer:
 
         try:
             names = list(constellation_members.keys())
+            # Collect all sampled source IDs across all pairs in one batch query
+            all_sample_ids: list[str] = []
+            pair_meta: list[tuple[str, str, set[str], set[str]]] = []
             for i in range(len(names)):
                 for j in range(i + 1, len(names)):
                     c1_ids = constellation_members[names[i]]
                     c2_ids = constellation_members[names[j]]
+                    sample = list(c1_ids)[:50]
+                    all_sample_ids.extend(sample)
+                    pair_meta.append((names[i], names[j], set(sample), c2_ids))
 
-                    # Find associations that cross between constellations
-                    for sid in list(c1_ids)[:50]:  # Sample to avoid O(n^2) explosion
-                        row = conn.execute("""
-                            SELECT target_id, strength FROM associations
-                            WHERE source_id = ? AND strength > 0.4
-                            LIMIT 10
-                        """, (sid,)).fetchall()
+            if all_sample_ids:
+                ph = ",".join("?" * len(all_sample_ids))
+                assoc_rows = conn.execute(
+                    f"SELECT source_id, target_id, strength FROM associations "
+                    f"WHERE source_id IN ({ph}) AND strength > 0.4",
+                    all_sample_ids,
+                ).fetchall()
+                # Index by source_id for fast lookup
+                assoc_by_src: dict[str, list[tuple[str, float]]] = {}
+                for r in assoc_rows:
+                    assoc_by_src.setdefault(r["source_id"], []).append(
+                        (r["target_id"], r["strength"])
+                    )
 
-                        for r in row:
-                            if r["target_id"] in c2_ids:
+                for c1_name, c2_name, sample_set, c2_ids in pair_meta:
+                    for sid in sample_set:
+                        for target_id, strength in assoc_by_src.get(sid, []):
+                            if target_id in c2_ids:
                                 bridges.append({
                                     "source_id": sid,
-                                    "target_id": r["target_id"],
-                                    "strength": r["strength"],
-                                    "constellation_1": names[i],
-                                    "constellation_2": names[j],
+                                    "target_id": target_id,
+                                    "strength": strength,
+                                    "constellation_1": c1_name,
+                                    "constellation_2": c2_name,
                                 })
-
                     if len(bridges) >= limit:
                         break
-                if len(bridges) >= limit:
-                    break
         except Exception as e:
             logger.debug(f"Bridge search failed: {e}")
 

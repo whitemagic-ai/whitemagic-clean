@@ -164,20 +164,19 @@ class TitleGenerator:
         skipped = 0
         titles: list[dict[str, Any]] = []
 
+        batch_updates: list[tuple[str, str]] = []
         for mem in untitled:
             new_title = self.generate(mem["content"] or "")
 
             if new_title and new_title != "Untitled":
                 titles.append({"id": mem["id"], "old": mem["title"], "new": new_title})
-
-                if not dry_run:
-                    cur.execute("UPDATE memories SET title = ? WHERE id = ?",
-                               (new_title, mem["id"]))
+                batch_updates.append((new_title, mem["id"]))
                 fixed += 1
             else:
                 skipped += 1
 
-        if not dry_run:
+        if not dry_run and batch_updates:
+            cur.executemany("UPDATE memories SET title = ? WHERE id = ?", batch_updates)
             conn.commit()
 
         return {"fixed": fixed, "skipped": skipped, "titles": titles}

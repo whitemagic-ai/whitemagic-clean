@@ -7,6 +7,31 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [15.9.0] — 2026-02-15
+
+### Galactic Core Fixes, Batch Coverage Scripts & Windsurf Excavation Round 2
+
+#### Fixed
+- **Galactic sweep pagination** — Replaced `list_recent(limit=50000)` with `list_all_paginated()` generator in `sqlite_backend.py`. Full sweep now iterates through ALL 111K+ memories via OFFSET/LIMIT pagination instead of capping at 50K. `galactic_map.py` restructured to process paginated batches with Rust/Python fallback per page.
+- **Serendipity quality filter** — Added noise exclusion set to `graph_engine.py` `rebuild()`. Filters out benchmark junk (`bench_t1`, `_bench`), external library changelogs/READMEs, very short memories (<50 chars), and bench-tagged content from graph analysis. Bridge nodes and community detection now operate on clean data.
+
+#### Added
+- **Constellation auto-merge** — `ConstellationDetector.auto_merge()` in `constellations.py`. Merges converging constellations when centroid distance < 0.5 and shared dominant tags ≥ 2. Smaller absorbed into larger with weighted centroid recomputation. Integrated into dream cycle kaizen phase. New MCP tool: `constellation.merge` → gana_extended_net.
+- **Batch embedding script** (`scripts/batch_embed.py`) — Iterates all unembedded memories via paginated SQL, encodes with sentence-transformers in configurable batches. Supports `--limit`, `--batch-size`, `--dry-run`.
+- **Batch holographic coords script** (`scripts/batch_holographic_coords.py`) — Assigns 5D holographic coordinates to all uncoordinated memories using `CoordinateEncoder.encode_batch()` with Rust Rayon acceleration. Supports `--limit`, `--batch-size`, `--dry-run`.
+- **Windsurf excavation round 2** — Probed new LevelDB session UUIDs via `trajectory_search`. Found and ingested 3 new conversations: "Implement Violet Security Features" (133 chunks), "Integrate Graph-Based Tools" (161 chunks), "WhiteMagic Security & Mesh Improvements" (540 chunks). Ingestion script: `scripts/ingest_windsurf_round2.py`.
+
+#### Changed
+- **Dispatch table**: 375 tools (was 374) — added `constellation.merge`.
+- **PRAT router**: `constellation.merge` mapped to `gana_extended_net`.
+- **Dream cycle kaizen**: Auto-merges converging constellations after emergence scan, reports merge count.
+
+#### Metrics
+- **375 MCP tools**, **28 Ganas**, **375 PRAT mappings**
+- **2280 tests passing**, 12 skipped, 0 failures
+
+---
+
 ## [15.8.0] — 2026-02-13
 
 ### Galaxy Rehydration, Full Activation & Pattern Systems Catalog

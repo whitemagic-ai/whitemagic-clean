@@ -11,17 +11,18 @@ This module provides edge AI capabilities that can run on:
 Philosophy: AI should run ANYWHERE, not just in datacenters.
 """
 
-from .embeddings import EmbeddingCache, LocalEmbeddings
-from .export import create_standalone_package, export_to_js, export_to_json
-from .federated import FederatedLearning, FederatedSync, get_federated_learning
-from .inference import EdgeInference, InferenceResult, edge_infer, get_edge_inference
-from .onnx_export import ONNXExporter, ONNXLoader, RuleBasedONNX
-from .patterns import LearnedRule, PatternLearner
-
-# Backward compatibility alias (docs refer to "Edge Rules")
-EdgeRules = EdgeInference
-EdgeRuleEngine = EdgeInference
-get_edge_rules = get_edge_inference
+try:
+    from .embeddings import EmbeddingCache, LocalEmbeddings
+    from .export import create_standalone_package, export_to_js, export_to_json
+    from .federated import FederatedLearning, FederatedSync, get_federated_learning
+    from .inference import EdgeInference, InferenceResult, edge_infer, get_edge_inference
+    from .onnx_export import ONNXExporter, ONNXLoader, RuleBasedONNX
+    from .patterns import LearnedRule, PatternLearner
+    EdgeRules = EdgeInference
+    EdgeRuleEngine = EdgeInference
+    get_edge_rules = get_edge_inference
+except ImportError:
+    pass
 
 __all__ = [
     # Inference

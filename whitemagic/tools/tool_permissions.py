@@ -19,10 +19,11 @@ Usage:
         return result  # blocked — insufficient permissions
 """
 
-import json
 import logging
 import os
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 from typing import Any
 
@@ -100,7 +101,7 @@ class AgentRoleRegistry:
         try:
             p = _rbac_path()
             if p.exists():
-                data = json.loads(p.read_text())
+                data = _json_loads(p.read_text())
                 self._agent_roles = data.get("agent_roles", {})
                 self._default_roles = data.get("default_roles", ["coordinator"])
                 logger.debug("Loaded %d agent roles from %s", len(self._agent_roles), p)
@@ -112,7 +113,7 @@ class AgentRoleRegistry:
         try:
             p = _rbac_path()
             p.parent.mkdir(parents=True, exist_ok=True)
-            p.write_text(json.dumps({
+            p.write_text(_json_dumps({
                 "agent_roles": self._agent_roles,
                 "default_roles": self._default_roles,
             }, indent=2))

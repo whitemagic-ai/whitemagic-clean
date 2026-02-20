@@ -58,9 +58,12 @@ def handle_create_memory(**kwargs: Any) -> dict[str, Any]:
     if memory_type is not None:
         store_kwargs["memory_type"] = memory_type
 
-    mem = remember(**store_kwargs)
-    _emit("MEMORY_CREATED", {"title": title, "tags": tags, "memory_id": str(mem.id)})
-    return {"status": "success", "memory_id": str(mem.id), "filename": f"{mem.id}.md"}
+    try:
+        mem = remember(**store_kwargs)
+        _emit("MEMORY_CREATED", {"title": title, "tags": tags, "memory_id": str(mem.id)})
+        return {"status": "success", "memory_id": str(mem.id), "filename": f"{mem.id}.md"}
+    except Exception as e:
+        return {"status": "error", "message": f"Failed to create memory: {str(e)[:200]}"}
 
 
 def handle_fast_read_memory(**kwargs: Any) -> dict[str, Any]:
@@ -220,5 +223,11 @@ def handle_search_memories(**kwargs: Any) -> dict[str, Any]:
     return {
         "status": "success",
         "count": len(memories),
-        "memories": [{"id": str(m.id), "content": m.content[:200]} for m in memories],
+        "memories": [
+            {
+                "id": str(m.id),
+                "content": m.content[:200] if isinstance(m.content, str) else str(m.content)[:200]
+            }
+            for m in memories
+        ],
     }

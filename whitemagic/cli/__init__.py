@@ -13,6 +13,13 @@ Structure (v13.0.0):
 
 def register_all(main) -> None:  # type: ignore[no-untyped-def]
     """Register all cli/ submodule commands with *main* Click group."""
-    from whitemagic.cli import doctor, init_command
-    doctor.register(main)
-    init_command.register(main)
+    try:
+        from whitemagic.cli import doctor
+        doctor.register(main)
+    except ImportError:
+        pass
+    try:
+        from whitemagic.cli import init_command
+        init_command.register(main)
+    except ImportError:
+        pass

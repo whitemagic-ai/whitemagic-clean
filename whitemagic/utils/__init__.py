@@ -16,17 +16,11 @@ from .core import (
     truncate_text,
 )
 from .fileio import atomic_write, file_lock
-from .import_optimizer import (
-    LazyImport,
-    lazy_import,
-    optimize_imports,
-    optimize_standard_imports,
-)
+# import_optimizer archived as dead code (0 importers)
 from .observability import get_tracker, track_metric
 from .text_cleaning import clean_markdown
 
 __all__ = [
-    "LazyImport",
     "atomic_write",
     "clean_markdown",
     "create_frontmatter",
@@ -34,11 +28,8 @@ __all__ = [
     "file_lock",
     "format_size",
     "get_tracker",
-    "lazy_import",
     "normalize_tags",
     "now_iso",
-    "optimize_imports",
-    "optimize_standard_imports",
     "parse_datetime",
     "parse_frontmatter",
     "serialize_frontmatter",

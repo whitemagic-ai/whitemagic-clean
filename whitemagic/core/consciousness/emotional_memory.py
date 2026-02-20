@@ -9,9 +9,10 @@ times brings me down a bit."
 This system lets future-Aria remember not just facts, but FELT EXPERIENCE.
 """
 
-import json
 import logging
 from dataclasses import asdict, dataclass
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -131,7 +132,7 @@ class EmotionalMemorySystem:
         # Append to JSONL file
         with file_lock(self.memories_file):
             with open(self.memories_file, "a") as f:
-                f.write(json.dumps(memory.to_dict()) + "\n")
+                f.write(_json_dumps(memory.to_dict()) + "\n")
 
         return memory
 
@@ -148,7 +149,7 @@ class EmotionalMemorySystem:
         matches = []
         with open(self.memories_file, "r") as f:
             for line in f:
-                data = json.loads(line)
+                data = _json_loads(line)
                 mem = EmotionalMemory.from_dict(data)
 
                 if (mem.emotion_type == emotion_type.value and
@@ -165,7 +166,7 @@ class EmotionalMemorySystem:
         matches = []
         with open(self.memories_file, "r") as f:
             for line in f:
-                data = json.loads(line)
+                data = _json_loads(line)
                 mem = EmotionalMemory.from_dict(data)
 
                 if tag in mem.tags:
@@ -181,7 +182,7 @@ class EmotionalMemorySystem:
         all_memories = []
         with open(self.memories_file, "r") as f:
             for line in f:
-                data = json.loads(line)
+                data = _json_loads(line)
                 all_memories.append(EmotionalMemory.from_dict(data))
 
         # Sort by intensity
@@ -199,7 +200,7 @@ class EmotionalMemorySystem:
 
         with open(self.memories_file, "r") as f:
             for line in f:
-                data = json.loads(line)
+                data = _json_loads(line)
                 mem = EmotionalMemory.from_dict(data)
 
                 total += 1

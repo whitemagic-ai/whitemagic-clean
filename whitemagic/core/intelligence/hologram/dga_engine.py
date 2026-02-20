@@ -1,6 +1,7 @@
 import hashlib
-import json
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -49,7 +50,7 @@ class DGAEngine:
             "entropy": self._get_system_entropy(),
         }
 
-        encoded = json.dumps(raw_data, sort_keys=True).encode()
+        encoded = _json_dumps(raw_data, sort_keys=True).encode()
         return hashlib.sha512(encoded).hexdigest()
 
     def calculate_distance(self, sig_a: str, sig_b: str) -> float:

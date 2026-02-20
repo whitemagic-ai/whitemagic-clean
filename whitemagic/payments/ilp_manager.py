@@ -19,6 +19,8 @@ import json
 import logging
 import threading
 import uuid
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -114,7 +116,7 @@ def _resolve_spsp(pointer: str, timeout_s: int = 10) -> dict[str, Any]:
             "Accept": "application/spsp4+json",
         })
         with urllib.request.urlopen(req, timeout=timeout_s) as resp:
-            payload = json.loads(resp.read().decode())
+            payload = _json_loads(resp.read().decode())
             if isinstance(payload, dict):
                 return payload
             return {"error": "Invalid SPSP response payload"}
@@ -159,7 +161,7 @@ class ILPManager:
         try:
             history_file = self._get_history_path() / "payment_history.jsonl"
             with open(history_file, "a", encoding="utf-8") as f:
-                f.write(json.dumps(record.to_dict()) + "\n")
+                f.write(_json_dumps(record.to_dict()) + "\n")
         except Exception as e:
             logger.debug(f"Payment history persist failed: {e}")
 
@@ -331,7 +333,7 @@ class ILPManager:
             for line in lines[-limit:]:
                 if line.strip():
                     try:
-                        records.append(json.loads(line))
+                        records.append(_json_loads(line))
                     except json.JSONDecodeError:
                         continue
 

@@ -134,7 +134,10 @@ class MultiSpectralReasoner:
             logger.debug(f"Zodiac cores matching not available: {e}")
 
         try:
-            art_mod = importlib.import_module("whitemagic.gardens.wisdom.art_of_war")
+            try:
+                art_mod = importlib.import_module("whitemagic.core.intelligence.wisdom.art_of_war")
+            except ImportError:
+                art_mod = importlib.import_module("whitemagic.gardens.wisdom.art_of_war")
             get_war_wisdom = getattr(art_mod, "get_war_wisdom", None)
             if callable(get_war_wisdom):
                 self.art_of_war = get_war_wisdom
@@ -212,7 +215,30 @@ class MultiSpectralReasoner:
             except Exception as e:
                 logger.info(f"⚠️ Art of War reasoning failed: {e}")
 
-        # 4. Pattern Matching (Memory Lens)
+        # 4. Zodiac Lens
+        if ReasoningLens.ZODIAC in lenses_list and self.zodiac_cores:
+            try:
+                ctx = {
+                    "operation": context.task_type,
+                    "intention": context.question[:50],
+                    "urgency": context.urgency,
+                }
+                all_cores = self.zodiac_cores.get_all_cores()
+                best_core = max(all_cores.values(), key=lambda c: c.can_handle(ctx)) if all_cores else None
+                if best_core and best_core.can_handle(ctx) > 0.4:
+                    resp = best_core.activate(ctx)
+                    perspectives.append(LensPerspective(
+                        lens=ReasoningLens.ZODIAC,
+                        analysis=f"Zodiac core {best_core.name} resonates ({best_core.element}/{best_core.mode})",
+                        confidence=0.75,
+                        guidance=resp.wisdom,
+                        details={"core": best_core.name, "element": best_core.element,
+                                 "mode": best_core.mode, "resonance": resp.resonance},
+                    ))
+            except Exception as e:
+                logger.info(f"\u26a0\ufe0f Zodiac reasoning failed: {e}")
+
+        # 5. Pattern Matching (Memory Lens)
         patterns_matched = self._match_patterns(context, perspectives)
 
         # 5. Synthesis

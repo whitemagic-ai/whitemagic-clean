@@ -51,9 +51,9 @@ def _parse_manifest(path: Path) -> dict[str, Any] | None:
         import yaml
     except ImportError:
         # PyYAML not installed — try json fallback
-        import json
+        from whitemagic.utils.fast_json import loads as _json_loads
         try:
-            data: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+            data: dict[str, Any] = _json_loads(path.read_text(encoding="utf-8"))
             return data
         except Exception as e:
             logger.warning("Forge: failed to parse %s as JSON: %s", path, e)

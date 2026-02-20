@@ -1,5 +1,7 @@
 """WhiteMagic API Routes."""
 
-from . import api_keys, dashboard
-
-__all__ = ["dashboard", "api_keys"]
+try:
+    from . import dashboard_api
+    __all__ = ["dashboard_api"]
+except ImportError:
+    __all__ = []

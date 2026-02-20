@@ -75,8 +75,14 @@ def __getattr__(name: str) -> Any:
     return module
 
 
+def bootstrap() -> None:
+    """Initialize the Unified Nervous System and register all organs."""
+    from whitemagic.core.bootstrap_organs import bootstrap_nervous_system
+    bootstrap_nervous_system()
+
+
 def __dir__() -> list[str]:
-    return sorted(list(globals().keys()) + list(_LAZY_MODULES.keys()) + ["MemoryManager"])
+    return sorted(list(globals().keys()) + list(_LAZY_MODULES.keys()) + ["MemoryManager", "bootstrap"])
 
 __all__ = [
     'memory', 'resonance', 'patterns', 'consciousness',
@@ -88,5 +94,6 @@ __all__ = [
     'immune', 'automation', 'monitoring',
     'integration',
     'edge', 'parallel', 'autonomous',
-    'utils'
+    'utils',
+    'bootstrap'
 ]

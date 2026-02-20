@@ -16,10 +16,11 @@ MeshClient's peer registry.
 
 from __future__ import annotations
 
-import json
 import logging
 import threading
 import time
+
+from whitemagic.utils.fast_json import loads as _json_loads
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -64,8 +65,8 @@ class MeshAwareness:
     def process_redis_message(self, data: str) -> None:
         """Process a message from the Redis ganying channel for mesh events."""
         try:
-            msg = json.loads(data) if isinstance(data, str) else data
-        except (json.JSONDecodeError, TypeError):
+            msg = _json_loads(data) if isinstance(data, str) else data
+        except (ValueError, TypeError):
             return
 
         msg_type = msg.get("type", msg.get("signal_type", ""))

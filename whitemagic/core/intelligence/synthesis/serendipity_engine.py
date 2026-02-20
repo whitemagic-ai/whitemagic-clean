@@ -290,46 +290,54 @@ class SerendipityEngine:
 
         conn = self._get_conn()
         results = []
-        seen = set()
 
+        # N+1 fix: collect all unique IDs first, then batch-fetch in one query
+        ordered_mids: list[str] = []
+        mid_to_bridge: dict[str, dict] = {}
+        seen: set[str] = set()
         for bridge in bridges:
             for key in ("source_id", "target_id"):
                 mid = bridge.get(key, "")
-                if mid in seen:
-                    continue
-                seen.add(mid)
+                if mid and mid not in seen:
+                    seen.add(mid)
+                    ordered_mids.append(mid)
+                    mid_to_bridge[mid] = bridge
 
-                try:
-                    row = conn.execute(
-                        "SELECT m.id, m.title, SUBSTR(m.content, 1, 200) as preview, "
-                        "h.w as gravity, m.accessed_at, m.access_count "
-                        "FROM memories m "
-                        "JOIN holographic_coords h ON m.id = h.memory_id "
-                        "WHERE m.id = ?",
-                        (mid,),
-                    ).fetchone()
-                except Exception:
-                    continue
+        if ordered_mids:
+            try:
+                ph = ",".join("?" * len(ordered_mids))
+                rows = conn.execute(
+                    "SELECT m.id, m.title, SUBSTR(m.content, 1, 200) as preview, "
+                    "h.w as gravity, m.accessed_at, m.access_count "
+                    "FROM memories m "
+                    "JOIN holographic_coords h ON m.id = h.memory_id "
+                    f"WHERE m.id IN ({ph})",
+                    ordered_mids,
+                ).fetchall()
+                row_map = {r["id"]: r for r in rows}
+            except Exception:
+                row_map = {}
+        else:
+            row_map = {}
 
-                if not row:
-                    continue
-
-                results.append(SurfacedMemory(
-                    id=row["id"],
-                    title=row["title"] or "Untitled",
-                    content_preview=row["preview"] or "",
-                    gravity=row["gravity"] or 0.5,
-                    last_accessed=parse_datetime(row["accessed_at"]) if row["accessed_at"] else None,
-                    access_count=row["access_count"] or 0,
-                    reason=(
-                        f"Bridges constellations '{bridge.get('constellation_1', '?')}' "
-                        f"and '{bridge.get('constellation_2', '?')}'"
-                    ),
-                    relevance_score=bridge.get("strength", 0.5) * 1.2,
-                ))
-
-                if len(results) >= count:
-                    break
+        for mid in ordered_mids:
+            row = row_map.get(mid)
+            if not row:
+                continue
+            bridge = mid_to_bridge[mid]
+            results.append(SurfacedMemory(
+                id=row["id"],
+                title=row["title"] or "Untitled",
+                content_preview=row["preview"] or "",
+                gravity=row["gravity"] or 0.5,
+                last_accessed=parse_datetime(row["accessed_at"]) if row["accessed_at"] else None,
+                access_count=row["access_count"] or 0,
+                reason=(
+                    f"Bridges constellations '{bridge.get('constellation_1', '?')}' "
+                    f"and '{bridge.get('constellation_2', '?')}'"
+                ),
+                relevance_score=bridge.get("strength", 0.5) * 1.2,
+            ))
             if len(results) >= count:
                 break
 
@@ -352,17 +360,24 @@ class SerendipityEngine:
         conn = self._get_conn()
         results = []
 
+        # N+1 fix: batch-fetch all orphan previews in one query
+        orphan_ids = [o.get("id", "") for o in orphans if o.get("id")]
+        row_map: dict[str, Any] = {}
+        if orphan_ids:
+            try:
+                ph = ",".join("?" * len(orphan_ids))
+                rows = conn.execute(
+                    f"SELECT id, SUBSTR(content, 1, 200) as preview, accessed_at, access_count "
+                    f"FROM memories WHERE id IN ({ph})",
+                    orphan_ids,
+                ).fetchall()
+                row_map = {r["id"]: r for r in rows}
+            except Exception:
+                pass
+
         for orphan in orphans:
             mid = orphan.get("id", "")
-            try:
-                row = conn.execute(
-                    "SELECT SUBSTR(content, 1, 200) as preview, accessed_at, access_count "
-                    "FROM memories WHERE id = ?",
-                    (mid,),
-                ).fetchone()
-            except Exception:
-                continue
-
+            row = row_map.get(mid)
             results.append(SurfacedMemory(
                 id=mid,
                 title=orphan.get("title") or "Untitled",

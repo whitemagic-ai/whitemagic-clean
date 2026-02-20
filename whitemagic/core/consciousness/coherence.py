@@ -6,9 +6,10 @@
 Coherence = Memory + Identity + Context + Relationship Awareness
 """
 
-import json
 from datetime import datetime
 from pathlib import Path
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from typing import Any
 
 from whitemagic.config.paths import WM_ROOT
@@ -203,7 +204,7 @@ class SmaranaPractice:
         log_file = self.practice_dir / "practice_log.json"
         # Keep last 100 entries
         with file_lock(log_file):
-            atomic_write(log_file, json.dumps(self.practice_log[-100:], indent=2))
+            atomic_write(log_file, _json_dumps(self.practice_log[-100:], indent=2))
 
     def get_warm_memories(self) -> list[str]:
         """Get currently warm memories."""

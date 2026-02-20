@@ -8,10 +8,11 @@ rate-limit boosts.
 Storage: $WM_STATE_ROOT/gratitude/ledger.jsonl
 """
 
-import json
 import logging
 import threading
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field, asdict
 from enum import Enum
 from pathlib import Path
@@ -73,7 +74,7 @@ class GratitudeLedger:
                 for line in f:
                     line = line.strip()
                     if line:
-                        data = json.loads(line)
+                        data = _json_loads(line)
                         self._events.append(GratitudeEvent(**data))
         except Exception as exc:
             logger.warning(f"Failed to load gratitude ledger: {exc}")
@@ -84,7 +85,7 @@ class GratitudeLedger:
             self._events.append(event)
             try:
                 with open(self._path, "a", encoding="utf-8") as f:
-                    f.write(json.dumps(event.to_dict(), default=str) + "\n")
+                    f.write(_json_dumps(event.to_dict(), default=str) + "\n")
             except Exception as exc:
                 logger.warning(f"Failed to persist gratitude event: {exc}")
 

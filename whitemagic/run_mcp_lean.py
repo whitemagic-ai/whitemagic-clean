@@ -17,10 +17,11 @@ Supports:
 """
 
 import asyncio
-import json
 import logging
 import sys
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from pathlib import Path
 from typing import Any
 
@@ -333,7 +334,7 @@ async def call_tool(name: str, arguments: dict[str, Any] | None) -> list[types.T
     # resolving executor-backed futures in this handler path.
     result = _sync_dispatch(name, tool_name, tool_args, operation)
 
-    text = json.dumps(result, indent=2, default=str)
+    text = _json_dumps(result, indent=2, default=str)
     return [types.TextContent(type="text", text=text)]
 
 

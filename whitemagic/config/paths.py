@@ -93,6 +93,11 @@ else:
 # Cold storage DB (v13.3.2) — deep_archive + scavenged memories
 COLD_DB_PATH: Path = MEMORY_DIR / "whitemagic_cold.db"
 
+def get_state_root() -> Path:
+    """Returns the effective state root (WM_ROOT)."""
+    return WM_ROOT
+
+
 def ensure_paths() -> Any:
     """Ensure all core directories exist."""
     import logging

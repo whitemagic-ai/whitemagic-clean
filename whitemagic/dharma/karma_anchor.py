@@ -29,6 +29,8 @@ import hashlib
 import json
 import logging
 from dataclasses import asdict, dataclass
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -131,7 +133,7 @@ def _persist_anchor(snapshot: AnchorSnapshot, result: AnchorResult) -> None:
             "recorded_at": datetime.now(timezone.utc).isoformat(),
         }
         with open(history_file, "a", encoding="utf-8") as f:
-            f.write(json.dumps(record) + "\n")
+            f.write(_json_dumps(record) + "\n")
     except Exception as e:
         logger.debug(f"Anchor history persist failed: {e}")
 
@@ -148,7 +150,7 @@ def get_anchor_history(limit: int = 20) -> list[dict[str, Any]]:
         for line in lines[-limit:]:
             if line.strip():
                 try:
-                    records.append(json.loads(line))
+                    records.append(_json_loads(line))
                 except json.JSONDecodeError:
                     continue
         return records
@@ -266,7 +268,7 @@ def submit_anchor(
         client = JsonRpcClient(url)
         wallet = Wallet.from_seed(wallet_seed)
 
-        memo_data = json.dumps({
+        memo_data = _json_dumps({
             "v": ANCHOR_VERSION,
             "root": merkle_root,
             "ts": snapshot.timestamp,
@@ -389,7 +391,7 @@ def verify_anchor(
         # Decode memo data
         memo_data_hex = anchor_memo.get("MemoData", "")
         try:
-            memo_json = json.loads(bytes.fromhex(memo_data_hex).decode())
+            memo_json = _json_loads(bytes.fromhex(memo_data_hex).decode())
         except (ValueError, json.JSONDecodeError) as e:
             return {
                 "status": "error",

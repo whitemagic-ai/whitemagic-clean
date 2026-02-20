@@ -9,13 +9,13 @@ import click
 
 
 @click.group()
-def iching():
+def iching() -> None:
     """Consult the I Ching oracle."""
 
 
 @iching.command()
 @click.argument("question")
-def consult(question: str):
+def consult(question: str) -> None:
     """Ask the I Ching a question."""
     try:
         from whitemagic_extensions.symbolic import consult_iching  # type: ignore[import-not-found]
@@ -44,7 +44,7 @@ def consult(question: str):
 
 @iching.command()
 @click.argument("number", type=int)
-def meaning(number: int):
+def meaning(number: int) -> None:
     """Get meaning of a hexagram."""
     if number < 1 or number > 64:
         click.echo("✗ Hexagram number must be 1-64")
@@ -62,12 +62,12 @@ def meaning(number: int):
 
 
 @click.group()
-def wuxing():
+def wuxing() -> None:
     """Wu Xing (Five Elements) balance."""
 
 
 @wuxing.command()
-def balance():
+def balance() -> None:
     """Check elemental balance."""
     elements = {
         "Wood": random.uniform(0.5, 1.0),
@@ -92,7 +92,7 @@ def balance():
 
 
 @wuxing.command()
-def recommend():
+def recommend() -> None:
     """Get recommendations for balance."""
     click.echo("\n💡 Wu Xing Recommendations\n")
     click.echo("• Strengthen Water element through meditation")

@@ -49,21 +49,30 @@ class TagNormalizer:
         cur.execute("SELECT DISTINCT tag FROM tags WHERE tag != LOWER(tag)")
         upper_tags = [r["tag"] for r in cur.fetchall()]
 
-        for tag in upper_tags:
-            if not dry_run:
-                cur.execute("UPDATE tags SET tag = LOWER(tag) WHERE tag = ?", (tag,))
-            results["lowercased"] += 1
+        results["lowercased"] = len(upper_tags)
+        if not dry_run and upper_tags:
+            # N+1 fix: executemany instead of per-tag UPDATE loop
+            cur.executemany(
+                "UPDATE tags SET tag = LOWER(tag) WHERE tag = ?",
+                [(tag,) for tag in upper_tags],
+            )
 
-        # Step 2: Merge synonyms
+        # Step 2: Merge synonyms — N+1 fix: batch-check all variants in one IN query per canonical
+        batch_updates: list[tuple[str, str]] = []
         for canonical, variants in self.SYNONYMS.items():
+            if not variants:
+                continue
+            ph = ",".join("?" * len(variants))
+            cur.execute("SELECT tag, COUNT(*) as cnt FROM tags WHERE tag IN (" + ph + ") GROUP BY tag", list(variants))
+            variant_counts = {r["tag"]: r["cnt"] for r in cur.fetchall()}
             for variant in variants:
-                cur.execute("SELECT COUNT(*) FROM tags WHERE tag = ?", (variant,))
-                count = cur.fetchone()[0]
+                count = variant_counts.get(variant, 0)
                 if count > 0:
-                    if not dry_run:
-                        cur.execute("UPDATE tags SET tag = ? WHERE tag = ?",
-                                   (canonical, variant))
+                    batch_updates.append((canonical, variant))
                     results["merged"] += count
+
+        if batch_updates and not dry_run:
+            cur.executemany("UPDATE tags SET tag = ? WHERE tag = ?", batch_updates)
 
         if not dry_run:
             conn.commit()
@@ -218,9 +227,11 @@ class TagNormalizer:
 
             if tags:
                 if not dry_run:
-                    for tag in tags:
-                        cur.execute("INSERT OR IGNORE INTO tags (memory_id, tag) VALUES (?, ?)",
-                                   (mem["id"], tag))
+                    # N+1 fix: executemany instead of per-tag INSERT loop
+                    cur.executemany(
+                        "INSERT OR IGNORE INTO tags (memory_id, tag) VALUES (?, ?)",
+                        [(mem["id"], tag) for tag in tags],
+                    )
                 results["tagged"] += 1
             else:
                 results["skipped"] += 1

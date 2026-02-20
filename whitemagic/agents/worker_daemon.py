@@ -22,10 +22,11 @@ Usage:
     python -m whitemagic.agents.worker_daemon [--poll-interval 5]
 """
 
-import json
 import logging
 import os
 import shlex
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import subprocess
 import time
 from datetime import datetime
@@ -136,13 +137,13 @@ class WorkerDaemon:
         tdir = _tasks_dir()
         for f in sorted(tdir.glob("task-*.json")):
             try:
-                task = json.loads(f.read_text(encoding="utf-8"))
+                task = _json_loads(f.read_text(encoding="utf-8"))
                 if task.get("status") == "pending":
                     # Check if assigned to us or unassigned
                     target = task.get("target_worker")
                     if target is None or target == self.worker_name or target == "any":
                         tasks.append(task)
-            except (json.JSONDecodeError, OSError):
+            except (ValueError, OSError):
                 continue
         return tasks
 
@@ -180,7 +181,7 @@ class WorkerDaemon:
         # Save result separately
         result_path = _results_dir() / f"{task_id}.json"
         try:
-            result_path.write_text(json.dumps({
+            result_path.write_text(_json_dumps({
                 "task_id": task_id,
                 "worker": self.worker_name,
                 "result": result,
@@ -270,7 +271,7 @@ class WorkerDaemon:
         task_id = task.get("id", "unknown")
         path = _tasks_dir() / f"{task_id}.json"
         try:
-            path.write_text(json.dumps(task, indent=2, default=str), encoding="utf-8")
+            path.write_text(_json_dumps(task, indent=2, default=str), encoding="utf-8")
         except Exception as e:
             logger.error(f"Failed to save task {task_id}: {e}")
 

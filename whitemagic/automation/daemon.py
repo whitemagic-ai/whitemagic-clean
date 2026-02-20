@@ -683,16 +683,16 @@ if __name__ == "__main__":
                 daemon.stop()
 
         elif cmd == "status":
-            import json
-            logger.info(json.dumps(daemon.get_status(), indent=2, default=str))
+            from whitemagic.utils.fast_json import dumps_str as _json_dumps
+            logger.info(_json_dumps(daemon.get_status(), indent=2, default=str))
 
         elif cmd == "run":
             if len(sys.argv) > 2:
                 task_name = sys.argv[2]
                 if task_name in daemon.tasks:
                     result = daemon._execute_task(daemon.tasks[task_name])
-                    import json
-                    logger.info(json.dumps(result, indent=2, default=str))
+                    from whitemagic.utils.fast_json import dumps_str as _json_dumps
+                    logger.info(_json_dumps(result, indent=2, default=str))
                 else:
                     logger.info(f"Unknown task: {task_name}")
             else:

@@ -6,6 +6,8 @@ and consensus detection.  All state is stored under WM_STATE_ROOT/votes/.
 import json
 import os
 import re
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
@@ -39,13 +41,13 @@ def _load_vote_session(session_id: str) -> dict[str, Any]:
     meta_path = _vote_session_dir(session_id) / "meta.json"
     if not meta_path.exists():
         raise FileNotFoundError(f"Vote session not found: {session_id}")
-    return cast("dict[str, Any]", json.loads(meta_path.read_text(encoding="utf-8")))
+    return cast("dict[str, Any]", _json_loads(meta_path.read_text(encoding="utf-8")))
 
 
 def _save_vote_session(session: dict[str, Any]) -> None:
     session_id = session["id"]
     meta_path = _vote_session_dir(session_id) / "meta.json"
-    meta_path.write_text(json.dumps(session, indent=2), encoding="utf-8")
+    meta_path.write_text(_json_dumps(session, indent=2), encoding="utf-8")
 
 
 # ---------------------------------------------------------------------------
@@ -189,7 +191,7 @@ def handle_vote_cast(**kwargs: Any) -> dict[str, Any]:
 
     # Also save individual vote file for reference
     vote_file = _vote_session_dir(session_id) / f"vote_{voter}.json"
-    vote_file.write_text(json.dumps(vote, indent=2), encoding="utf-8")
+    vote_file.write_text(_json_dumps(vote, indent=2), encoding="utf-8")
 
     _emit("VOTE_CAST", {"session_id": session_id, "voter": voter, "confidence": confidence})
 
@@ -233,7 +235,7 @@ def handle_vote_analyze(**kwargs: Any) -> dict[str, Any]:
 
     # Save analysis results
     results_file = _vote_session_dir(session_id) / "results.json"
-    results_file.write_text(json.dumps({
+    results_file.write_text(_json_dumps({
         "session_id": session_id,
         "problem": session.get("problem"),
         "analysis": analysis,
@@ -284,7 +286,7 @@ def handle_vote_record_outcome(**kwargs: Any) -> dict[str, Any]:
     accuracy = {}
     if accuracy_file.exists():
         try:
-            accuracy = json.loads(accuracy_file.read_text(encoding="utf-8"))
+            accuracy = _json_loads(accuracy_file.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
             accuracy = {}
 
@@ -301,7 +303,7 @@ def handle_vote_record_outcome(**kwargs: Any) -> dict[str, Any]:
             if success:
                 accuracy[voter]["correct"] += 1
 
-    accuracy_file.write_text(json.dumps(accuracy, indent=2), encoding="utf-8")
+    accuracy_file.write_text(_json_dumps(accuracy, indent=2), encoding="utf-8")
 
     return {
         "status": "success",
@@ -330,7 +332,7 @@ def handle_vote_list(**kwargs: Any) -> dict[str, Any]:
         if not meta.exists():
             continue
         try:
-            s = json.loads(meta.read_text(encoding="utf-8"))
+            s = _json_loads(meta.read_text(encoding="utf-8"))
             if status_filter and s.get("status") != status_filter:
                 continue
             sessions.append({

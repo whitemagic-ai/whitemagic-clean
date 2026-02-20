@@ -27,9 +27,10 @@ Usage:
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum, auto
@@ -137,7 +138,7 @@ class HolographicIntake:
         """Load configuration."""
         if self.config_path.exists():
             try:
-                data = json.loads(self.config_path.read_text())
+                data = _json_loads(self.config_path.read_text())
                 self._watch_dirs = data.get("watch_dirs", [])
             except Exception as e:
                 logger.warning(f"Failed to load intake config: {e}")
@@ -149,13 +150,13 @@ class HolographicIntake:
             "updated": datetime.now(timezone.utc).isoformat(),
             "watch_dirs": self._watch_dirs,
         }
-        self.config_path.write_text(json.dumps(data, indent=2))
+        self.config_path.write_text(_json_dumps(data, indent=2))
 
     def _load_queue(self) -> None:
         """Load intake queue from disk."""
         if self.queue_path.exists():
             try:
-                data = json.loads(self.queue_path.read_text())
+                data = _json_loads(self.queue_path.read_text())
                 for item_data in data.get("queue", []):
                     item = IntakeItem(
                         path=item_data["path"],
@@ -178,7 +179,7 @@ class HolographicIntake:
             "updated": datetime.now(timezone.utc).isoformat(),
             "queue": [item.to_dict() for item in self._queue.values()],
         }
-        self.queue_path.write_text(json.dumps(data, indent=2))
+        self.queue_path.write_text(_json_dumps(data, indent=2))
 
     def _load_known_hashes(self) -> None:
         """Load content hashes from existing memories."""
@@ -186,7 +187,7 @@ class HolographicIntake:
             # Load from metadata.json
             metadata_path = MEMORY_DIR / "metadata.json"
             if metadata_path.exists():
-                data = json.loads(metadata_path.read_text())
+                data = _json_loads(metadata_path.read_text())
                 for mem in data.get("memory_index", []):
                     if "content_hash" in mem:
                         self._known_hashes.add(mem["content_hash"])

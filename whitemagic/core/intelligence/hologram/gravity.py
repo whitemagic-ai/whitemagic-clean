@@ -199,15 +199,23 @@ class GravityCalculator:
         new_distribution = {"critical": 0, "high": 0, "medium": 0, "low": 0, "ephemeral": 0}
         updates = []
 
+        # N+1 fix: batch-fetch all existing w values in one query
+        mem_ids = [m["id"] for m in memories]
+        if mem_ids:
+            ph = ",".join("?" * len(mem_ids))
+            old_w_rows = conn.execute(
+                f"SELECT memory_id, w FROM holographic_coords WHERE memory_id IN ({ph})",
+                mem_ids,
+            ).fetchall()
+            old_w_map = {r["memory_id"]: r["w"] for r in old_w_rows}
+        else:
+            old_w_map = {}
+
         for m in memories:
             mem_dict = dict(m)
             mem_dict["tags"] = []  # Tags stored separately
 
-            # Get old W
-            old_w = conn.execute(
-                "SELECT w FROM holographic_coords WHERE memory_id = ?", (m["id"],),
-            ).fetchone()
-            old_w = old_w["w"] if old_w else 0.5
+            old_w = old_w_map.get(m["id"], 0.5)
 
             # Calculate new W
             factors = self.calculate(mem_dict)
@@ -229,11 +237,10 @@ class GravityCalculator:
             updates.append((m["id"], new_w))
 
         if not dry_run:
-            for mem_id, new_w in updates:
-                conn.execute(
-                    "UPDATE holographic_coords SET w = ? WHERE memory_id = ?",
-                    (new_w, mem_id),
-                )
+            conn.executemany(
+                "UPDATE holographic_coords SET w = ? WHERE memory_id = ?",
+                [(new_w, mem_id) for mem_id, new_w in updates],
+            )
             conn.commit()
 
         conn.close()

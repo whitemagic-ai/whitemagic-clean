@@ -4,9 +4,10 @@ Structured repository for "Discovered Solutions" and "Code Primitives".
 Bridges the gap between raw pattern extraction and actionable code.
 """
 
-import json
 import logging
 import sqlite3
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -70,8 +71,8 @@ class SolutionLibrary:
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             solution.id, solution.title, solution.description, solution.code_snippet,
-            solution.pattern_type, solution.confidence, json.dumps(solution.tags),
-            json.dumps(solution.metadata), solution.created_at,
+            solution.pattern_type, solution.confidence, _json_dumps(solution.tags),
+            _json_dumps(solution.metadata), solution.created_at,
         ))
         conn.commit()
         conn.close()
@@ -101,8 +102,8 @@ class SolutionLibrary:
                 code_snippet=row["code_snippet"],
                 pattern_type=row["pattern_type"],
                 confidence=row["confidence"],
-                tags=json.loads(row["tags"]),
-                metadata=json.loads(row["metadata"]),
+                tags=_json_loads(row["tags"]),
+                metadata=_json_loads(row["metadata"]),
                 created_at=row["created_at"],
             )
         return None

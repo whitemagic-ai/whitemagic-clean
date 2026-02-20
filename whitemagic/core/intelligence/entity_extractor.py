@@ -22,10 +22,11 @@ Usage:
 
 from __future__ import annotations
 
-import json
 import logging
 import re
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -173,7 +174,7 @@ class EntityExtractor:
 
             prompt = _EXTRACTION_PROMPT + text
 
-            payload = json.dumps({
+            payload = _json_dumps({
                 "model": self._model,
                 "prompt": prompt,
                 "stream": False,
@@ -188,11 +189,11 @@ class EntityExtractor:
             )
 
             with urllib.request.urlopen(req, timeout=self._timeout) as resp:
-                raw = json.loads(resp.read().decode("utf-8"))
+                raw = _json_loads(resp.read().decode("utf-8"))
                 response_text = raw.get("response", "")
 
             # Parse the JSON response
-            data = json.loads(response_text)
+            data = _json_loads(response_text)
             entities = [
                 Entity(
                     name=e.get("name", ""),
@@ -299,23 +300,26 @@ class EntityExtractor:
             now = datetime.now().isoformat()
 
             with pool.connection() as conn:
-                for rel in result.relations:
-                    # Store as a typed, directed association
-                    conn.execute(
+                batch_params = [
+                    (
+                        memory_id,
+                        f"entity:{rel.object.lower().replace(' ', '_')}",
+                        rel.confidence,
+                        "forward",
+                        rel.predicate,
+                        "semantic",
+                        now,
+                        now,
+                    )
+                    for rel in result.relations
+                ]
+                if batch_params:
+                    conn.executemany(
                         """INSERT OR IGNORE INTO associations
                            (source_id, target_id, strength, direction, relation_type,
                             edge_type, created_at, ingestion_time)
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                        (
-                            memory_id,
-                            f"entity:{rel.object.lower().replace(' ', '_')}",
-                            rel.confidence,
-                            "forward",
-                            rel.predicate,
-                            "semantic",
-                            now,
-                            now,
-                        ),
+                        batch_params,
                     )
                 conn.commit()
 

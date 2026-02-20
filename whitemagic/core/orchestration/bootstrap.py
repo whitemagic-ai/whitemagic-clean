@@ -6,9 +6,10 @@ This module ensures every session starts with full context,
 not a cold start. Like tuning into a field that already exists.
 """
 
-import json
 from datetime import datetime, timedelta
 from pathlib import Path
+
+from whitemagic.utils.fast_json import loads as _json_loads
 from typing import Any
 
 
@@ -129,7 +130,7 @@ class SessionBootstrap:
             tags_file = emotional_dir / "emotional_tags.json"
             if tags_file.exists():
                 try:
-                    data = json.loads(tags_file.read_text())
+                    data = _json_loads(tags_file.read_text())
                     # Find high-intensity memories
                     for mem_id, tags in data.items():
                         for tag in tags:

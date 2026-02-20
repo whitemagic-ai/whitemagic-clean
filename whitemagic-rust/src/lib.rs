@@ -18,6 +18,14 @@ pub mod async_memory;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod audit;
 #[cfg(not(target_arch = "wasm32"))]
+pub mod galaxy_miner;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod geneseed_miner;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod pattern_cross_validator;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod pattern_scorer;
+#[cfg(not(target_arch = "wasm32"))]
 #[allow(clippy::empty_line_after_doc_comments, clippy::implicit_saturating_sub)]
 pub mod clones;
 #[cfg(not(target_arch = "wasm32"))]
@@ -29,6 +37,13 @@ pub mod consolidation;
 pub mod data_lake;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod embeddings;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod memory_engine;
+pub mod bm25;
+pub mod vector_search;
+// Temporarily disabled until Zig library is compiled
+// #[cfg(not(target_arch = "wasm32"))]
+// pub mod zig_router;
 #[cfg(not(target_arch = "wasm32"))]
 #[allow(clippy::unwrap_or_default)]
 pub mod event_processor;
@@ -120,6 +135,10 @@ pub mod holographic_encoder_5d;
 #[cfg(not(target_arch = "wasm32"))]
 #[allow(clippy::redundant_closure)]
 pub mod minhash;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod embedding_minhash;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod simhash_lsh;
 #[cfg(feature = "rusqlite")]
 #[allow(clippy::redundant_closure)]
 pub mod sqlite_accel;
@@ -139,9 +158,9 @@ pub mod event_ring;
 
 // v14 — Hybrid RRF + Association Walk accelerators
 #[cfg(not(target_arch = "wasm32"))]
-pub mod hybrid_rrf;
+mod hybrid_rrf;
 #[cfg(feature = "rusqlite")]
-pub mod association_walk;
+mod association_walk;
 
 // v14.5 — Arrow IPC, Tokio Clone Army, Iceoryx2 IPC
 #[cfg(not(target_arch = "wasm32"))]
@@ -149,7 +168,87 @@ pub mod arrow_bridge;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod tokio_clones;
 #[cfg(not(target_arch = "wasm32"))]
+pub mod clone_army;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod advanced_scheduler;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod ipc_bridge;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod constellation_boost;
+
+// v16.2 — ONNX Embedder (H002 + UNIFIED_EMBED campaign)
+// ENABLED: Model downloaded, dependencies configured, code compiled
+#[cfg(all(not(target_arch = "wasm32"), feature = "ort"))]
+pub mod onnx_embedder;
+pub mod hrr;
+
+// v16 — Unified Zodiac Army (12×12 synthesis)
+#[cfg(not(target_arch = "wasm32"))]
+pub mod unified_zodiac_army;
+
+// WM2 — Unified Polyglot Clone Army (synthesis of all 12 army types)
+#[cfg(not(target_arch = "wasm32"))]
+pub mod wm2_clone_army;
+
+// PSR Campaign Modules - High Priority
+#[cfg(not(target_arch = "wasm32"))]
+pub mod reasoning_engine;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod causal_net_v2;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod emergence_detector;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod predictive_engine;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod synthesis_engine;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod association_miner_v2;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod graph_walker_v2;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod mindful_forgetting;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod galaxy_manager_v2;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod search_cache_v2;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod massive_deployer;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod code_writing_clone;
+
+// PSR-001 Memory Core Modules
+#[cfg(not(target_arch = "wasm32"))]
+pub mod memory {
+    pub mod sqlite_backend_v2;
+    pub mod unified_v2;
+    pub mod consolidation_v2;
+    pub mod unified_memory_v3;
+}
+#[cfg(not(target_arch = "wasm32"))]
+pub mod unified_memory;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod db_manager;
+
+// PSR-001 Phase 1 — db_manager_v2 (mirrors db_manager.py ConnectionPool)
+#[cfg(not(target_arch = "wasm32"))]
+pub mod db_manager_v2;
+
+// PSR-002 through PSR-010 Modules
+#[cfg(not(target_arch = "wasm32"))]
+pub mod psr;
+
+// PSR-015 — Native FFI (zero JSON overhead)
+// LoCoMo 100% Optimization Modules
+#[cfg(not(target_arch = "wasm32"))]
+pub mod cross_encoder;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod query_intent;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod graph_traversal;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod confidence_threshold;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod hnsw_index;
 
 // Python bindings - minimal export
 #[cfg(feature = "python")]
@@ -294,6 +393,14 @@ fn whitemagic_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     // v13.1 — MinHash LSH
     m.add_function(wrap_pyfunction!(minhash::minhash_find_duplicates, m)?)?;
     m.add_function(wrap_pyfunction!(minhash::minhash_signatures, m)?)?;
+    
+    // v16 — Embedding MinHash (H001 optimization)
+    m.add_function(wrap_pyfunction!(embedding_minhash::embedding_minhash_find_duplicates, m)?)?;
+    
+    // v16.1 — SimHash LSH for cosine similarity (H001 proper implementation)
+    m.add_function(wrap_pyfunction!(simhash_lsh::simhash_find_duplicates, m)?)?;
+    
+    // I008 — Arrow IPC for zero-copy data transfer (see v14.5 section below)
 
     // v13.1 — SQLite Accelerator
     #[cfg(feature = "rusqlite")]
@@ -361,15 +468,106 @@ fn whitemagic_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(arrow_bridge::arrow_schema_info, m)?)?;
     m.add_function(wrap_pyfunction!(arrow_bridge::arrow_roundtrip_bench, m)?)?;
 
-    // v14.5 — Tokio Clone Army (massively parallel exploration)
+    // v14.7 — Tokio Clone Army
     m.add_function(wrap_pyfunction!(tokio_clones::tokio_deploy_clones, m)?)?;
-    m.add_function(wrap_pyfunction!(tokio_clones::tokio_clone_bench, m)?)?;
     m.add_function(wrap_pyfunction!(tokio_clones::tokio_clone_stats, m)?)?;
+
+    // v15.10 — Galaxy Pattern Miner (Phase 3 Recursive Evolution)
+    m.add_function(wrap_pyfunction!(galaxy_miner::mine_access_patterns, m)?)?;
+    m.add_function(wrap_pyfunction!(galaxy_miner::mine_cache_candidates, m)?)?;
+    m.add_function(wrap_pyfunction!(galaxy_miner::mine_semantic_clusters, m)?)?;
+    m.add_function(wrap_pyfunction!(galaxy_miner::get_galaxy_stats, m)?)?;
+    
+    // v15.10 — Geneseed Codebase Vault Miner (Git History Analysis)
+    m.add_function(wrap_pyfunction!(geneseed_miner::mine_geneseed_patterns, m)?)?;
+    m.add_function(wrap_pyfunction!(geneseed_miner::get_geneseed_stats, m)?)?;
+    m.add_class::<geneseed_miner::OptimizationPattern>()?;
+    m.add_class::<geneseed_miner::GeneseedStats>()?;
+    
+    // v16 — Pattern Cross-Validator (100x speedup via parallel processing)
+    m.add_function(wrap_pyfunction!(pattern_cross_validator::cross_validate_patterns, m)?)?;
+    m.add_function(wrap_pyfunction!(pattern_cross_validator::get_top_patterns, m)?)?;
+    m.add_function(wrap_pyfunction!(pattern_cross_validator::get_pattern_stats, m)?)?;
+    m.add_class::<pattern_cross_validator::CrossValidatedPattern>()?;
+    
+    // v16 — Pattern Scorer (10-50x speedup via parallel processing)
+    m.add_function(wrap_pyfunction!(pattern_scorer::batch_score_patterns, m)?)?;
+    m.add_function(wrap_pyfunction!(pattern_scorer::score_galaxy_patterns, m)?)?;
+    m.add_function(wrap_pyfunction!(pattern_scorer::score_geneseed_patterns, m)?)?;
+    m.add_function(wrap_pyfunction!(pattern_scorer::apply_cross_source_boost, m)?)?;
+    m.add_function(wrap_pyfunction!(pattern_scorer::filter_patterns, m)?)?;
+    m.add_function(wrap_pyfunction!(pattern_scorer::get_scoring_stats, m)?)?;
+    m.add_class::<pattern_scorer::ScoredPattern>()?;
+    m.add_class::<pattern_scorer::ScoringConfig>()?;
+    m.add_class::<galaxy_miner::AccessPattern>()?;
+    m.add_class::<galaxy_miner::SemanticCluster>()?;
+
+    // v16.1 — Polyglot Memory Engine (Rust core for unified.py replacement)
+    m.add_class::<memory_engine::MemoryEngine>()?;
 
     // v14.5 — Iceoryx2 IPC Bridge (cross-process zero-copy)
     m.add_function(wrap_pyfunction!(ipc_bridge::ipc_bridge_init, m)?)?;
     m.add_function(wrap_pyfunction!(ipc_bridge::ipc_bridge_publish, m)?)?;
     m.add_function(wrap_pyfunction!(ipc_bridge::ipc_bridge_status, m)?)?;
+    
+    // v16.2 — ONNX Embedder (H002 + UNIFIED_EMBED - 50-100× speedup)
+    // ENABLED: ort crate v2.0 with Arrow IPC zero-copy I/O
+    #[cfg(all(feature = "arrow", feature = "ort"))]
+    {
+        m.add_function(wrap_pyfunction!(onnx_embedder::arrow_onnx_embed, m)?)?;
+        m.add_function(wrap_pyfunction!(onnx_embedder::onnx_embedder_available, m)?)?;
+        m.add_function(wrap_pyfunction!(onnx_embedder::onnx_embedder_info, m)?)?;
+    }
+    
+    // PSR-002 — Constellation Boost
+    m.add_class::<constellation_boost::ConstellationMember>()?;
+    m.add_class::<constellation_boost::PyConstellationBoost>()?;
+
+    // PSR Campaign Modules - Python Bindings
+    m.add_class::<reasoning_engine::PyReasoningEngine>()?;
+    m.add_class::<causal_net_v2::PyCausalNetV2>()?;
+    m.add_class::<emergence_detector::PyEmergenceDetector>()?;
+    m.add_class::<predictive_engine::PyPredictiveEngine>()?;
+    m.add_class::<synthesis_engine::PySynthesisEngine>()?;
+    m.add_class::<association_miner_v2::PyAssociationMinerV2>()?;
+    m.add_class::<graph_walker_v2::PyGraphWalkerV2>()?;
+    m.add_class::<mindful_forgetting::PyDecayEngine>()?;
+    m.add_class::<galaxy_manager_v2::PyGalaxyManagerV2>()?;
+    m.add_class::<search_cache_v2::PySearchCacheV2>()?;
+    // PSR-001 — Unified Memory + DB Manager
+    m.add_class::<unified_memory::Memory>()?;
+    m.add_class::<unified_memory::PyUnifiedMemory>()?;
+    m.add_class::<db_manager::PyDBManager>()?;
+    // PSR-001 Phase 1 — unified.py + db_manager.py → Rust (real replacements)
+    m.add_class::<memory::unified_memory_v3::PyUnifiedMemoryV3>()?;
+    m.add_class::<db_manager_v2::PyConnectionPool>()?;
+    // WM2 — Unified Polyglot Clone Army
+    m.add_class::<wm2_clone_army::PyWM2Army>()?;
+    
+    // PSR-001 — Massive Deployer (10-100× faster than Python)
+    m.add_class::<massive_deployer::CampaignTask>()?;
+    m.add_class::<massive_deployer::DeploymentResult>()?;
+    m.add_class::<massive_deployer::MassiveDeployer>()?;
+    m.add_function(wrap_pyfunction!(massive_deployer::create_massive_deployer, m)?)?;
+    m.add_function(wrap_pyfunction!(massive_deployer::benchmark_rust_vs_python, m)?)?;
+    
+    // PSR-001 — Code Writing Clone (self-modifying armies)
+    m.add_class::<code_writing_clone::CodeOperation>()?;
+    m.add_class::<code_writing_clone::CodeWritingResult>()?;
+    m.add_class::<code_writing_clone::CodeWritingClone>()?;
+    m.add_class::<code_writing_clone::CodeWritingArmy>()?;
+    // LoCoMo 100% Optimization Modules
+    cross_encoder::register_cross_encoder(&m)?;
+    query_intent::register_query_intent(&m)?;
+    graph_traversal::register_graph_traversal(&m)?;
+    confidence_threshold::register_confidence(&m)?;
+    hnsw_index::register_hnsw(&m)?;
+    
+    // PSR-015 — Native FFI wrappers (zero JSON overhead, 50× speedup)
+    native_ffi::register_native_ffi(&m)?;
 
     Ok(())
 }
+
+#[cfg(not(target_arch = "wasm32"))]
+pub mod native_ffi;

@@ -17,10 +17,11 @@ Usage:
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import threading
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -47,7 +48,7 @@ def _sha256(data: str) -> str:
 
 def _canonical_json(obj: Any) -> str:
     """Deterministic JSON serialization for hashing."""
-    return json.dumps(obj, sort_keys=True, separators=(",", ":"), default=str)
+    return _json_dumps(obj, sort_keys=True)
 
 
 class McpIntegrity:
@@ -218,7 +219,7 @@ class McpIntegrity:
                     for name, fp in self._baseline.items()
                 },
             }
-            path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+            path.write_text(_json_dumps(data, indent=2), encoding="utf-8")
         except Exception as e:
             logger.debug("MCP integrity persist failed: %s", e)
 
@@ -229,7 +230,7 @@ class McpIntegrity:
         if not path.exists():
             return
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
+            data = _json_loads(path.read_text(encoding="utf-8"))
             self._snapshot_time = data.get("snapshot_time", 0.0)
             for name, fp_data in data.get("tools", {}).items():
                 self._baseline[name] = ToolFingerprint(

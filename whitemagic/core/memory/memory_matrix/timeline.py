@@ -14,9 +14,10 @@ Usage:
 
 from __future__ import annotations
 
-import json
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta, timezone
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 from threading import Lock
 from typing import Any
@@ -69,7 +70,7 @@ class ChronologicalTimeline:
         if self.storage_path.exists():
             try:
                 with file_lock(self.storage_path):
-                    data = json.loads(self.storage_path.read_text())
+                    data = _json_loads(self.storage_path.read_text())
                 self._events = [
                     TimelineEvent.from_dict(e)
                     for e in data.get("events", [])
@@ -88,7 +89,7 @@ class ChronologicalTimeline:
             "events": [e.to_dict() for e in self._events],
         }
         with file_lock(self.storage_path):
-            atomic_write(self.storage_path, json.dumps(data, indent=2))
+            atomic_write(self.storage_path, _json_dumps(data, indent=2))
 
     def add_event(
         self,
@@ -224,7 +225,7 @@ class ChronologicalTimeline:
                 results.append(event)
                 continue
             # Search in data
-            data_str = json.dumps(event.data).lower()
+            data_str = _json_dumps(event.data).lower()
             if query_lower in data_str:
                 results.append(event)
         return results

@@ -69,6 +69,7 @@ COMMON_EXCLUDES=(
     --exclude='*.db-wal'
     --exclude='*.so'
     --exclude='*.dylib'
+    --exclude='_unsafe_maintenance/'
 )
 
 echo ""

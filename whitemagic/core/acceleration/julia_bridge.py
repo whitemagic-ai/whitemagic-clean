@@ -18,10 +18,11 @@ Usage:
 """
 from __future__ import annotations
 
-import json
 import logging
 import os
 import shutil
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import subprocess
 import threading
 from pathlib import Path
@@ -93,13 +94,13 @@ println(JSON3.write(result))
     try:
         proc = subprocess.run(
             [_julia_bin, "-e", script],
-            input=json.dumps(request),
+            input=_json_dumps(request),
             capture_output=True,
             text=True,
             timeout=60,
         )
         if proc.returncode == 0 and proc.stdout.strip():
-            parsed = json.loads(proc.stdout.strip())
+            parsed = _json_loads(proc.stdout.strip())
             if isinstance(parsed, dict):
                 return parsed
         elif proc.stderr:
@@ -243,6 +244,124 @@ def julia_batch_forecast(
 
 
 # ---------------------------------------------------------------------------
+# GraphRRF — Graph scoring, RRF fusion, PageRank (graph_rrf.jl)
+# ---------------------------------------------------------------------------
+
+def _call_julia_direct(module_file: str, request: dict[str, Any]) -> dict[str, Any] | None:
+    """Call a Julia module that owns its own main() JSON-stdio entry point."""
+    _init_julia()
+    if not _julia_bin or not _JULIA_DIR:
+        return None
+    src_path = _JULIA_DIR / module_file
+    if not src_path.exists():
+        logger.debug("Julia source not found: %s", src_path)
+        return None
+    try:
+        proc = subprocess.run(
+            [_julia_bin, "--startup-file=no", str(src_path)],
+            input=_json_dumps(request),
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if proc.returncode == 0 and proc.stdout.strip():
+            parsed = _json_loads(proc.stdout.strip())
+            if isinstance(parsed, dict):
+                return parsed
+        elif proc.stderr:
+            logger.debug("Julia %s stderr: %s", module_file, proc.stderr[:300])
+    except subprocess.TimeoutExpired:
+        logger.warning("Julia %s timed out", module_file)
+    except Exception as e:
+        logger.debug("Julia %s call failed: %s", module_file, e)
+    return None
+
+
+def julia_rrf_fuse(
+    ranked_lists: list[list[dict[str, Any]]],
+    weights: list[float] | None = None,
+    k: float = 60.0,
+) -> list[dict[str, Any]] | None:
+    """Merge N ranked memory lists via Reciprocal Rank Fusion using Julia.
+
+    Args:
+        ranked_lists: Each list is [{id, score}, ...] sorted by score desc.
+        weights: Per-list weights (default: uniform 1.0).
+        k: RRF constant (default 60, higher = smoother rank blending).
+
+    Returns:
+        Merged list of {id, rrf_score} sorted by score desc, or None.
+    """
+    return _call_julia_direct("graph_rrf.jl", {
+        "command": "rrf_fuse",
+        "lists": ranked_lists,
+        "weights": weights or [1.0] * len(ranked_lists),
+        "k": k,
+    })
+
+
+def julia_pagerank(
+    node_ids: list[str],
+    edges: list[dict[str, Any]],
+    damping: float = 0.85,
+) -> list[dict[str, Any]] | None:
+    """Compute PageRank scores for a memory subgraph using Julia power iteration.
+
+    Args:
+        node_ids: List of memory ID strings.
+        edges: List of {source, target, weight} dicts.
+        damping: Damping factor (default 0.85).
+
+    Returns:
+        List of {id, pagerank} sorted descending, or None.
+    """
+    return _call_julia_direct("graph_rrf.jl", {
+        "command": "pagerank",
+        "node_ids": node_ids,
+        "edges": edges,
+        "damping": damping,
+    })
+
+
+def julia_score_walk_paths(
+    paths: list[dict[str, Any]],
+    weights: dict[str, float] | None = None,
+) -> list[dict[str, Any]] | None:
+    """Score BFS walk paths by weighted multi-signal product using Julia.
+
+    Args:
+        paths: List of {nodes, edge_signals, depth} dicts.
+        weights: Signal weights {semantic, gravity, recency, staleness}.
+
+    Returns:
+        Paths sorted by score desc with {nodes, score, depth, terminal_id}, or None.
+    """
+    return _call_julia_direct("graph_rrf.jl", {
+        "command": "score_walk_paths",
+        "paths": paths,
+        "weights": weights or {"semantic": 0.4, "gravity": 0.3, "recency": 0.2, "staleness": 0.1},
+    })
+
+
+def julia_community_gravity(
+    memory_vec: list[float],
+    community_centroids: list[list[float]],
+    community_ids: list[str],
+) -> list[dict[str, Any]] | None:
+    """Rank communities by cosine gravity toward a query vector using Julia.
+
+    Returns:
+        List of {community_id, gravity} sorted descending, or None.
+    """
+    return _call_julia_direct("graph_rrf.jl", {
+        "command": "community_gravity",
+        "vector": memory_vec,
+        "centroids": community_centroids,
+        "community_ids": community_ids,
+    })
+
+
+# ---------------------------------------------------------------------------
 # Status
 # ---------------------------------------------------------------------------
 
@@ -251,8 +370,8 @@ def julia_bridge_status() -> dict[str, Any]:
     _init_julia()
     modules = {}
     if _JULIA_DIR:
-        for f in ["memory_stats.jl", "self_model_forecast.jl",
-                   "causal_resonance.jl", "constellations.jl", "gan_ying.jl"]:
+        for f in ["memory_stats.jl", "self_model_forecast.jl", "graph_rrf.jl",
+                  "causal_resonance.jl", "constellations.jl", "gan_ying.jl"]:
             modules[f.replace(".jl", "")] = (_JULIA_DIR / f).exists()
 
     return {

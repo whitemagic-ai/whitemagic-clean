@@ -2,9 +2,10 @@
 Tracks tool latency, errors, and success rates.
 """
 
-import json
 import logging
 from collections import deque
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
@@ -77,7 +78,7 @@ class Telemetry:
         # 2. Persist to JSON-L
         try:
             with open(self.log_path, "a", encoding="utf-8") as f:
-                f.write(json.dumps(event) + "\n")
+                f.write(_json_dumps(event) + "\n")
         except Exception as e:
             logger.warning(f"Failed to persist telemetry: {e}")
 

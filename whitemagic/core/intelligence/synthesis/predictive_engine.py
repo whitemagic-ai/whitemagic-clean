@@ -470,20 +470,22 @@ class PredictiveEngine:
         # Development gardens to analyze
         dev_gardens = ["milestone", "automation", "roadmap", "strategy", "production_ready"]
 
-        # Get recent activity in each garden
-        garden_activity = {}
-        for garden in dev_gardens:
-            cur.execute("""
-                SELECT COUNT(*) as count,
-                       MAX(m.created_at) as latest,
-                       AVG(h.w) as avg_gravity
-                FROM memories m
-                JOIN tags t ON m.id = t.memory_id
-                LEFT JOIN holographic_coords h ON m.id = h.memory_id
-                WHERE t.tag = ?
-            """, (garden,))
-            row = cur.fetchone()
-            garden_activity[garden] = {
+        # N+1 fix: batch-fetch all garden stats in one GROUP BY query
+        ph = ",".join("?" * len(dev_gardens))
+        cur.execute(f"""
+            SELECT t.tag,
+                   COUNT(*) as count,
+                   MAX(m.created_at) as latest,
+                   AVG(h.w) as avg_gravity
+            FROM memories m
+            JOIN tags t ON m.id = t.memory_id
+            LEFT JOIN holographic_coords h ON m.id = h.memory_id
+            WHERE t.tag IN ({ph})
+            GROUP BY t.tag
+        """, dev_gardens)
+        garden_activity = {g: {"count": 0, "latest": None, "avg_gravity": 0.5} for g in dev_gardens}
+        for row in cur.fetchall():
+            garden_activity[row["tag"]] = {
                 "count": row["count"] or 0,
                 "latest": row["latest"],
                 "avg_gravity": row["avg_gravity"] or 0.5,
@@ -845,14 +847,14 @@ class PredictiveEngine:
 
         # Check each gap region
         gap_queries = [
-            ("Detail + Future", "y < -0.3 AND z > 0.2"),
-            ("Emotional + Historical", "x > 0.3 AND z < -0.2"),
-            ("Logical + Low Gravity", "x < -0.3 AND w < 0.4"),
-            ("Strategic Vision", "z > 0.3 AND w > 0.8"),
+            ("Detail + Future", "y < ? AND z > ?", (-0.3, 0.2)),
+            ("Emotional + Historical", "x > ? AND z < ?", (0.3, -0.2)),
+            ("Logical + Low Gravity", "x < ? AND w < ?", (-0.3, 0.4)),
+            ("Strategic Vision", "z > ? AND w > ?", (0.3, 0.8)),
         ]
 
-        for name, condition in gap_queries:
-            cur.execute(f"SELECT COUNT(*) FROM holographic_coords WHERE {condition}")
+        for name, condition, params in gap_queries:
+            cur.execute("SELECT COUNT(*) FROM holographic_coords WHERE " + condition, params)
             count = cur.fetchone()[0]
             if count < 3:  # Sparse region
                 gaps.append({

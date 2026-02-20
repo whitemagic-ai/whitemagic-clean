@@ -9,12 +9,12 @@ import click
 
 
 @click.group()
-def gardens():
+def gardens() -> None:
     """Manage WhiteMagic gardens (consciousness domains)."""
 
 
 @gardens.command(name="list")
-def list_gardens_cmd():
+def list_gardens_cmd() -> None:
     """List all available gardens."""
     list_gardens, get_garden = _get_gardens_backend()
 
@@ -36,7 +36,7 @@ def list_gardens_cmd():
 
 @gardens.command()
 @click.argument("garden")
-def activate(garden: str):
+def activate(garden: str) -> None:
     """Activate a specific garden."""
     try:
         _, get_garden = _get_gardens_backend()
@@ -66,7 +66,7 @@ def activate(garden: str):
 
 
 @gardens.command()
-def status():
+def status() -> None:
     """Show status of all gardens."""
     list_gardens, _ = _get_gardens_backend()
 
@@ -90,7 +90,7 @@ def status():
 
 
 @gardens.command()
-def synergy():
+def synergy() -> None:
     """Show active garden synergies."""
     list_gardens, _ = _get_gardens_backend()
 
@@ -115,7 +115,7 @@ def synergy():
 
 @gardens.command()
 @click.argument("garden")
-def deactivate(garden: str):
+def deactivate(garden: str) -> None:
     """Deactivate a garden."""
     try:
         _, get_garden = _get_gardens_backend()

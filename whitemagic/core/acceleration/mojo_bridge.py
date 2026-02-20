@@ -20,10 +20,11 @@ Usage:
 """
 from __future__ import annotations
 
-import json
 import logging
 import os
 import shutil
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import subprocess
 import threading
 from pathlib import Path
@@ -42,9 +43,19 @@ def _find_mojo() -> tuple[str | None, Path | None]:
     base = Path(__file__).resolve().parent.parent.parent.parent
     mojo_dir = base / "whitemagic-mojo"
 
-    # Find mojo binary
+    # Find mojo binary — check pixi env, archive venv, PATH, and env override
+    archive_base = base.parent  # ~/Desktop
     candidates = [
         os.environ.get("MOJO_PATH", ""),
+        # Dev venv modular package (pip install max) — binary present but runfiles broken upstream
+        # Fixed when Modular ships magic CLI or fixes pip packaging for Linux
+        str(base / ".venv" / "lib" / "python3.12" / "site-packages" / "modular" / "bin" / "mojo"),
+        # Archive venv modular package
+        str(archive_base / "wm_archive" / "WM" / "whitemagic" / ".venv"
+            / "lib" / "python3.12" / "site-packages" / "modular" / "bin" / "mojo"),
+        # Pixi-managed Mojo (also broken — missing runfiles)
+        str(archive_base / "wm_archive" / "WM" / "whitemagic" / "whitemagic-mojo"
+            / "mojo-env" / ".pixi" / "envs" / "default" / "bin" / "mojo"),
         str(base / ".venv" / "bin" / "mojo"),
         shutil.which("mojo") or "",
     ]
@@ -192,14 +203,14 @@ def _call_mojo(module_name: str, request: dict[str, Any]) -> dict[str, Any] | No
     try:
         proc = subprocess.run(
             [_mojo_bin, "run", str(src_path)],
-            input=json.dumps(request),
+            input=_json_dumps(request),
             capture_output=True,
             text=True,
             timeout=30,
             cwd=str(_MOJO_DIR),
         )
         if proc.returncode == 0 and proc.stdout.strip():
-            parsed = json.loads(proc.stdout.strip())
+            parsed = _json_loads(proc.stdout.strip())
             if isinstance(parsed, dict):
                 return parsed
         elif proc.stderr:

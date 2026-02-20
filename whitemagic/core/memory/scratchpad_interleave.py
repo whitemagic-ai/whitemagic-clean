@@ -4,9 +4,10 @@ Manages multiple parallel scratchpads with intelligent interleaving
 at phase boundaries for creative synthesis.
 """
 
-import json
 from datetime import datetime
 from pathlib import Path
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from typing import Any
 
 from whitemagic.config.paths import WM_ROOT
@@ -67,11 +68,11 @@ class ScratchpadManager:
         for pad_file in self.scratch_dir.glob("*.json"):
             try:
                 with file_lock(pad_file):
-                    data: dict[str, Any] = json.loads(pad_file.read_text())
+                    data: dict[str, Any] = _json_loads(pad_file.read_text())
                 pad = Scratchpad(data["name"], data.get("focus"))
                 pad.entries = data.get("entries", [])
                 self.scratchpads[data["name"]] = pad
-            except json.JSONDecodeError:
+            except (ValueError, OSError):
                 pass
 
     def _save_scratchpad(self, name: str) -> None:
@@ -79,7 +80,7 @@ class ScratchpadManager:
         if name in self.scratchpads:
             pad_file = self.scratch_dir / f"{name}.json"
             with file_lock(pad_file):
-                atomic_write(pad_file, json.dumps(self.scratchpads[name].to_dict(), indent=2))
+                atomic_write(pad_file, _json_dumps(self.scratchpads[name].to_dict(), indent=2))
 
     def create(self, name: str, focus: str | None = None) -> Scratchpad:
         """Create a new scratchpad."""

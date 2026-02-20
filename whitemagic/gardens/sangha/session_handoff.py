@@ -10,10 +10,11 @@ v4.3.0 Enhancement: Continuous Execution Mode
 
 from __future__ import annotations
 
-import json
 import logging
 from dataclasses import dataclass
 from datetime import datetime
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 from typing import Any
 
@@ -208,7 +209,7 @@ class SessionHandoff:
     def _load_session_state(self, filepath: Path) -> SessionState | None:
         """Load session state from file."""
         with file_lock(filepath):
-            data = json.loads(filepath.read_text()) or {}
+            data = _json_loads(filepath.read_text()) or {}
         return SessionState(
             session_id=data["session_id"],
             started_at=parse_datetime(data["started_at"]),
@@ -254,7 +255,7 @@ class SessionHandoff:
             "last_progress_at": state.last_progress_at.isoformat() if state.last_progress_at else None,
         }
         with file_lock(filepath):
-            atomic_write(filepath, json.dumps(data, indent=2))
+            atomic_write(filepath, _json_dumps(data, indent=2))
 
     def _create_handoff_doc(self, state: SessionState, filepath: Path) -> None:
         """Create handoff document for next session."""

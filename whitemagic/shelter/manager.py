@@ -13,10 +13,11 @@ Environment variables:
 
 from __future__ import annotations
 
-import json
 import logging
 import os
 import shutil
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 import subprocess
 import tempfile
 import threading
@@ -424,7 +425,7 @@ class ShelterManager:
         # Write input data to shelter work dir
         if input_data:
             input_path = Path(shelter.work_dir) / "input.json"
-            input_path.write_text(json.dumps(input_data), encoding="utf-8")
+            input_path.write_text(_json_dumps(input_data), encoding="utf-8")
 
         # Dharma check — always on, even inside shelters
         try:

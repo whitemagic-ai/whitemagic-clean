@@ -11,9 +11,10 @@ Like biological immune memory (memory B cells and T cells), this system:
 """
 from __future__ import annotations
 
-import json
 import logging
 from dataclasses import asdict, dataclass
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -157,7 +158,7 @@ class ImmuneMemory:
             return
 
         try:
-            data = json.loads(self.storage_path.read_text())
+            data = _json_loads(self.storage_path.read_text())
             for antigen, record_data in data.items():
                 self.memories[antigen] = ImmuneMemoryRecord(**record_data)
         except Exception as e:
@@ -170,7 +171,7 @@ class ImmuneMemory:
                 antigen: asdict(memory)
                 for antigen, memory in self.memories.items()
             }
-            self.storage_path.write_text(json.dumps(data, indent=2))
+            self.storage_path.write_text(_json_dumps(data, indent=2))
         except Exception as e:
             logger.info(f"Warning: Failed to save immune memory: {e}")
 

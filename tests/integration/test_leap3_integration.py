@@ -37,9 +37,9 @@ class TestMCPStdioRoundTrip:
         assert mcp.name == "WhiteMagic Core"
 
     def test_registry_tool_count(self):
-        """TOOL_REGISTRY has ≥175 tools (current expectation: 178)."""
+        """TOOL_REGISTRY has ≥165 tools (post-V002 pruning: ~170)."""
         from whitemagic.tools.registry import TOOL_REGISTRY
-        assert len(TOOL_REGISTRY) >= 175, f"Only {len(TOOL_REGISTRY)} tools in registry"
+        assert len(TOOL_REGISTRY) >= 165, f"Only {len(TOOL_REGISTRY)} tools in registry"
 
     def test_all_registry_tools_have_schemas(self):
         """Every registered tool has a non-empty input_schema."""

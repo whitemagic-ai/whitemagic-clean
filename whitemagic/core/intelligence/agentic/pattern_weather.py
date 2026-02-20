@@ -1,6 +1,7 @@
 """Brain Upgrade #6: Pattern Weather Report - Cognitive weather at session start."""
 from typing import Any
-import json
+
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 class PatternWeather:
@@ -11,7 +12,7 @@ class PatternWeather:
 
     def _load(self) -> dict:
         if self.patterns_file.exists():
-            return json.loads(self.patterns_file.read_text())  # type: ignore[no-any-return]
+            return _json_loads(self.patterns_file.read_text())  # type: ignore[no-any-return]
         return {"patterns": {}}
 
     def get_forecast(self) -> dict:

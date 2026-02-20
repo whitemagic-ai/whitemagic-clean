@@ -32,6 +32,73 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
+# Cached module references — hoisted from per-call lazy imports to eliminate
+# import-lock contention on rapid parallel tool dispatch.
+# Each is loaded once on first access; failures are cached as None.
+# ---------------------------------------------------------------------------
+
+_sanitize_tool_args: Any = None
+_get_breaker_registry: Any = None
+_get_rate_limiter: Any = None
+_check_tool_permission: Any = None
+_check_maturity_for_tool: Any = None
+_get_security_monitor: Any = None
+_get_governor: Any = None
+_compact_fn: Any = None
+_cached: bool = False
+
+
+def _ensure_cached() -> None:
+    """Load all middleware dependencies once.  Safe to call multiple times."""
+    global _sanitize_tool_args, _get_breaker_registry, _get_rate_limiter
+    global _check_tool_permission, _check_maturity_for_tool
+    global _get_security_monitor, _get_governor, _compact_fn, _cached
+    if _cached:
+        return
+    try:
+        from whitemagic.tools.input_sanitizer import sanitize_tool_args
+        _sanitize_tool_args = sanitize_tool_args
+    except Exception:
+        pass
+    try:
+        from whitemagic.tools.circuit_breaker import get_breaker_registry
+        _get_breaker_registry = get_breaker_registry
+    except Exception:
+        pass
+    try:
+        from whitemagic.tools.rate_limiter import get_rate_limiter
+        _get_rate_limiter = get_rate_limiter
+    except Exception:
+        pass
+    try:
+        from whitemagic.tools.tool_permissions import check_tool_permission
+        _check_tool_permission = check_tool_permission
+    except Exception:
+        pass
+    try:
+        from whitemagic.tools.maturity_check import check_maturity_for_tool
+        _check_maturity_for_tool = check_maturity_for_tool
+    except Exception:
+        pass
+    try:
+        from whitemagic.security.security_breaker import get_security_monitor
+        _get_security_monitor = get_security_monitor
+    except Exception:
+        pass
+    try:
+        from whitemagic.core.governor import get_governor
+        _get_governor = get_governor
+    except Exception:
+        pass
+    try:
+        from whitemagic.tools.compact_response import compact
+        _compact_fn = compact
+    except Exception:
+        pass
+    _cached = True
+
+
+# ---------------------------------------------------------------------------
 # Types
 # ---------------------------------------------------------------------------
 
@@ -71,11 +138,20 @@ class DispatchPipeline:
 
     def __init__(self) -> None:
         self._middlewares: list[tuple[str, MiddlewareFn]] = []
+        self._chain: NextFn | None = None  # Pre-built chain (frozen after first execute)
 
     def use(self, name: str, middleware: MiddlewareFn) -> "DispatchPipeline":
         """Register a middleware.  Order matters — first registered runs first."""
         self._middlewares.append((name, middleware))
+        self._chain = None  # Invalidate pre-built chain
         return self
+
+    def _build_chain(self) -> NextFn:
+        """Build the closure chain once from registered middlewares."""
+        chain: NextFn = _terminal
+        for name, mw in reversed(self._middlewares):
+            chain = _wrap(mw, chain, name)
+        return chain
 
     def execute(self, tool_name: str, **kwargs: Any) -> dict[str, Any] | None:
         """Execute the full pipeline for a tool call."""
@@ -87,18 +163,16 @@ class DispatchPipeline:
             zig_prevalidated=bool(kwargs.pop("_zig_prevalidated", False)),
         )
 
-        # Build the chain from innermost → outermost
-        chain: NextFn = _terminal
-        for name, mw in reversed(self._middlewares):
-            chain = _wrap(mw, chain, name)
+        # Use pre-built chain (built once, reused for all calls)
+        if self._chain is None:
+            self._chain = self._build_chain()
 
-        result = chain(ctx)
+        result = self._chain(ctx)
 
         # Post-pipeline: compact response mode
-        if ctx.compact and isinstance(result, dict):
+        if ctx.compact and isinstance(result, dict) and _compact_fn is not None:
             try:
-                from whitemagic.tools.compact_response import compact
-                result = compact(result)
+                result = _compact_fn(result)
             except Exception:
                 pass
 
@@ -134,27 +208,29 @@ def _wrap(mw: MiddlewareFn, next_fn: NextFn, name: str) -> NextFn:
 
 def mw_input_sanitizer(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
     """Validate tool arguments before any processing."""
-    try:
-        from whitemagic.tools.input_sanitizer import sanitize_tool_args
-        result = sanitize_tool_args(ctx.tool_name, ctx.kwargs)
-        if result is not None:
-            return result
-    except Exception:
-        pass
+    _ensure_cached()
+    if _sanitize_tool_args is not None:
+        try:
+            result = _sanitize_tool_args(ctx.tool_name, ctx.kwargs)
+            if result is not None:
+                return result
+        except Exception:
+            pass
     return next_fn(ctx)
 
 
 def mw_circuit_breaker(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
     """Fast-fail if tool is in cooldown; record success/failure afterward."""
+    _ensure_cached()
     breaker = None
-    try:
-        from whitemagic.tools.circuit_breaker import get_breaker_registry
-        breaker = get_breaker_registry().get(ctx.tool_name)
-        # Skip pre-check if Zig dispatch already validated circuit state
-        if not ctx.zig_prevalidated and breaker.is_open():
-            return breaker.calm_response()
-    except Exception:
-        breaker = None
+    if _get_breaker_registry is not None:
+        try:
+            breaker = _get_breaker_registry().get(ctx.tool_name)
+            # Skip pre-check if Zig dispatch already validated circuit state
+            if not ctx.zig_prevalidated and breaker.is_open():
+                return breaker.calm_response()
+        except Exception:
+            breaker = None
 
     result = next_fn(ctx)
 
@@ -176,25 +252,27 @@ def mw_rate_limiter(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | N
     """Per-agent, per-tool rate limiting."""
     if ctx.zig_prevalidated:
         return next_fn(ctx)  # Zig already checked rate limit
-    try:
-        from whitemagic.tools.rate_limiter import get_rate_limiter
-        rate_result = get_rate_limiter().check(ctx.agent_id, ctx.tool_name)
-        if rate_result is not None:
-            return rate_result
-    except Exception:
-        pass
+    _ensure_cached()
+    if _get_rate_limiter is not None:
+        try:
+            rate_result = _get_rate_limiter().check(ctx.agent_id, ctx.tool_name)
+            if rate_result is not None:
+                return rate_result
+        except Exception:
+            pass
     return next_fn(ctx)
 
 
 def mw_tool_permissions(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
     """Per-agent RBAC permission check."""
-    try:
-        from whitemagic.tools.tool_permissions import check_tool_permission
-        perm_result = check_tool_permission(ctx.agent_id, ctx.tool_name)
-        if perm_result is not None:
-            return perm_result
-    except Exception:
-        pass
+    _ensure_cached()
+    if _check_tool_permission is not None:
+        try:
+            perm_result = _check_tool_permission(ctx.agent_id, ctx.tool_name)
+            if perm_result is not None:
+                return perm_result
+        except Exception:
+            pass
     return next_fn(ctx)
 
 
@@ -202,59 +280,62 @@ def mw_maturity_gate(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | 
     """Block tools that require a higher maturity stage than currently reached."""
     if ctx.zig_prevalidated:
         return next_fn(ctx)  # Zig already checked maturity
-    try:
-        from whitemagic.tools.maturity_check import check_maturity_for_tool
-        gate_result = check_maturity_for_tool(ctx.tool_name)
-        if gate_result is not None:
-            return gate_result
-    except Exception:
-        pass
+    _ensure_cached()
+    if _check_maturity_for_tool is not None:
+        try:
+            gate_result = _check_maturity_for_tool(ctx.tool_name)
+            if gate_result is not None:
+                return gate_result
+        except Exception:
+            pass
     return next_fn(ctx)
 
 
 def mw_security_monitor(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
     """Edgerunner Violet: anomaly detection for suspicious tool-call patterns."""
-    try:
-        from whitemagic.security.security_breaker import get_security_monitor
-        safety = ctx.kwargs.get("safety", "READ")
-        if not isinstance(safety, str):
-            safety = "READ"
-        alert = get_security_monitor().record_call(
-            tool=ctx.tool_name,
-            safety=safety,
-            agent_id=ctx.agent_id,
-        )
-        if alert and alert.get("action") == "block":
-            return {
-                "status": "error",
-                "error_code": "security_breaker",
-                "message": f"Security monitor blocked: {alert.get('detail', 'anomaly detected')}",
-                "alert": alert,
-            }
-    except Exception:
-        pass
+    _ensure_cached()
+    if _get_security_monitor is not None:
+        try:
+            safety = ctx.kwargs.get("safety", "READ")
+            if not isinstance(safety, str):
+                safety = "READ"
+            alert = _get_security_monitor().record_call(
+                tool=ctx.tool_name,
+                safety=safety,
+                agent_id=ctx.agent_id,
+            )
+            if alert and alert.get("action") == "block":
+                return {
+                    "status": "error",
+                    "error_code": "security_breaker",
+                    "message": f"Security monitor blocked: {alert.get('detail', 'anomaly detected')}",
+                    "alert": alert,
+                }
+        except Exception:
+            pass
     return next_fn(ctx)
 
 
 def mw_governor(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
     """Ethical gate — Governor validates the tool call."""
-    try:
-        from whitemagic.core.governor import get_governor
-        gov = get_governor()
-        validation = gov.validate_tool_call(ctx.tool_name, ctx.kwargs)
-        if not validation.safe:
-            try:
-                from whitemagic.tools.unified_api import _emit_gan_ying
-                _emit_gan_ying("GOVERNOR_BLOCKED", {
-                    "tool": ctx.tool_name, "reason": validation.reason,
-                })
-            except Exception:
-                pass
-            return {
-                "status": "error",
-                "error": f"Governor Blocked: {validation.reason}",
-                "risk_level": validation.risk_level.name,
-            }
-    except ImportError:
-        pass
+    _ensure_cached()
+    if _get_governor is not None:
+        try:
+            gov = _get_governor()
+            validation = gov.validate_tool_call(ctx.tool_name, ctx.kwargs)
+            if not validation.safe:
+                try:
+                    from whitemagic.tools.unified_api import _emit_gan_ying
+                    _emit_gan_ying("GOVERNOR_BLOCKED", {
+                        "tool": ctx.tool_name, "reason": validation.reason,
+                    })
+                except Exception:
+                    pass
+                return {
+                    "status": "error",
+                    "error": f"Governor Blocked: {validation.reason}",
+                    "risk_level": validation.risk_level.name,
+                }
+        except Exception:
+            pass
     return next_fn(ctx)

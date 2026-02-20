@@ -8,7 +8,7 @@
 # ============================================================================
 
 import sys
-import json
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from whitemagic.core.bridge.utils import logger
 
 # === IMPORT ALL TOOLS FROM MODULAR BRIDGE ===
@@ -45,6 +45,6 @@ from whitemagic.core.bridge.tools import (
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         tool_name = sys.argv[1]
-        kwargs = json.loads(sys.argv[2]) if len(sys.argv) > 2 else {}
+        kwargs = _json_loads(sys.argv[2]) if len(sys.argv) > 2 else {}
         result = execute_mcp_tool(tool_name, **kwargs)
-        logger.info(json.dumps(result, default=str))
+        logger.info(_json_dumps(result, default=str))

@@ -265,7 +265,7 @@ class PhylogeneticTracker:
         )
 
         try:
-            import json
+            from whitemagic.utils.fast_json import dumps_str as _json_dumps
             from whitemagic.core.memory.unified import get_unified_memory
             um = get_unified_memory()
             with um.backend.pool.connection() as conn:
@@ -276,7 +276,7 @@ class PhylogeneticTracker:
                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                     (edge_id, source_id, source_galaxy, target_id, target_galaxy,
                      edge_type, mechanism, edge.created_at,
-                     json.dumps(metadata, default=str)),
+                     _json_dumps(metadata, default=str)),
                 )
                 conn.commit()
         except Exception as e:

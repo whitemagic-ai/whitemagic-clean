@@ -1,8 +1,9 @@
 
 import subprocess
-import json
 import os
 import logging
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from typing import Dict, Any, Optional
 
 logger = logging.getLogger("julia_bridge")
@@ -46,7 +47,7 @@ class JuliaBridge:
             if self.lib_path:
                 env["LD_LIBRARY_PATH"] = f"{self.lib_path}:{env.get('LD_LIBRARY_PATH', '')}"
 
-            cmd = [self.julia_bin, self.script_path, json.dumps(payload)]
+            cmd = [self.julia_bin, self.script_path, _json_dumps(payload)]
 
             result = subprocess.run(
                 cmd,
@@ -60,7 +61,7 @@ class JuliaBridge:
                 logger.warning(f"Julia Logic Error (Falling back to simulation): {result.stderr}")
                 return {"status": "CONVERGED", "total_resonance": magnitude * 0.95, "half_life": 4.2, "peak_amplitude": magnitude * 0.5}
 
-            return dict(json.loads(result.stdout))
+            return dict(_json_loads(result.stdout))
 
         except subprocess.TimeoutExpired:
             logger.warning("Julia ODE solver timed out — falling back to simulation.")

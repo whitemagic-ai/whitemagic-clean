@@ -29,6 +29,7 @@ Usage:
     distance = gmap.compute_distance(memory)
 """
 
+import asyncio
 import logging
 import threading
 import time
@@ -197,102 +198,100 @@ class GalacticMap:
             logger.error(f"GalacticMap sweep: UnifiedMemory unavailable: {exc}")
             return report
 
-        # Fetch all memories in batches
-        all_memories = backend.list_recent(limit=50000)
-        report.total_memories = len(all_memories)
-
+        # Paginate through ALL memories (no cap)
         zone_counts: dict[str, int] = {z.value: 0 for z in GalacticZone}
         total_retention = 0.0
         total_distance = 0.0
         updates: list[tuple[str, float, float]] = []
+        total_memories = 0
 
-        # Try Rust accelerated batch scoring for large sweeps
-        used_rust = False
-        if len(all_memories) > 100:
-            try:
-                from whitemagic.optimization.rust_accelerators import (
-                    galactic_batch_score,
-                    rust_available,
-                )
-                if rust_available():
-                    mem_dicts = []
-                    for mem in all_memories:
-                        mem_dicts.append({
-                            "id": mem.id,
-                            "importance": getattr(mem, "importance", 0.5),
-                            "neuro_score": getattr(mem, "neuro_score", 0.5),
-                            "emotional_valence": getattr(mem, "emotional_valence", 0.0),
-                            "recall_count": getattr(mem, "recall_count", 0),
-                            "is_protected": bool(getattr(mem, "is_protected", False)),
-                            "is_core_identity": bool(getattr(mem, "is_core_identity", False)),
-                            "is_sacred": bool(getattr(mem, "is_sacred", False)),
-                            "is_pinned": bool(getattr(mem, "is_pinned", False)),
-                            "memory_type_weight": getattr(mem, "importance", 0.5),
-                            "richness": min(1.0, len(str(mem.content)) / 2000.0) if mem.content else 0.3,
-                            "activity": min(1.0, getattr(mem, "recall_count", 0) / 20.0),
-                            "recency": 0.5,
-                            "emotion": abs(getattr(mem, "emotional_valence", 0.0)),
-                            "protection": 1.0 if any([
-                                getattr(mem, "is_protected", False),
-                                getattr(mem, "is_core_identity", False),
-                                getattr(mem, "is_sacred", False),
-                                getattr(mem, "is_pinned", False),
-                            ]) else 0.0,
-                        })
+        # Check Rust availability once
+        rust_scorer = None
+        try:
+            from whitemagic.optimization.rust_accelerators import (
+                galactic_batch_score,
+                rust_available,
+            )
+            if rust_available():
+                rust_scorer = galactic_batch_score
+        except Exception:
+            pass
 
-                    results = galactic_batch_score(mem_dicts, quick=False)
-                    result_map = {r["id"]: r for r in results}
+        for page in backend.list_all_paginated(batch_size=batch_size):
+            total_memories += len(page)
 
-                    for mem in all_memories:
-                        r = result_map.get(mem.id)
-                        if not r:
-                            continue
-                        ret_score = r["retention_score"]
-                        distance = r["galactic_distance"]
-                        zone = classify_zone(distance)
-                        zone_counts[zone.value] += 1
-                        total_retention += ret_score
-                        total_distance += distance
-                        if mem.is_protected or mem.is_core_identity or mem.is_sacred or mem.is_pinned:
-                            report.protected_count += 1
-                        if zone == GalacticZone.CORE:
-                            report.core_count += 1
-                        elif zone == GalacticZone.FAR_EDGE:
-                            report.edge_count += 1
-                        updates.append((mem.id, distance, ret_score))
+            if rust_scorer is not None:
+                # Rust accelerated path
+                mem_dicts = []
+                for mem in page:
+                    mem_dicts.append({
+                        "id": mem.id,
+                        "importance": getattr(mem, "importance", 0.5) or 0.5,
+                        "neuro_score": getattr(mem, "neuro_score", 0.5) or 0.5,
+                        "emotional_valence": getattr(mem, "emotional_valence", 0.0) or 0.0,
+                        "recall_count": getattr(mem, "recall_count", 0) or 0,
+                        "is_protected": bool(getattr(mem, "is_protected", False)),
+                        "is_core_identity": bool(getattr(mem, "is_core_identity", False)),
+                        "is_sacred": bool(getattr(mem, "is_sacred", False)),
+                        "is_pinned": bool(getattr(mem, "is_pinned", False)),
+                        "memory_type_weight": getattr(mem, "importance", 0.5),
+                        "richness": min(1.0, len(str(mem.content)) / 2000.0) if mem.content else 0.3,
+                        "activity": min(1.0, (getattr(mem, "recall_count", 0) or 0) / 20.0),
+                        "recency": 0.5,
+                        "emotion": abs(getattr(mem, "emotional_valence", 0.0) or 0.0),
+                        "protection": 1.0 if any([
+                            getattr(mem, "is_protected", False),
+                            getattr(mem, "is_core_identity", False),
+                            getattr(mem, "is_sacred", False),
+                            getattr(mem, "is_pinned", False),
+                        ]) else 0.0,
+                    })
 
-                        if len(updates) >= batch_size:
-                            backend.batch_update_galactic(updates)
-                            report.memories_updated += len(updates)
-                            updates.clear()
+                results = rust_scorer(mem_dicts, quick=False)
+                result_map = {r["id"]: r for r in results}
 
-                    used_rust = True
-                    logger.debug("Galactic sweep used Rust accelerator")
-            except Exception as e:
-                logger.debug(f"Rust galactic scoring unavailable, using Python: {e}")
+                for mem in page:
+                    r = result_map.get(mem.id)
+                    if not r:
+                        continue
+                    ret_score = r["retention_score"]
+                    distance = r["galactic_distance"]
+                    zone = classify_zone(distance)
+                    zone_counts[zone.value] += 1
+                    total_retention += ret_score
+                    total_distance += distance
+                    if mem.is_protected or mem.is_core_identity or mem.is_sacred or mem.is_pinned:
+                        report.protected_count += 1
+                    if zone == GalacticZone.CORE:
+                        report.core_count += 1
+                    elif zone == GalacticZone.FAR_EDGE:
+                        report.edge_count += 1
+                    updates.append((mem.id, distance, ret_score))
+            else:
+                # Python fallback path
+                for mem in page:
+                    verdict = retention.evaluate(mem)
+                    ret_score = verdict.score
+                    distance = self.compute_distance(mem, retention_score=ret_score)
+                    zone = classify_zone(distance)
+                    zone_counts[zone.value] += 1
+                    total_retention += ret_score
+                    total_distance += distance
+                    if mem.is_protected or mem.is_core_identity or mem.is_sacred or mem.is_pinned:
+                        report.protected_count += 1
+                    if zone == GalacticZone.CORE:
+                        report.core_count += 1
+                    elif zone == GalacticZone.FAR_EDGE:
+                        report.edge_count += 1
+                    updates.append((mem.id, distance, ret_score))
 
-        # Python fallback path
-        if not used_rust:
-            for mem in all_memories:
-                verdict = retention.evaluate(mem)
-                ret_score = verdict.score
-                distance = self.compute_distance(mem, retention_score=ret_score)
-                zone = classify_zone(distance)
-                zone_counts[zone.value] += 1
-                total_retention += ret_score
-                total_distance += distance
-                if mem.is_protected or mem.is_core_identity or mem.is_sacred or mem.is_pinned:
-                    report.protected_count += 1
-                if zone == GalacticZone.CORE:
-                    report.core_count += 1
-                elif zone == GalacticZone.FAR_EDGE:
-                    report.edge_count += 1
-                updates.append((mem.id, distance, ret_score))
+            # Flush batch
+            if len(updates) >= batch_size:
+                backend.batch_update_galactic(updates)
+                report.memories_updated += len(updates)
+                updates.clear()
 
-                if len(updates) >= batch_size:
-                    backend.batch_update_galactic(updates)
-                    report.memories_updated += len(updates)
-                    updates.clear()
+        report.total_memories = total_memories
 
         # Flush remaining
         if updates:
@@ -429,7 +428,7 @@ class GalacticMap:
             counts: dict[str, int] = {z.value: 0 for z in GalacticZone}
             with backend.pool.connection() as conn:
                 rows = conn.execute(
-                    "SELECT galactic_distance FROM memories WHERE galactic_distance IS NOT NULL",
+                    "SELECT galactic_distance FROM memories WHERE galactic_distance IS NOT NULL AND memory_type != 'quarantined'",
                 ).fetchall()
 
             for (dist,) in rows:
@@ -450,19 +449,154 @@ class GalacticMap:
             "total_sweeps": self._total_sweeps,
         }
 
+    # ------------------------------------------------------------------
+    # Async versions for PSR-013
+    # ------------------------------------------------------------------
 
-# ---------------------------------------------------------------------------
-# Singleton
-# ---------------------------------------------------------------------------
+    async def full_sweep_async(self, batch_size: int = 500) -> GalacticSweepReport:
+        """Async version of full_sweep for non-blocking galactic operations."""
+        start = time.perf_counter()
+        report = GalacticSweepReport()
 
-_map_instance: GalacticMap | None = None
-_map_lock = threading.Lock()
+        # Get retention engine
+        try:
+            from whitemagic.core.memory.mindful_forgetting import get_retention_engine
+            retention = get_retention_engine()
+        except Exception as exc:
+            logger.error(f"GalacticMap sweep: RetentionEngine unavailable: {exc}")
+            return report
+
+        # Get backend
+        try:
+            from whitemagic.core.memory.unified import get_unified_memory
+            um = get_unified_memory()
+            backend = um.backend
+        except Exception as exc:
+            logger.error(f"GalacticMap sweep: UnifiedMemory unavailable: {exc}")
+            return report
+
+        # Paginate through ALL memories (no cap)
+        zone_counts: dict[str, int] = {z.value: 0 for z in GalacticZone}
+        total_retention = 0.0
+        total_distance = 0.0
+        updates: list[tuple[str, float, float]] = []
+        total_memories = 0
+
+        # Process pages asynchronously
+        loop = asyncio.get_event_loop()
+        for page in backend.list_all_paginated(batch_size=batch_size):
+            total_memories += len(page)
+
+            # Process page in executor to avoid blocking
+            def process_page_sync(page_data: list[Memory]) -> tuple[list[tuple[str, float, float]], dict[str, Any]]:
+                page_updates: list[tuple[str, float, float]] = []
+                page_zone_counts: dict[str, int] = {z.value: 0 for z in GalacticZone}
+                page_retention = 0.0
+                page_distance = 0.0
+                page_protected = 0
+                page_core = 0
+                page_edge = 0
+
+                for mem in page_data:
+                    verdict = retention.evaluate(mem)
+                    ret_score = verdict.score
+                    distance = self.compute_distance(mem, retention_score=ret_score)
+                    zone = classify_zone(distance)
+                    page_zone_counts[zone.value] += 1
+                    page_retention += ret_score
+                    page_distance += distance
+                    if mem.is_protected or mem.is_core_identity or mem.is_sacred or mem.is_pinned:
+                        page_protected += 1
+                    if zone == GalacticZone.CORE:
+                        page_core += 1
+                    elif zone == GalacticZone.FAR_EDGE:
+                        page_edge += 1
+                    page_updates.append((mem.id, distance, ret_score))
+
+                return page_updates, {
+                    "zone_counts": page_zone_counts,
+                    "retention": page_retention,
+                    "distance": page_distance,
+                    "protected": page_protected,
+                    "core": page_core,
+                    "edge": page_edge,
+                }
+
+            page_result, page_stats = await loop.run_in_executor(None, process_page_sync, page)
+            updates.extend(page_result)
+            for z, c in page_stats["zone_counts"].items():
+                zone_counts[z] += c
+            total_retention += page_stats["retention"]
+            total_distance += page_stats["distance"]
+            report.protected_count += page_stats["protected"]
+            report.core_count += page_stats["core"]
+            report.edge_count += page_stats["edge"]
+
+            # Flush batch asynchronously
+            if len(updates) >= batch_size:
+                await loop.run_in_executor(None, backend.batch_update_galactic, updates)
+                report.memories_updated += len(updates)
+                updates.clear()
+
+        report.total_memories = total_memories
+
+        # Flush remaining
+        if updates:
+            await loop.run_in_executor(None, backend.batch_update_galactic, updates)
+            report.memories_updated += len(updates)
+
+        # Finalize report
+        n = max(report.total_memories, 1)
+        report.zone_counts = zone_counts
+        report.avg_retention = total_retention / n
+        report.avg_distance = total_distance / n
+        report.sweep_duration_ms = (time.perf_counter() - start) * 1000
+
+        self._total_sweeps += 1
+        logger.info(
+            f"🌌 Galactic Map Async Sweep #{self._total_sweeps}: "
+            f"{report.total_memories} memories mapped, "
+            f"CORE={report.core_count}, EDGE={report.edge_count}, "
+            f"avg_distance={report.avg_distance:.3f}, "
+            f"in {report.sweep_duration_ms:.0f}ms",
+        )
+
+        return report
+
+    async def get_zone_counts_async(self) -> dict[str, int]:
+        """Async version of get_zone_counts."""
+        try:
+            from whitemagic.core.memory.unified import get_unified_memory
+            backend = get_unified_memory().backend
+
+            loop = asyncio.get_event_loop()
+
+            def query_zones() -> dict[str, int]:
+                counts: dict[str, int] = {z.value: 0 for z in GalacticZone}
+                with backend.pool.connection() as conn:
+                    rows = conn.execute(
+                        "SELECT galactic_distance FROM memories WHERE galactic_distance IS NOT NULL AND memory_type != 'quarantined'",
+                    ).fetchall()
+
+                for (dist,) in rows:
+                    zone = classify_zone(dist)
+                    counts[zone.value] = counts.get(zone.value, 0) + 1
+
+                return counts
+
+            return await loop.run_in_executor(None, query_zones)
+        except Exception as e:
+            logger.debug(f"get_zone_counts_async failed: {e}")
+            return {}
+
+
+# Singleton instance
+_galactic_map: GalacticMap | None = None
 
 
 def get_galactic_map() -> GalacticMap:
-    """Get or create the global GalacticMap singleton."""
-    global _map_instance
-    with _map_lock:
-        if _map_instance is None:
-            _map_instance = GalacticMap()
-        return _map_instance
+    """Get the singleton GalacticMap instance."""
+    global _galactic_map
+    if _galactic_map is None:
+        _galactic_map = GalacticMap()
+    return _galactic_map

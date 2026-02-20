@@ -8,6 +8,8 @@ import json
 import os
 import re
 from datetime import datetime
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 from typing import Any, cast
 from uuid import uuid4
@@ -51,7 +53,7 @@ def _load_pipeline(pipeline_id: str) -> dict[str, Any] | None:
     if not p.exists():
         return None
     try:
-        data = json.loads(p.read_text(encoding="utf-8"))
+        data = _json_loads(p.read_text(encoding="utf-8"))
         if isinstance(data, dict):
             return cast("dict[str, Any]", data)
         return None
@@ -61,7 +63,7 @@ def _load_pipeline(pipeline_id: str) -> dict[str, Any] | None:
 
 def _save_pipeline(pipeline: dict[str, Any]) -> None:
     p = _pipeline_path(pipeline["id"])
-    p.write_text(json.dumps(pipeline, indent=2), encoding="utf-8")
+    p.write_text(_json_dumps(pipeline, indent=2), encoding="utf-8")
 
 
 # ---------------------------------------------------------------------------
@@ -339,7 +341,7 @@ def handle_pipeline_list(**kwargs: Any) -> dict[str, Any]:
     pipelines = []
     for f in sorted(pdir.glob("*.json"), reverse=True):
         try:
-            p = json.loads(f.read_text(encoding="utf-8"))
+            p = _json_loads(f.read_text(encoding="utf-8"))
             if status_filter and p.get("status") != status_filter:
                 continue
             pipelines.append({

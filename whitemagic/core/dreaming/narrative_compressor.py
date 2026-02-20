@@ -170,6 +170,46 @@ class NarrativeCompressor:
     # Step 1: Load candidate memories
     # ------------------------------------------------------------------
 
+    # Noise patterns — memories matching these are excluded from compression
+    _NOISE_TITLE_PREFIXES = (
+        "bench_t1", "_bench", "Benchmark test memory",
+        "Test Memory", "Test Artifact", "Recovered:",
+    )
+    _NOISE_TITLE_SUBSTRINGS = (
+        "CHANGELOG", "release notes", "BSD License", "MIT License",
+        "Apache License", "node_modules", "__pycache__",
+        "README.md",
+    )
+    _NOISE_MEMORY_TYPES = ("deep_archive", "scavenged", "quarantined")
+    _NOISE_TAG_SUBSTRINGS = ("bench", "_bench", "benchmark", "test_artifact")
+
+    def _is_noise(self, m: Any) -> bool:
+        """Check if a memory is noise that should be excluded from compression."""
+        title = (m.title or "").strip()
+        mtype = str(getattr(m, "memory_type", "")).lower()
+        content_len = len(str(m.content or ""))
+
+        # Skip noise memory types (external library code, fragments)
+        if mtype in self._NOISE_MEMORY_TYPES:
+            return True
+        # Skip benchmark/test junk by title
+        for prefix in self._NOISE_TITLE_PREFIXES:
+            if title.startswith(prefix):
+                return True
+        for substr in self._NOISE_TITLE_SUBSTRINGS:
+            if substr in title:
+                return True
+        # Skip very short memories (< 80 chars) — likely fragments
+        if content_len < 80:
+            return True
+        # Skip memories tagged with benchmark/test noise
+        tags = set(getattr(m, "tags", []) or [])
+        for noise_tag in self._NOISE_TAG_SUBSTRINGS:
+            for tag in tags:
+                if noise_tag in tag.lower():
+                    return True
+        return False
+
     def _load_candidates(self, um: Any, limit: int) -> list[dict[str, Any]]:
         """Load recent episodic memories that are candidates for compression."""
         try:
@@ -181,6 +221,9 @@ class NarrativeCompressor:
                 if "narrative_compressed" in tags or "protected" in tags:
                     continue
                 if "narrative" in tags and "auto_generated" in tags:
+                    continue
+                # Skip noise memories (benchmark junk, external libs, fragments)
+                if self._is_noise(m):
                     continue
 
                 candidates.append({
@@ -394,15 +437,16 @@ class NarrativeCompressor:
             pool = um.backend.pool
             with pool.connection() as conn:
                 with conn:
-                    for mid in cluster.memory_ids:
-                        conn.execute(
-                            """UPDATE memories
-                               SET importance = importance * ?,
-                                   tags = COALESCE(tags, '') || ',narrative_compressed'
-                               WHERE id = ? AND importance > 0.1""",
-                            (self._demotion_factor, mid),
-                        )
-                        demoted += 1
+                    # N+1 fix: executemany instead of per-memory UPDATE loop
+                    params = [(self._demotion_factor, mid) for mid in cluster.memory_ids]
+                    conn.executemany(
+                        """UPDATE memories
+                           SET importance = importance * ?,
+                               tags = COALESCE(tags, '') || ',narrative_compressed'
+                           WHERE id = ? AND importance > 0.1""",
+                        params,
+                    )
+                    demoted = len(cluster.memory_ids)
         except Exception as e:
             logger.debug(f"Failed to demote sources: {e}")
         return demoted

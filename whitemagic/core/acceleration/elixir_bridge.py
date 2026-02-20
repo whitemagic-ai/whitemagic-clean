@@ -19,10 +19,11 @@ Usage:
 """
 from __future__ import annotations
 
-import json
 import logging
 import os
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import time
 from typing import Any
 
@@ -51,7 +52,7 @@ def _get_redis() -> Any:
 
             # Check if Elixir node is responding
             test_channel = f"{_ELIXIR_CHANNEL}:ping"
-            client.publish(test_channel, json.dumps({"type": "ping"}))
+            client.publish(test_channel, _json_dumps({"type": "ping"}))
 
             _redis_client = client
             _HAS_ELIXIR = True
@@ -82,7 +83,7 @@ def _send_elixir_command(module: str, command: str, payload: dict[str, Any]) -> 
         pubsub = client.pubsub()
         pubsub.subscribe(response_channel)
 
-        client.publish(f"{_ELIXIR_CHANNEL}:commands", json.dumps(message))
+        client.publish(f"{_ELIXIR_CHANNEL}:commands", _json_dumps(message))
 
         # Wait for response with timeout
         deadline = time.monotonic() + _RESPONSE_TIMEOUT
@@ -90,7 +91,7 @@ def _send_elixir_command(module: str, command: str, payload: dict[str, Any]) -> 
             msg = pubsub.get_message(timeout=0.5)
             if msg and msg["type"] == "message":
                 pubsub.unsubscribe(response_channel)
-                parsed = json.loads(msg["data"])
+                parsed = _json_loads(msg["data"])
                 if isinstance(parsed, dict):
                     return parsed
 

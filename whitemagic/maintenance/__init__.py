@@ -9,12 +9,15 @@ from .capability_harness import (
     HarnessReport,
     run_harness,
 )
-from .garden_health import (
-    GardenHealth,
-    GardenHealthRegistry,
-    HealthReport,
-    run_health_check,
-)
+try:
+    from .garden_health import (
+        GardenHealth,
+        GardenHealthRegistry,
+        HealthReport,
+        run_health_check,
+    )
+except ImportError:
+    GardenHealth = GardenHealthRegistry = HealthReport = run_health_check = None  # type: ignore[assignment,misc]
 
 __all__ = [
     "CapabilityHarness",

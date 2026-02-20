@@ -21,10 +21,11 @@ Requires: pip install watchdog (optional dependency)
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import re
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -145,7 +146,7 @@ class SemanticFileWatcher:
         """Load configuration from disk."""
         if self.config_path.exists():
             try:
-                data = json.loads(self.config_path.read_text())
+                data = _json_loads(self.config_path.read_text())
                 for path, config in data.get("watches", {}).items():
                     self._watches[path] = WatchConfig(**config)
             except Exception:
@@ -158,7 +159,7 @@ class SemanticFileWatcher:
             "updated": datetime.now(timezone.utc).isoformat(),
             "watches": {path: config.to_dict() for path, config in self._watches.items()},
         }
-        self.config_path.write_text(json.dumps(data, indent=2))
+        self.config_path.write_text(_json_dumps(data, indent=2))
 
     # =========================================================================
     # Watch Management

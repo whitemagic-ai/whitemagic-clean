@@ -17,6 +17,8 @@ import json
 import os
 import re
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections.abc import Coroutine
 from datetime import datetime
 from pathlib import Path
@@ -262,7 +264,7 @@ def handle_ensemble_query(**kwargs: Any) -> dict[str, Any]:
 
     try:
         path = _ensemble_dir() / f"{ensemble_id}.json"
-        path.write_text(json.dumps(record, indent=2, default=str), encoding="utf-8")
+        path.write_text(_json_dumps(record, indent=2, default=str), encoding="utf-8")
     except Exception:
         pass
 
@@ -299,14 +301,15 @@ def handle_ensemble_status(**kwargs: Any) -> dict[str, Any]:
     """Get the full result of a past ensemble query."""
     ensemble_id = kwargs.get("ensemble_id")
     if not ensemble_id:
-        return {"status": "error", "error": "ensemble_id is required"}
+        # Return list of recent ensembles instead of error
+        return handle_ensemble_history(**kwargs)
 
     path = _ensemble_dir() / f"{ensemble_id}.json"
     if not path.exists():
         return {"status": "error", "error": f"Ensemble {ensemble_id} not found"}
 
     try:
-        record = json.loads(path.read_text(encoding="utf-8"))
+        record = _json_loads(path.read_text(encoding="utf-8"))
         return {"status": "success", "ensemble": record}
     except Exception as e:
         return {"status": "error", "error": str(e)}
@@ -324,7 +327,7 @@ def handle_ensemble_history(**kwargs: Any) -> dict[str, Any]:
 
     for f in sorted(edir.glob("ens-*.json"), reverse=True):
         try:
-            record = json.loads(f.read_text(encoding="utf-8"))
+            record = _json_loads(f.read_text(encoding="utf-8"))
             entries.append({
                 "id": record["id"],
                 "prompt_preview": record.get("prompt", "")[:100],

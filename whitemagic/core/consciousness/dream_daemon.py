@@ -147,7 +147,7 @@ class DreamDaemon:
     def _calculate_resonance(self, impulse_data: str) -> float:
         """Call Julia Gan Ying engine to measure resonance."""
         try:
-            import json
+            from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
             import os
             import subprocess
             from pathlib import Path
@@ -161,14 +161,14 @@ class DreamDaemon:
                 return 0.5
 
             # Execute
-            input_val = json.dumps({"magnitude": 0.5, "damping": 0.1})
+            input_val = _json_dumps({"magnitude": 0.5, "damping": 0.1})
             result = subprocess.run(
                 ["julia", julia_script, input_val],
                 capture_output=True, text=True, timeout=10,
             )
 
             if result.returncode == 0:
-                data = json.loads(result.stdout)
+                data = _json_loads(result.stdout)
                 # Normalize arbitrary resonance val
                 return float(min(data.get("total_resonance", 0.0) / 10000.0, 1.0))
             return 0.5

@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 import importlib
 import logging
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -324,7 +326,7 @@ class SanghaChat:
         channel_jsonl = self.chat_dir / f"{channel}.jsonl"
         with file_lock(channel_jsonl):
             with open(channel_jsonl, "a") as f:
-                f.write(json.dumps(msg.to_dict()) + "\n")
+                f.write(_json_dumps(msg.to_dict()) + "\n")
 
         return msg
 
@@ -347,7 +349,7 @@ class SanghaChat:
 
             for line in lines[-limit:]:
                 try:
-                    data = json.loads(line)
+                    data = _json_loads(line)
                     msg = ChatMessage.from_dict(data)
                     if since and msg.timestamp <= since:
                         continue
@@ -452,7 +454,7 @@ class SanghaChat:
         with file_lock(tasks_jsonl):
             with open(tasks_jsonl, "w") as f:
                 for t in tasks:
-                    f.write(json.dumps(t.to_dict()) + "\n")
+                    f.write(_json_dumps(t.to_dict()) + "\n")
         with file_lock(tasks_md):
             with open(tasks_md, "w") as f:
                 f.write(f"# Sangha Tasks\n\nCreated: {datetime.now().isoformat()}\n\n---\n\n")
@@ -472,7 +474,7 @@ class SanghaChat:
                 lines = f.readlines()
                 for line in lines:
                     try:
-                        data = json.loads(line)
+                        data = _json_loads(line)
                         task = Task.from_dict(data)
                         if status and task.status != status:
                             continue

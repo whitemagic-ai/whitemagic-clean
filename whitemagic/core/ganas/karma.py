@@ -9,6 +9,8 @@ import asyncio
 import json
 import logging
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 from typing import Any
 
@@ -73,7 +75,7 @@ class KarmaTraceLogger:
 
         try:
             with open(self.trace_file, "a", encoding="utf-8") as f:
-                f.write(json.dumps(trace_entry) + "\n")
+                f.write(_json_dumps(trace_entry) + "\n")
         except Exception as e:
             logger.info(f"⚠️ Failed to write karma trace: {e}")
 
@@ -97,7 +99,7 @@ class KarmaTraceLogger:
                 lines = f.readlines()
                 for line in lines[-limit:]:
                     try:
-                        traces.append(json.loads(line))
+                        traces.append(_json_loads(line))
                     except json.JSONDecodeError:
                         continue
         except Exception as e:

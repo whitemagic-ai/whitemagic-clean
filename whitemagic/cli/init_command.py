@@ -231,8 +231,9 @@ This script walks through WhiteMagic's core capabilities:
 WhiteMagic v__WM_VERSION__
 """
 import os
-import json
 import sys
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 # Quiet startup
 os.environ.setdefault("WM_SILENT_INIT", "1")
@@ -257,7 +258,7 @@ def section(title: str) -> None:
 
 
 def pretty(data: dict) -> str:
-    return json.dumps(data, indent=2, default=str)[:2000]
+    return _json_dumps(data, indent=2, default=str)[:2000]
 
 
 def main() -> None:

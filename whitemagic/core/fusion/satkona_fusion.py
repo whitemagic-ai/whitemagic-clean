@@ -17,10 +17,11 @@ Created: 2026-02-05
 Phase: 2 (Fusion Opportunities)
 """
 
-import json
 import os
 import sqlite3
 import subprocess
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from importlib.util import find_spec
 from pathlib import Path
@@ -341,13 +342,13 @@ def get_julia_resonance(impulse: float = 0.5) -> float:
         if not os.path.exists(julia_script):
             return 0.0
 
-        input_data = json.dumps({"magnitude": impulse, "damping": 0.1})
+        input_data = _json_dumps({"magnitude": impulse, "damping": 0.1})
         result = subprocess.run(
             ["julia", julia_script, input_data],
             capture_output=True, text=True, timeout=10,
         )
         if result.returncode == 0:
-            data = json.loads(result.stdout)
+            data = _json_loads(result.stdout)
             return float(min(data.get("peak_amplitude", 0.0), 1.0))
         return 0.0
     except Exception:

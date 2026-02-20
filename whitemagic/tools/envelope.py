@@ -13,7 +13,8 @@ Design goals:
 from __future__ import annotations
 
 import base64
-import json
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from collections.abc import Iterable, Mapping, MutableMapping
 from dataclasses import asdict, is_dataclass
 from datetime import date, datetime
@@ -260,4 +261,4 @@ def normalize_raw(
 
 def dumps(result: dict[str, Any]) -> str:
     """Stable JSON dump for envelopes (useful for eval/regression)."""
-    return json.dumps(result, indent=2, sort_keys=True, ensure_ascii=True)
+    return _json_dumps(result, indent=2, sort_keys=True)

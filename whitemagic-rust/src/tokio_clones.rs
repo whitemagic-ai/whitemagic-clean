@@ -100,6 +100,16 @@ impl CloneStrategy {
             Self::Custom(_) => 0.6 + (clone_id as f64 * 0.006).cos().abs() * 0.3,
         };
 
+        // Truncate prompt safely at char boundary (not byte boundary)
+        let truncated = if prompt.len() <= 50 {
+            prompt
+        } else {
+            prompt.char_indices()
+                .nth(50)
+                .map(|(idx, _)| &prompt[..idx])
+                .unwrap_or(prompt)
+        };
+
         CloneResult {
             clone_id,
             strategy: self.name().to_string(),
@@ -107,7 +117,7 @@ impl CloneStrategy {
                 "[Clone {} / {}] Explored: {}",
                 clone_id,
                 self.name(),
-                &prompt[..prompt.len().min(50)]
+                truncated
             ),
             confidence,
             tokens_used: 50 + (clone_id % 200) as u32,

@@ -10,6 +10,8 @@ from typing import Any
 import json
 from datetime import datetime
 
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
+
 from whitemagic.utils.fileio import atomic_write, file_lock
 
 
@@ -31,8 +33,8 @@ class CoherencePersistence:
         if self.state_file.exists():
             try:
                 with file_lock(self.state_file):
-                    return json.loads(self.state_file.read_text()) or {}
-            except json.JSONDecodeError:
+                    return _json_loads(self.state_file.read_text()) or {}
+            except (json.JSONDecodeError, ValueError):
                 pass
         return {
             "level": 100,
@@ -54,7 +56,7 @@ class CoherencePersistence:
         }
         self.state_file.parent.mkdir(parents=True, exist_ok=True)
         with file_lock(self.state_file):
-            atomic_write(self.state_file, json.dumps(self.current, indent=2))
+            atomic_write(self.state_file, _json_dumps(self.current, indent=2))
 
     def get_level(self) -> int:
         return int(self.current.get("level", 100))
@@ -127,7 +129,7 @@ class CoherencePersistence:
         """Save current state to disk."""
         self.state_file.parent.mkdir(parents=True, exist_ok=True)
         with file_lock(self.state_file):
-            atomic_write(self.state_file, json.dumps(self.current, indent=2))
+            atomic_write(self.state_file, _json_dumps(self.current, indent=2))
 
 _coherence = None
 def get_coherence() -> CoherencePersistence:

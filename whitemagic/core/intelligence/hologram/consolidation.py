@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from whitemagic.config.paths import DB_PATH
+from whitemagic.utils.fast_json import dumps_str as _fast_dumps
 
 logger = logging.getLogger(__name__)
 
@@ -155,14 +156,23 @@ class HolographicConsolidator:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
 
+        # N+1 fix: collect all unique IDs across all clusters, fetch in one query per batch
         for i in range(0, len(clusters), batch_size):
             batch = clusters[i:i+batch_size]
+            all_ids = list({mid for cluster in batch for mid in cluster.memory_ids})
+            if not all_ids:
+                continue
+            placeholders = ",".join("?" * len(all_ids))
+            rows = conn.execute(
+                "SELECT id, title, importance FROM memories WHERE id IN (" + placeholders + ")",
+                all_ids,
+            ).fetchall()
+            row_map = {r["id"]: r for r in rows}
             for cluster in batch:
-                placeholders = ",".join("?" * len(cluster.memory_ids))
-                rows = conn.execute(f"SELECT title, importance FROM memories WHERE id IN ({placeholders})", cluster.memory_ids).fetchall()
-                cluster.titles = [r["title"] for r in rows]
-                if rows:
-                    cluster.avg_importance = sum(r["importance"] for r in rows) / len(rows)
+                cluster_rows = [row_map[mid] for mid in cluster.memory_ids if mid in row_map]
+                cluster.titles = [r["title"] for r in cluster_rows]
+                if cluster_rows:
+                    cluster.avg_importance = sum(r["importance"] for r in cluster_rows) / len(cluster_rows)
         conn.close()
 
     async def create_summary(self, cluster: MemoryCluster) -> dict[str, Any]:
@@ -239,7 +249,7 @@ class HolographicConsolidator:
                     """, (
                         summary["id"], summary["content"], datetime.now().isoformat(),
                         datetime.now().isoformat(), summary["title"], summary["importance"],
-                        json.dumps({"source_ids": summary["source_ids"]}),
+                        _fast_dumps({"source_ids": summary["source_ids"]}),
                     ))
                     conn.execute("INSERT OR REPLACE INTO holographic_coords (memory_id, x, y, z, w) VALUES (?, ?, ?, ?, ?)",
                                 (summary["id"], *summary["coords"]))

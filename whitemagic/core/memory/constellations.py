@@ -728,6 +728,134 @@ class ConstellationDetector:
         return self.detect(sample_limit=sample_limit)
 
     # ------------------------------------------------------------------
+    # Auto-Merge Converging Constellations
+    # ------------------------------------------------------------------
+
+    def auto_merge(
+        self,
+        max_distance: float = 0.5,
+        min_shared_tags: int = 2,
+    ) -> dict[str, Any]:
+        """Merge converging constellations that share tags and are close in 5D space.
+
+        Two constellations are merged when:
+          1. Their centroid distance < max_distance
+          2. They share >= min_shared_tags dominant tags
+
+        The smaller constellation is absorbed into the larger one.
+        Memberships are re-persisted after merging.
+
+        Returns a summary dict with merge details.
+        """
+        with self._lock:
+            if not self._last_report or not self._last_report.constellations:
+                return {"status": "no_constellations", "merges": 0}
+            constellations = list(self._last_report.constellations)
+
+        if len(constellations) < 2:
+            return {"status": "too_few", "merges": 0}
+
+        # Find merge candidates
+        merge_pairs: list[tuple[int, int, float, list[str]]] = []
+        for i in range(len(constellations)):
+            for j in range(i + 1, len(constellations)):
+                a, b = constellations[i], constellations[j]
+                dist = self._distance_5d(a.centroid, b.centroid)
+                if dist >= max_distance:
+                    continue
+                shared = set(a.dominant_tags) & set(b.dominant_tags)
+                if len(shared) >= min_shared_tags:
+                    merge_pairs.append((i, j, dist, sorted(shared)))
+
+        if not merge_pairs:
+            return {"status": "no_candidates", "merges": 0, "checked": len(constellations)}
+
+        # Sort by distance (closest first)
+        merge_pairs.sort(key=lambda p: p[2])
+
+        merged_into: dict[int, int] = {}  # idx → absorbed_into_idx
+        merge_log: list[dict[str, Any]] = []
+
+        for i, j, dist, shared in merge_pairs:
+            # Resolve transitive merges
+            while i in merged_into:
+                i = merged_into[i]
+            while j in merged_into:
+                j = merged_into[j]
+            if i == j:
+                continue  # Already merged via transitivity
+
+            a, b = constellations[i], constellations[j]
+            # Larger absorbs smaller
+            if len(a.member_ids) < len(b.member_ids):
+                i, j = j, i
+                a, b = b, a
+
+            # Merge b into a
+            new_members = list(set(a.member_ids) | set(b.member_ids))
+            new_tags = list(dict.fromkeys(a.dominant_tags + b.dominant_tags))[:10]
+
+            # Recompute centroid as weighted average
+            wa, wb = len(a.member_ids), len(b.member_ids)
+            total = wa + wb
+            new_centroid = tuple(
+                (a.centroid[d] * wa + b.centroid[d] * wb) / total
+                for d in range(5)
+            )
+
+            merge_log.append({
+                "absorbed": b.name,
+                "into": a.name,
+                "distance": round(dist, 4),
+                "shared_tags": shared,
+                "new_size": len(new_members),
+            })
+
+            # Update a in-place
+            a.member_ids = new_members
+            a.dominant_tags = new_tags
+            a.centroid = (new_centroid[0], new_centroid[1], new_centroid[2],
+                          new_centroid[3], new_centroid[4])
+            a.avg_importance = (a.avg_importance * wa + b.avg_importance * wb) / total
+            a.stability = max(a.stability, b.stability)
+
+            merged_into[j] = i
+
+        # Remove absorbed constellations
+        surviving = [
+            c for idx, c in enumerate(constellations)
+            if idx not in merged_into
+        ]
+
+        # Update cached report
+        with self._lock:
+            if self._last_report:
+                self._last_report.constellations = surviving
+                self._last_report.constellations_found = len(surviving)
+                self._last_report.largest_constellation = max(
+                    (len(c.member_ids) for c in surviving), default=0,
+                )
+
+        # Re-persist memberships
+        if merge_log:
+            self.persist_memberships()
+
+        result = {
+            "status": "ok",
+            "merges": len(merge_log),
+            "constellations_before": len(constellations),
+            "constellations_after": len(surviving),
+            "merge_log": merge_log,
+        }
+
+        if merge_log:
+            logger.info(
+                f"✨ Constellation auto-merge: {len(merge_log)} merges, "
+                f"{len(constellations)} → {len(surviving)} constellations",
+            )
+        return result
+
+    # ------------------------------------------------------------------
     # Drift Tracking
     # ------------------------------------------------------------------
 

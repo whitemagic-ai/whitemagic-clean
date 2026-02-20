@@ -1,7 +1,8 @@
 import logging
-import json
 
 from datetime import datetime
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 from typing import Optional, Dict, Any
 from .collector import MetricsCollector
@@ -43,7 +44,7 @@ def track_metric(category: str, metric: Optional[str] = None, value: float = 1.0
     }
 
     with file_path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(entry) + "\n")
+        handle.write(_json_dumps(entry) + "\n")
 
     logger.info(f"METRIC: {category}.{metric}={value} @ {timestamp}")
     return {"success": True}

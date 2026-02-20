@@ -5,9 +5,10 @@ Supports multiple environments (development, staging, production) and
 configuration sources (files, environment variables, CLI arguments).
 """
 
-import json
 import logging
 import os
+
+from whitemagic.utils.fast_json import loads as _json_loads
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -299,7 +300,7 @@ class ConfigManager:
                     result = yaml.safe_load(content)
                     return result if isinstance(result, dict) else None
                 if filename.endswith(".json"):
-                    result = json.loads(content)
+                    result = _json_loads(content)
                     return result if isinstance(result, dict) else None
         except ImportError:
             # Fallback if yaml is not installed

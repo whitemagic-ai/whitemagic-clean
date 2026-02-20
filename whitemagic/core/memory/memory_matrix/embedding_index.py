@@ -15,8 +15,9 @@ Usage:
 from __future__ import annotations
 
 import hashlib
-import json
 from dataclasses import dataclass, field
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime, timezone
 from importlib.util import find_spec
 from pathlib import Path
@@ -75,7 +76,7 @@ class EmbeddingIndex:
         if index_file.exists():
             try:
                 with file_lock(index_file):
-                    data = json.loads(index_file.read_text())
+                    data = _json_loads(index_file.read_text())
                 for entry_data in data.get("entries", []):
                     entry = EmbeddingEntry(
                         id=entry_data["id"],
@@ -111,7 +112,7 @@ class EmbeddingIndex:
             ],
         }
         with file_lock(index_file):
-            atomic_write(index_file, json.dumps(data))
+            atomic_write(index_file, _json_dumps(data))
 
     def _rebuild_matrix(self) -> None:
         """Rebuild numpy matrix for fast search."""

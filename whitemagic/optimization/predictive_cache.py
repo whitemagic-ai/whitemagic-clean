@@ -6,9 +6,10 @@ based on access patterns. Uses Markov chains for prediction.
 Target: 60-70% faster access for frequently used memories
 """
 
-import json
 import logging
 from collections import OrderedDict, defaultdict
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass
 from pathlib import Path
 from collections.abc import Callable
@@ -189,7 +190,7 @@ class PredictiveCache:
                     k: dict(v) for k, v in self.access_patterns.items()
                 },
             }
-            self.state_path.write_text(json.dumps(state))
+            self.state_path.write_text(_json_dumps(state))
         except Exception as e:
             logger.warning(f"Failed to save cache state: {e}")
 
@@ -198,7 +199,7 @@ class PredictiveCache:
         if not self.state_path.exists():
             return
         try:
-            state = json.loads(self.state_path.read_text())
+            state = _json_loads(self.state_path.read_text())
             self.access_history = state.get("access_history", [])
             raw_patterns = state.get("access_patterns", {})
             self.access_patterns = defaultdict(lambda: defaultdict(float))

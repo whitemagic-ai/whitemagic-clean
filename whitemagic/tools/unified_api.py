@@ -3,10 +3,11 @@ Expanded to support all 44 MCP tools.
 """
 
 import asyncio
-import json
 import logging
 import os
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import traceback
 from collections.abc import Coroutine
 from concurrent.futures import ThreadPoolExecutor
@@ -144,12 +145,12 @@ def _load_session(base_path: Path, session_id: str) -> dict[str, Any]:
     path = _session_path(base_path, session_id)
     if not path.exists():
         raise FileNotFoundError(f"Session not found: {session_id}")
-    return cast("dict[str, Any]", json.loads(path.read_text(encoding="utf-8")))
+    return cast("dict[str, Any]", _json_loads(path.read_text(encoding="utf-8")))
 
 
 def _save_session(base_path: Path, session: dict[str, Any]) -> None:
     path = _session_path(base_path, session["id"])
-    path.write_text(json.dumps(session, indent=2), encoding="utf-8")
+    path.write_text(_json_dumps(session, indent=2), encoding="utf-8")
 
 
 def _run_async(coro: Coroutine[Any, Any, T]) -> T:

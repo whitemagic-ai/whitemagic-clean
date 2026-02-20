@@ -1,6 +1,8 @@
 """Session tool handlers — including cross-device handoff."""
 import json
 import os
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
@@ -27,12 +29,12 @@ def _load_session(base_path: Path, session_id: str) -> dict[str, Any]:
     path = _session_path(base_path, session_id)
     if not path.exists():
         raise FileNotFoundError(f"Session not found: {session_id}")
-    return cast("dict[str, Any]", json.loads(path.read_text(encoding="utf-8")))
+    return cast("dict[str, Any]", _json_loads(path.read_text(encoding="utf-8")))
 
 
 def _save_session(base_path: Path, session: dict[str, Any]) -> None:
     path = _session_path(base_path, session["id"])
-    path.write_text(json.dumps(session, indent=2), encoding="utf-8")
+    path.write_text(_json_dumps(session, indent=2), encoding="utf-8")
 
 
 def _emit(event_type: str, data: dict[str, Any]) -> None:
@@ -251,7 +253,7 @@ def handle_session_handoff_transfer(**kwargs: Any) -> dict[str, Any]:
     # Save handoff package
     hdir = _handoff_dir(base_path)
     (hdir / f"{handoff_id}.json").write_text(
-        json.dumps(handoff, indent=2), encoding="utf-8",
+        _json_dumps(handoff, indent=2), encoding="utf-8",
     )
 
     # Notify via Redis if available
@@ -289,7 +291,7 @@ def handle_session_accept_handoff(**kwargs: Any) -> dict[str, Any]:
         return {"status": "error", "error": f"Handoff {handoff_id} not found"}
 
     try:
-        handoff = json.loads(hpath.read_text(encoding="utf-8"))
+        handoff = _json_loads(hpath.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError) as e:
         return {"status": "error", "error": str(e)}
 
@@ -304,7 +306,7 @@ def handle_session_accept_handoff(**kwargs: Any) -> dict[str, Any]:
     handoff["status"] = "accepted"
     handoff["accepted_at"] = now
     handoff["accepted_by"] = os.uname().nodename
-    hpath.write_text(json.dumps(handoff, indent=2), encoding="utf-8")
+    hpath.write_text(_json_dumps(handoff, indent=2), encoding="utf-8")
 
     _emit("SESSION_HANDOFF_ACCEPTED", {
         "handoff_id": handoff_id,
@@ -330,7 +332,7 @@ def handle_session_list_handoffs(**kwargs: Any) -> dict[str, Any]:
     handoffs: list[dict[str, Any]] = []
     for f in sorted(hdir.glob("handoff-*.json"), reverse=True):
         try:
-            h = json.loads(f.read_text(encoding="utf-8"))
+            h = _json_loads(f.read_text(encoding="utf-8"))
             if status_filter and h.get("status") != status_filter:
                 continue
             handoffs.append({
@@ -360,7 +362,7 @@ def _notify_handoff(handoff: dict[str, Any]) -> None:
         import redis
         url = os.environ.get("REDIS_URL", "redis://localhost:6379")
         r = redis.Redis.from_url(url, decode_responses=True, socket_timeout=2)
-        r.publish("ganying", json.dumps({
+        r.publish("ganying", _json_dumps({
             "event_type": "SESSION_HANDOFF",
             "source": "session_handler",
             "data": {

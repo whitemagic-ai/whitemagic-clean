@@ -162,6 +162,91 @@ class ContextOptimizer:
 
         return self.pack(items, token_budget=token_budget, query=query)
 
+    def pack_wisdom(
+        self,
+        query: str,
+        token_budget: int | None = None,
+        limit: int = 5,
+    ) -> PackedContext:
+        """Pack wisdom (Golden Rules) from the Holocron."""
+        items = []
+        try:
+            from whitemagic.alchemy.holocron import Holocron
+            holocron = Holocron()
+            holocron.load()
+            rules = holocron.get_relevant_rules(query, limit=limit)
+
+            for rule in rules:
+                items.append(ContextItem(
+                    id=rule["id"],
+                    content=f"GOLDEN RULE: {rule['title']}\n{rule['description']}",
+                    source="holocron",
+                    importance=1.0, # High importance for wisdom
+                    recency=1.0,    # Timeless
+                    relevance=0.9,  # Assumed high if returned by get_relevant_rules
+                    tokens=0
+                ))
+        except Exception as e:
+            logger.debug("Wisdom pack failed: %s", e)
+
+        return self.pack(items, token_budget=token_budget, query=query)
+
+    def pack_full_context(
+        self,
+        query: str,
+        token_budget: int | None = None,
+        memory_limit: int = 50,
+        wisdom_limit: int = 5,
+    ) -> PackedContext:
+        """Pack both memories and wisdom (Golden Rules) into the budget."""
+        items = []
+        
+        # 1. Get Wisdom
+        try:
+            from whitemagic.alchemy.holocron import Holocron
+            holocron = Holocron()
+            holocron.load()
+            rules = holocron.get_relevant_rules(query, limit=wisdom_limit)
+            for rule in rules:
+                items.append(ContextItem(
+                    id=rule["id"],
+                    content=f"GOLDEN RULE: {rule['title']}\n{rule['description']}",
+                    source="holocron",
+                    importance=1.0, 
+                    recency=1.0,
+                    relevance=0.9,
+                    tokens=0
+                ))
+        except Exception as e:
+            logger.debug("Wisdom fetch failed: %s", e)
+
+        # 2. Get Memories
+        try:
+            import time
+            from whitemagic.core.memory.unified import get_unified_memory
+            um = get_unified_memory()
+            results = um.search(query, limit=memory_limit)
+
+            for mem in results:
+                created = getattr(mem, "created_at", None)
+                recency = 0.5
+                if created:
+                    age_days = (time.time() - created.timestamp()) / 86400
+                    recency = max(0.0, 1.0 - (age_days / 365))
+
+                items.append(ContextItem(
+                    id=mem.id,
+                    content=f"[{mem.title or 'untitled'}] {mem.content[:2000]}",
+                    source="memory",
+                    importance=getattr(mem, "importance", 0.5) or 0.5,
+                    recency=recency,
+                    relevance=0.5,
+                ))
+        except Exception as e:
+            logger.debug("Memory fetch failed: %s", e)
+
+        return self.pack(items, token_budget=token_budget, query=query)
+
     @staticmethod
     def _primacy_recency_reorder(items: list[ContextItem]) -> list[ContextItem]:
         """Place highest-salience items at start and end of the list.

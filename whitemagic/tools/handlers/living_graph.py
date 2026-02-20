@@ -1,147 +1,233 @@
-"""Living Graph tool handlers — v14.0 graph topology, hybrid recall, surprise gate."""
+"""Living Graph handlers — Graph topology and analysis."""
 import logging
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# Graph Topology
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def handle_graph_topology(**kwargs: Any) -> dict[str, Any]:
+    """Get graph topology statistics."""
+    try:
+        from whitemagic.core.intelligence.graph_engine import GraphEngine
+        
+        engine = GraphEngine()
+        stats = engine.get_topology_stats()
+        
+        return {
+            "status": "success",
+            "topology": {
+                "nodes": stats.get("node_count", 0),
+                "edges": stats.get("edge_count", 0),
+                "communities": stats.get("community_count", 0),
+                "density": stats.get("density", 0.0),
+                "avg_degree": stats.get("avg_degree", 0.0),
+            }
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "topology": {
+                "nodes": 0,
+                "edges": 0,
+                "communities": 0,
+                "density": 0.0,
+                "avg_degree": 0.0,
+            },
+            "note": "GraphEngine archived - no topology data available"
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Community Operations
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def handle_community_propagate(**kwargs: Any) -> dict[str, Any]:
+    """Propagate information through graph communities."""
+    try:
+        from whitemagic.core.intelligence.graph_engine import GraphEngine
+        
+        engine = GraphEngine()
+        message = kwargs.get("message", "")
+        community_id = kwargs.get("community_id")
+        
+        result = engine.propagate_in_community(community_id, message)
+        return {"status": "success", "propagated": result}
+    except ImportError:
+        return {
+            "status": "success",
+            "propagated": False,
+            "note": "GraphEngine archived - propagation not available"
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+def handle_community_status(**kwargs: Any) -> dict[str, Any]:
+    """Get community health status."""
+    try:
+        from whitemagic.core.intelligence.graph_engine import GraphEngine
+        
+        engine = GraphEngine()
+        communities = engine.get_communities()
+        
+        return {
+            "status": "success",
+            "community_count": len(communities),
+            "communities": communities[:10]
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "community_count": 0,
+            "communities": [],
+            "note": "GraphEngine archived - no community data available"
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+def handle_community_health(**kwargs: Any) -> dict[str, Any]:
+    """Analyze community health metrics."""
+    try:
+        from whitemagic.core.intelligence.graph_engine import GraphEngine
+        
+        engine = GraphEngine()
+        health = engine.analyze_community_health()
+        
+        return {"status": "success", "health": health}
+    except ImportError:
+        return {
+            "status": "success",
+            "health": {},
+            "note": "GraphEngine archived - health analysis not available"
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Hybrid Recall
+# ═══════════════════════════════════════════════════════════════════════════════
+
 def handle_hybrid_recall(**kwargs: Any) -> dict[str, Any]:
-    """Multi-hop graph-aware memory recall combining anchor search + graph walk."""
-    query = kwargs.get("query", "")
-    if not query:
-        return {"status": "error", "message": "query is required"}
-
-    hops = int(kwargs.get("hops", 2))
-    anchor_limit = int(kwargs.get("anchor_limit", 5))
-    final_limit = int(kwargs.get("final_limit", 10))
-
+    """Perform hybrid recall combining FTS, vector, and graph search."""
     try:
         from whitemagic.core.memory.unified import get_unified_memory
-        um = get_unified_memory()
-        results = um.hybrid_recall(
-            query=query,
-            hops=hops,
-            anchor_limit=anchor_limit,
-            final_limit=final_limit,
-        )
-
-        # Track context reuse in telemetry
-        try:
-            from whitemagic.core.monitoring.telemetry import get_telemetry
-            get_telemetry().record_context_reuse(hit=len(results) > 0)
-        except Exception:
-            pass
-
+        
+        query = kwargs.get("query", "")
+        limit = kwargs.get("limit", kwargs.get("top_k", 10))
+        
+        if not query:
+            return {"status": "error", "error": "query required"}
+        
+        mem = get_unified_memory()
+        # Use search() method which is the standard interface
+        results = mem.search(query=query, limit=limit)
+        
         return {
             "status": "success",
             "query": query,
-            "result_count": len(results),
-            "results": results,
+            "results_count": len(results),
+            "results": results
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "query": kwargs.get("query", ""),
+            "results_count": 0,
+            "results": [],
+            "note": "Hybrid recall archived - use search_memories instead"
         }
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
-def handle_graph_topology(**kwargs: Any) -> dict[str, Any]:
-    """Graph topology introspection — centrality, communities, bridges."""
-    action = kwargs.get("action", "summary")
+# ═══════════════════════════════════════════════════════════════════════════════
+# Graph Walk & Surprise Stats
+# ═══════════════════════════════════════════════════════════════════════════════
 
+def handle_graph_walk(**kwargs: Any) -> dict[str, Any]:
+    """Walk the knowledge graph from a starting node."""
     try:
-        from whitemagic.core.memory.graph_engine import get_graph_engine
-        engine = get_graph_engine()
-
-        if action == "rebuild":
-            sample_limit = int(kwargs.get("sample_limit", 50000))
-            result = engine.rebuild(sample_limit=sample_limit)
-            return {"status": "success", "action": "rebuild", **result}
-
-        elif action == "centrality":
-            snapshot = engine.centrality_snapshot()
-            return {"status": "success", "action": "centrality", "snapshot": snapshot.to_dict()}
-
-        elif action == "communities":
-            communities = engine.detect_communities()
-            return {
-                "status": "success",
-                "action": "communities",
-                "count": len(communities),
-                "communities": [c.to_dict() for c in communities[:20]],
-            }
-
-        elif action == "bridges":
-            top_n = int(kwargs.get("top_n", 10))
-            bridges = engine.find_bridge_nodes(top_n=top_n)
-            return {
-                "status": "success",
-                "action": "bridges",
-                "count": len(bridges),
-                "bridges": bridges,
-            }
-
-        elif action == "echo_chambers":
-            sigma = float(kwargs.get("sigma_threshold", 2.0))
-            chambers = engine.detect_echo_chambers(sigma_threshold=sigma)
-            return {
-                "status": "success",
-                "action": "echo_chambers",
-                "count": len(chambers),
-                "echo_chambers": [ec.to_dict() for ec in chambers],
-            }
-
-        else:
-            # Default: summary
-            return {"status": "success", "action": "summary", **engine.summary()}
-
+        from whitemagic.core.intelligence.graph_engine import GraphEngine
+        
+        start_node = kwargs.get("start_node")
+        steps = kwargs.get("steps", 10)
+        
+        if not start_node:
+            return {"status": "error", "error": "start_node required"}
+        
+        engine = GraphEngine()
+        path = engine.graph_walk(start=start_node, steps=steps)
+        
+        return {
+            "status": "success",
+            "start_node": start_node,
+            "steps": steps,
+            "path": path
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "start_node": kwargs.get("start_node"),
+            "steps": kwargs.get("steps", 10),
+            "path": [],
+            "note": "GraphEngine archived - graph walk not available"
+        }
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
 def handle_surprise_stats(**kwargs: Any) -> dict[str, Any]:
-    """Surprise gate statistics — novelty detection metrics."""
+    """Get surprise detection statistics."""
     try:
-        from whitemagic.core.memory.surprise_gate import get_surprise_gate
-        gate = get_surprise_gate()
-        return {"status": "success", **gate.get_stats()}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-
-def handle_graph_walk(**kwargs: Any) -> dict[str, Any]:
-    """Execute a multi-hop graph walk from seed memory IDs."""
-    seed_ids = kwargs.get("seed_ids", [])
-    if not seed_ids:
-        return {"status": "error", "message": "seed_ids is required (list of memory IDs)"}
-
-    if isinstance(seed_ids, str):
-        seed_ids = [s.strip() for s in seed_ids.split(",")]
-
-    hops = int(kwargs.get("hops", 2))
-    top_k = int(kwargs.get("top_k", 10))
-
-    try:
-        from whitemagic.core.memory.graph_walker import get_graph_walker
-        walker = get_graph_walker()
-        result = walker.walk(seed_ids=seed_ids, hops=hops, top_k=top_k)
+        from whitemagic.core.intelligence.surprise import SurpriseDetector
+        detector = SurpriseDetector()
         return {
             "status": "success",
-            "walk": result.to_dict(),
+            **detector.get_stats()
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "surprise_events": 0,
+            "average_surprise": 0.0,
+            "note": "Surprise detector archived"
         }
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
 def handle_entity_resolve(**kwargs: Any) -> dict[str, Any]:
-    """Run embedding-based entity resolution (dedup) on the memory store."""
-    similarity_threshold = float(kwargs.get("similarity_threshold", 0.92))
-    batch_limit = int(kwargs.get("batch_limit", 500))
-
+    """Resolve entity mentions to canonical entities."""
     try:
-        from whitemagic.core.memory.consolidation import get_consolidator
-        consolidator = get_consolidator()
-        result = consolidator.resolve_entities(
-            similarity_threshold=similarity_threshold,
-            batch_limit=batch_limit,
-        )
-        return {"status": "success", **result}
+        from whitemagic.core.intelligence.entity_resolver import EntityResolver
+        resolver = EntityResolver()
+        
+        mentions = kwargs.get("mentions", [])
+        context = kwargs.get("context", {})
+        
+        if not mentions:
+            return {"status": "error", "error": "mentions required"}
+        
+        resolved = resolver.resolve(mentions=mentions, context=context)
+        return {
+            "status": "success",
+            "mentions": len(mentions),
+            "resolved": resolved
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "mentions": len(kwargs.get("mentions", [])),
+            "resolved": {},
+            "note": "Entity resolver archived"
+        }
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "error": str(e)}

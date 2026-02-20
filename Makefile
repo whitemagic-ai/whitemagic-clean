@@ -8,6 +8,9 @@ WM_SILENT_INIT ?= 1
 install:
 	pip install -e ".[dev,mcp,cli]"
 
+install-heavy:
+	pip install -e ".[dev,mcp,cli,heavy]"
+
 test:
 	WM_STATE_ROOT=$(WM_STATE_ROOT) WM_DB_PATH=$(WM_DB_PATH) WM_SILENT_INIT=$(WM_SILENT_INIT) pytest -q tests/
 

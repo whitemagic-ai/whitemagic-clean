@@ -10,12 +10,16 @@ def handle_context_pack(**kwargs: Any) -> dict[str, Any]:
     query = kwargs.get("query", "")
     token_budget = int(kwargs.get("token_budget", 8000))
     limit = int(kwargs.get("limit", 50))
+    include_wisdom = bool(kwargs.get("include_wisdom", False))
 
     if not query:
         return {"status": "error", "error": "query is required"}
 
     opt = get_context_optimizer()
-    packed = opt.pack_memories(query, token_budget=token_budget, limit=limit)
+    if include_wisdom:
+        packed = opt.pack_full_context(query, token_budget=token_budget, memory_limit=limit)
+    else:
+        packed = opt.pack_memories(query, token_budget=token_budget, limit=limit)
 
     return {
         "status": "success",

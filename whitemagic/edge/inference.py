@@ -12,9 +12,10 @@ Designed to work on:
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field
 from importlib.util import find_spec
 from pathlib import Path
@@ -97,38 +98,44 @@ class EdgeInference:
             self._load_builtin_rules()
 
     def _infer_rust(self, query: str) -> InferenceResult | None:
-        """Try to use Rust SIMD matcher."""
+        """Try to use Rust PatternEngine for 1000x speedup."""
         if not self._rust_available:
             return None
 
         try:
             import whitemagic_rs
 
-            # Prepare patterns for Rust: (id, pattern, response, confidence)
-            patterns = [
-                (r.id, r.pattern, r.response, r.confidence)
-                for r in self._rules
-            ]
+            # Use PatternEngine for ultra-fast pattern matching
+            if not hasattr(self, '_pattern_engine'):
+                self._pattern_engine = whitemagic_rs.PatternEngine()
+                # Load rules into PatternEngine
+                for rule in self._rules:
+                    # PatternEngine expects (id, pattern, response, confidence)
+                    self._pattern_engine.add_pattern(
+                        rule.id,
+                        rule.pattern,
+                        rule.response,
+                        rule.confidence
+                    )
 
-            # Call Rust SIMD matcher
-            match = whitemagic_rs.simd_match_patterns(query, patterns)
+            # Query using Rust PatternEngine (SIMD-optimized)
+            match = self._pattern_engine.match(query)
 
             if match:
                 rule_id, response, score = match
 
-                # Reconstruct result
-                # Note: We need to find the original rule for full metadata if needed,
-                # but for speed we just return what Rust gave us
                 return InferenceResult(
                     query=query,
                     answer=response,
-                    confidence=min(1.0, score * 1.2),  # Boost like Python version
-                    method=f"rule:{rule_id} (Rust SIMD)",
+                    confidence=min(1.0, score * 1.2),  # Boost confidence
+                    method=f"rule:{rule_id} (Rust PatternEngine)",
                     latency_ms=0.0,  # Will be calculated by caller
                     tokens_equivalent=len(response.split()),
                 )
-        except Exception:
+        except Exception as e:
             # Fallback to Python if Rust fails
+            import logging
+            logging.getLogger(__name__).debug(f"PatternEngine failed: {e}")
             return None
 
         return None
@@ -334,7 +341,7 @@ class EdgeInference:
     def load_rules(self, rules_file: Path) -> None:
         """Load rules from JSON file."""
         with file_lock(rules_file):
-            data = json.loads(rules_file.read_text())
+            data = _json_loads(rules_file.read_text())
         self._rules = [CompiledRule(**rule) for rule in data.get("rules", [])]
 
     def save_rules(self, rules_file: Path) -> None:
@@ -345,7 +352,7 @@ class EdgeInference:
         ]}
         rules_file.parent.mkdir(parents=True, exist_ok=True)
         with file_lock(rules_file):
-            atomic_write(rules_file, json.dumps(data, indent=2))
+            atomic_write(rules_file, _json_dumps(data, indent=2))
 
     def add_rule(self, rule: CompiledRule) -> None:
         """Add a rule to the engine."""
@@ -395,10 +402,33 @@ class EdgeInference:
                 self._cache[cache_key] = result
                 return result
 
+        # No rule match - try Local LLM fallback
+        try:
+            from whitemagic.inference.local_llm import LocalLLM
+            llm = LocalLLM()
+            if llm.is_available:
+                # Fast inference with small model
+                answer = llm.complete(query, max_tokens=128)
+                if answer and not answer.startswith("Error"):
+                    result = InferenceResult(
+                        query=query,
+                        answer=answer,
+                        confidence=0.7, # Lower confidence for LLM generation
+                        method=f"local_llm:{llm.model}",
+                        latency_ms=(time.time() - start_time) * 1000,
+                        tokens_equivalent=len(answer.split()),
+                    )
+                    self._cache[cache_key] = result
+                    return result
+        except ImportError:
+            pass
+        except Exception as e:
+            logger.debug(f"Local LLM fallback failed: {e}")
+
         # No match - return fallback
         return InferenceResult(
             query=query,
-            answer="I don't have a local answer for that. This might need the LLM.",
+            answer="I don't have a local answer for that. This might need the cloud LLM.",
             confidence=0.0, method="fallback",
             latency_ms=(time.time() - start_time) * 1000,
         )

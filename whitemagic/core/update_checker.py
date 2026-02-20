@@ -13,10 +13,11 @@ Respects:
 
 from __future__ import annotations
 
-import json
 import logging
 import os
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 from typing import Optional
 
@@ -39,7 +40,7 @@ def _read_cache() -> Optional[dict]:
         p = _cache_path()
         if not p.exists():
             return None
-        data = json.loads(p.read_text(encoding="utf-8"))
+        data = _json_loads(p.read_text(encoding="utf-8"))
         if time.time() - data.get("ts", 0) < _CACHE_TTL_SECONDS:
             return data
     except Exception:
@@ -53,7 +54,7 @@ def _write_cache(latest: str, current: str) -> None:
         p = _cache_path()
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(
-            json.dumps({"ts": time.time(), "latest": latest, "current": current}),
+            _json_dumps({"ts": time.time(), "latest": latest, "current": current}),
             encoding="utf-8",
         )
     except Exception:
@@ -67,7 +68,7 @@ def _fetch_latest_version() -> Optional[str]:
 
         req = Request(_PYPI_URL, headers={"Accept": "application/json"})
         with urlopen(req, timeout=_TIMEOUT_SECONDS) as resp:
-            data = json.loads(resp.read())
+            data = _json_loads(resp.read())
             return data.get("info", {}).get("version")
     except Exception:
         return None

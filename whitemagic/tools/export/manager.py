@@ -13,6 +13,8 @@ import io
 import json
 import uuid
 import zipfile
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
@@ -210,7 +212,7 @@ class ExportImportManager:
                     memory.updated_at
                 ]
                 if request.include_metadata:
-                    row.append(json.dumps(memory.metadata))
+                    row.append(_json_dumps(memory.metadata))
                 writer.writerow(row)
 
         return {
@@ -255,7 +257,7 @@ class ExportImportManager:
                 if request.include_metadata and memory.metadata:
                     f.write("### Metadata\\n\\n")
                     f.write("```json\\n")
-                    f.write(json.dumps(memory.metadata, indent=2))
+                    f.write(_json_dumps(memory.metadata, indent=2))
                     f.write("\\n```\\n\\n")
 
                 f.write("---\\n\\n")
@@ -324,7 +326,7 @@ class ExportImportManager:
             }
 
             with zf.open("metadata.json", 'w') as meta_file:
-                meta_file.write(json.dumps(metadata, indent=2).encode('utf-8'))
+                meta_file.write(_json_dumps(metadata, indent=2).encode('utf-8'))
 
             # Clean up temporary files
             Path(json_result["filepath"]).unlink()
@@ -397,7 +399,7 @@ class ExportImportManager:
         """Import memories from JSON."""
 
         try:
-            parsed = json.loads(self._to_text(data))
+            parsed = _json_loads(self._to_text(data))
 
             # Handle both direct list and wrapped format
             if "memories" in parsed:
@@ -437,7 +439,7 @@ class ExportImportManager:
                 content=row.get("content", ""),
                 memory_type=row.get("memory_type", "short_term"),
                 tags=row.get("tags", "").split(";") if row.get("tags") else [],
-                metadata=json.loads(row.get("metadata") or "{}"),
+                metadata=_json_loads(row.get("metadata") or "{}"),
                 created_at=row.get("created_at", datetime.now().isoformat()),
                 updated_at=row.get("updated_at", datetime.now().isoformat())
             )

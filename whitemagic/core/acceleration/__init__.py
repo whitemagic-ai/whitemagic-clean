@@ -31,25 +31,33 @@ from .mojo_bridge import (
     mojo_quantize,
     mojo_status,
 )
-from .simd_constellation import grid_density_scan, simd_constellation_status
-from .simd_cosine import batch_cosine, cosine_similarity, simd_status
-from .simd_distance import (
+# Unified SIMD bridge (replaces 6 individual modules)
+from .simd_unified import (
+    # Cosine operations
+    batch_cosine,
+    cosine_similarity,
+    # Distance operations
     cosine_similarity_zig,
     pairwise_distance_matrix,
-    simd_distance_status,
     top_k_nearest,
-)
-from .simd_holographic import (
+    # Holographic 5D operations
     holographic_5d_centroid,
     holographic_5d_distance,
     holographic_5d_knn,
-    simd_holographic_status,
-)
-from .simd_keywords import extract_keywords, simd_keywords_status
-from .simd_vector_batch import (
+    # Constellation operations
+    grid_density_scan,
+    # Keyword extraction
+    extract_keywords,
+    # Vector batch operations
     batch_centroid,
     batch_normalize,
     batch_topk_cosine,
+    # Status functions
+    simd_status,
+    simd_constellation_status,
+    simd_distance_status,
+    simd_holographic_status,
+    simd_keywords_status,
     simd_vector_batch_status,
 )
 from .state_board_bridge import StateBoardBridge, get_state_board

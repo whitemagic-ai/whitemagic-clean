@@ -6,9 +6,10 @@ The Ralph Wiggum Loop: "I'm helping!" but actually effective.
 
 from __future__ import annotations
 
-import json
 import logging
 import shlex
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -554,7 +555,7 @@ class ContinuousExecutor:
             "objectives": [obj.to_dict() for obj in objectives],
         }
 
-        strategy_path.write_text(json.dumps(strategy_doc, indent=2))
+        strategy_path.write_text(_json_dumps(strategy_doc, indent=2))
         self.log(f"Strategy logged to: {strategy_path}")
 
     async def checkpoint(self) -> None:
@@ -568,7 +569,7 @@ class ContinuousExecutor:
             "limits": self.limits.get_status(),
         }
 
-        self.checkpoint_path.write_text(json.dumps(checkpoint, indent=2))
+        self.checkpoint_path.write_text(_json_dumps(checkpoint, indent=2))
         self.log(f"Checkpointed: {len(self.completed)} complete, {len(self.objectives)} pending")
 
     async def get_git_state(self) -> dict[str, Any]:

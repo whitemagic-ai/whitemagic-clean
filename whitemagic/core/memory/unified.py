@@ -78,14 +78,22 @@ class UnifiedMemory:
             if self.holographic and count > 0:
                 logger.info(f"🌌 Holographic Index loaded: {count} points")
 
-    def store(self, content: Any, memory_type: MemoryType = MemoryType.SHORT_TERM,
+    def store(self, content: Any, memory_type: MemoryType | str = MemoryType.SHORT_TERM,
               tags: set[str] | None = None, emotional_valence: float = 0.0,
-              importance: float = 0.5, metadata: dict | None = None, title: str | None = None, **kwargs: Any) -> Memory:
+              importance: float = 0.5, metadata: dict | None = None, title: str | None = None,
+              auto_embed: bool = True, **kwargs: Any) -> Memory:
         """Store a new memory.
 
         v14.0: Surprise-gated ingestion evaluates novelty before storage.
         High surprise → boosted importance. Low surprise → reinforce existing.
         """
+        # Convert string memory_type to enum for backward compatibility
+        if isinstance(memory_type, str):
+            try:
+                memory_type = MemoryType[memory_type.upper()]
+            except (KeyError, ValueError):
+                memory_type = MemoryType.SHORT_TERM
+        
         metadata = metadata or {}
 
         # v14.1.1: Content hash dedup — check for exact duplicates before anything else
@@ -164,16 +172,17 @@ class UnifiedMemory:
             if coords:
                 self.backend.store_coords(memory.id, *coords)
 
-        # Auto-index embedding if sentence-transformers is available
-        try:
-            from whitemagic.core.memory.embeddings import get_embedding_engine
-            engine = get_embedding_engine()
-            if engine and engine.available():
-                embedding = engine.encode(str(memory.content))
-                if embedding:
-                    engine.cache_embedding(memory.id, embedding)
-        except Exception:
-            pass  # Embedding unavailable — skip silently
+        # Auto-index embedding if sentence-transformers is available and auto_embed=True
+        if auto_embed:
+            try:
+                from whitemagic.core.memory.embeddings import get_embedding_engine
+                engine = get_embedding_engine()
+                if engine and engine.available():
+                    embedding = engine.encode(str(memory.content))
+                    if embedding:
+                        engine.cache_embedding(memory.id, embedding)
+            except Exception:
+                pass  # Embedding unavailable — skip silently
 
         # v15.2: Auto-extract entities and relations into knowledge graph
         try:
@@ -772,6 +781,12 @@ class UnifiedMemory:
 
 # Singleton instance
 _unified_memory: UnifiedMemory | None = None
+
+
+def reset_singleton() -> None:
+    """Reset the singleton instance for testing."""
+    global _unified_memory
+    _unified_memory = None
 
 def get_unified_memory() -> UnifiedMemory:
     """Get the singleton unified memory instance."""

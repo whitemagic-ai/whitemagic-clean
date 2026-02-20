@@ -7,9 +7,10 @@ Used as fallback when Mojo is unavailable, or as primary for robustness.
 Handles None values gracefully and processes batches efficiently.
 """
 
-import json
 import sys
 import time
+
+from whitemagic.utils.fast_json import loads as _json_loads
 from dataclasses import dataclass
 from typing import Any
 
@@ -169,7 +170,7 @@ def main() -> Any:
     """CLI interface: read JSON from stdin, output coordinates."""
     if len(sys.argv) > 1 and sys.argv[1] == "--batch":
         # Read JSON from stdin
-        data = json.loads(sys.stdin.read())
+        data = _json_loads(sys.stdin.read())
         items = data.get("items", [])
 
         encoder = FastBatchEncoder()

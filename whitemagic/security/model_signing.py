@@ -20,10 +20,11 @@ Usage:
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import threading
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -265,7 +266,7 @@ class ModelSigningRegistry:
                     }
                     for name, m in self._manifests.items()
                 }
-            path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+            path.write_text(_json_dumps(data, indent=2), encoding="utf-8")
         except Exception as e:
             logger.debug("Model manifest persist failed: %s", e)
 
@@ -276,7 +277,7 @@ class ModelSigningRegistry:
         if not path.exists():
             return
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
+            data = _json_loads(path.read_text(encoding="utf-8"))
             for name, md in data.items():
                 self._manifests[name] = ModelManifest(
                     model_name=name,

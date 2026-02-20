@@ -2,16 +2,19 @@
 Implements a scalable, ACID-compliant persistence layer for WhiteMagic.
 """
 
-import json
 import logging
+import re
 import sqlite3
+
+from whitemagic.utils.fast_json import loads as _json_loads
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Generator
 
 from whitemagic.core.memory.db_manager import get_db_pool
 from whitemagic.core.memory.unified_types import Memory, MemoryType
 from whitemagic.utils.core import parse_datetime
+from whitemagic.utils.fast_json import dumps_str as _fast_dumps
 
 logger = logging.getLogger(__name__)
 
@@ -75,11 +78,11 @@ class SQLiteBackend:
     def _init_db(self) -> None:
         """Initialize database schema and handle migrations.
 
-        Creates a rotated backup before applying any schema changes.
+        Creates a rotated backup only when schema changes are actually needed.
         PRAGMAs (WAL, mmap_size, cache_size, temp_store, etc.) are
         set centrally in db_manager.ConnectionPool._create_connection().
         """
-        self._auto_backup()
+        self._needs_backup = True  # Deferred: only backup if migration needed
         with self.pool.connection() as conn:
 
             # 1. Memories table
@@ -130,11 +133,20 @@ class SQLiteBackend:
                 "model_exclude": "INTEGER DEFAULT 0", # v15: exclude from AI context
             }
 
+            _valid_ident = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_]*$')
             for col_name, col_type in new_columns.items():
                 if col_name not in existing_columns:
+                    if not _valid_ident.match(col_name) or not _valid_ident.match(col_type.split()[0]):
+                        logger.warning(f"Skipping invalid identifier: {col_name}")
+                        continue
+                    # Deferred backup: only backup before first actual schema change
+                    if self._needs_backup:
+                        self._auto_backup()
+                        self._needs_backup = False
                     logger.debug(f"Adding column {col_name} to memories table")
                     try:
-                        conn.execute(f"ALTER TABLE memories ADD COLUMN {col_name} {col_type}")
+                        stmt = 'ALTER TABLE memories ADD COLUMN "' + col_name + '" ' + col_type
+                        conn.execute(stmt)
                     except sqlite3.OperationalError as e:
                         logger.warning(f"Could not add column {col_name}: {e}")
 
@@ -200,8 +212,14 @@ class SQLiteBackend:
                 ("ingestion_time", "TEXT"),                       # Living Memory: bitemporal modeling
             ]:
                 if col_name not in assoc_columns:
+                    if not _valid_ident.match(col_name):
+                        continue
+                    if self._needs_backup:
+                        self._auto_backup()
+                        self._needs_backup = False
                     try:
-                        conn.execute(f"ALTER TABLE associations ADD COLUMN {col_name} {col_def}")
+                        stmt = 'ALTER TABLE associations ADD COLUMN "' + col_name + '" ' + col_def
+                        conn.execute(stmt)
                         logger.info(f"Added {col_name} column to associations table")
                     except sqlite3.OperationalError:
                         pass
@@ -210,6 +228,9 @@ class SQLiteBackend:
             hc_cursor = conn.execute("PRAGMA table_info(holographic_coords)")
             hc_columns = {row[1] for row in hc_cursor.fetchall()}
             if "v" not in hc_columns:
+                if self._needs_backup:
+                    self._auto_backup()
+                    self._needs_backup = False
                 try:
                     conn.execute("ALTER TABLE holographic_coords ADD COLUMN v REAL DEFAULT 0.5")
                     logger.info("Added v column to holographic_coords table")
@@ -307,8 +328,8 @@ class SQLiteBackend:
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     memory.id,
-                    json.dumps(memory.content) if not isinstance(memory.content, str) else memory.content,
-                    memory.memory_type.name,
+                    _fast_dumps(memory.content) if not isinstance(memory.content, str) else memory.content,
+                    memory.memory_type.name if hasattr(memory.memory_type, 'name') else str(memory.memory_type),
                     memory.created_at.isoformat(),
                     (memory.last_modified or memory.created_at).isoformat(),
                     memory.accessed_at.isoformat(),
@@ -320,7 +341,7 @@ class SQLiteBackend:
                     memory.recall_count,
                     memory.half_life_days,
                     1 if memory.is_protected else 0,
-                    json.dumps(memory.metadata),
+                    _fast_dumps(memory.metadata),
                     memory.title,
                     memory.galactic_distance,
                     memory.retention_score,
@@ -355,7 +376,100 @@ class SQLiteBackend:
                     INSERT INTO memories_fts (id, title, content, tags_text) VALUES (?, ?, ?, ?)
                 """, (memory.id, memory.title or "", str(memory.content), tags_text))
 
+        # Invalidate cache for this memory
+        try:
+            from whitemagic.core.memory.query_cache import get_query_cache
+            cache = get_query_cache()
+            cache.invalidate(f"get_memory:{memory.id}")
+        except Exception:
+            pass
+
         return memory.id
+
+    def get_memory(self, memory_id: str) -> Memory | None:
+        """Retrieve a memory by ID (hot DB first, then cold) with caching."""
+        # Try cache first
+        try:
+            from whitemagic.core.memory.query_cache import get_query_cache
+            cache = get_query_cache()
+            cache_key = f"get_memory:{memory_id}"
+            cached = cache.get(cache_key)
+            if cached is not None:
+                return cached
+        except Exception:
+            pass
+        
+        # Cache miss - query database
+        mem = self._get_memory_from_pool(memory_id, self.pool)
+        if mem:
+            # Cache the result
+            try:
+                cache.set(cache_key, mem, ttl=60)
+            except Exception:
+                pass
+            return mem
+        
+        # Fallback to cold storage if available
+        cold_pool = self._get_cold_pool()
+        if cold_pool:
+            mem = self._get_memory_from_pool(memory_id, cold_pool)
+            if mem:
+                try:
+                    cache.set(cache_key, mem, ttl=120)  # Longer TTL for cold storage
+                except Exception:
+                    pass
+            return mem
+        return None
+
+    def _get_memory_from_pool(self, memory_id: str, pool: Any) -> Memory | None:
+        """Retrieve a memory by ID from a specific DB pool."""
+        with pool.connection() as conn:
+            conn.row_factory = sqlite3.Row
+            row = conn.execute("SELECT * FROM memories WHERE id = ?", (memory_id,)).fetchone()
+
+            if not row:
+                return None
+
+            # Fetch Tags
+            tags_rows = conn.execute("SELECT tag FROM tags WHERE memory_id = ?", (memory_id,)).fetchall()
+            tags = {r["tag"] for r in tags_rows}
+
+            # Fetch Associations
+            assoc_rows = conn.execute("SELECT target_id, strength FROM associations WHERE source_id = ?", (memory_id,)).fetchall()
+            associations = {r["target_id"]: r["strength"] for r in assoc_rows}
+
+            # Content hydration
+            content = row["content"]
+            if isinstance(content, str) and (content.startswith("{") or content.startswith("[")):
+                try:
+                    content = _json_loads(content)
+                except Exception:
+                    pass # Fallback to raw string if not valid JSON
+
+            return Memory(
+                id=row["id"],
+                content=content,
+                memory_type=getattr(MemoryType, row["memory_type"], MemoryType.SHORT_TERM),
+                title=row["title"],
+                created_at=parse_datetime(row["created_at"]),
+                accessed_at=parse_datetime(row["accessed_at"]),
+                access_count=row["access_count"],
+                tags=tags,
+                associations=associations,
+                emotional_valence=row["emotional_valence"],
+                importance=row["importance"],
+                neuro_score=row["neuro_score"] if "neuro_score" in row.keys() else 1.0,
+                novelty_score=row["novelty_score"] if "novelty_score" in row.keys() else 1.0,
+                recall_count=row["recall_count"] if "recall_count" in row.keys() else 0,
+                half_life_days=row["half_life_days"] if "half_life_days" in row.keys() else 30.0,
+                is_protected=bool(row["is_protected"]) if "is_protected" in row.keys() else False,
+                is_private=bool(row["is_private"]) if "is_private" in row.keys() else False,
+                model_exclude=bool(row["model_exclude"]) if "model_exclude" in row.keys() else False,
+                galactic_distance=row["galactic_distance"] if "galactic_distance" in row.keys() else 0.0,
+                retention_score=row["retention_score"] if "retention_score" in row.keys() else 0.5,
+                last_retention_sweep=parse_datetime(row["last_retention_sweep"]) if "last_retention_sweep" in row.keys() and row["last_retention_sweep"] else None,
+                metadata=_json_loads(row["metadata"]) if row["metadata"] else {},
+            )
 
     def recall(self, memory_id: str) -> Memory | None:
         """Retrieve a memory by ID. Falls back to cold storage if not in hot DB."""
@@ -390,7 +504,7 @@ class SQLiteBackend:
             content = row["content"]
             if isinstance(content, str) and (content.startswith("{") or content.startswith("[")):
                 try:
-                    content = json.loads(content)
+                    content = _json_loads(content)
                 except Exception:
                     pass # Fallback to raw string if not valid JSON
 
@@ -416,17 +530,17 @@ class SQLiteBackend:
                 galactic_distance=row["galactic_distance"] if "galactic_distance" in row.keys() else 0.0,
                 retention_score=row["retention_score"] if "retention_score" in row.keys() else 0.5,
                 last_retention_sweep=parse_datetime(row["last_retention_sweep"]) if "last_retention_sweep" in row.keys() and row["last_retention_sweep"] else None,
-                metadata=json.loads(row["metadata"]) if row["metadata"] else {},
+                metadata=_json_loads(row["metadata"]) if row["metadata"] else {},
             )
 
     def fetch_memory_contents(self, memory_type: str | None = None, limit: int = 10000) -> list[str]:
         """Fetch contents of memories efficiently for pattern analysis."""
         with self.pool.connection() as conn:
             conn.row_factory = sqlite3.Row
-            sql = "SELECT content FROM memories"
+            sql = "SELECT content FROM memories WHERE memory_type != 'quarantined'"
             params: list[Any] = []
             if memory_type:
-                sql += " WHERE memory_type = ?"
+                sql += " AND memory_type = ?"
                 params.append(memory_type)
             sql += " ORDER BY importance DESC LIMIT ?"
             params.append(limit)
@@ -460,13 +574,14 @@ class SQLiteBackend:
                     SELECT m.*, fts.rank
                     FROM memories m
                     JOIN (
-                        SELECT id, rank
+                        SELECT id, bm25(memories_fts, 10.0, 1.0, 5.0) as rank
                         FROM memories_fts
                         WHERE memories_fts MATCH ?
                         ORDER BY rank
                         LIMIT ?
                     ) fts ON m.id = fts.id
                     WHERE m.importance >= ?
+                      AND m.memory_type != 'quarantined'
                 """
                 params = [fts_query, limit * 3, min_importance]  # Get more candidates for filtering
 
@@ -489,7 +604,7 @@ class SQLiteBackend:
 
             else:
                 # No query: return recent/important memories
-                sql = "SELECT * FROM memories WHERE importance >= ?"
+                sql = "SELECT * FROM memories WHERE importance >= ? AND memory_type != 'quarantined'"
                 params = [min_importance]
 
                 if memory_type:
@@ -513,7 +628,7 @@ class SQLiteBackend:
         with self.pool.connection() as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(
-                "SELECT * FROM memories WHERE is_protected = 0 ORDER BY neuro_score ASC LIMIT ?",
+                "SELECT * FROM memories WHERE is_protected = 0 AND memory_type != 'quarantined' ORDER BY neuro_score ASC LIMIT ?",
                 (limit,),
             ).fetchall()
             return self._batch_hydrate(rows, conn)
@@ -526,12 +641,12 @@ class SQLiteBackend:
             return {
                 row["id"]: {
                     "content": row["content"],
-                    "bloom_conditions": json.loads(row["bloom_conditions"]) if row["bloom_conditions"] else [],
+                    "bloom_conditions": _json_loads(row["bloom_conditions"]) if row["bloom_conditions"] else [],
                     "planted_at": row["planted_at"],
                     "times_bloomed": row["times_bloomed"],
                     "last_bloomed": row["last_bloomed"],
                     "potency": row["potency"],
-                    "keywords": json.loads(row["keywords"]) if row["keywords"] else [],
+                    "keywords": _json_loads(row["keywords"]) if row["keywords"] else [],
                 }
                 for row in cursor
             }
@@ -557,12 +672,12 @@ class SQLiteBackend:
             """, (
                 seed_id,
                 content,
-                json.dumps(bloom_conditions),
+                _fast_dumps(bloom_conditions),
                 planted_at,
                 times_bloomed,
                 last_bloomed,
                 potency,
-                json.dumps(keywords),
+                _fast_dumps(keywords),
             ))
 
     def get_stats(self) -> dict[str, Any]:
@@ -741,7 +856,7 @@ class SQLiteBackend:
             content = row["content"]
             if isinstance(content, str) and (content.startswith("{") or content.startswith("[")):
                 try:
-                    content = json.loads(content)
+                    content = _json_loads(content)
                 except Exception:
                     pass
 
@@ -766,7 +881,7 @@ class SQLiteBackend:
                     galactic_distance=row["galactic_distance"] if "galactic_distance" in row.keys() else 0.0,
                     retention_score=row["retention_score"] if "retention_score" in row.keys() else 0.5,
                     last_retention_sweep=parse_datetime(row["last_retention_sweep"]) if "last_retention_sweep" in row.keys() and row["last_retention_sweep"] else None,
-                    metadata=json.loads(row["metadata"]) if row["metadata"] else {},
+                    metadata=_json_loads(row["metadata"]) if row["metadata"] else {},
                 )
 
                 # Attach FTS rank if present (from search)
@@ -783,11 +898,11 @@ class SQLiteBackend:
         """List recent memories."""
         with self.pool.connection() as conn:
             conn.row_factory = sqlite3.Row
-            sql = "SELECT * FROM memories"
+            sql = "SELECT * FROM memories WHERE memory_type != 'quarantined'"
             params: list[Any] = []
 
             if memory_type:
-                sql += " WHERE memory_type = ?"
+                sql += " AND memory_type = ?"
                 params.append(memory_type.name)
 
             sql += " ORDER BY created_at DESC LIMIT ?"
@@ -796,11 +911,34 @@ class SQLiteBackend:
             rows = conn.execute(sql, params).fetchall()
             return self._batch_hydrate(rows, conn)
 
+    def list_all_paginated(self, batch_size: int = 2000) -> "Generator[list[Memory], None, None]":
+        """Yield ALL memories in batches via OFFSET/LIMIT pagination.
+
+        Unlike list_recent(), this iterates through every memory in the DB
+        without a global cap — essential for full galactic sweeps across
+        100K+ corpora.
+        """
+        offset = 0
+        while True:
+            with self.pool.connection() as conn:
+                conn.row_factory = sqlite3.Row
+                rows = conn.execute(
+                    "SELECT * FROM memories WHERE memory_type != 'quarantined' ORDER BY rowid LIMIT ? OFFSET ?",
+                    (batch_size, offset),
+                ).fetchall()
+                if not rows:
+                    break
+                batch = self._batch_hydrate(rows, conn)
+            yield batch
+            offset += batch_size
+            if len(rows) < batch_size:
+                break
+
     def list_accessed(self, limit: int = 10) -> list[Memory]:
         """List recently accessed memories."""
         with self.pool.connection() as conn:
             conn.row_factory = sqlite3.Row
-            sql = "SELECT * FROM memories ORDER BY accessed_at DESC LIMIT ?"
+            sql = "SELECT * FROM memories WHERE memory_type != 'quarantined' ORDER BY accessed_at DESC LIMIT ?"
             rows = conn.execute(sql, (limit,)).fetchall()
             return self._batch_hydrate(rows, conn)
 
@@ -1182,8 +1320,8 @@ class SQLiteBackend:
                 harmony_score,
                 consent_level,
                 boundary_type,
-                json.dumps(concerns) if concerns else None,
-                json.dumps(context) if context else None,
+                _fast_dumps(concerns) if concerns else None,
+                _fast_dumps(context) if context else None,
                 decision,
             ))
             return cursor.lastrowid or 0
@@ -1214,8 +1352,8 @@ class SQLiteBackend:
                     "harmony_score": row["harmony_score"],
                     "consent_level": row["consent_level"],
                     "boundary_type": row["boundary_type"],
-                    "concerns": json.loads(row["concerns"]) if row["concerns"] else [],
-                    "context": json.loads(row["context"]) if row["context"] else {},
+                    "concerns": _json_loads(row["concerns"]) if row["concerns"] else [],
+                    "context": _json_loads(row["context"]) if row["context"] else {},
                     "decision": row["decision"],
                 }
                 for row in rows

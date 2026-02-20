@@ -8,6 +8,8 @@ import json
 import os
 import socket
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections.abc import Coroutine
 from datetime import datetime
 from typing import Any, Optional, TypeVar
@@ -87,7 +89,7 @@ class _AsyncBroker:
         message["timestamp"] = datetime.now().isoformat()
         msg_id = f"{channel}_{time.time()}"
         message["id"] = msg_id
-        serialized = json.dumps(message)
+        serialized = _json_dumps(message)
         await asyncio.gather(
             redis.publish(channel, serialized),
             redis.lpush(f"history:{channel}", serialized),
@@ -105,7 +107,7 @@ class _AsyncBroker:
         results: list[dict[str, Any]] = []
         for item in raw:
             try:
-                results.append(json.loads(item))
+                results.append(_json_loads(item))
             except (json.JSONDecodeError, TypeError):
                 pass
         return results

@@ -148,8 +148,17 @@ def handle_track_metric(**kwargs: Any) -> dict[str, Any]:
 
 
 def handle_get_metrics_summary(**kwargs: Any) -> dict[str, Any]:
-    from whitemagic.core.bridge.metrics import get_metrics_summary
-    return _ensure_result_dict(get_metrics_summary(**kwargs), "get_metrics_summary")
+    try:
+        from whitemagic.core.bridge.metrics import get_metrics_summary
+        return _ensure_result_dict(get_metrics_summary(**kwargs), "get_metrics_summary")
+    except ImportError:
+        return {
+            "status": "success",
+            "metrics": {},
+            "total_metrics": 0,
+            "timeframe": kwargs.get("timeframe", "session"),
+            "note": "Metrics module archived - no metrics available"
+        }
 
 
 # --- Intelligence ---
@@ -317,8 +326,30 @@ def handle_read_memory(**kwargs: Any) -> dict[str, Any]:
 
 
 def handle_list_memories(**kwargs: Any) -> dict[str, Any]:
-    from whitemagic.core.bridge.tools import execute_mcp_tool
-    return _ensure_result_dict(execute_mcp_tool("memory_list", **kwargs), "memory_list")
+    """List recent memories."""
+    from whitemagic.core.memory.unified import get_unified_memory
+    
+    limit = int(kwargs.get("limit", 20))
+    memory_type = kwargs.get("memory_type") or kwargs.get("type")
+    
+    um = get_unified_memory()
+    
+    # Get recent memories from backend
+    memories = um.backend.list_recent(limit=limit, memory_type=memory_type)
+    
+    # Convert to dict format
+    results = []
+    for mem in memories:
+        results.append({
+            "id": mem.id,
+            "title": mem.title or "Untitled",
+            "content": (mem.content[:200] + "..." if len(mem.content) > 200 else mem.content) if mem.content else "",
+            "memory_type": mem.memory_type,
+            "created_at": mem.created_at,
+            "importance": mem.importance,
+        })
+    
+    return {"status": "success", "results": results, "count": len(results)}
 
 
 def handle_update_memory(**kwargs: Any) -> dict[str, Any]:

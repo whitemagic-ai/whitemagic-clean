@@ -28,13 +28,17 @@ from typing import Any, cast
 
 from whitemagic.config.paths import WM_ROOT
 
-from .base import PluginBase
-from .registry import PluginRegistry
+try:
+    from .base import PluginBase
+    from .registry import PluginRegistry
+except ImportError:
+    PluginBase = None  # type: ignore[assignment,misc]
+    PluginRegistry = None  # type: ignore[assignment,misc]
 
 logger = logging.getLogger(__name__)
 
 # Global registry
-_registry = PluginRegistry()
+_registry = PluginRegistry() if PluginRegistry is not None else None
 
 
 def load_plugins() -> list[PluginBase]:

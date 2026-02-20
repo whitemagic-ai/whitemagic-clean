@@ -7,14 +7,14 @@ import click
 
 
 @click.group()
-def intelligence():
+def intelligence() -> None:
     """Manage intelligence systems (agentic AI)."""
 
 
 @intelligence.command()
 @click.argument("count", type=int)
 @click.argument("prompt")
-def clone(count: int, prompt: str):
+def clone(count: int, prompt: str) -> None:
     """Deploy thought clones for parallel exploration."""
     try:
         from whitemagic_extensions.edge import ThoughtCloneArmy  # type: ignore[import-not-found]
@@ -39,7 +39,7 @@ def clone(count: int, prompt: str):
 
 
 @intelligence.command()
-def coherence():
+def coherence() -> None:
     """Check current coherence level."""
     try:
         from whitemagic_extensions.intelligence import CoherencePersistence  # type: ignore[import-not-found]
@@ -60,7 +60,7 @@ def coherence():
 
 @intelligence.command()
 @click.argument("amount", type=int, default=10)
-def boost(amount: int):
+def boost(amount: int) -> None:
     """Boost coherence level."""
     try:
         from whitemagic_extensions.intelligence import CoherencePersistence
@@ -78,7 +78,7 @@ def boost(amount: int):
 
 
 @intelligence.command()
-def anti_loop():
+def anti_loop() -> None:
     """Check for infinite loops."""
     try:
         from whitemagic_extensions.intelligence import AntiLoopDetector, CircuitState
@@ -105,7 +105,7 @@ def anti_loop():
 
 
 @intelligence.command()
-def token_report():
+def token_report() -> None:
     """Get token budget report."""
     try:
         from whitemagic_extensions.intelligence import TokenBudget
@@ -123,7 +123,7 @@ def token_report():
 @intelligence.command()
 @click.argument("task")
 @click.option("--parallel", "-p", default=4, help="Number of parallel approaches")
-def solve(task: str, parallel: int):
+def solve(task: str, parallel: int) -> None:
     """Solve a problem using parallel cognition."""
     try:
         from whitemagic_extensions.autonomous import ParallelCognition  # type: ignore[import-not-found]

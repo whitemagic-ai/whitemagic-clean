@@ -14,6 +14,8 @@ import json
 import logging
 import re
 from collections import Counter, defaultdict
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -74,16 +76,16 @@ class PatternLearner:
 
         if queries_file.exists():
             try:
-                data = json.loads(queries_file.read_text())
+                data = _json_loads(queries_file.read_text())
                 self._queries = [QueryRecord(**q) for q in data]
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, ValueError):
                 pass
 
         if rules_file.exists():
             try:
-                data = json.loads(rules_file.read_text())
+                data = _json_loads(rules_file.read_text())
                 self._learned_rules = [LearnedRule(**r) for r in data]
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, ValueError):
                 pass
 
     def _save(self) -> None:
@@ -91,7 +93,7 @@ class PatternLearner:
         queries_file = self.data_dir / "queries.json"
         rules_file = self.data_dir / "learned_rules.json"
 
-        queries_file.write_text(json.dumps([
+        queries_file.write_text(_json_dumps([
             {
                 "query": q.query,
                 "answer": q.answer,
@@ -103,7 +105,7 @@ class PatternLearner:
             for q in self._queries
         ], indent=2))
 
-        rules_file.write_text(json.dumps([
+        rules_file.write_text(_json_dumps([
             {
                 "id": r.id,
                 "pattern": r.pattern,

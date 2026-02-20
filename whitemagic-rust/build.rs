@@ -86,26 +86,19 @@ fn main() {
         None
     };
 
-    if let Some(lib_dir) = final_zig_dir {
-        println!("cargo:rustc-link-search=native={}", lib_dir.display());
-        // Link DYNAMICALLY to the shared Zig core to allow state sharing with Mojo/Python
-        // The shared library is named "libwhitemagic.so" -> link "whitemagic"
-        println!("cargo:rustc-link-lib=dylib=whitemagic");
-
-        // Add RPATH so the extension can find the Zig library at runtime without LD_LIBRARY_PATH
-        // We use $ORIGIN relative paths assuming specific deployment, or absolute path for dev
-        // For dev (Ghost in the Machine test), absolute path is safest.
-        println!("cargo:rustc-link-arg=-Wl,-rpath,{}", lib_dir.display());
-
-        // We also need to link libc because Zig's C allocator depends on it
+    // Link Zig static library for query router
+    if let Some(ref zig_dir) = final_zig_dir {
+        println!("cargo:rustc-link-search=native={}", zig_dir.display());
+        println!("cargo:rustc-link-lib=static=whitemagic-zig");
+        println!("cargo:rerun-if-changed={}", zig_dir.join("libwhitemagic-zig.a").display());
+        
+        // Link libc (required by Zig)
         println!("cargo:rustc-link-lib=dylib=c");
     } else {
-        // Fallback or warning if Zig library is not built yet
-        // This allows the build to proceed (without Zig acceleration) if needed
-        println!("cargo:warning=Zig static library not found at {} or {}. Proceeding without Zig acceleration.", zig_lib_dir.display(), zig_lib_root.display());
+        println!("cargo:warning=Zig static library not found at {}. Proceeding without Zig acceleration.", zig_lib_dir.display());
     }
 
-    // Rerun if build script changes or if the Zig library changes
+    // Rerun if build script changes
     println!("cargo:rerun-if-changed=build.rs");
 
     // Ensure libpython is linkable for Rust test binaries that include PyO3 code.

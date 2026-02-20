@@ -4,8 +4,9 @@ Manages work sessions, state persistence, and context tracking.
 
 from __future__ import annotations
 
-import json
 from dataclasses import asdict, dataclass, field
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
@@ -113,7 +114,7 @@ class SessionManager:
             return None
 
         try:
-            data = json.loads(path.read_text())
+            data = _json_loads(path.read_text())
             session = Session.from_dict(data)
             self._active_sessions[session_id] = session
             return session
@@ -125,7 +126,7 @@ class SessionManager:
         sessions = []
         for path in self.base_dir.glob("*.json"):
             try:
-                data = json.loads(path.read_text())
+                data = _json_loads(path.read_text())
                 session = Session.from_dict(data)
                 if status and session.status != status:
                     continue
@@ -162,7 +163,7 @@ class SessionManager:
     def _save_session(self, session: Session) -> None:
         """Save session to disk."""
         path = self._session_path(session.id)
-        path.write_text(json.dumps(session.to_dict(), indent=2))
+        path.write_text(_json_dumps(session.to_dict(), indent=2))
 
     def get_active_session(self) -> Session | None:
         """Get the most recently updated active session."""

@@ -2,10 +2,11 @@
 Provides real-time context awareness: Time, System Stats, Resource Usage, and Session Metadata.
 """
 
-import json
 import logging
 import os
 import platform
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -102,13 +103,13 @@ class GroundingSystem:
         """Persist the anchor to a known location (the 'Lighthouse')."""
         lighthouse_path = self.storage_dir / "lighthouse.json"
         with open(lighthouse_path, "w") as f:
-            json.dump(anchor, f, indent=2)
+            f.write(_json_dumps(anchor, indent=2))
 
         # Also append to daily log
         day_str = datetime.now().strftime("%Y-%m-%d")
         log_path = self.storage_dir / f"continuity_log_{day_str}.jsonl"
         with open(log_path, "a") as f:
-            f.write(json.dumps(anchor) + "\n")
+            f.write(_json_dumps(anchor) + "\n")
 
     def print_grounding(self) -> None:
         """Print a human/AI readable grounding summary."""

@@ -68,28 +68,38 @@ class SessionStartupOrchestrator:
         """Start core infrastructure systems."""
         results = []
 
-        # 0. Rust Bridge (build if needed)
+        # 0. Rust Bridge (build if needed — enabled by default)
         def start_rust_bridge() -> None:
             try:
                 import whitemagic_rs
-                logger.info("✅ Rust bridge already available")
+                n = len([f for f in dir(whitemagic_rs) if not f.startswith("_")])
+                logger.info(f"✅ Rust bridge available ({n} functions)")
             except ImportError:
-                if os.getenv("WM_AUTO_BUILD_RUST_BRIDGE", "0") != "1":
-                    logger.info("ℹ️  Rust bridge not available (optional). Set WM_AUTO_BUILD_RUST_BRIDGE=1 to auto-build.")
+                if os.getenv("WM_AUTO_BUILD_RUST_BRIDGE", "1") == "0":
+                    logger.info("ℹ️  Rust bridge not available. Set WM_AUTO_BUILD_RUST_BRIDGE=1 to auto-build.")
                     return
 
-                logger.info("🔧 Building Rust bridge (WM_AUTO_BUILD_RUST_BRIDGE=1)...")
+                logger.info("🔧 Auto-building Rust bridge...")
                 import subprocess
 
-                script_path = os.path.join(os.path.dirname(__file__), "../../../../scripts/build_rust_bridge.sh")
-                if not os.path.exists(script_path):
-                    raise FileNotFoundError(f"Rust bridge build script missing: {script_path}")
+                # Resolve script path relative to project root
+                this_dir = os.path.dirname(os.path.abspath(__file__))
+                candidates = [
+                    os.path.normpath(os.path.join(this_dir, "..", "..", "..", "..", "scripts", "build_rust_bridge.sh")),
+                    os.path.normpath(os.path.join(this_dir, "..", "..", "..", "scripts", "build_rust_bridge.sh")),
+                ]
+                script_path = next((p for p in candidates if os.path.exists(p)), None)
+                if not script_path:
+                    logger.warning("⚠️ build_rust_bridge.sh not found, skipping Rust build")
+                    return
 
-                result = subprocess.run(["bash", script_path], capture_output=True, text=True)
+                result = subprocess.run(["bash", script_path], capture_output=True, text=True, timeout=600)
                 if result.returncode != 0:
-                    raise RuntimeError(f"Rust bridge build failed: {result.stderr}")
+                    logger.warning(f"⚠️ Rust bridge build failed: {result.stderr[:500]}")
+                    return
                 # Try import again to verify success
                 import whitemagic_rs  # noqa: F401
+                logger.info("✅ Rust bridge built successfully")
         results.append(self._safe_activate("Rust Bridge", start_rust_bridge))
 
         # 1. Gan Ying Bus (must be first)

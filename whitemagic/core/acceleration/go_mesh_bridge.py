@@ -17,10 +17,11 @@ Usage:
 """
 from __future__ import annotations
 
-import json
 import logging
 import os
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import time
 from typing import Any
 
@@ -72,14 +73,14 @@ def _send_mesh_command(command: str, payload: dict[str, Any]) -> dict[str, Any] 
         response_channel = f"{_MESH_CHANNEL}:response:{request_id}"
         pubsub = client.pubsub()
         pubsub.subscribe(response_channel)
-        client.publish(f"{_MESH_CHANNEL}:commands", json.dumps(message))
+        client.publish(f"{_MESH_CHANNEL}:commands", _json_dumps(message))
 
         deadline = time.monotonic() + 5.0
         while time.monotonic() < deadline:
             msg = pubsub.get_message(timeout=0.5)
             if msg and msg["type"] == "message":
                 pubsub.unsubscribe(response_channel)
-                parsed = json.loads(msg["data"])
+                parsed = _json_loads(msg["data"])
                 if isinstance(parsed, dict):
                     return parsed
 

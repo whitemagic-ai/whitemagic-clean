@@ -12,8 +12,9 @@ Implementation:
 from __future__ import annotations
 
 import hashlib
-import json
 from dataclasses import dataclass
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -60,7 +61,7 @@ def get_record(tool: str, key: str) -> IdempotencyRecord | None:
         return None
     try:
         with file_lock(path):
-            data = json.loads(path.read_text(encoding="utf-8"))
+            data = _json_loads(path.read_text(encoding="utf-8"))
         if not isinstance(data, dict):
             return None
         resp = data.get("response")
@@ -80,4 +81,4 @@ def put_record(tool: str, key: str, response: dict[str, Any]) -> None:
     path = _record_path(tool, key)
     record = IdempotencyRecord(tool=tool, key=key, stored_at=_utc_now_iso(), response=response)
     with file_lock(path):
-        atomic_write(path, json.dumps(record.to_dict(), indent=2, sort_keys=True))
+        atomic_write(path, _json_dumps(record.to_dict(), indent=2, sort_keys=True))

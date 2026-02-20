@@ -53,25 +53,61 @@ def handle_galaxy_switch(**kwargs: Any) -> dict[str, Any]:
 
 
 def handle_galaxy_list(**kwargs: Any) -> dict[str, Any]:
-    """List all known galaxies."""
+    """List all known galaxies with caching."""
+    # Try cache first
+    try:
+        from whitemagic.core.memory.query_cache import get_query_cache
+        cache = get_query_cache()
+        cached = cache.get("galaxy_list")
+        if cached is not None:
+            return cached
+    except Exception:
+        pass
+    
     from whitemagic.core.memory.galaxy_manager import get_galaxy_manager
 
     gm = get_galaxy_manager()
     galaxies = gm.list_galaxies()
-    return {
+    result = {
         "status": "success",
         "active": gm.get_active().name,
         "count": len(galaxies),
         "galaxies": galaxies,
     }
+    
+    # Cache the result
+    try:
+        cache.set("galaxy_list", result, ttl=30)
+    except Exception:
+        pass
+    
+    return result
 
 
 def handle_galaxy_status(**kwargs: Any) -> dict[str, Any]:
-    """Get galaxy manager status."""
+    """Get galaxy manager status with caching."""
+    # Try cache first
+    try:
+        from whitemagic.core.memory.query_cache import get_query_cache
+        cache = get_query_cache()
+        cached = cache.get("galaxy_status")
+        if cached is not None:
+            return cached
+    except Exception:
+        pass
+    
     from whitemagic.core.memory.galaxy_manager import get_galaxy_manager
 
     gm = get_galaxy_manager()
-    return {"status": "success", **gm.status()}
+    result = {"status": "success", **gm.status()}
+    
+    # Cache the result
+    try:
+        cache.set("galaxy_status", result, ttl=30)
+    except Exception:
+        pass
+    
+    return result
 
 
 def handle_galaxy_ingest(**kwargs: Any) -> dict[str, Any]:

@@ -1,18 +1,42 @@
 """WhiteMagic parallel processing package."""
 
-from .adaptive import AdaptiveThreadingController, SystemMetrics
-from .cache import CacheEntry, DistributedCache
-from .file_ops import FileReadResult, ParallelFileReader, batch_read_files, batch_read_files_dict
-from .memory_consolidator import (
-    ConsolidationResult,
-    ParallelMemoryConsolidator,
-    consolidate_all_memories,
-    emit_consolidation_event,
-)
-from .pipeline import ParallelPipeline, PipelineResult, PipelineStage
-from .pools import PoolConfig, ThreadingManager, ThreadingTier
-from .runner import ParallelTestRunner, TestResult, TestSuiteResult, run_tests_parallel
-from .scheduler import ParallelScheduler, SchedulerStats, Task, TaskPriority, TaskStatus
+try:
+    from .adaptive import AdaptiveThreadingController, SystemMetrics
+except ImportError:
+    AdaptiveThreadingController = SystemMetrics = None  # type: ignore[assignment,misc]
+try:
+    from .cache import CacheEntry, DistributedCache
+except ImportError:
+    CacheEntry = DistributedCache = None  # type: ignore[assignment,misc]
+try:
+    from .file_ops import FileReadResult, ParallelFileReader, batch_read_files, batch_read_files_dict
+except ImportError:
+    FileReadResult = ParallelFileReader = batch_read_files = batch_read_files_dict = None  # type: ignore[assignment,misc]
+try:
+    from .memory_consolidator import (
+        ConsolidationResult,
+        ParallelMemoryConsolidator,
+        consolidate_all_memories,
+        emit_consolidation_event,
+    )
+except ImportError:
+    ConsolidationResult = ParallelMemoryConsolidator = consolidate_all_memories = emit_consolidation_event = None  # type: ignore[assignment,misc]
+try:
+    from .pipeline import ParallelPipeline, PipelineResult, PipelineStage
+except ImportError:
+    ParallelPipeline = PipelineResult = PipelineStage = None  # type: ignore[assignment,misc]
+try:
+    from .pools import PoolConfig, ThreadingManager, ThreadingTier
+except ImportError:
+    PoolConfig = ThreadingManager = ThreadingTier = None  # type: ignore[assignment,misc]
+try:
+    from .runner import ParallelTestRunner, TestResult, TestSuiteResult, run_tests_parallel
+except ImportError:
+    ParallelTestRunner = TestResult = TestSuiteResult = run_tests_parallel = None  # type: ignore[assignment,misc]
+try:
+    from .scheduler import ParallelScheduler, SchedulerStats, Task, TaskPriority, TaskStatus
+except ImportError:
+    ParallelScheduler = SchedulerStats = Task = TaskPriority = TaskStatus = None  # type: ignore[assignment,misc]
 
 # Legacy names that were removed from the package layout.
 # Keep placeholders for compatibility with old imports.

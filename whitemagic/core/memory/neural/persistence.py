@@ -5,6 +5,8 @@ Created: December 2, 2025 (Hanuman Tuesday).
 import json
 from pathlib import Path
 
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
+
 from whitemagic.core.memory.neural.neural_memory import NeuralMemory
 
 
@@ -23,13 +25,13 @@ class NeuralMemoryStore:
         """Load memory index."""
         if self.index_path.exists():
             try:
-                self._index = json.loads(self.index_path.read_text())
-            except json.JSONDecodeError:
+                self._index = _json_loads(self.index_path.read_text())
+            except (json.JSONDecodeError, ValueError):
                 self._index = {}
 
     def _save_index(self) -> None:
         """Save memory index."""
-        self.index_path.write_text(json.dumps(self._index, indent=2))
+        self.index_path.write_text(_json_dumps(self._index, indent=2))
 
     def save(self, memory: NeuralMemory) -> str:
         """Save a neural memory to disk."""
@@ -37,7 +39,7 @@ class NeuralMemoryStore:
         filepath = self.base_path / filename
 
         data = memory.to_dict()
-        filepath.write_text(json.dumps(data, indent=2, default=str))
+        filepath.write_text(_json_dumps(data, indent=2, default=str))
 
         self._index[memory.id] = filename
         self._save_index()
@@ -55,9 +57,9 @@ class NeuralMemoryStore:
             return None
 
         try:
-            data = json.loads(filepath.read_text())
+            data = _json_loads(filepath.read_text())
             return NeuralMemory.from_dict(data)
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, ValueError):
             return None
 
     def load_all(self) -> list[NeuralMemory]:

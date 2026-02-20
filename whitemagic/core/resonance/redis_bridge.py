@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import json
 import logging
 import os
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from typing import Any
 
@@ -129,7 +130,7 @@ class RedisBridge:
     def _process_message(self, raw_data: str) -> None:
         """Parse Redis message and emit to internal bus (inbound)."""
         try:
-            payload = json.loads(raw_data)
+            payload = _json_loads(raw_data)
 
             # Skip messages we published ourselves (echo prevention)
             if payload.get("_bridge_origin") == self._BRIDGE_SOURCE_TAG:
@@ -181,7 +182,7 @@ class RedisBridge:
             except Exception:
                 pass
 
-        except json.JSONDecodeError:
+        except ValueError:
             logger.warning(f"Received non-JSON message on Redis: {raw_data}")
         except Exception as e:
             logger.error(f"Error processing Redis message: {e}")
@@ -196,7 +197,7 @@ class RedisBridge:
         if isinstance(event.data, dict) and event.data.get("_inbound"):
             return
         try:
-            payload = json.dumps({
+            payload = _json_dumps({
                 "event_type": event.event_type.value,
                 "source": event.source,
                 "data": event.data,

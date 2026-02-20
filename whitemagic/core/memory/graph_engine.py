@@ -146,11 +146,71 @@ class GraphEngine:
     # Graph construction
     # ------------------------------------------------------------------
 
-    def rebuild(self, sample_limit: int = 50000) -> dict[str, Any]:
+    # Noise memory prefixes/patterns to exclude from graph analysis
+    NOISE_TITLE_PREFIXES = (
+        "bench_t1", "_bench", "Benchmark test memory",
+        "Test Memory", "Test Artifact",
+    )
+    NOISE_TITLE_SUBSTRINGS = (
+        "CHANGELOG", "README.md", "release notes",
+        "BSD License", "MIT License", "Apache License",
+        "node_modules", "__pycache__",
+    )
+
+    def _build_noise_exclusion_set(self, conn: Any) -> set[str]:
+        """Build a set of memory IDs that should be excluded from graph analysis.
+
+        Excludes: benchmark junk, external library noise, very short memories.
+        """
+        noise_ids: set[str] = set()
+        try:
+            # Exclude quarantined memories
+            rows = conn.execute(
+                "SELECT id FROM memories WHERE memory_type = 'quarantined'",
+            ).fetchall()
+            noise_ids.update(r[0] if isinstance(r, tuple) else r["id"] for r in rows)
+
+            # Exclude by title patterns
+            for prefix in self.NOISE_TITLE_PREFIXES:
+                rows = conn.execute(
+                    "SELECT id FROM memories WHERE title LIKE ?",
+                    (f"{prefix}%",),
+                ).fetchall()
+                noise_ids.update(r[0] if isinstance(r, tuple) else r["id"] for r in rows)
+
+            for substr in self.NOISE_TITLE_SUBSTRINGS:
+                rows = conn.execute(
+                    "SELECT id FROM memories WHERE title LIKE ?",
+                    (f"%{substr}%",),
+                ).fetchall()
+                noise_ids.update(r[0] if isinstance(r, tuple) else r["id"] for r in rows)
+
+            # Exclude very short memories (< 50 chars content, not protected)
+            rows = conn.execute(
+                """SELECT id FROM memories
+                   WHERE LENGTH(content) < 50 AND is_protected = 0""",
+            ).fetchall()
+            noise_ids.update(r[0] if isinstance(r, tuple) else r["id"] for r in rows)
+
+            # Exclude memories tagged as _bench
+            rows = conn.execute(
+                "SELECT memory_id FROM tags WHERE tag LIKE '%bench%'",
+            ).fetchall()
+            noise_ids.update(r[0] if isinstance(r, tuple) else r["memory_id"] for r in rows)
+
+        except Exception as e:
+            logger.debug(f"Noise exclusion set build failed: {e}")
+
+        if noise_ids:
+            logger.info(f"Graph quality filter: excluding {len(noise_ids)} noise memories")
+        return noise_ids
+
+    def rebuild(self, sample_limit: int = 50000, quality_filter: bool = True) -> dict[str, Any]:
         """Build/rebuild the graph from association table.
 
         Args:
             sample_limit: Max edges to load (for performance on 19M associations).
+            quality_filter: If True, exclude noise memories from the graph.
 
         Returns:
             Build stats dict.
@@ -170,10 +230,16 @@ class GraphEngine:
             return {"status": "error", "message": str(e)}
 
         G = nx.DiGraph()
+        noise_ids: set[str] = set()
 
         try:
             with pool.connection() as conn:
                 conn.row_factory = sqlite3.Row
+
+                # Build noise exclusion set
+                if quality_filter:
+                    noise_ids = self._build_noise_exclusion_set(conn)
+
                 # Load edges with v14 schema columns
                 rows = conn.execute(
                     """SELECT source_id, target_id, strength,
@@ -187,10 +253,15 @@ class GraphEngine:
                     (sample_limit,),
                 ).fetchall()
 
+                skipped = 0
                 for row in rows:
+                    src, tgt = row["source_id"], row["target_id"]
+                    if noise_ids and (src in noise_ids or tgt in noise_ids):
+                        skipped += 1
+                        continue
                     G.add_edge(
-                        row["source_id"],
-                        row["target_id"],
+                        src,
+                        tgt,
                         weight=row["strength"],
                         direction=row["direction"],
                         relation_type=row["relation_type"],
@@ -233,6 +304,7 @@ class GraphEngine:
             "status": "success",
             "nodes": G.number_of_nodes(),
             "edges": G.number_of_edges(),
+            "noise_filtered": len(noise_ids),
             "duration_ms": round(elapsed, 1),
             "rebuilds": self._total_rebuilds,
         }

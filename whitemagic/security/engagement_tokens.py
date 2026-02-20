@@ -26,10 +26,11 @@ from __future__ import annotations
 
 import hashlib
 import hmac
-import json
 import logging
 import secrets
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -108,10 +109,10 @@ class EngagementToken:
 def _compute_token_hash(token_id: str, scope: list[str], tools: list[str],
                          issuer: str, expires_at: float) -> str:
     """Compute HMAC-SHA256 of token fields for tamper detection."""
-    payload = json.dumps({
+    payload = _json_dumps({
         "id": token_id, "scope": sorted(scope), "tools": sorted(tools),
         "issuer": issuer, "expires_at": expires_at,
-    }, sort_keys=True, separators=(",", ":"))
+    }, sort_keys=True)
     return hmac.new(_get_hmac_key(), payload.encode(), hashlib.sha256).hexdigest()
 
 
@@ -340,7 +341,7 @@ class EngagementTokenManager:
                     }
                     for tid, t in self._tokens.items()
                 }
-            path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+            path.write_text(_json_dumps(data, indent=2), encoding="utf-8")
         except Exception as e:
             logger.debug("Engagement token persist failed: %s", e)
 
@@ -351,7 +352,7 @@ class EngagementTokenManager:
         if not path.exists():
             return
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
+            data = _json_loads(path.read_text(encoding="utf-8"))
             for tid, td in data.items():
                 self._tokens[tid] = EngagementToken(
                     token_id=tid,

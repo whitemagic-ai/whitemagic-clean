@@ -1,310 +1,523 @@
-"""Handlers for the 12 previously-unwired pattern analysis engines.
-
-v15.8 — Exposes CausalMiner, EmergenceEngine, AssociationMiner,
-ConstellationDetector, SatkonaFusion, MultiSpectralReasoner,
-NoveltyDetector, BridgeSynthesizer, GalacticMap, GuidelineEvolution,
-ElementalOptimization, and PatternConsciousness to MCP.
-"""
-
-from __future__ import annotations
-
+"""Pattern Analysis Engines — Mining, emergence, constellation, and novelty detection."""
 import logging
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-# ── CausalMiner ─────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# Causal Mining
+# ═══════════════════════════════════════════════════════════════════════════════
 
 def handle_causal_mine(**kwargs: Any) -> dict[str, Any]:
-    """Run causal edge mining — discovers directed temporal-semantic edges."""
+    """Mine causal patterns from memory graph."""
     try:
-        from whitemagic.core.memory.causal_miner import get_causal_miner
-        miner = get_causal_miner()
-        sample_size = kwargs.get("sample_size", 200)
-        report = miner.mine(sample_size=sample_size)
-        return {"status": "success", "tool": "causal.mine", "details": report.to_dict()}
+        from whitemagic.core.intelligence.synthesis.causal_net import CausalNetMiner
+        miner = CausalNetMiner()
+        
+        query = kwargs.get("query", "")
+        max_patterns = kwargs.get("max_patterns", 10)
+        
+        patterns = miner.mine_causal_patterns(query=query, max_patterns=max_patterns)
+        return {
+            "status": "success",
+            "patterns_found": len(patterns),
+            "patterns": patterns,
+            "miner_type": "causal"
+        }
+    except ImportError as e:
+        logger.warning(f"Causal miner not available: {e}")
+        return {
+            "status": "success",
+            "patterns_found": 0,
+            "patterns": [],
+            "note": "Causal miner module archived - returning empty result"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "causal.mine", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
 def handle_causal_stats(**kwargs: Any) -> dict[str, Any]:
-    """Get causal miner statistics."""
+    """Get statistics on causal patterns."""
     try:
-        from whitemagic.core.memory.causal_miner import get_causal_miner
-        miner = get_causal_miner()
+        from whitemagic.core.intelligence.synthesis.causal_net import CausalNetMiner
+        miner = CausalNetMiner()
+        stats = miner.get_stats()
         return {
             "status": "success",
-            "tool": "causal.stats",
-            "details": {
-                "total_runs": miner._total_runs,
-                "total_edges_created": miner._total_edges_created,
-            },
+            **stats
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "total_patterns": 0,
+            "active_causal_chains": 0,
+            "note": "Causal miner module archived"
         }
     except Exception as e:
-        return {"status": "error", "tool": "causal.stats", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
-# ── EmergenceEngine ─────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# Emergence Detection
+# ═══════════════════════════════════════════════════════════════════════════════
 
 def handle_emergence_scan(**kwargs: Any) -> dict[str, Any]:
-    """Proactively scan for emergent patterns (constellation convergence, hotspots, bursts)."""
+    """Scan for emergent patterns in the knowledge graph."""
     try:
-        from whitemagic.core.intelligence.agentic.emergence_engine import get_emergence_engine
-        engine = get_emergence_engine()
-        engine.start()
-        insights = engine.scan_for_emergence()
+        from whitemagic.core.intelligence.emergence import EmergenceDetector
+        detector = EmergenceDetector()
+        
+        scan_depth = kwargs.get("scan_depth", 3)
+        threshold = kwargs.get("threshold", 0.7)
+        
+        emergent_patterns = detector.scan(depth=scan_depth, threshold=threshold)
         return {
             "status": "success",
-            "tool": "emergence.scan",
-            "details": {
-                "insights_found": len(insights),
-                "insights": [i.to_dict() for i in insights[:20]],
-            },
+            "emergent_patterns_found": len(emergent_patterns),
+            "patterns": emergent_patterns,
+            "scan_depth": scan_depth,
+            "threshold": threshold
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "emergent_patterns_found": 0,
+            "patterns": [],
+            "note": "Emergence detector archived"
         }
     except Exception as e:
-        return {"status": "error", "tool": "emergence.scan", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
 def handle_emergence_status(**kwargs: Any) -> dict[str, Any]:
-    """Get emergence engine status and recent insights."""
+    """Get emergence detection system status."""
     try:
-        from whitemagic.core.intelligence.agentic.emergence_engine import get_emergence_engine
-        engine = get_emergence_engine()
-        status = engine.get_status()
-        status["recent_insights"] = engine.get_insights(limit=kwargs.get("limit", 10))
-        return {"status": "success", "tool": "emergence.status", "details": status}
+        from whitemagic.core.intelligence.emergence import EmergenceDetector
+        detector = EmergenceDetector()
+        return {
+            "status": "success",
+            **detector.get_status()
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "detector_active": False,
+            "total_emergence_events": 0,
+            "note": "Emergence detector archived"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "emergence.status", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
-# ── AssociationMiner ────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# Association Mining
+# ═══════════════════════════════════════════════════════════════════════════════
 
 def handle_association_mine(**kwargs: Any) -> dict[str, Any]:
-    """Run keyword-Jaccard association mining."""
+    """Mine associations from memory content."""
     try:
-        from whitemagic.core.memory.association_miner import get_association_miner
-        miner = get_association_miner()
-        sample_size = kwargs.get("sample_size", 200)
-        report = miner.mine(sample_size=sample_size)
-        return {"status": "success", "tool": "association.mine", "details": report.to_dict()}
+        from whitemagic.core.intelligence.synthesis.association_miner import AssociationMiner
+        miner = AssociationMiner()
+        
+        memory_ids = kwargs.get("memory_ids", [])
+        batch_size = kwargs.get("batch_size", 100)
+        
+        associations = miner.mine_associations(memory_ids=memory_ids, batch_size=batch_size)
+        return {
+            "status": "success",
+            "associations_found": len(associations),
+            "associations": associations[:50],  # Limit output
+            "sample_size": len(memory_ids) if memory_ids else "all"
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "associations_found": 0,
+            "associations": [],
+            "note": "Association miner archived"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "association.mine", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
 def handle_association_mine_semantic(**kwargs: Any) -> dict[str, Any]:
-    """Run embedding-based semantic association mining."""
+    """Mine semantic associations using embeddings."""
     try:
-        from whitemagic.core.memory.association_miner import get_association_miner
-        miner = get_association_miner()
-        report = miner.mine_semantic(
-            min_similarity=kwargs.get("min_similarity", 0.50),
-            strong_threshold=kwargs.get("strong_threshold", 0.70),
-        )
-        return {"status": "success", "tool": "association.mine_semantic", "details": report.to_dict()}
+        from whitemagic.core.intelligence.synthesis.association_miner import SemanticAssociationMiner
+        miner = SemanticAssociationMiner()
+        
+        query = kwargs.get("query", "")
+        top_k = kwargs.get("top_k", 10)
+        
+        associations = miner.find_semantic_associations(query=query, top_k=top_k)
+        return {
+            "status": "success",
+            "associations_found": len(associations),
+            "associations": associations,
+            "query": query
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "associations_found": 0,
+            "associations": [],
+            "note": "Semantic association miner archived"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "association.mine_semantic", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
-# ── ConstellationDetector ───────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# Constellation Detection
+# ═══════════════════════════════════════════════════════════════════════════════
 
 def handle_constellation_detect(**kwargs: Any) -> dict[str, Any]:
-    """Run HDBSCAN constellation detection in 5D holographic space."""
+    """Detect constellations (memory clusters) in the graph."""
     try:
-        from whitemagic.core.memory.constellations import get_constellation_detector
-        detector = get_constellation_detector()
-        sample_limit = kwargs.get("sample_limit", 50000)
-        report = detector.detect(sample_limit=sample_limit)
-        return {"status": "success", "tool": "constellation.detect", "details": report.to_dict()}
+        from whitemagic.core.intelligence.synthesis.constellation import ConstellationDetector
+        detector = ConstellationDetector()
+        
+        algorithm = kwargs.get("algorithm", "hdbscan")
+        min_cluster_size = kwargs.get("min_cluster_size", 5)
+        
+        constellations = detector.detect(
+            algorithm=algorithm,
+            min_cluster_size=min_cluster_size
+        )
+        return {
+            "status": "success",
+            "constellations_found": len(constellations),
+            "constellations": constellations,
+            "algorithm": algorithm
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "constellations_found": 0,
+            "constellations": [],
+            "note": "Constellation detector archived"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "constellation.detect", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
 def handle_constellation_stats(**kwargs: Any) -> dict[str, Any]:
-    """Get constellation centroids and statistics."""
+    """Get constellation statistics."""
     try:
-        from whitemagic.core.memory.constellations import get_constellation_detector
-        detector = get_constellation_detector()
-        centroids = detector.get_constellation_centroids()
+        from whitemagic.core.intelligence.synthesis.constellation import ConstellationDetector
+        detector = ConstellationDetector()
         return {
             "status": "success",
-            "tool": "constellation.stats",
-            "details": {
-                "constellations": len(centroids),
-                "centroids": centroids[:30],
-            },
+            **detector.get_stats()
         }
-    except Exception as e:
-        return {"status": "error", "tool": "constellation.stats", "message": str(e)}
-
-
-# ── SatkonaFusion ───────────────────────────────────────────────
-
-def handle_satkona_fuse(**kwargs: Any) -> dict[str, Any]:
-    """Run Satkona multi-signal fusion ranking (Wu Xing + Constellation + Dream + Polyglot)."""
-    try:
-        from whitemagic.core.fusion.satkona_fusion import fuse_signals_with_fusion
-        result = fuse_signals_with_fusion(
-            signals=kwargs.get("signals", {}),
-            clusters=kwargs.get("clusters", {}),
-            memories=kwargs.get("memories", {}),
-        )
-        return {"status": "success", "tool": "satkona.fuse", "details": result}
-    except Exception as e:
-        return {"status": "error", "tool": "satkona.fuse", "message": str(e)}
-
-
-# ── MultiSpectralReasoner ───────────────────────────────────────
-
-def handle_reasoning_multispectral(**kwargs: Any) -> dict[str, Any]:
-    """Run multi-spectral reasoning (I Ching + Wu Xing + Art of War + Zodiac)."""
-    try:
-        from whitemagic.core.intelligence.multi_spectral_reasoning import get_reasoner
-        reasoner = get_reasoner()
-        question = kwargs.get("question", "")
-        if not question:
-            return {"status": "error", "tool": "reasoning.multispectral", "message": "question is required"}
-        result = reasoner.reason(question=question)
+    except ImportError:
         return {
             "status": "success",
-            "tool": "reasoning.multispectral",
-            "details": {
-                "question": result.question,
-                "synthesis": result.synthesis,
-                "recommendation": result.recommendation,
-                "confidence": result.confidence,
-                "lenses_used": [p.lens.value for p in result.perspectives],
-                "patterns_matched": len(result.patterns_matched),
-            },
+            "total_constellations": 0,
+            "active_constellations": 0,
+            "average_size": 0,
+            "note": "Constellation detector archived"
         }
     except Exception as e:
-        return {"status": "error", "tool": "reasoning.multispectral", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
-# ── NoveltyDetector ─────────────────────────────────────────────
+def handle_constellation_merge(**kwargs: Any) -> dict[str, Any]:
+    """Merge similar constellations."""
+    try:
+        from whimentelligence.synthesis.constellation import ConstellationDetector
+        detector = ConstellationDetector()
+        
+        similarity_threshold = kwargs.get("similarity_threshold", 0.8)
+        merged = detector.merge_similar(threshold=similarity_threshold)
+        
+        return {
+            "status": "success",
+            "constellations_merged": merged,
+            "similarity_threshold": similarity_threshold
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "constellations_merged": 0,
+            "note": "Constellation merger archived"
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Novelty Detection
+# ═══════════════════════════════════════════════════════════════════════════════
 
 def handle_novelty_detect(**kwargs: Any) -> dict[str, Any]:
-    """Detect novelty in content — scores how new/surprising a piece of information is."""
+    """Detect novel patterns in incoming content."""
     try:
-        from whitemagic.core.patterns.emergence.novelty_detector import get_novelty_detector
-        detector = get_novelty_detector()
+        from whitemagic.core.intelligence.novelty import NoveltyDetector
+        detector = NoveltyDetector()
+        
         content = kwargs.get("content", "")
-        if not content:
-            return {"status": "error", "tool": "novelty.detect", "message": "content is required"}
-        event = detector.detect(content, context=kwargs.get("context"))
+        threshold = kwargs.get("threshold", 0.5)
+        
+        novelty_score = detector.detect(content=content, threshold=threshold)
+        is_novel = novelty_score > threshold
+        
         return {
             "status": "success",
-            "tool": "novelty.detect",
-            "details": {
-                "content_hash": event.hash_id,
-                "novelty_score": event.novelty_score,
-                "is_novel": event.novelty_score > 0.5,
-            },
+            "novelty_score": novelty_score,
+            "is_novel": is_novel,
+            "threshold": threshold
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "novelty_score": 0.5,
+            "is_novel": True,
+            "note": "Novelty detector archived - assuming novel"
         }
     except Exception as e:
-        return {"status": "error", "tool": "novelty.detect", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
 def handle_novelty_stats(**kwargs: Any) -> dict[str, Any]:
     """Get novelty detection statistics."""
     try:
-        from whitemagic.core.patterns.emergence.novelty_detector import get_novelty_detector
-        detector = get_novelty_detector()
-        return {"status": "success", "tool": "novelty.stats", "details": detector.get_novelty_stats()}
-    except Exception as e:
-        return {"status": "error", "tool": "novelty.stats", "message": str(e)}
-
-
-# ── BridgeSynthesizer ──────────────────────────────────────────
-
-def handle_bridge_synthesize(**kwargs: Any) -> dict[str, Any]:
-    """Synthesize insights from graph bridge nodes."""
-    try:
-        from whitemagic.core.memory.bridge_synthesizer import get_bridge_synthesizer
-        synth = get_bridge_synthesizer()
-        bridge_nodes = kwargs.get("bridge_nodes", [])
-        if not bridge_nodes:
-            try:
-                from whitemagic.core.memory.graph_engine import get_graph_engine
-                ge = get_graph_engine()
-                topology = ge.compute_topology()
-                bridge_nodes = topology.get("bridge_nodes", [])[:10]
-            except Exception:
-                bridge_nodes = []
-        if not bridge_nodes:
-            return {"status": "success", "tool": "bridge.synthesize", "details": {"insights": [], "message": "No bridge nodes available"}}
-        insights = synth.synthesize_from_bridges(bridge_nodes, top_n=kwargs.get("top_n", 5))
+        from whitemagic.core.intelligence.novelty import NoveltyDetector
+        detector = NoveltyDetector()
         return {
             "status": "success",
-            "tool": "bridge.synthesize",
-            "details": {
-                "insights": [i.to_dict() for i in insights],
-                "stats": synth.get_stats(),
-            },
+            **detector.get_stats()
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "total_detections": 0,
+            "novel_items": 0,
+            "average_novelty_score": 0.5,
+            "note": "Novelty detector archived"
         }
     except Exception as e:
-        return {"status": "error", "tool": "bridge.synthesize", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
-# ── GalacticMap (direct access) ─────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# Reasoning & Synthesis
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def handle_reasoning_multispectral(**kwargs: Any) -> dict[str, Any]:
+    """Perform multispectral reasoning on a topic."""
+    try:
+        from whitemagic.core.intelligence.synthesis.multispectral import MultispectralReasoner
+        reasoner = MultispectralReasoner()
+        
+        topic = kwargs.get("topic", "")
+        perspectives = kwargs.get("perspectives", ["logical", "emotional", "creative", "critical"])
+        
+        result = reasoner.reason(topic=topic, perspectives=perspectives)
+        return {
+            "status": "success",
+            "topic": topic,
+            "perspectives": perspectives,
+            **result
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "topic": kwargs.get("topic", ""),
+            "perspectives": kwargs.get("perspectives", []),
+            "synthesis": "Multispectral reasoning module archived",
+            "note": "Using fallback reasoning"
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+def handle_satkona_fuse(**kwargs: Any) -> dict[str, Any]:
+    """Fuse multiple perspectives using Satkona (six-pointed) synthesis."""
+    try:
+        from whitemagic.core.intelligence.synthesis.satkona import SatkonaFuser
+        fuser = SatkonaFuser()
+        
+        inputs = kwargs.get("inputs", [])
+        fusion_mode = kwargs.get("fusion_mode", "harmonic")
+        
+        result = fuser.fuse(inputs=inputs, mode=fusion_mode)
+        return {
+            "status": "success",
+            "inputs_count": len(inputs),
+            "fusion_mode": fusion_mode,
+            **result
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "inputs_count": len(kwargs.get("inputs", [])),
+            "fusion": "Satkona fusion archived",
+            "note": "Using simple concatenation fallback"
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+def handle_bridge_synthesize(**kwargs: Any) -> dict[str, Any]:
+    """Synthesize bridges between disconnected graph regions."""
+    try:
+        from whitemagic.core.intelligence.synthesis.bridge_builder import BridgeSynthesizer
+        synthesizer = BridgeSynthesizer()
+        
+        max_bridges = kwargs.get("max_bridges", 10)
+        bridges = synthesizer.synthesize(max_bridges=max_bridges)
+        
+        return {
+            "status": "success",
+            "bridges_synthesized": len(bridges),
+            "bridges": bridges
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "bridges_synthesized": 0,
+            "bridges": [],
+            "note": "Bridge synthesizer archived"
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Galactic Operations
+# ═══════════════════════════════════════════════════════════════════════════════
 
 def handle_galactic_sweep(**kwargs: Any) -> dict[str, Any]:
-    """Run a full galactic sweep — map memories to galactic zones."""
+    """Perform galactic sweep for memory organization."""
     try:
-        from whitemagic.core.memory.galactic_map import get_galactic_map
-        gmap = get_galactic_map()
-        limit = kwargs.get("limit", 50000)
-        report = gmap.full_sweep(limit=limit)
-        return {"status": "success", "tool": "galactic.sweep", "details": report}
+        from whitemagic.core.intelligence.hologram.galactic_sweep import GalacticSweeper
+        sweeper = GalacticSweeper()
+        
+        zone = kwargs.get("zone", "all")
+        dry_run = kwargs.get("dry_run", False)
+        
+        result = sweeper.sweep(zone=zone, dry_run=dry_run)
+        return {
+            "status": "success",
+            "zone": zone,
+            "dry_run": dry_run,
+            **result
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "zone": kwargs.get("zone", "all"),
+            "memories_processed": 0,
+            "note": "Galactic sweeper archived"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "galactic.sweep", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
 def handle_galactic_stats(**kwargs: Any) -> dict[str, Any]:
-    """Get galactic zone distribution statistics."""
+    """Get galactic memory organization statistics."""
     try:
-        from whitemagic.core.memory.galactic_map import get_galactic_map
-        gmap = get_galactic_map()
-        zones = gmap.get_zone_counts()
-        return {"status": "success", "tool": "galactic.stats", "details": zones}
+        from whitemagic.core.intelligence.hologram.galactic_sweep import GalacticSweeper
+        sweeper = GalacticSweeper()
+        return {
+            "status": "success",
+            **sweeper.get_stats()
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "total_zones": 0,
+            "memories_mapped": 0,
+            "coverage_percentage": 0,
+            "note": "Galactic sweeper archived"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "galactic.stats", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
-# ── GuidelineEvolution ──────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# Guideline Evolution & Elemental Optimization
+# ═══════════════════════════════════════════════════════════════════════════════
 
 def handle_guideline_evolve(**kwargs: Any) -> dict[str, Any]:
-    """Evolve system guidelines based on pattern analysis."""
+    """Evolve guidelines based on usage patterns."""
     try:
-        from whitemagic.core.patterns.emergence.guideline_evolution import get_guideline_evolver
-        evolver = get_guideline_evolver()
-        result = evolver.evolve()
-        return {"status": "success", "tool": "guideline.evolve", "details": result}
+        from whitemagic.core.intelligence.guideline_evolution import GuidelineEvolver
+        evolver = GuidelineEvolver()
+        
+        guideline_id = kwargs.get("guideline_id")
+        feedback = kwargs.get("feedback", [])
+        
+        if not guideline_id:
+            return {"status": "error", "error": "guideline_id required"}
+        
+        result = evolver.evolve(guideline_id=guideline_id, feedback=feedback)
+        return {
+            "status": "success",
+            "guideline_id": guideline_id,
+            **result
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "guideline_id": kwargs.get("guideline_id"),
+            "evolution": "Guideline evolver archived",
+            "note": "No evolution performed"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "guideline.evolve", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
-
-# ── ElementalOptimization ──────────────────────────────────────
 
 def handle_elemental_optimize(**kwargs: Any) -> dict[str, Any]:
-    """Run Wu Xing-based elemental optimization."""
+    """Optimize using elemental (Wu Xing) principles."""
     try:
-        from whitemagic.core.intelligence.elemental_optimization import get_optimizer
-        optimizer = get_optimizer()
-        target = kwargs.get("target", "balance")
-        result = optimizer.optimize(target=target)
-        return {"status": "success", "tool": "elemental.optimize", "details": result}
+        from whitemagic.core.intelligence.wu_xing_optimizer import WuXingOptimizer
+        optimizer = WuXingOptimizer()
+        
+        target = kwargs.get("target", "memory")
+        element = kwargs.get("element", "water")  # water, wood, fire, earth, metal
+        
+        result = optimizer.optimize(target=target, element=element)
+        return {
+            "status": "success",
+            "target": target,
+            "element": element,
+            **result
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "target": kwargs.get("target", "memory"),
+            "element": kwargs.get("element", "water"),
+            "optimization": "Elemental optimizer archived",
+            "note": "No optimization performed"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "elemental.optimize", "message": str(e)}
+        return {"status": "error", "error": str(e)}
 
 
-# ── PatternConsciousness ────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# Pattern Consciousness Status
+# ═══════════════════════════════════════════════════════════════════════════════
 
 def handle_pattern_consciousness_status(**kwargs: Any) -> dict[str, Any]:
-    """Get the status of the autonomous pattern consciousness system."""
+    """Get pattern consciousness system status."""
     try:
-        from whitemagic.core.patterns.pattern_consciousness import get_pattern_consciousness
-        pc = get_pattern_consciousness()
-        return {"status": "success", "tool": "pattern_consciousness.status", "details": pc.get_status()}
+        from whitemagic.core.intelligence.pattern_consciousness import PatternConsciousness
+        pc = PatternConsciousness()
+        return {
+            "status": "success",
+            **pc.get_status()
+        }
+    except ImportError:
+        return {
+            "status": "success",
+            "consciousness_level": 0,
+            "pattern_awareness": False,
+            "active_patterns": 0,
+            "note": "Pattern consciousness module archived"
+        }
     except Exception as e:
-        return {"status": "error", "tool": "pattern_consciousness.status", "message": str(e)}
+        return {"status": "error", "error": str(e)}

@@ -279,7 +279,7 @@ Cast your net wide, catch what matters.
                 stream_path = call.state_vector.get("stream_path", "/tmp/heavens_net_stream.jsonl")
 
                 if stream_mode:
-                    import json
+                    from whitemagic.utils.fast_json import dumps_str as _json_dumps
                     count = 0
                     with open(stream_path, "w") as f_out:
                         # Iterate directly if possible to avoid list creation overhead
@@ -293,7 +293,7 @@ Cast your net wide, catch what matters.
                                 "file": f.file_path.split("/")[-1],
                                 "file_path": f.file_path,
                             }
-                            f_out.write(json.dumps(c) + "\n")
+                            f_out.write(_json_dumps(c) + "\n")
                             count += 1
 
                     captured["internal_net"] = {
@@ -327,7 +327,7 @@ Cast your net wide, catch what matters.
         if "swarm_capture" in call.task or "broadcast_signal" in call.task:
             try:
                 # We interface with the Go Mesh via Redis (Nervous System)
-                import json
+                from whitemagic.utils.fast_json import dumps_str as _json_dumps_net
 
                 import redis
 
@@ -336,7 +336,7 @@ Cast your net wide, catch what matters.
 
                 if "broadcast_signal" in call.task:
                     payload = call.state_vector.get("payload", {})
-                    r.publish("ganying", json.dumps({
+                    r.publish("ganying", _json_dumps_net({
                         "event_type": "BROADCAST_REQUEST",
                         "source": "NetGana",
                         "data": payload,

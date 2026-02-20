@@ -27,9 +27,10 @@ Usage:
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
@@ -308,7 +309,7 @@ class KarmaLedger:
             # v14.3: Auto-rotate when file exceeds 10MB
             self._maybe_rotate(ledger_file)
             with open(ledger_file, "a", encoding="utf-8") as f:
-                f.write(json.dumps(entry.to_dict()) + "\n")
+                f.write(_json_dumps(entry.to_dict()) + "\n")
         except Exception as e:
             logger.debug(f"Karma ledger persist failed: {e}")
 
@@ -393,7 +394,7 @@ class KarmaLedger:
                 if not line.strip():
                     continue
                 try:
-                    data = json.loads(line)
+                    data = _json_loads(line)
                     entry = KarmaEntry(**data)
                     self._entries.append(entry)
                     self._total_debt += entry.debt_delta
@@ -401,7 +402,7 @@ class KarmaLedger:
                     self._tool_calls[entry.tool] += 1
                     if entry.mismatch:
                         self._tool_mismatches[entry.tool] += 1
-                except (json.JSONDecodeError, TypeError):
+                except (ValueError, TypeError):
                     continue
             logger.info(f"Karma ledger: loaded {len(self._entries)} entries, debt={self._total_debt:.1f}")
         except Exception as e:

@@ -33,6 +33,7 @@ from __future__ import annotations
 import logging
 import math
 import re
+from whitemagic.utils.fast_regex import compile as re_compile
 import threading
 import time
 from collections import Counter
@@ -47,13 +48,13 @@ logger = logging.getLogger(__name__)
 
 # Concrete indicators (lower abstraction)
 _CONCRETE_PATTERNS: list[re.Pattern[str]] = [
-    re.compile(r"\b\d{4}[-/]\d{2}[-/]\d{2}\b"),        # dates
-    re.compile(r"\b\d+\.\d+\.\d+\b"),                    # versions
-    re.compile(r"\b(?:https?://|/[\w/]+\.[\w]+)\b"),      # URLs/paths
-    re.compile(r"\b[A-Z][a-z]+(?:[A-Z][a-z]+)+\b"),      # CamelCase identifiers
-    re.compile(r"\b\w+\.(py|rs|zig|go|ts|js|hs|ex)\b"),  # file extensions
-    re.compile(r"\b0x[0-9a-fA-F]+\b"),                    # hex literals
-    re.compile(r"\b\d{3,}\b"),                            # large numbers
+    re_compile(r"\b\d{4}[-/]\d{2}[-/]\d{2}\b"),        # dates
+    re_compile(r"\b\d+\.\d+\.\d+\b"),                    # versions
+    re_compile(r"\b(?:https?://|/[\w/]+\.[\w]+)\b"),      # URLs/paths
+    re_compile(r"\b[A-Z][a-z]+(?:[A-Z][a-z]+)+\b"),      # CamelCase identifiers
+    re_compile(r"\b\w+\.(py|rs|zig|go|ts|js|hs|ex)\b"),  # file extensions
+    re_compile(r"\b0x[0-9a-fA-F]+\b"),                    # hex literals
+    re_compile(r"\b\d{3,}\b"),                            # large numbers
 ]
 
 # Abstract indicators (higher abstraction)

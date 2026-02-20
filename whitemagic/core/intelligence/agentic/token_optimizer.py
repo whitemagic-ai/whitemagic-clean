@@ -17,8 +17,9 @@ v4.3.0 Enhancement: Unified Resource Tracking
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -130,7 +131,7 @@ class QueryCache:
     def _load(self) -> None:
         if self.cache_file.exists():
             try:
-                data = json.loads(self.cache_file.read_text())
+                data = _json_loads(self.cache_file.read_text())
                 for h, item in data.items():
                     self._cache[h] = CachedResult(
                         query_hash=h,
@@ -153,7 +154,7 @@ class QueryCache:
             }
             for h, c in self._cache.items()
         }
-        self.cache_file.write_text(json.dumps(data, indent=2))
+        self.cache_file.write_text(_json_dumps(data, indent=2))
 
     def get(self, query: str) -> CachedResult | None:
         h = self._hash_query(query)
@@ -265,13 +266,20 @@ class TokenOptimizer:
         """
         tokens_saved = 0
 
-        # 1. Check cache
-        cached = self.cache.get(query)
+        # 1. Check cache first
+        cache_key = hashlib.sha256(f"{query}:{context}".encode()).hexdigest()[:16]
+        cached = self.cache.get(cache_key)
         if cached:
-            self.budget.save(cached.tokens_saved)
-            return query, f"[CACHED] {cached.result}", cached.tokens_saved
+            return cached["query"], cached["context"], cached["saved"]
 
-        # 2. Try local reasoning first
+        # 2. Compress context if provided
+        optimized_context = context
+        if context:
+            compressed, saved = self.compressor.compress(context)
+            optimized_context = compressed
+            tokens_saved += saved
+
+        # 3. Try local reasoning first
         try:
             from whitemagic.core.intelligence.agentic.local_reasoning import (
                 reason_locally,
@@ -279,9 +287,13 @@ class TokenOptimizer:
             result = reason_locally(query)
             if result.insights and not result.ready_for_ai:
                 # Fully resolved locally!
-                self.cache.set(query, result.summary, result.total_tokens_saved)
-                self.budget.save(result.total_tokens_saved)
-                return query, f"[LOCAL] {result.summary}", result.total_tokens_saved
+                self.cache.set(cache_key, {
+                    "query": query,
+                    "context": optimized_context,
+                    "saved": tokens_saved + result.total_tokens_saved,
+                })
+                self.budget.save(tokens_saved + result.total_tokens_saved)
+                return query, f"[LOCAL] {result.summary}", tokens_saved + result.total_tokens_saved
             tokens_saved += result.total_tokens_saved
         except Exception as e:
             logger.info(f"DEBUG: reason_locally failed: {e}")

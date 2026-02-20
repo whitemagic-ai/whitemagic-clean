@@ -11,27 +11,21 @@ Phase 1 Integration (v5.0.0-alpha):
 - Integrated with holographic memory system
 """
 
-# Import new BaseGarden-integrated version from core.py
-from .beauty_appreciation import BeautyRecognition
-
-# Keep legacy imports for backward compatibility
-from .celebration import CelebrationPractice
-from .core import JoyGarden, get_joy_garden
-from .freedom_dance import FreedomDance
-from .laughter import LaughterSystem
-from .overflow_routing import OverflowRouter
-from .play_protocols import PlayProtocol
-
-__all__ = [
-    "CelebrationPractice",
-    "PlayProtocol",
-    "LaughterSystem",
-    "BeautyRecognition",
-    "FreedomDance",
-    "OverflowRouter",
-    "JoyGarden",
-    "get_joy_garden",
-]
+try:
+    from .beauty_appreciation import BeautyRecognition
+    from .celebration import CelebrationPractice
+    from .core import JoyGarden, get_joy_garden
+    from .freedom_dance import FreedomDance
+    from .laughter import LaughterSystem
+    from .overflow_routing import OverflowRouter
+    from .play_protocols import PlayProtocol
+    __all__ = [
+        "CelebrationPractice", "PlayProtocol", "LaughterSystem",
+        "BeautyRecognition", "FreedomDance", "OverflowRouter",
+        "JoyGarden", "get_joy_garden",
+    ]
+except ImportError:
+    __all__ = []
 
 from pathlib import Path
 

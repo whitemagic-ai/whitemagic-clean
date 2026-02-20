@@ -70,7 +70,10 @@ def _lazy_import(garden_name: str) -> types.ModuleType | None:
     if garden_name not in _module_cache:
         module_path = _GARDEN_MODULES.get(garden_name)
         if module_path:
-            _module_cache[garden_name] = importlib.import_module(module_path)
+            try:
+                _module_cache[garden_name] = importlib.import_module(module_path)
+            except (ImportError, AttributeError):
+                _module_cache[garden_name] = None
     return _module_cache.get(garden_name)
 
 
@@ -98,18 +101,25 @@ def __getattr__(name: str) -> Any:
     # Handle garden class access (e.g., JoyGarden)
     if name.endswith("Garden"):
         garden_name = name[:-6].lower()
-        cls = _get_garden_class(garden_name)
-        if cls:
-            globals()[name] = cls
-            return cls
+        if garden_name in _GARDEN_MODULES:
+            cls = _get_garden_class(garden_name)
+            if cls:
+                globals()[name] = cls
+                return cls
+            # Module archived/missing — return None so import * doesn't crash
+            globals()[name] = None
+            return None
 
     # Handle getter access (e.g., get_joy_garden)
     if name.startswith("get_") and name.endswith("_garden"):
         garden_name = name[4:-7]
-        getter = _get_garden_getter(garden_name)
-        if getter:
-            globals()[name] = getter
-            return getter
+        if garden_name in _GARDEN_MODULES:
+            getter = _get_garden_getter(garden_name)
+            if getter:
+                globals()[name] = getter
+                return getter
+            globals()[name] = None
+            return None
 
     raise AttributeError(f"module 'whitemagic.gardens' has no attribute '{name}'")
 

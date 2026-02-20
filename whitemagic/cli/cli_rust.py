@@ -3,9 +3,10 @@
 Fast search, compression, and memory consolidation via Rust.
 """
 
-import json
 import logging
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,7 @@ def rust_search(
         )
         if output_json:
             payload = [{"path": r[0], "score": r[1]} for r in results]
-            logger.info(json.dumps(payload, indent=2))
+            logger.info(_json_dumps(payload, indent=2))
         else:
             logger.info(f"🔍 Found {len(results)} results:")
             for path, score in results[:20]:
@@ -97,7 +98,7 @@ def rust_consolidate(
             "top_memories": result[4],
         }
         if output_json:
-            logger.info(json.dumps(payload, indent=2))
+            logger.info(_json_dumps(payload, indent=2))
         else:
             logger.info("🧠 Consolidation complete:")
             logger.info(f"   Short-term: {payload['short_term_count']}")

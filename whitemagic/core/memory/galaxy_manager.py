@@ -21,10 +21,11 @@ Usage via MCP:
 
 from __future__ import annotations
 
-import json
 import logging
 import threading
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -95,7 +96,7 @@ class GalaxyManager:
         """Load galaxy registry from disk."""
         if _REGISTRY_PATH.exists():
             try:
-                data = json.loads(_REGISTRY_PATH.read_text(encoding="utf-8"))
+                data = _json_loads(_REGISTRY_PATH.read_text(encoding="utf-8"))
                 for name, info_dict in data.get("galaxies", {}).items():
                     self._galaxies[name] = GalaxyInfo.from_dict(info_dict)
                 self._active_galaxy = data.get("active", "default")
@@ -121,7 +122,7 @@ class GalaxyManager:
         }
         try:
             _REGISTRY_PATH.parent.mkdir(parents=True, exist_ok=True)
-            _REGISTRY_PATH.write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
+            _REGISTRY_PATH.write_text(_json_dumps(data, indent=2, default=str), encoding="utf-8")
         except Exception as e:
             logger.error(f"Failed to save galaxy registry: {e}")
 

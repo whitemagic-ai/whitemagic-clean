@@ -23,6 +23,7 @@ Usage:
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import threading
 import time
@@ -285,6 +286,116 @@ class MemoryLifecycleManager:
     def is_attached(self) -> bool:
         return self._attached
 
+    # ------------------------------------------------------------------
+    # Async versions for PSR-013
+    # ------------------------------------------------------------------
+
+    async def run_sweep_async(self, persist: bool | None = None) -> dict[str, Any]:
+        """Async version of run_sweep for non-blocking lifecycle operations."""
+        if persist is None:
+            persist = self._config.persist_scores
+
+        start = time.perf_counter()
+        loop = asyncio.get_event_loop()
+
+        # Phase 1: Retention sweep (run in executor)
+        def run_retention_sweep():
+            from whitemagic.core.memory.mindful_forgetting import get_retention_engine
+            engine = get_retention_engine()
+            return engine.sweep(persist=persist)
+
+        try:
+            report = await loop.run_in_executor(None, run_retention_sweep)
+        except Exception as e:
+            logger.error(f"Lifecycle sweep failed: {e}")
+            return {"status": "error", "message": str(e)}
+
+        # Phase 2: Galactic rotation (async version)
+        galactic_report = None
+        try:
+            from whitemagic.core.memory.galactic_map import get_galactic_map
+            gmap = get_galactic_map()
+            galactic_report = await gmap.full_sweep_async(
+                batch_size=self._config.max_memories_per_sweep,
+            )
+        except Exception as e:
+            logger.debug(f"Galactic rotation skipped: {e}")
+
+        # Phase 3: Decay drift
+        drift_report = None
+        try:
+            from whitemagic.core.memory.galactic_map import get_galactic_map
+            gmap = get_galactic_map()
+            drift_report = await loop.run_in_executor(None, gmap.decay_drift)
+        except Exception as e:
+            logger.debug(f"Decay drift skipped: {e}")
+
+        # Phase 4: Association strength decay
+        assoc_decay_report = None
+        try:
+            from whitemagic.core.memory.unified import get_unified_memory
+            um = get_unified_memory()
+            assoc_decay_report = await loop.run_in_executor(None, um.backend.decay_associations)
+        except Exception as e:
+            logger.debug(f"Association decay skipped: {e}")
+
+        elapsed_ms = (time.perf_counter() - start) * 1000
+
+        with self._lock:
+            self._stats.total_sweeps += 1
+            self._stats.total_evaluated += report.total_evaluated
+            self._stats.total_retained += report.retained
+            self._stats.total_decayed += report.decayed
+            self._stats.total_archived += report.archived
+            self._stats.total_protected += report.protected
+            self._stats.last_sweep_duration_ms = elapsed_ms
+            self._stats.last_sweep_at = datetime.now().isoformat()
+
+        # Feed Harmony Vector energy dimension
+        self._update_harmony(report)
+
+        # Emit consolidation event
+        self._emit_event(report)
+
+        summary = {
+            "status": "success",
+            "sweep": {
+                "evaluated": report.total_evaluated,
+                "retained": report.retained,
+                "decayed": report.decayed,
+                "archived": report.archived,
+                "protected": report.protected,
+                "duration_ms": round(elapsed_ms, 1),
+            },
+            "lifetime": self._stats.to_dict(),
+        }
+
+        if galactic_report:
+            summary["galactic"] = {
+                "memories_rotated": galactic_report.memories_updated,
+                "zone_counts": galactic_report.zone_counts,
+                "avg_distance": round(galactic_report.avg_distance, 4),
+            }
+
+        if drift_report and drift_report.get("status") == "success":
+            summary["decay_drift"] = {
+                "memories_drifted": drift_report["memories_drifted"],
+                "drift_rate": drift_report["drift_rate"],
+            }
+
+        if assoc_decay_report and assoc_decay_report.get("status") == "success":
+            summary["association_decay"] = {
+                "evaluated": assoc_decay_report["associations_evaluated"],
+                "decayed": assoc_decay_report["associations_decayed"],
+                "pruned": assoc_decay_report["associations_pruned"],
+            }
+
+        logger.info(
+            f"🌌 Memory lifecycle async sweep: {report.total_evaluated} evaluated, "
+            f"{report.archived} rotated to edge, {elapsed_ms:.0f}ms",
+        )
+        return summary
+
 
 # ---------------------------------------------------------------------------
 # Singleton
@@ -298,6 +409,18 @@ def get_lifecycle_manager(
     config: LifecycleConfig | None = None,
 ) -> MemoryLifecycleManager:
     """Get the global Memory Lifecycle Manager."""
+    global _manager
+    if _manager is None:
+        with _manager_lock:
+            if _manager is None:
+                _manager = MemoryLifecycleManager(config=config)
+    return _manager
+
+
+async def get_lifecycle_manager_async(
+    config: LifecycleConfig | None = None,
+) -> MemoryLifecycleManager:
+    """Get the global Memory Lifecycle Manager asynchronously."""
     global _manager
     if _manager is None:
         with _manager_lock:

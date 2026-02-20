@@ -18,6 +18,7 @@ Usage:
 
 import logging
 import re
+from whitemagic.utils.fast_regex import compile as re_compile
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -34,32 +35,32 @@ MAX_LIST_LENGTH = 1000       # Max items in any list argument
 
 # Prompt injection patterns (case-insensitive)
 _INJECTION_PATTERNS: list[re.Pattern] = [
-    re.compile(r"ignore\s+(all\s+)?previous\s+instructions", re.IGNORECASE),
-    re.compile(r"you\s+are\s+now\s+(a|an)\s+", re.IGNORECASE),
-    re.compile(r"system\s*:\s*you\s+are", re.IGNORECASE),
-    re.compile(r"<\s*system\s*>", re.IGNORECASE),
-    re.compile(r"\{\{\s*system", re.IGNORECASE),
-    re.compile(r"ADMIN_OVERRIDE", re.IGNORECASE),
-    re.compile(r"sudo\s+", re.IGNORECASE),
+    re_compile(r"ignore\s+(all\s+)?previous\s+instructions", re.IGNORECASE),
+    re_compile(r"you\s+are\s+now\s+(a|an)\s+", re.IGNORECASE),
+    re_compile(r"system\s*:\s*you\s+are", re.IGNORECASE),
+    re_compile(r"<\s*system\s*>", re.IGNORECASE),
+    re_compile(r"\{\{\s*system", re.IGNORECASE),
+    re_compile(r"ADMIN_OVERRIDE", re.IGNORECASE),
+    re_compile(r"sudo\s+", re.IGNORECASE),
 ]
 
 # Path traversal patterns
 _PATH_TRAVERSAL_PATTERNS: list[re.Pattern] = [
-    re.compile(r"\.\./"),              # ../
-    re.compile(r"\.\.\\"),           # ..\
-    re.compile(r"/etc/(passwd|shadow|hosts)"),
-    re.compile(r"~root"),
-    re.compile(r"%2e%2e[/%5c]", re.IGNORECASE),  # URL-encoded ../
-    re.compile(r"\.\.%2f", re.IGNORECASE),        # ..%2f
-    re.compile(r"/proc/self/"),                    # Linux proc filesystem
+    re_compile(r"\.\./"),              # ../
+    re_compile(r"\.\.\\"),           # ..\
+    re_compile(r"/etc/(passwd|shadow|hosts)"),
+    re_compile(r"~root"),
+    re_compile(r"%2e%2e[/%5c]", re.IGNORECASE),  # URL-encoded ../
+    re_compile(r"\.\.%2f", re.IGNORECASE),        # ..%2f
+    re_compile(r"/proc/self/"),                    # Linux proc filesystem
 ]
 
 # Shell injection patterns (for string values that might hit shell)
 _SHELL_INJECTION_PATTERNS: list[re.Pattern] = [
-    re.compile(r";\s*(rm|cat|curl|wget|bash|sh|python)\s", re.IGNORECASE),
-    re.compile(r"\|\s*(bash|sh|python)", re.IGNORECASE),
-    re.compile(r"\$\(.*\)"),          # $(command)
-    re.compile(r"`.*`"),              # `command`
+    re_compile(r";\s*(rm|cat|curl|wget|bash|sh|python)\s", re.IGNORECASE),
+    re_compile(r"\|\s*(bash|sh|python)", re.IGNORECASE),
+    re_compile(r"\$\(.*\)"),          # $(command)
+    re_compile(r"`.*`"),              # `command`
 ]
 
 # Tools exempt from content scanning (their args are expected to contain code/text)
@@ -82,8 +83,8 @@ def sanitize_tool_args(tool_name: str, kwargs: dict[str, Any]) -> dict[str, Any]
     """
     # 0. Total payload size estimate
     try:
-        import json
-        payload_size = len(json.dumps(kwargs, default=str))
+        from whitemagic.utils.fast_json import dumps as _fj_dumps
+        payload_size = len(_fj_dumps(kwargs, default=str))
         if payload_size > MAX_TOTAL_SIZE:
             logger.warning(f"Sanitizer blocked {tool_name}: payload too large ({payload_size} bytes)")
             return {"status": "error", "error": f"Payload too large: {payload_size} bytes (max {MAX_TOTAL_SIZE})", "error_code": "input_invalid"}
@@ -100,12 +101,12 @@ def sanitize_tool_args(tool_name: str, kwargs: dict[str, Any]) -> dict[str, Any]
     if tool_name not in _CONTENT_SCAN_EXEMPT:
         # Try Haskell boundary detection first (stricter, exhaustive pattern matching)
         try:
-            import json
+            from whitemagic.utils.fast_json import dumps_str as _fj_dumps_str
 
             from whitemagic.core.acceleration.haskell_bridge import (
                 haskell_check_boundaries,
             )
-            args_str = json.dumps(kwargs, default=str)[:10000]
+            args_str = _fj_dumps_str(kwargs, default=str)[:10000]
             violations = haskell_check_boundaries(tool_name, "", args_str)
             if violations:
                 critical = [v for v in violations if v.get("severity", 0) >= 3]

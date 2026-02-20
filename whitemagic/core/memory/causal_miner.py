@@ -193,29 +193,22 @@ class CausalMiner:
         start = time.perf_counter()
         report = CausalMiningReport()
 
-        # Get embedding engine for semantic similarity
+        # Try embedding-based mining first, fall back to temporal-only
+        use_embeddings = False
+        pairs: list[dict] = []
         try:
             from whitemagic.core.memory.embeddings import get_embedding_engine
             engine = get_embedding_engine()
-        except Exception as e:
-            logger.error(f"Causal mining: embedding engine unavailable: {e}")
-            return report
-
-        if not engine.available():
-            logger.info("Causal mining: embeddings not available, skipping")
-            return report
-
-        # Find similar pairs
-        pairs = engine.find_similar_pairs(
-            min_similarity=self._min_semantic_sim,
-            max_pairs=self._max_edges * 5,
-        )
-
-        if not pairs:
-            report.duration_ms = (time.perf_counter() - start) * 1000
-            return report
-
-        report.pairs_evaluated = len(pairs)
+            # Try find_similar_pairs directly — works on pre-computed embeddings
+            # even when the model isn't installed (available() may be False)
+            pairs = engine.find_similar_pairs(
+                min_similarity=self._min_semantic_sim,
+                max_pairs=self._max_edges * 5,
+            )
+            if pairs:
+                use_embeddings = True
+        except Exception:
+            pass
 
         # Hydrate memory metadata for temporal + tag signals
         try:
@@ -224,6 +217,15 @@ class CausalMiner:
         except Exception as e:
             logger.error(f"Causal mining: memory system unavailable: {e}")
             return report
+
+        # Temporal fallback: sample recent memories and pair by proximity + tags
+        if not use_embeddings:
+            pairs = self._temporal_fallback_pairs(um, sample_size)
+            if not pairs:
+                report.duration_ms = (time.perf_counter() - start) * 1000
+                return report
+
+        report.pairs_evaluated = len(pairs)
 
         # Collect all candidate IDs
         candidate_ids: set[str] = set()
@@ -275,8 +277,13 @@ class CausalMiner:
             tgt_meta = mem_meta[tgt]
 
             # Determine temporal order: earlier → later
+            # Normalize timezone: strip tzinfo to avoid naive/aware comparison
             src_time = src_meta["created_at"]
             tgt_time = tgt_meta["created_at"]
+            if hasattr(src_time, 'replace') and src_time.tzinfo is not None:
+                src_time = src_time.replace(tzinfo=None)
+            if hasattr(tgt_time, 'replace') and tgt_time.tzinfo is not None:
+                tgt_time = tgt_time.replace(tzinfo=None)
 
             if src_time > tgt_time:
                 # Swap so source is always earlier
@@ -370,6 +377,75 @@ class CausalMiner:
             f"{report.edges_created} created ({elapsed:.0f}ms)",
         )
         return report
+
+    # ------------------------------------------------------------------
+    # Temporal fallback (no embeddings required)
+    # ------------------------------------------------------------------
+
+    def _temporal_fallback_pairs(
+        self, um: Any, sample_size: int,
+    ) -> list[dict[str, Any]]:
+        """Generate candidate pairs from temporal proximity + tag overlap.
+
+        When embeddings are unavailable, we sample recent LONG_TERM memories
+        and pair them by creation-time proximity. This gives the causal miner
+        something to work with even on a cold corpus.
+        """
+        pairs: list[dict[str, Any]] = []
+        try:
+            with um.backend.pool.connection() as conn:
+                rows = conn.execute(
+                    """SELECT id, title, created_at FROM memories
+                       WHERE memory_type != 'quarantined'
+                         AND created_at IS NOT NULL
+                         AND LENGTH(content) > 100
+                       ORDER BY created_at DESC
+                       LIMIT ?""",
+                    (sample_size,),
+                ).fetchall()
+
+            if len(rows) < 2:
+                return []
+
+            # Parse timestamps and pair adjacent memories
+            parsed = []
+            for row in rows:
+                mid = row[0] if isinstance(row, tuple) else row["id"]
+                title = row[1] if isinstance(row, tuple) else row["title"]
+                ts_str = row[2] if isinstance(row, tuple) else row["created_at"]
+                try:
+                    ts = datetime.fromisoformat(str(ts_str).replace("Z", "+00:00"))
+                except (ValueError, TypeError):
+                    continue
+                parsed.append({"id": mid, "title": title, "ts": ts})
+
+            # Sort by time (oldest first)
+            parsed.sort(key=lambda m: m["ts"])
+
+            # Pair each memory with the next N temporally-adjacent ones
+            window = min(5, len(parsed))
+            for i in range(len(parsed)):
+                for j in range(i + 1, min(i + window, len(parsed))):
+                    dt_hours = abs((parsed[j]["ts"] - parsed[i]["ts"]).total_seconds()) / 3600.0
+                    if dt_hours > _MAX_CAUSAL_WINDOW_HOURS:
+                        break
+                    # Use temporal proximity as a stand-in for similarity
+                    temporal_sim = self._temporal_proximity(dt_hours)
+                    if temporal_sim >= 0.1:  # At least some proximity
+                        pairs.append({
+                            "source_id": parsed[i]["id"],
+                            "target_id": parsed[j]["id"],
+                            "similarity": temporal_sim,  # Stand-in for semantic sim
+                        })
+
+            logger.info(
+                f"Causal mining: temporal fallback generated {len(pairs)} pairs "
+                f"from {len(parsed)} memories",
+            )
+        except Exception as e:
+            logger.debug(f"Temporal fallback failed: {e}")
+
+        return pairs[:self._max_edges * 5]
 
     # ------------------------------------------------------------------
     # Stats

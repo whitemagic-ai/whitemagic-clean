@@ -11,8 +11,9 @@ Usage:
 from __future__ import annotations
 
 import asyncio
-import json
 from collections.abc import Awaitable, Callable
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
@@ -152,7 +153,7 @@ class CDPConnection:
         self._pending[msg_id] = future
 
         # Send message
-        await self._ws.send(json.dumps(message))
+        await self._ws.send(_json_dumps(message))
 
         # Wait for response
         try:
@@ -169,7 +170,7 @@ class CDPConnection:
                 return
 
             async for message in ws:
-                data = json.loads(message)
+                data = _json_loads(message)
 
                 if "id" in data:
                     # This is a response to a command

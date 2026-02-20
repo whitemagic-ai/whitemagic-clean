@@ -95,14 +95,14 @@ class UniversalRouter:
             response = generate(prompt)
 
             if "response" in response:
-                import json
+                from whitemagic.utils.fast_json import loads as _json_loads
                 try:
                     # Clean the response to ensure valid JSON (basic cleanup)
                     json_str = response["response"].strip()
                     if json_str.startswith("```json"):
                         json_str = json_str[7:-3]
 
-                    steps_data = json.loads(json_str)
+                    steps_data = _json_loads(json_str)
 
                     steps = [
                         GanaStep(

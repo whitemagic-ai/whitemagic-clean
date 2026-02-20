@@ -270,14 +270,13 @@ class DreamCycle:
 
                     if auto_tags:
                         auto_tags.add("auto_tagged")
-                        for tag in auto_tags:
-                            try:
-                                conn.execute(
-                                    "INSERT OR IGNORE INTO tags (memory_id, tag) VALUES (?, ?)",
-                                    (row["id"], tag),
-                                )
-                            except Exception:
-                                pass
+                        try:
+                            conn.executemany(
+                                "INSERT OR IGNORE INTO tags (memory_id, tag) VALUES (?, ?)",
+                                [(row["id"], tag) for tag in auto_tags],
+                            )
+                        except Exception:
+                            pass
                         tagged_count += 1
 
                 if tagged_count > 0:
@@ -297,22 +296,24 @@ class DreamCycle:
                     LIMIT 30
                 """).fetchall()
 
+                # N+1 fix: batch archive updates with executemany
+                now_iso = datetime.now().isoformat()
+                archive_params = [
+                    (min(0.8, max(row["galactic_distance"] + 0.15, 0.7)), now_iso, row["id"])
+                    for row in archive_candidates
+                ]
                 archived = 0
-                for row in archive_candidates:
-                    # Push to outer rim (0.7-0.8 range, not full edge)
-                    new_dist = min(0.8, max(row["galactic_distance"] + 0.15, 0.7))
-                    conn.execute(
+                if archive_params:
+                    conn.executemany(
                         """UPDATE memories
                            SET galactic_distance = ?,
                                metadata = json_set(COALESCE(metadata, '{}'),
                                    '$.auto_archived_at', ?,
                                    '$.archive_reason', 'dream_triage')
                            WHERE id = ?""",
-                        (new_dist, datetime.now().isoformat(), row["id"]),
+                        archive_params,
                     )
-                    archived += 1
-
-                if archived > 0:
+                    archived = len(archive_params)
                     conn.commit()
                 result["auto_archived"] = archived
 
@@ -323,15 +324,14 @@ class DreamCycle:
                     WHERE is_protected = 1 AND galactic_distance > 0.1
                     LIMIT 20
                 """).fetchall()
+                # N+1 fix: batch drift correction with executemany
                 drift_corrected = 0
-                for row in drifted_core:
-                    conn.execute(
+                if drifted_core:
+                    conn.executemany(
                         "UPDATE memories SET galactic_distance = 0.0 WHERE id = ?",
-                        (row["id"],),
+                        [(row["id"],) for row in drifted_core],
                     )
-                    drift_corrected += 1
-
-                if drift_corrected > 0:
+                    drift_corrected = len(drifted_core)
                     conn.commit()
                 result["drift_corrected"] = drift_corrected
 
@@ -529,16 +529,16 @@ class DreamCycle:
                     um = get_unified_memory()
                     with um.backend.pool.connection() as conn:
                         with conn:
-                            for ec in echo_chambers[:10]:
-                                # Reduce edge weights by 50% for echo chamber node
-                                conn.execute(
-                                    """UPDATE associations
-                                       SET strength = strength * 0.5
-                                       WHERE (source_id = ? OR target_id = ?)
-                                       AND strength > 0.1""",
-                                    (ec.node_id, ec.node_id),
-                                )
-                                inhibited += 1
+                            # N+1 fix: executemany instead of per-node UPDATE loop
+                            ec_params = [(ec.node_id, ec.node_id) for ec in echo_chambers[:10]]
+                            conn.executemany(
+                                """UPDATE associations
+                                   SET strength = strength * 0.5
+                                   WHERE (source_id = ? OR target_id = ?)
+                                   AND strength > 0.1""",
+                                ec_params,
+                            )
+                            inhibited = len(ec_params)
                     result["edges_inhibited_for_nodes"] = inhibited
                 except Exception as e:
                     result["inhibition_error"] = str(e)
@@ -606,6 +606,15 @@ class DreamCycle:
         except Exception:
             pass
 
+        # Auto-merge converging constellations (v15.9)
+        merge_result: dict[str, Any] = {}
+        try:
+            from whitemagic.core.memory.constellations import get_constellation_detector
+            detector = get_constellation_detector()
+            merge_result = detector.auto_merge(max_distance=0.5, min_shared_tags=2)
+        except Exception:
+            pass
+
         try:
             from whitemagic.harmony.vector import get_harmony_vector
             hv = get_harmony_vector()
@@ -659,10 +668,12 @@ class DreamCycle:
                 "emergence_insights": emergence_insights,
                 "emergence_count": len(emergence_insights),
                 "dream_insights_persisted": persisted_count,
+                "constellation_merges": merge_result.get("merges", 0),
             }
         except Exception as e:
             return {"skipped": True, "reason": str(e), "emergence_insights": emergence_insights,
-                    "dream_insights_persisted": persisted_count}
+                    "dream_insights_persisted": persisted_count,
+                    "constellation_merges": merge_result.get("merges", 0)}
 
     def _dream_oracle(self) -> dict[str, Any]:
         """Phase 4: Consult Grimoire for contextual recommendations."""

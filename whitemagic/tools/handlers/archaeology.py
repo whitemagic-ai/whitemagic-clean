@@ -105,7 +105,16 @@ def handle_archaeology_recent_reads(**kwargs: Any) -> dict[str, Any]:
 
 
 def handle_archaeology_stats(**kwargs: Any) -> dict[str, Any]:
-    return {"status": "success", **_arch().stats()}
+    try:
+        return {"status": "success", **_arch().stats()}
+    except ImportError:
+        return {
+            "status": "success",
+            "total_files": 0,
+            "disk_usage_mb": 0,
+            "unread_count": 0,
+            "note": "FileArchaeologist module archived - no file tracking available"
+        }
 
 
 def handle_archaeology_report(**kwargs: Any) -> dict[str, Any]:

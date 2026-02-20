@@ -7,6 +7,8 @@ under WM_STATE_ROOT/agents/.
 import json
 import os
 from datetime import datetime
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 from typing import Any, cast
 from uuid import uuid4
@@ -38,14 +40,14 @@ def _load_agent(agent_id: str) -> dict[str, Any] | None:
     if not p.exists():
         return None
     try:
-        return cast("dict[str, Any]", json.loads(p.read_text(encoding="utf-8")))
+        return cast("dict[str, Any]", _json_loads(p.read_text(encoding="utf-8")))
     except (json.JSONDecodeError, OSError):
         return None
 
 
 def _save_agent(agent: dict[str, Any]) -> None:
     p = _agent_path(agent["id"])
-    p.write_text(json.dumps(agent, indent=2), encoding="utf-8")
+    p.write_text(_json_dumps(agent, indent=2), encoding="utf-8")
 
 
 def _delete_agent(agent_id: str) -> bool:
@@ -61,7 +63,7 @@ def _all_agents() -> list[dict[str, Any]]:
     adir = _agents_dir()
     for f in sorted(adir.glob("*.json")):
         try:
-            agents.append(json.loads(f.read_text(encoding="utf-8")))
+            agents.append(_json_loads(f.read_text(encoding="utf-8")))
         except (json.JSONDecodeError, OSError):
             continue
     return agents

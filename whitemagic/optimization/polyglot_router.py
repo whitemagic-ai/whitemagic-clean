@@ -9,10 +9,11 @@ Routes operations to fastest available implementation:
 """
 
 import ctypes
-import json
 import logging
 import math
 import os
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 import subprocess
 import time
 from collections.abc import Callable
@@ -125,11 +126,11 @@ class PolyglotRouter:
     def _check_rust(self) -> bool:
         """Check if Rust bridge is available."""
         try:
-            # Try normal import first
-            if find_spec("whitemagic_rs") is not None:
-                return True
+            # Try actual import (find_spec doesn't work reliably with maturin packages)
+            import whitemagic_rs
+            return True
         except ImportError:
-            # Try to help it find its dependencies and itself
+            # Try to help it find its dependencies
             try:
                 import sys
                 lib_path = self.base_path / "whitemagic-zig/zig-out/lib"
@@ -144,10 +145,10 @@ class PolyglotRouter:
                 elif str(lib_path) not in os.environ["LD_LIBRARY_PATH"]:
                     os.environ["LD_LIBRARY_PATH"] += f":{lib_path}"
 
-                return find_spec("whitemagic_rs") is not None
+                import whitemagic_rs
+                return True
             except ImportError:
                 return False
-        return False
 
     def _get_mojo_env(self) -> dict[str, str]:
         """Get environment with Mojo library paths."""
@@ -322,7 +323,7 @@ class PolyglotRouter:
                     "created_timestamp": int(mem.get("created_timestamp", current_time)),
                 })
 
-            batch_data = json.dumps({"items": items})
+            batch_data = _json_dumps({"items": items})
 
             # Call Mojo with --batch, piping JSON via stdin (avoids E2BIG)
             res = subprocess.run(

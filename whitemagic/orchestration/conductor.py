@@ -5,9 +5,10 @@ Philosophy: A conductor leads the orchestra through the symphony, iteration by i
 until the piece is complete. Each iteration builds on the last, with memory and intelligence.
 """
 
-import json
 import logging
 from collections.abc import Callable
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -298,7 +299,7 @@ class ConductorOrchestrator:
             ],
         }
 
-        output_path.write_text(json.dumps(session_data, indent=2))
+        output_path.write_text(_json_dumps(session_data, indent=2))
         logger.info(f"📄 Session exported to {output_path}")
 
         return output_path

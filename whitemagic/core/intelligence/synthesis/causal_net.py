@@ -1,8 +1,9 @@
 
-import json
 import logging
 import sqlite3
 import subprocess
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 
 import numpy as np
@@ -31,7 +32,7 @@ class CausalNet:
         for key, mids in active_clusters.items():
             # Get stats for this cluster
             placeholders = ",".join("?" for _ in mids)
-            rows = conn.execute(f"SELECT x, y, z, w FROM holographic_coords WHERE memory_id IN ({placeholders})", mids).fetchall()
+            rows = conn.execute("SELECT x, y, z, w FROM holographic_coords WHERE memory_id IN (" + placeholders + ")", mids).fetchall()
             if not rows:
                 continue
 
@@ -79,12 +80,12 @@ class CausalNet:
             logger.warning("Julia resonance script not found. Skipping verification.")
             return edges, {}
 
-        payload = json.dumps({"nodes": nodes, "edges": edges})
+        payload = _json_dumps({"nodes": nodes, "edges": edges})
         try:
             # We assume Julia is installed and pixi environment is managed or global julia works
             cmd = ["julia", str(julia_script), payload]
             result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            resonance_scores = json.loads(result.stdout)
+            resonance_scores = _json_loads(result.stdout)
 
             # Prune edges where the destination has near-zero resonance
             # Meaning energy didn't flow from parent to child

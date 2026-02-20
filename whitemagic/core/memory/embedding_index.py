@@ -8,8 +8,9 @@ where similar concepts cluster together in neural space.
 """
 
 import hashlib
-import json
 import math
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -131,11 +132,11 @@ class EmbeddingIndex:
         if index_file.exists():
             try:
                 with file_lock(index_file):
-                    data: dict[str, Any] = json.loads(index_file.read_text())
+                    data: dict[str, Any] = _json_loads(index_file.read_text())
                 self.index = data.get("index", {})
                 self.embedder.idf = data.get("idf", {})
                 self.embedder.doc_count = data.get("doc_count", 0)
-            except json.JSONDecodeError:
+            except (ValueError, OSError):
                 pass
 
     def _save_index(self) -> None:
@@ -148,7 +149,7 @@ class EmbeddingIndex:
             "last_updated": datetime.now().isoformat(),
         }
         with file_lock(index_file):
-            atomic_write(index_file, json.dumps(data))
+            atomic_write(index_file, _json_dumps(data))
 
     def add(self, content: str, metadata: dict[str, Any] | None = None) -> str:
         """Add content to the index."""
@@ -215,7 +216,7 @@ class EmbeddingIndex:
             "total_documents": len(self.index),
             "vocabulary_size": len(self.embedder.idf),
             "index_size_bytes": sum(
-                len(json.dumps(e)) for e in self.index.values()
+                len(_json_dumps(e)) for e in self.index.values()
             ),
         }
 

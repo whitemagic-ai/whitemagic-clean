@@ -12,6 +12,8 @@ import hashlib
 import json
 import threading
 import time
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -57,7 +59,7 @@ class HolographicIntake:
         """Load configuration and known hashes."""
         if self.config_path.exists():
             try:
-                data = json.loads(self.config_path.read_text())
+                data = _json_loads(self.config_path.read_text())
                 self._watch_dirs = data.get("watch_dirs", [])
             except (json.JSONDecodeError, IOError) as e:
                 self.stats.errors.append(f"Config load error: {e}")
@@ -65,27 +67,27 @@ class HolographicIntake:
 
         if self.hashes_path.exists():
             try:
-                self._known_hashes = set(json.loads(self.hashes_path.read_text()))
+                self._known_hashes = set(_json_loads(self.hashes_path.read_text()))
             except (json.JSONDecodeError, IOError) as e:
                 self.stats.errors.append(f"Hashes load error: {e}")
                 pass
 
         if self.queue_path.exists():
             try:
-                self._queue = json.loads(self.queue_path.read_text())
+                self._queue = _json_loads(self.queue_path.read_text())
             except (json.JSONDecodeError, IOError) as e:
                 self.stats.errors.append(f"Queue load error: {e}")
                 pass
 
     def _save(self) -> None:
         """Save configuration and state."""
-        self.config_path.write_text(json.dumps({
+        self.config_path.write_text(_json_dumps({
             "watch_dirs": self._watch_dirs,
             "updated": datetime.now().isoformat(),
         }, indent=2))
 
-        self.hashes_path.write_text(json.dumps(list(self._known_hashes)))
-        self.queue_path.write_text(json.dumps(self._queue, indent=2))
+        self.hashes_path.write_text(_json_dumps(list(self._known_hashes)))
+        self.queue_path.write_text(_json_dumps(self._queue, indent=2))
 
     def add_watch(self, path: str) -> bool:
         """Add a directory to watch list."""

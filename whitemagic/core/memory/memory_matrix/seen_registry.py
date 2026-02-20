@@ -17,8 +17,9 @@ Usage:
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -77,7 +78,7 @@ class SeenRegistry:
         if self.storage_path.exists():
             try:
                 with file_lock(self.storage_path):
-                    data = json.loads(self.storage_path.read_text())
+                    data = _json_loads(self.storage_path.read_text())
                 self._entries = {
                     k: SeenEntry.from_dict(v)
                     for k, v in data.get("entries", {}).items()
@@ -94,7 +95,7 @@ class SeenRegistry:
             "entries": {k: v.to_dict() for k, v in self._entries.items()},
         }
         with file_lock(self.storage_path):
-            atomic_write(self.storage_path, json.dumps(data, indent=2))
+            atomic_write(self.storage_path, _json_dumps(data, indent=2))
 
     def _hash_content(self, path: str) -> str | None:
         """Generate hash of file content."""

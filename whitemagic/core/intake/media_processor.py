@@ -260,13 +260,13 @@ class ImageProcessor:
         """Use Ollama vision model for image captioning."""
         try:
             import base64
-            import json
+            from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
             import urllib.request
 
             # Read and base64-encode the image
             image_data = base64.b64encode(path.read_bytes()).decode("utf-8")
 
-            payload = json.dumps({
+            payload = _json_dumps({
                 "model": "llava",  # Common vision model
                 "prompt": "Describe this image in detail. What do you see?",
                 "images": [image_data],
@@ -279,7 +279,7 @@ class ImageProcessor:
                 headers={"Content-Type": "application/json"},
             )
             with urllib.request.urlopen(req, timeout=30) as resp:
-                result = json.loads(resp.read().decode("utf-8"))
+                result = _json_loads(resp.read().decode("utf-8"))
                 return str(result.get("response", ""))
         except Exception:
             return ""

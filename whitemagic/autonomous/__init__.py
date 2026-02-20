@@ -30,13 +30,21 @@ from .executor import (
     ObjectiveGenerator,
     ProgressAssessor,
 )
-from .maintenance import (
-    AutonomousMaintenance,
-    auto_heal,
-    get_maintenance,
-    run_maintenance,
-)
-from .self_prompting import ask_human, process_queue, queue_work
+try:
+    from .maintenance import (
+        AutonomousMaintenance,
+        auto_heal,
+        get_maintenance,
+        run_maintenance,
+    )
+except ImportError:
+    AutonomousMaintenance = None  # type: ignore[assignment,misc]
+    auto_heal = get_maintenance = run_maintenance = None  # type: ignore[assignment]
+
+try:
+    from .self_prompting import ask_human, process_queue, queue_work
+except ImportError:
+    ask_human = process_queue = queue_work = None  # type: ignore[assignment]
 
 __all__ = [
     # daemon capabilities

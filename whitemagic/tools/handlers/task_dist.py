@@ -9,6 +9,8 @@ Tools(copy)/scripts/distributed/task-distributor.py.
 import json
 import os
 import subprocess
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
@@ -51,18 +53,18 @@ def _load_queue() -> list[dict[str, Any]]:
     if not qp.exists():
         return []
     try:
-        return cast("list[dict[str, Any]]", json.loads(qp.read_text(encoding="utf-8")))
+        return cast("list[dict[str, Any]]", _json_loads(qp.read_text(encoding="utf-8")))
     except (json.JSONDecodeError, OSError):
         return []
 
 
 def _save_queue(queue: list[dict[str, Any]]) -> None:
-    _queue_path().write_text(json.dumps(queue, indent=2), encoding="utf-8")
+    _queue_path().write_text(_json_dumps(queue, indent=2), encoding="utf-8")
 
 
 def _append_log(entry: dict[str, Any]) -> None:
     with open(_log_path(), "a", encoding="utf-8") as f:
-        f.write(json.dumps(entry) + "\n")
+        f.write(_json_dumps(entry) + "\n")
 
 
 def _task_file_path(task_id: str) -> Path:
@@ -74,7 +76,7 @@ def _load_task_file(task_id: str) -> dict[str, Any] | None:
     if not path.exists():
         return None
     try:
-        return cast("dict[str, Any]", json.loads(path.read_text(encoding="utf-8")))
+        return cast("dict[str, Any]", _json_loads(path.read_text(encoding="utf-8")))
     except (json.JSONDecodeError, OSError):
         return None
 
@@ -83,7 +85,7 @@ def _save_task_file(task: dict[str, Any]) -> None:
     task_id = task.get("id")
     if not task_id:
         return
-    _task_file_path(str(task_id)).write_text(json.dumps(task, indent=2), encoding="utf-8")
+    _task_file_path(str(task_id)).write_text(_json_dumps(task, indent=2), encoding="utf-8")
 
 
 def _merge_runtime_state(task: dict[str, Any]) -> dict[str, Any]:
@@ -195,7 +197,7 @@ def handle_task_status(**kwargs: Any) -> dict[str, Any]:
         result = None
         if result_file.exists():
             try:
-                result = json.loads(result_file.read_text(encoding="utf-8"))
+                result = _json_loads(result_file.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 pass
         return {
@@ -289,7 +291,7 @@ def handle_task_complete(**kwargs: Any) -> dict[str, Any]:
         "worker": os.uname().nodename,
     }
     result_file = _results_dir() / f"{task_id}.json"
-    result_file.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    result_file.write_text(_json_dumps(result, indent=2), encoding="utf-8")
 
     _append_log({
         "event": "task_completed",

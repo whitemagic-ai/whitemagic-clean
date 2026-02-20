@@ -16,9 +16,10 @@ Usage:
 """
 from __future__ import annotations
 
-import json
 import logging
 import threading
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -77,7 +78,7 @@ def haskell_check_boundaries(
             args_str.encode("utf-8"),
         )
         if result_ptr:
-            result = json.loads(result_ptr.decode("utf-8"))
+            result = _json_loads(result_ptr.decode("utf-8"))
             return result if isinstance(result, list) else [result]
     except Exception as e:
         logger.debug("Haskell check_boundaries failed: %s", e)
@@ -109,7 +110,7 @@ def haskell_classify_content(
             description.encode("utf-8"),
         )
         if result_ptr:
-            parsed = json.loads(result_ptr.decode("utf-8"))
+            parsed = _json_loads(result_ptr.decode("utf-8"))
             if isinstance(parsed, dict):
                 return parsed
     except Exception as e:
@@ -136,7 +137,7 @@ def haskell_detect_injection(input_text: str) -> list[dict[str, Any]] | None:
 
         result_ptr = lib.c_detect_injection(input_text.encode("utf-8"))
         if result_ptr:
-            parsed = json.loads(result_ptr.decode("utf-8"))
+            parsed = _json_loads(result_ptr.decode("utf-8"))
             if isinstance(parsed, list):
                 return [item for item in parsed if isinstance(item, dict)]
     except Exception as e:
@@ -184,7 +185,7 @@ def haskell_maturity_assess(
         if not hasattr(lib, "c_maturity_assess"):
             return None
 
-        request = json.dumps({
+        request = _json_dumps({
             "stage": stage,
             "tools_executed": tools_executed,
             "session_count": session_count,
@@ -196,9 +197,9 @@ def haskell_maturity_assess(
         })
         result_ptr = lib.c_maturity_assess(request.encode("utf-8"))
         if result_ptr:
-            parsed = json.loads(result_ptr.decode("utf-8"))
-            if isinstance(parsed, dict):
-                return parsed
+            parsed2 = _json_loads(result_ptr.decode("utf-8"))
+            if isinstance(parsed2, dict):
+                return parsed2
     except Exception as e:
         logger.debug("Haskell maturity_assess failed: %s", e)
 
@@ -231,7 +232,7 @@ def haskell_evaluate_rules(
         if not hasattr(lib, "c_evaluate_rules"):
             return None
 
-        request = json.dumps({
+        request = _json_dumps({
             "tool_name": tool_name,
             "description": description,
             "safety_level": safety_level,
@@ -240,7 +241,7 @@ def haskell_evaluate_rules(
         })
         result_ptr = lib.c_evaluate_rules(request.encode("utf-8"))
         if result_ptr:
-            parsed = json.loads(result_ptr.decode("utf-8"))
+            parsed = _json_loads(result_ptr.decode("utf-8"))
             if isinstance(parsed, dict):
                 return parsed
     except Exception as e:
@@ -269,7 +270,7 @@ def haskell_detect_rule_conflicts(
 
         result_ptr = lib.c_detect_conflicts(profile.encode("utf-8"))
         if result_ptr:
-            parsed = json.loads(result_ptr.decode("utf-8"))
+            parsed = _json_loads(result_ptr.decode("utf-8"))
             if isinstance(parsed, list):
                 return [item for item in parsed if isinstance(item, dict)]
     except Exception as e:
