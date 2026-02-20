@@ -1,4 +1,4 @@
-"""Mojo Accelerator Bridge — Python ↔ Mojo via Subprocess.
+"""Mojo Accelerator Bridge — Python ↔ Mojo via Subprocess (0.26.1 compatible).
 ========================================================
 Bridges to compiled Mojo executables for batch encoding, embedding
 quantization, and neuro scoring. Falls back to pure Python when
@@ -56,6 +56,9 @@ def _find_mojo() -> tuple[str | None, Path | None]:
         # Pixi-managed Mojo (also broken — missing runfiles)
         str(archive_base / "wm_archive" / "WM" / "whitemagic" / "whitemagic-mojo"
             / "mojo-env" / ".pixi" / "envs" / "default" / "bin" / "mojo"),
+        # Pixi Mojo 0.26.1 (working)
+        str(base / "whitemagic-mojo" / ".pixi" / "envs" / "default" / "bin" / "mojo"),
+        "pixi",  # Will be resolved via shutil.which
         str(base / ".venv" / "bin" / "mojo"),
         shutil.which("mojo") or "",
     ]

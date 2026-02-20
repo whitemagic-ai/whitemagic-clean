@@ -1,26 +1,43 @@
-"""Predictive Analytics - GPU Prediction (PSR-004)
-Target: 100× speedup
-"""
-from tensor import Tensor
+"""Predictive Analytics - Mojo 0.26.1"""
 
-struct PredictiveAnalytics:
-    var window_size: Int
-    
-    fn __init__(inout self, window_size: Int):
-        self.window_size = window_size
-    
-    fn predict_next(self, series: Tensor[DType.float32], length: Int) -> Float32:
-        if length < 2:
-            return 0.0
+fn moving_average(values: List[Float32], window: Int) -> List[Float32]:
+    """Compute moving average."""
+    var result = List[Float32]()
+    for i in range(len(values)):
         var sum: Float32 = 0.0
-        for i in range(max(0, length - self.window_size), length):
-            sum += series[i]
-        return sum / Float32(min(self.window_size, length))
+        var count = 0
+        for j in range(max(0, i - window + 1), min(len(values), i + 1)):
+            sum += values[j]
+            count += 1
+        if count > 0:
+            result.append(sum / Float32(count))
+        else:
+            result.append(0.0)
+    return result^
+
+fn trend_slope(values: List[Float32]) -> Float32:
+    """Simple linear trend slope."""
+    var n = len(values)
+    if n < 2:
+        return 0.0
+    
+    var sum_x: Float32 = 0.0
+    var sum_y: Float32 = 0.0
+    var sum_xy: Float32 = 0.0
+    var sum_xx: Float32 = 0.0
+    
+    for i in range(n):
+        var x = Float32(i)
+        var y = values[i]
+        sum_x += x
+        sum_y += y
+        sum_xy += x * y
+        sum_xx += x * x
+    
+    var denom = Float32(n) * sum_xx - sum_x * sum_x
+    if denom != 0.0:
+        return (Float32(n) * sum_xy - sum_x * sum_y) / denom
+    return 0.0
 
 fn main():
-    let analytics = PredictiveAnalytics(5)
-    var series = Tensor[DType.float32](10)
-    for i in range(10):
-        series[i] = Float32(i)
-    let prediction = analytics.predict_next(series, 10)
-    print("Prediction:", prediction)
+    print("Predictive Analytics v0.26.1")

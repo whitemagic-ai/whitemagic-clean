@@ -1,80 +1,39 @@
-"""Causal Miner - GPU Causal Discovery (PSR-001)
-Target: 100× speedup for causal mining
-"""
+"""Causal Miner - Mojo 0.26.1"""
+from math import sqrt
+from python import Python
 
-from tensor import Tensor
-
-struct CausalEdge:
-    var cause: String
-    var effect: String
-    var strength: Float32
-    var confidence: Float32
+fn temporal_correlation(times_a: List[Float64], times_b: List[Float64]) -> Float32:
+    """Compute temporal correlation between two time series."""
+    if len(times_a) == 0 or len(times_b) == 0:
+        return 0.0
     
-    fn __init__(inout self, cause: String, effect: String, strength: Float32, confidence: Float32):
-        self.cause = cause
-        self.effect = effect
-        self.strength = strength
-        self.confidence = confidence
-
-struct CausalMiner:
-    var edges: DynamicVector[CausalEdge]
-    var min_confidence: Float32
+    var mean_a: Float64 = 0.0
+    var mean_b: Float64 = 0.0
     
-    fn __init__(inout self, min_confidence: Float32):
-        self.edges = DynamicVector[CausalEdge]()
-        self.min_confidence = min_confidence
+    for i in range(len(times_a)):
+        mean_a += times_a[i]
+    mean_a /= Float64(len(times_a))
     
-    fn add_edge(inout self, edge: CausalEdge):
-        """Add causal edge."""
-        if edge.confidence >= self.min_confidence:
-            self.edges.push_back(edge)
+    for i in range(len(times_b)):
+        mean_b += times_b[i]
+    mean_b /= Float64(len(times_b))
     
-    fn get_causes(self, effect: String) -> DynamicVector[CausalEdge]:
-        """Get all causes for an effect."""
-        var results = DynamicVector[CausalEdge]()
-        
-        for i in range(len(self.edges)):
-            if self.edges[i].effect == effect:
-                results.push_back(self.edges[i])
-        
-        return results
+    var num: Float64 = 0.0
+    var den_a: Float64 = 0.0
+    var den_b: Float64 = 0.0
     
-    fn get_effects(self, cause: String) -> DynamicVector[CausalEdge]:
-        """Get all effects for a cause."""
-        var results = DynamicVector[CausalEdge]()
-        
-        for i in range(len(self.edges)):
-            if self.edges[i].cause == cause:
-                results.push_back(self.edges[i])
-        
-        return results
+    var n = min(len(times_a), len(times_b))
+    for i in range(n):
+        var da = times_a[i] - mean_a
+        var db = times_b[i] - mean_b
+        num += da * db
+        den_a += da * da
+        den_b += db * db
     
-    fn compute_total_effect(self, cause: String, effect: String) -> Float32:
-        """Compute total causal effect."""
-        var total: Float32 = 0.0
-        
-        let direct_effects = self.get_effects(cause)
-        
-        for i in range(len(direct_effects)):
-            if direct_effects[i].effect == effect:
-                total += direct_effects[i].strength
-            else:
-                let indirect = self.compute_total_effect(direct_effects[i].effect, effect)
-                total += direct_effects[i].strength * indirect
-        
-        return total
-    
-    fn edge_count(self) -> Int:
-        """Get edge count."""
-        return len(self.edges)
+    var denom = sqrt(den_a * den_b)
+    if denom > 0.0:
+        return Float32(num / denom)
+    return 0.0
 
 fn main():
-    var miner = CausalMiner(0.5)
-    
-    miner.add_edge(CausalEdge("rain", "wet_ground", 0.9, 0.95))
-    miner.add_edge(CausalEdge("wet_ground", "slippery", 0.8, 0.85))
-    
-    print("Causal edges:", miner.edge_count())
-    
-    let total_effect = miner.compute_total_effect("rain", "slippery")
-    print("Total effect:", total_effect)
+    print("Causal Miner v0.26.1")
