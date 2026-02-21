@@ -146,7 +146,7 @@ class PredictiveEngine:
         # Get supporting metrics
         conn = self._get_conn()
         cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM memories")
+        cur.execute("SELECT COUNT(*) FROM memories WHERE memory_type != 'quarantined'")
         mem_count = cur.fetchone()[0]
 
         return PredictiveReport(
@@ -170,6 +170,7 @@ class PredictiveEngine:
             JOIN tags t ON m.id = t.memory_id
             LEFT JOIN holographic_coords h ON m.id = h.memory_id
             WHERE t.tag IN ('milestone', 'complete', 'ready', 'phase', 'version')
+            AND m.memory_type != 'quarantined'
             ORDER BY m.created_at DESC
             LIMIT 50
         """)
@@ -227,6 +228,7 @@ class PredictiveEngine:
             JOIN tags t ON m.id = t.memory_id
             LEFT JOIN holographic_coords h ON m.id = h.memory_id
             WHERE t.tag IN ('roadmap', 'strategy', 'plan', 'vision')
+            AND m.memory_type != 'quarantined'
             ORDER BY h.z DESC NULLS LAST
             LIMIT 20
         """)
@@ -438,7 +440,8 @@ class PredictiveEngine:
         # Find manual process mentions
         cur.execute("""
             SELECT COUNT(*) as cnt FROM memories
-            WHERE content LIKE '%manually%' OR content LIKE '%by hand%' OR content LIKE '%repeat%'
+            WHERE (content LIKE '%manually%' OR content LIKE '%by hand%' OR content LIKE '%repeat%')
+            AND memory_type != 'quarantined'
         """)
         manual_count = cur.fetchone()["cnt"]
 
@@ -481,6 +484,7 @@ class PredictiveEngine:
             JOIN tags t ON m.id = t.memory_id
             LEFT JOIN holographic_coords h ON m.id = h.memory_id
             WHERE t.tag IN ({ph})
+            AND m.memory_type != 'quarantined'
             GROUP BY t.tag
         """, dev_gardens)
         garden_activity = {g: {"count": 0, "latest": None, "avg_gravity": 0.5} for g in dev_gardens}
@@ -517,6 +521,7 @@ class PredictiveEngine:
                 JOIN tags t ON m.id = t.memory_id
                 WHERE t.tag = 'roadmap'
                 AND m.created_at > datetime('now', '-14 days')
+                AND m.memory_type != 'quarantined'
             """)
             recent_roadmap = cur.fetchone()[0]
             if recent_roadmap == 0:
@@ -543,6 +548,7 @@ class PredictiveEngine:
             JOIN tags t ON m.id = t.memory_id
             JOIN holographic_coords h ON m.id = h.memory_id
             WHERE t.tag = 'strategy' AND h.w > 0.8
+            AND m.memory_type != 'quarantined'
             ORDER BY h.w DESC
             LIMIT 5
         """)
@@ -570,6 +576,7 @@ class PredictiveEngine:
             JOIN tags t ON m.id = t.memory_id
             WHERE t.tag = 'production_ready'
             AND m.created_at > datetime('now', '-7 days')
+            AND m.memory_type != 'quarantined'
         """)
         recent_prod_ready = cur.fetchone()[0]
 
@@ -877,6 +884,7 @@ class PredictiveEngine:
                 COUNT(CASE WHEN created_at > datetime('now', '-7 days') THEN 1 END) as last_7d,
                 COUNT(CASE WHEN created_at > datetime('now', '-30 days') THEN 1 END) as last_30d
             FROM memories
+            WHERE memory_type != 'quarantined'
         """)
         row = cur.fetchone()
 

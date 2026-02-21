@@ -13,9 +13,18 @@ defmodule WhitemagicCore.GanYing.Supervisor do
   end
 
   @impl true
-  def init(_opts) do
+  def init(_init_arg) do
     children = [
+      # FAST Lane Pool - dedicated workers for <100ms latency events
+      {WhitemagicCore.GanYing.FastLanePool, pool_size: 8},
+      
+      # MEDIUM Lane Pool - for <1s latency events  
+      {WhitemagicCore.GanYing.MediumLanePool, pool_size: 4},
+      
+      # Main Event Bus coordinator
       WhitemagicCore.GanYing.EventBus,
+      
+      # Dream scheduler for background processing
       WhitemagicCore.GanYing.DreamScheduler
     ]
 

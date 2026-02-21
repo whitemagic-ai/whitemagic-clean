@@ -1,9 +1,9 @@
 # The WhiteMagic Grimoire - 28-Fold Living Mandala
 
-**Version**: v7.4.0  
-**Phase**: SCORPIO Complete  
+**Version**: v8.0.0 (WhiteMagic v18)  
+**Phase**: SAGITTARIUS (Phase 9) - Distribution  
 **Structure**: 28 Chapters (Lunar Mansions)  
-**Status**: ✅ Complete
+**Status**: ✅ Complete — Polyglot Ascension Release
 
 ---
 

@@ -1,7 +1,6 @@
 import asyncio
 import hashlib
 import itertools
-import json
 import logging
 import math
 import sqlite3
@@ -164,7 +163,7 @@ class HolographicConsolidator:
                 continue
             placeholders = ",".join("?" * len(all_ids))
             rows = conn.execute(
-                "SELECT id, title, importance FROM memories WHERE id IN (" + placeholders + ")",
+                "SELECT id, title, importance FROM memories WHERE id IN (" + placeholders + ") AND memory_type != 'quarantined'",
                 all_ids,
             ).fetchall()
             row_map = {r["id"]: r for r in rows}

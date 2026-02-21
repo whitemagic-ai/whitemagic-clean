@@ -217,7 +217,7 @@ class ConstellationDetector:
                 SELECT hc.memory_id, hc.x, hc.y, hc.z, hc.w, hc.v,
                        m.title, m.memory_type, m.importance, m.galactic_distance
                 FROM holographic_coords hc
-                JOIN memories m ON hc.memory_id = m.id
+                JOIN memories m ON hc.memory_id = m.id AND m.memory_type != 'quarantined'
                 WHERE hc.x IS NOT NULL AND hc.y IS NOT NULL
                 ORDER BY m.importance DESC
                 LIMIT ?

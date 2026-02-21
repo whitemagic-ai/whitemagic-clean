@@ -130,3 +130,4 @@ venv/
 .DS_Store
 Thumbs.db
 _unsafe_maintenance/
+*.onnx

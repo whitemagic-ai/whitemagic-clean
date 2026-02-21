@@ -91,14 +91,17 @@ class RustOnnxBridge:
                 stderr = result.stderr.decode('utf-8', errors='replace')
                 raise RuntimeError(f"Rust ONNX failed: {stderr}")
             
-            # Parse JSON output (placeholder for now)
+            # Parse JSON output from Rust ONNX embedder
             output = json.loads(result.stdout.decode('utf-8'))
             
-            # TODO: Parse Arrow IPC output when implemented
-            _ = output  # Placeholder to use the variable
-            # For now, return placeholder embeddings
-            import random
-            return [[random.random() * 0.1 for _ in range(384)] for _ in texts]
+            # Extract embeddings from output
+            if 'embeddings' in output:
+                return output['embeddings']
+            elif 'error' in output:
+                raise RuntimeError(f"Rust ONNX error: {output['error']}")
+            else:
+                # Fallback: parse from legacy format
+                return [[float(x) for x in emb] for emb in output.get('vectors', [])]
             
         except subprocess.TimeoutExpired:
             raise RuntimeError("Rust ONNX timed out after 5 minutes")

@@ -1,16 +1,12 @@
 [build-system]
-requires = ["maturin>=1.0,<2.0"]
+requires = ["maturin>=1.4"]
 build-backend = "maturin"
 
 [project]
-name = "whitemagic-rs"
-version = "11.0.0"
-description = "High-performance Rust core for WhiteMagic"
-requires-python = ">=3.8"
-classifiers = [
-    "Programming Language :: Rust",
-    "Programming Language :: Python :: Implementation :: CPython",
-]
+name = "whitemagic-rust"
+version = "17.0.0"
+description = "WhiteMagic Rust accelerators"
+requires-python = ">=3.11"
 
 [tool.maturin]
 features = ["pyo3/extension-module"]

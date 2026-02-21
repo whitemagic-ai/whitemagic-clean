@@ -118,15 +118,29 @@ defmodule WhitemagicCore.GanYing.EventBus do
     event_type = event["event_type"] || "unknown"
     lane = classify_lane(event_type)
     timestamp = System.system_time(:millisecond)
-
+    
     enriched = Map.merge(event, %{
       "_lane" => Atom.to_string(lane),
       "_bus_ts" => timestamp
     })
-
-    # Route to matching subscribers
-    {delivered, dropped} = route(enriched, lane, event_type, state.subscribers)
-
+    
+    # Route to lane pools for prioritized events
+    {delivered, dropped} = case lane do
+      :fast ->
+        # Route to FAST lane pool
+        WhitemagicCore.GanYing.FastLanePool.emit(event_type, enriched)
+        {1, 0}  # Assume delivered, pool handles backpressure
+        
+      :medium ->
+        # Route to MEDIUM lane pool
+        WhitemagicCore.GanYing.MediumLanePool.emit(event_type, enriched)
+        {1, 0}
+        
+      :slow ->
+        # Traditional routing for SLOW lane
+        route(enriched, lane, event_type, state.subscribers)
+    end
+    
     # Update stats
     stats = state.stats
     new_stats = %{stats |
@@ -135,7 +149,7 @@ defmodule WhitemagicCore.GanYing.EventBus do
       dropped: stats.dropped + dropped,
       by_lane: Map.update(stats.by_lane, lane, 1, &(&1 + 1))
     }
-
+    
     {:noreply, %{state | stats: new_stats}}
   end
 

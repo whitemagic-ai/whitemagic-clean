@@ -457,6 +457,19 @@ class GanYingBus:
         except Exception:
             pass  # EventRing is optional
 
+        # Leap 8: Publish to Iceoryx2 IPC for cross-process broadcasting
+        try:
+            from whitemagic.core.ipc_bridge import publish_json
+            publish_json('wm/events', {
+                'type': event.event_type.value,
+                'source': event.source,
+                'confidence': event.confidence,
+                'timestamp': event.timestamp.isoformat(),
+                'data': event.data,
+            })
+        except Exception:
+            pass  # IPC is optional
+
         # Copy listener list under lock (fast), dispatch OUTSIDE (no lock contention)
         with self._lock:
             self._history.append(event)
