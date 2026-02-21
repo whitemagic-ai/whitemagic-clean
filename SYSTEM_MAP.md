@@ -715,7 +715,7 @@ Layer 0: BUS
 
 - Tests: **1318 passed**, 7 skipped
 - Active fusions: **14** (core/fusions.py) + **14** (polyglot hot paths + PRAT resonance) = **28 total**
-- MCP tools: **374 nested** across **28 Gana meta-tools**
+- MCP tools: **375 nested** across **28 Gana meta-tools**
 - Polyglot languages: **7** (Python + Rust + Haskell + Elixir + Go + Zig + Mojo)
 - Memories: **111,665** | Associations: **2,247,642** | DB: **2.0 GB**
 - Constellations: **30** | Communities: **182** | Bridge nodes: **10**

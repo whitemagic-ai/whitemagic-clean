@@ -29,7 +29,7 @@ fn traverse_3hop_bfs(
     frontier.push_back((start, 1.0, vec![start]));
     visited.insert(start);
     
-    for depth in 0..max_depth {
+    for _depth in 0..max_depth {
         let mut next_frontier: Vec<(u64, f32, Vec<u64>)> = Vec::new();
         
         while let Some((node, prob, path)) = frontier.pop_front() {

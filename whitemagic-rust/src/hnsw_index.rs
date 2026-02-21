@@ -44,14 +44,14 @@ fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
 }
 
 pub struct HnswIndex {
-    dim: usize,
+    _dim: usize,
     vectors: std::collections::HashMap<u64, Vec<f32>>,
 }
 
 impl HnswIndex {
     pub fn new(dim: usize) -> Self {
         HnswIndex {
-            dim,
+            _dim: dim,
             vectors: std::collections::HashMap::new(),
         }
     }

@@ -7,8 +7,8 @@ use std::time::Instant;
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "arrow", feature = "ort"))]
 fn main() {
-    use crate::onnx_embedder::{ONNXEmbedder, ONNXEmbedderConfig};
-    use arrow::array::{StringArray, StringBuilder};
+    use whitemagic_rs::onnx_embedder::{ONNXEmbedder, ONNXEmbedderConfig};
+    use arrow::array::StringBuilder;
     
     let db_path = dirs::home_dir()
         .map(|h| h.join(".whitemagic/memory/whitemagic.db"))
