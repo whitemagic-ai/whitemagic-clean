@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # mypy: disable-error-code=no-untyped-def
 """
-WhiteMagic MCP Server — Lean Edition (v15.0)
+WhiteMagic MCP Server — Lean Edition
 ==============================================
 Uses the standard mcp SDK directly (no FastMCP overhead).
 Registers 28 PRAT Gana meta-tools.  All heavy imports are
@@ -25,6 +25,14 @@ from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from pathlib import Path
 from typing import Any
 
+from whitemagic.runtime_status import get_runtime_status
+from whitemagic.tools.tool_surface import (
+    GANA_NAMES as _GANA_NAMES,
+    GANA_SHORT_DESC as _GANA_SHORT_DESC,
+    get_gana_metadata as _get_gana_metadata,
+    get_gana_nested_tools as _get_gana_nested_tools,
+)
+
 # ── Ensure project root is on sys.path ──────────────────────────────
 ROOT_DIR = Path(__file__).resolve().parent
 CORE_SYSTEM_DIR = ROOT_DIR.parent
@@ -46,7 +54,7 @@ from mcp.shared.message import SessionMessage  # noqa: E402
 
 # ── Version ──────────────────────────────────────────────────────────
 _VERSION_FILE = CORE_SYSTEM_DIR / "VERSION"
-_VERSION = _VERSION_FILE.read_text().strip() if _VERSION_FILE.exists() else "15.0.0"
+_VERSION = _VERSION_FILE.read_text().strip() if _VERSION_FILE.exists() else "18.1.0"
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -89,88 +97,27 @@ def _ensure_init() -> None:
 # ══════════════════════════════════════════════════════════════════════
 
 # Gana name → (short description, nested tool names)
-# Built lazily so we don't need to import the registry at startup.
 _GANA_CACHE: dict[str, tuple[str, list[str]]] | None = None
 
 
+# Shared Gana metadata lives in whitemagic.tools.tool_surface so lean and
+# classic MCP surfaces draw from the same canonical 28-Gana contract.
+_GANA_TOOLS: dict[str, list[str]] = {}
+try:
+    _GANA_TOOLS = _get_gana_nested_tools()
+except ImportError:
+    pass
+
+
 def _load_gana_metadata() -> dict[str, tuple[str, list[str]]]:
-    """Load Gana metadata from the registry (heavy import, done once)."""
-    global _GANA_CACHE
+    """Load Gana metadata from the shared tool-surface module."""
+    global _GANA_CACHE, _GANA_TOOLS
     if _GANA_CACHE is not None:
         return _GANA_CACHE
 
-    from whitemagic.tools.registry import TOOL_REGISTRY
-    from whitemagic.tools.prat_router import GANA_TO_TOOLS
-
-    gana_descs: dict[str, str] = {}
-    for td in TOOL_REGISTRY:
-        if td.name.startswith("gana_"):
-            gana_descs[td.name] = td.description
-
-    _GANA_CACHE = {}
-    for gana_name, desc in gana_descs.items():
-        nested = GANA_TO_TOOLS.get(gana_name, [])
-        _GANA_CACHE[gana_name] = (desc, nested)
-
+    _GANA_CACHE = _get_gana_metadata()
+    _GANA_TOOLS = {gana: list(tools) for gana, (_, tools) in _GANA_CACHE.items()}
     return _GANA_CACHE
-
-
-# ── Static Gana list for instant tools/list (no heavy imports) ──────
-# These are the 28 Gana names — hard-coded for zero-import startup.
-_GANA_NAMES: list[str] = [
-    "gana_horn", "gana_neck", "gana_root", "gana_room",
-    "gana_heart", "gana_tail", "gana_winnowing_basket",
-    "gana_ghost", "gana_willow", "gana_star",
-    "gana_extended_net", "gana_wings", "gana_chariot",
-    "gana_abundance", "gana_straddling_legs", "gana_mound",
-    "gana_stomach", "gana_hairy_head", "gana_net",
-    "gana_turtle_beak", "gana_three_stars", "gana_dipper",
-    "gana_ox", "gana_girl", "gana_void", "gana_roof",
-    "gana_encampment", "gana_wall",
-]
-
-# Static short descriptions (no imports needed)
-_GANA_SHORT_DESC: dict[str, str] = {
-    "gana_horn": "Session initialisation — bootstrap, create, resume, checkpoint, handoff",
-    "gana_neck": "Core memory creation — create, update, import, delete, clone memories",
-    "gana_root": "System health — health report, rust status/audit, state summary, ship check",
-    "gana_room": "Resource locks & privacy — sangha lock, sandbox, hermit crab mode, MCP integrity, security monitor",
-    "gana_heart": "Session context — scratchpad (create/update/finalize/analyze), handoff, context pack/status",
-    "gana_tail": "Performance & acceleration — SIMD ops (cosine/batch), cascade execution",
-    "gana_winnowing_basket": "Wisdom & search — search, vector search, hybrid recall, graph walk, JIT research, batch read",
-    "gana_ghost": "Introspection & web research — gnosis, telemetry, capabilities, graph topology, surprise stats, web search/fetch, browser automation, watchers, self-model forecast",
-    "gana_willow": "Resilience — rate limiter, grimoire spells/suggest/cast/walkthrough, oracle",
-    "gana_star": "Governance — governor validate/set-goal/drift/budget/dharma, forge status/reload/validate",
-    "gana_extended_net": "Pattern connectivity — pattern search, cluster stats, learning, coherence boost, resonance trace",
-    "gana_wings": "Deployment & export — export memories, audit export, mesh broadcast/status",
-    "gana_chariot": "Archaeology & knowledge graph — archaeology (search/stats/digest), KG extract/query/top, marketplace, Windsurf conversations",
-    "gana_abundance": "Regeneration — dream cycle (start/stop/now/status), lifecycle, serendipity, entity resolve, narrative compress, ILP payments, gratitude",
-    "gana_straddling_legs": "Ethics & balance — ethics eval, boundaries, consent, harmony vector, wu xing balance, verification",
-    "gana_mound": "Metrics & caching — hologram view, metric tracking, yin-yang balance, green score",
-    "gana_stomach": "Digestion & tasks — pipeline (create/list/status), task distribute/status/route/complete",
-    "gana_hairy_head": "Detail & debug — salience, anomaly (check/history/status), otel (metrics/spans), karma report/trace/anchor/verify, dharma rules",
-    "gana_net": "Capture & filtering — prompt render/list/reload, karma verify chain",
-    "gana_turtle_beak": "Precision — edge/bitnet inference, edge batch, stats",
-    "gana_three_stars": "Judgment & synthesis — bicameral reasoning, ensemble (query/history/status), optimization, kaizen analyze/apply, sabha convene/status",
-    "gana_dipper": "Strategy — homeostasis (check/status), maturity assess, starter packs (get/list/suggest), cognitive modes",
-    "gana_ox": "Endurance — swarm decompose/route/complete/vote/plan/resolve/status, worker",
-    "gana_girl": "Nurture — agent register/heartbeat/list/capabilities/deregister/trust",
-    "gana_void": "Stillness & galaxies — galactic dashboard, gardens, galaxy CRUD/transfer/merge/sync/lineage/taxonomy, OMS export/import/inspect",
-    "gana_roof": "Shelter — ollama models/generate/chat/agent, model signing/verify, sovereign sandbox (shelter create/execute/inspect/destroy)",
-    "gana_encampment": "Community — sangha chat, broker publish/history/status, gan ying emit/history/listeners",
-    "gana_wall": "Boundaries — vote create/cast/analyze/list/record_outcome, engagement tokens (issue/validate/revoke/list/status)",
-}
-
-# Dynamic per-Gana tool lists — generated from the PRAT router's TOOL_TO_GANA
-# dict which is the single source of truth for tool→Gana mapping.
-# This import is cheap (just a module-level dict, no subsystem init).
-_GANA_TOOLS: dict[str, list[str]] = {}
-try:
-    from whitemagic.tools.prat_router import GANA_TO_TOOLS as _G2T
-    _GANA_TOOLS = {gana: sorted(tools) for gana, tools in _G2T.items()}
-except ImportError:
-    # Fallback: will be populated on first _load_gana_metadata() call
-    pass
 
 
 def _schema_for_gana(name: str) -> dict:
@@ -355,6 +302,12 @@ async def list_resources() -> list[types.Resource]:
     """Expose orientation docs and workflow templates."""
     resources = [
         types.Resource(
+            uri="whitemagic://orientation/prologue",  # type: ignore[arg-type]
+            name="Prologue",
+            description="Canonical introduction and documentation router for WhiteMagic.",
+            mimeType="text/markdown",
+        ),
+        types.Resource(
             uri="whitemagic://orientation/ai-primary",  # type: ignore[arg-type]
             name="AI Primary",
             description="Primary orientation document for AI runtimes.",
@@ -388,6 +341,12 @@ async def list_resources() -> list[types.Resource]:
 async def read_resource(uri) -> str:
     """Read a resource by URI."""
     uri_str = str(uri)
+    if "prologue" in uri_str:
+        path = ROOT_DIR / "grimoire" / "00_PROLOGUE.md"
+        try:
+            return path.read_text(encoding="utf-8")
+        except Exception as exc:
+            return f"# Unavailable\n\nerror: {exc}"
     if "ai-primary" in uri_str:
         path = CORE_SYSTEM_DIR / "AI_PRIMARY.md"
         try:
@@ -420,6 +379,16 @@ async def read_resource(uri) -> str:
 async def main_stdio() -> None:
     """Run as stdio MCP server (default, for IDE integration)."""
     import anyio
+
+    runtime_status = get_runtime_status()
+    if not runtime_status.get("silent_init"):
+        suffix = " [DEGRADED]" if runtime_status.get("degraded_mode") else ""
+        print(f"\n  WhiteMagic MCP Server v{_VERSION}{suffix}", file=sys.stderr)
+        print(f"  Mode: {runtime_status.get('mode')} | 28 Gana tools", file=sys.stderr)
+        if runtime_status.get("degraded_reasons"):
+            reasons = ", ".join(runtime_status["degraded_reasons"])
+            print(f"  Degraded reasons: {reasons}", file=sys.stderr)
+        print("", file=sys.stderr)
 
     read_stream_writer, read_stream = anyio.create_memory_object_stream[SessionMessage | Exception](0)
     write_stream, write_stream_reader = anyio.create_memory_object_stream[SessionMessage](0)
@@ -484,10 +453,16 @@ async def main_http(host: str = "127.0.0.1", port: int = 8770) -> None:
         ],
     )
 
+    runtime_status = get_runtime_status()
     logger.warning(f"WhiteMagic MCP HTTP server starting on http://{host}:{port}/mcp")
-    print(f"\n  WhiteMagic MCP Server v{_VERSION}", file=sys.stderr)
+    suffix = " [DEGRADED]" if runtime_status.get("degraded_mode") else ""
+    print(f"\n  WhiteMagic MCP Server v{_VERSION}{suffix}", file=sys.stderr)
     print(f"  HTTP endpoint: http://{host}:{port}/mcp", file=sys.stderr)
-    print("  28 Gana tools | 311 nested tools\n", file=sys.stderr)
+    print(f"  Mode: {runtime_status.get('mode')} | 28 Gana tools", file=sys.stderr)
+    if runtime_status.get("degraded_reasons"):
+        reasons = ", ".join(runtime_status["degraded_reasons"])
+        print(f"  Degraded reasons: {reasons}", file=sys.stderr)
+    print("", file=sys.stderr)
 
     config = uvicorn.Config(app, host=host, port=port, log_level="warning")
     uv_server = uvicorn.Server(config)

@@ -17,13 +17,14 @@ def _load_rust() -> tuple[Any, Any]:
 
 def handle_create_memory(**kwargs: Any) -> dict[str, Any]:
     from whitemagic.core.memory.unified import remember
+    from whitemagic.tools.errors import ToolExecutionError, ErrorCode
 
     content = kwargs.get("content")
     title = kwargs.get("title")
     if not isinstance(title, str) or not title.strip():
-        return {"status": "error", "message": "title is required"}
+        raise ToolExecutionError("title is required", error_code=ErrorCode.INVALID_PARAMS)
     if not isinstance(content, str) or not content.strip():
-        return {"status": "error", "message": "content is required"}
+        raise ToolExecutionError("content is required", error_code=ErrorCode.INVALID_PARAMS)
 
     memory_type_str = kwargs.get("type") or kwargs.get("memory_type") or "short_term"
     try:
@@ -39,28 +40,49 @@ def handle_create_memory(**kwargs: Any) -> dict[str, Any]:
     # UX: accept comma-separated string as well as list
     if isinstance(tags, str):
         tags = [t.strip() for t in tags.split(",") if t.strip()]
-    metadata: dict[str, Any] = {}
-    try:
-        from whitemagic.gardens.wisdom.wu_xing import get_wu_xing
-        wu_xing = get_wu_xing()
-        phase = wu_xing.detect_current_phase()
-        metadata = {"wu_xing_phase": phase.value, "wu_xing_timestamp": now_iso()}
-    except Exception:
-        metadata = {}
+    metadata_raw = kwargs.get("metadata")
+    metadata: dict[str, Any] = dict(metadata_raw) if isinstance(metadata_raw, dict) else {}
+    include_wu_xing_raw = kwargs.get("include_wu_xing_metadata", False)
+    include_wu_xing_metadata = (
+        include_wu_xing_raw if isinstance(include_wu_xing_raw, bool)
+        else str(include_wu_xing_raw).strip().lower() in {"1", "true", "yes", "on"}
+    )
+    if include_wu_xing_metadata:
+        try:
+            from whitemagic.gardens.wisdom.wu_xing import get_wu_xing
+            wu_xing = get_wu_xing()
+            phase = wu_xing.detect_current_phase()
+            metadata.setdefault("wu_xing_phase", phase.value)
+            metadata.setdefault("wu_xing_timestamp", now_iso())
+        except Exception:
+            pass
 
     tag_set = {str(t).lower() for t in (tags or []) if str(t).strip()}
+    auto_embed_raw = kwargs.get("auto_embed", False)
+    auto_embed = auto_embed_raw if isinstance(auto_embed_raw, bool) else str(auto_embed_raw).strip().lower() in {"1", "true", "yes", "on"}
+    emit_gan_ying_raw = kwargs.get("emit_gan_ying", False)
+    emit_gan_ying = (
+        emit_gan_ying_raw if isinstance(emit_gan_ying_raw, bool)
+        else str(emit_gan_ying_raw).strip().lower() in {"1", "true", "yes", "on"}
+    )
+
     store_kwargs: dict[str, Any] = {
         "content": content,
         "title": title.strip(),
         "tags": tag_set,
         "metadata": metadata,
+        "auto_embed": auto_embed,
+        "enable_surprise_gate": False,
+        "enable_entity_extraction": False,
+        "enable_holographic_index": False,
     }
     if memory_type is not None:
         store_kwargs["memory_type"] = memory_type
 
     try:
         mem = remember(**store_kwargs)
-        _emit("MEMORY_CREATED", {"title": title, "tags": tags, "memory_id": str(mem.id)})
+        if emit_gan_ying:
+            _emit("MEMORY_CREATED", {"title": title, "tags": tags, "memory_id": str(mem.id)})
         return {"status": "success", "memory_id": str(mem.id), "filename": f"{mem.id}.md"}
     except Exception as e:
         return {"status": "error", "message": f"Failed to create memory: {str(e)[:200]}"}

@@ -47,6 +47,15 @@ except ImportError:
     nx = None  # type: ignore[assignment]
     _NX_AVAILABLE = False
 
+# Rust acceleration (S026 VC2)
+try:
+    import whitemagic_rust as _wr
+    _rust_graph = _wr.graph_engine
+    _RUST_AVAILABLE = True
+except ImportError:
+    _rust_graph = None  # type: ignore[assignment]
+    _RUST_AVAILABLE = False
+
 
 @dataclass
 class CentralitySnapshot:
@@ -447,6 +456,32 @@ class GraphEngine:
             if not between:
                 return []
 
+            # Try Rust implementation first (S026 VC2)
+            if _RUST_AVAILABLE:
+                try:
+                    # Build adjacency list for Rust
+                    UG = G.to_undirected()
+                    adjacencies: dict[str, list[str]] = {}
+                    for node in UG.nodes():
+                        adjacencies[str(node)] = [str(n) for n in UG.neighbors(node)]
+                    
+                    betweenness_str = {str(k): v for k, v in between.items()}
+                    results = _rust_graph.py_bridging_centrality(
+                        betweenness_str, adjacencies, top_n
+                    )
+                    return [
+                        {
+                            "node_id": r[0],
+                            "bridging_centrality": round(r[1], 6),
+                            "betweenness": round(r[2], 6),
+                            "bridging_coefficient": round(r[3], 4),
+                            "degree": r[4],
+                        }
+                        for r in results
+                    ]
+                except Exception:
+                    pass  # Fall back to Python
+
             UG = G.to_undirected()
 
             bridges: list[dict[str, Any]] = []
@@ -600,6 +635,31 @@ class GraphEngine:
         if not prev.eigenvector or not curr.eigenvector:
             return []
 
+        # Try Rust implementation first (S026 VC2)
+        if _RUST_AVAILABLE:
+            try:
+                prev_cent = {str(k): v for k, v in prev.eigenvector.items()}
+                curr_cent = {str(k): v for k, v in curr.eigenvector.items()}
+                new_edge_nodes = self._get_recent_edge_nodes()
+                new_edge_str = {str(n) for n in new_edge_nodes}
+                
+                results = _rust_graph.py_detect_echo_chambers(
+                    prev_cent, curr_cent, new_edge_str, sigma_threshold
+                )
+                return [
+                    EchoChamber(
+                        node_id=r[0],
+                        current_centrality=r[1],
+                        previous_centrality=r[2],
+                        spike_ratio=r[3],
+                        has_new_data=r[4],
+                    )
+                    for r in results
+                ]
+            except Exception:
+                pass  # Fall back to Python
+
+        # Python fallback
         # Compute mean and std of centrality changes
         common_nodes = set(prev.eigenvector.keys()) & set(curr.eigenvector.keys())
         if len(common_nodes) < 10:

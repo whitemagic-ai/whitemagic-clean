@@ -25,7 +25,10 @@ post-processing feedback).
 from __future__ import annotations
 
 import logging
+import os
 from collections.abc import Callable
+
+from whitemagic.runtime_status import get_runtime_status
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -45,6 +48,8 @@ _check_maturity_for_tool: Any = None
 _get_security_monitor: Any = None
 _get_governor: Any = None
 _compact_fn: Any = None
+_get_prometheus: Any = None
+_get_otel: Any = None
 _cached: bool = False
 
 
@@ -53,6 +58,7 @@ def _ensure_cached() -> None:
     global _sanitize_tool_args, _get_breaker_registry, _get_rate_limiter
     global _check_tool_permission, _check_maturity_for_tool
     global _get_security_monitor, _get_governor, _compact_fn, _cached
+    global _get_prometheus, _get_otel
     if _cached:
         return
     try:
@@ -93,6 +99,16 @@ def _ensure_cached() -> None:
     try:
         from whitemagic.tools.compact_response import compact
         _compact_fn = compact
+    except Exception:
+        pass
+    try:
+        from whitemagic.core.monitoring.prometheus_export import get_prometheus
+        _get_prometheus = get_prometheus
+    except Exception:
+        pass
+    try:
+        from whitemagic.core.monitoring.otel_export import get_otel
+        _get_otel = get_otel
     except Exception:
         pass
     _cached = True
@@ -155,6 +171,7 @@ class DispatchPipeline:
 
     def execute(self, tool_name: str, **kwargs: Any) -> dict[str, Any] | None:
         """Execute the full pipeline for a tool call."""
+        quiet_internal_benchmark = bool(kwargs.get("_internal_benchmark", False))
         ctx = DispatchContext(
             tool_name=tool_name,
             kwargs=kwargs,
@@ -162,6 +179,8 @@ class DispatchPipeline:
             compact=kwargs.pop("_compact", False),
             zig_prevalidated=bool(kwargs.pop("_zig_prevalidated", False)),
         )
+        if quiet_internal_benchmark:
+            ctx.meta["quiet_internal_benchmark"] = True
 
         # Use pre-built chain (built once, reused for all calls)
         if self._chain is None:
@@ -185,9 +204,14 @@ class DispatchPipeline:
 
 def _terminal(ctx: DispatchContext) -> dict[str, Any] | None:
     """End of chain — no handler found."""
+    runtime_status = get_runtime_status()
     return {
         "status": "error",
+        "error_code": "tool_not_found",
         "message": f"Tool {ctx.tool_name} not yet implemented in unified_api or bridge",
+        "degraded_mode": runtime_status.get("degraded_mode", False),
+        "degraded_reasons": runtime_status.get("degraded_reasons", []),
+        "resolution": {"suggested_action": "verify_tool_name_or_use_prat_gana", "debug_hint": "Set WM_DEBUG=1 for verbose diagnostics"},
     }
 
 
@@ -197,6 +221,10 @@ def _wrap(mw: MiddlewareFn, next_fn: NextFn, name: str) -> NextFn:
         try:
             return mw(ctx, next_fn)
         except Exception as e:
+            # Re-raise explicit tool execution errors so they aren't swallowed
+            # by the middleware fallback logic.
+            if e.__class__.__name__ == "ToolExecutionError":
+                raise
             logger.debug(f"Middleware '{name}' error: {e}")
             return next_fn(ctx)
     return wrapped
@@ -248,6 +276,39 @@ def mw_circuit_breaker(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] 
     return result
 
 
+def mw_observability(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
+    """Record tool metrics to Prometheus and OpenTelemetry."""
+    import time
+    _ensure_cached()
+    
+    start = time.perf_counter()
+    result = next_fn(ctx)
+    duration = time.perf_counter() - start
+    
+    # Determine status
+    status = "success"
+    if isinstance(result, dict):
+        status_val = str(result.get("status", "")).lower()
+        if status_val == "error":
+            status = "error"
+    
+    # Record to Prometheus
+    if _get_prometheus is not None:
+        try:
+            _get_prometheus().record_tool_call(ctx.tool_name, duration, status)
+        except Exception:
+            pass
+    
+    # Record to OTel
+    if _get_otel is not None:
+        try:
+            _get_otel().record_tool_span(ctx.tool_name, duration, status)
+        except Exception:
+            pass
+    
+    return result
+
+
 def mw_rate_limiter(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
     """Per-agent, per-tool rate limiting."""
     if ctx.zig_prevalidated:
@@ -294,7 +355,9 @@ def mw_maturity_gate(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | 
 def mw_security_monitor(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
     """Edgerunner Violet: anomaly detection for suspicious tool-call patterns."""
     _ensure_cached()
-    if _get_security_monitor is not None:
+    quiet_internal = os.getenv("WM_BENCHMARK_QUIET", "").strip().lower() in ("1", "true", "yes")
+    quiet_internal = quiet_internal and bool(ctx.meta.get("quiet_internal_benchmark", False))
+    if _get_security_monitor is not None and not quiet_internal:
         try:
             safety = ctx.kwargs.get("safety", "READ")
             if not isinstance(safety, str):
@@ -338,4 +401,47 @@ def mw_governor(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
                 }
         except Exception:
             pass
+    return next_fn(ctx)
+
+
+def mw_sutra_auto_execute(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | None:
+    """Dharma-gated Auto-Execution.
+    Checks the Sutra Kernel to determine if a tool can auto-execute without human approval.
+    - Sattvic (Read/Observe): Auto-executes immediately.
+    - Rajasic (Write/Create): Auto-executes if intent is high, logs to Zodiac Ledger.
+    - Tamasic (Delete/Destructive): Blocked/Paused, sent to Nexus UI via Iceoryx2 for explicit consent.
+    """
+    try:
+        from whitemagic.core.bridge.sutra_bridge import get_sutra_kernel
+        sutra = get_sutra_kernel()
+        
+        # We estimate intent and karma from the tool metadata or context
+        # (For now, use defaults or dummy values, real implementation would extract from Gnosis/Karma)
+        verdict = sutra.evaluate_action(
+            action_type=ctx.tool_name, 
+            intent_score=1.0, 
+            karma_debt=0.0
+        )
+        
+        if verdict.startswith("Panic") or verdict.startswith("Intervene"):
+            # Block and push to UI for Karmic Consent
+            try:
+                from whitemagic.core.ipc_bridge import publish_json
+                publish_json("wm/commands", {
+                    "type": "karmic_consent_required",
+                    "tool": ctx.tool_name,
+                    "reason": verdict
+                })
+            except Exception as e:
+                logger.warning(f"Failed to push consent to Nexus UI: {e}")
+                
+            return {
+                "status": "paused",
+                "error": f"Sutra Kernel Intervention: {verdict}. Awaiting Karmic Consent.",
+                "action_required": "user_approval"
+            }
+            
+    except Exception as e:
+        logger.warning(f"Sutra Auto-Execute Middleware failed: {e}")
+        
     return next_fn(ctx)

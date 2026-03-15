@@ -1,0 +1,291 @@
+module interface hot_paths
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/vector = std/core/vector pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/core = std/core = "";
+import std/os/readline = std/os/readline = "";
+import std/num/float64 = std/num/float64 = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+// The `:io` effect is used for functions that perform arbitrary I/O operations.
+local alias std/core/io[78,1,78,29] :: E = <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,((std/core/io-noexn :: E) == 3 <(std/core/types/div :: X),((std/core/io-total :: E) == 2 <(std/core/types/ndet :: X),(std/core/console/console :: X),(std/core/net :: X),(std/core/fsys :: X),(std/core/ui :: X),((std/core/types/st :: H -> E)<(std/core/types/global :: H)> == 1 <(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/types/write :: H -> X)<(std/core/types/global :: H)>,(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>>)>)>)> = 4;
+ 
+//------------------------------
+//#kki: type declarations
+ 
+pub value{1,0,1} type complexity[12,1,15,6] {
+  pub con Low[13,3,13,5]{0,0,0} : complexity = 1;
+  pub con Medium[14,3,14,8]{0,0,0} : complexity = 2;
+  pub con High[15,3,15,6]{0,0,0} : complexity = 3;
+};
+pub value{1,0,1} type path-category[17,1,21,7] {
+  pub con Compute[18,3,18,9]{0,0,0} : path-category = 1;
+  pub con Memory[19,3,19,8]{0,0,0} : path-category = 2;
+  pub con IO[20,3,20,4]{0,0,0} : path-category = 3;
+  pub con Mixed[21,3,21,7]{0,0,0} : path-category = 4;
+};
+pub type path-profile[23,1,29,25] {
+  pub con Path-profile[23,12,23,23](name: std/core/types/string, call-count: std/core/types/int, total-time-ms: std/core/types/float64, avg-time-ms: std/core/types/float64, complexity: complexity, category: path-category){18,2,8} : (name : std/core/types/string, call-count : std/core/types/int, total-time-ms : std/core/types/float64, avg-time-ms : std/core/types/float64, complexity : complexity, category : path-category) -> path-profile = 1;
+};
+pub type profiling-session[31,1,35,27] {
+  pub con Profiling-session[31,12,31,28](paths: (std/core/types/list :: V -> V)<path-profile>, total-calls: std/core/types/int, total-time-ms: std/core/types/float64, hot-threshold-ms: std/core/types/float64){16,2,8} : (paths : (std/core/types/list :: V -> V)<path-profile>, total-calls : std/core/types/int, total-time-ms : std/core/types/float64, hot-threshold-ms : std/core/types/float64) -> profiling-session = 1;
+};
+ 
+//------------------------------
+//#kki: declarations
+ 
+// Automatically generated. Tests for the `Low` constructor of the `:complexity` type.
+pub fip fun is-low[13,3,13,5] : (^ complexity : complexity) -> std/core/types/bool;
+// Automatically generated. Tests for the `Medium` constructor of the `:complexity` type.
+pub fip fun is-medium[14,3,14,8] : (^ complexity : complexity) -> std/core/types/bool;
+// Automatically generated. Tests for the `High` constructor of the `:complexity` type.
+pub fip fun is-high[15,3,15,6] : (^ complexity : complexity) -> std/core/types/bool;
+// Automatically generated. Tests for the `Compute` constructor of the `:path-category` type.
+pub fip fun is-compute[18,3,18,9] : (^ path-category : path-category) -> std/core/types/bool;
+// Automatically generated. Tests for the `Memory` constructor of the `:path-category` type.
+pub fip fun is-memory[19,3,19,8] : (^ path-category : path-category) -> std/core/types/bool;
+// Automatically generated. Tests for the `IO` constructor of the `:path-category` type.
+pub fip fun is-io[20,3,20,4] : (^ path-category : path-category) -> std/core/types/bool;
+// Automatically generated. Tests for the `Mixed` constructor of the `:path-category` type.
+pub fip fun is-mixed[21,3,21,7] : (^ path-category : path-category) -> std/core/types/bool;
+// Automatically generated. Retrieves the `name` constructor field of the `:path-profile` type.
+pub fun path-profile/name[24,3,24,6] : (^ @this : path-profile) -> std/core/types/string;
+// Automatically generated. Retrieves the `call-count` constructor field of the `:path-profile` type.
+pub fun path-profile/call-count[25,3,25,12] : (^ @this : path-profile) -> std/core/types/int;
+// Automatically generated. Retrieves the `total-time-ms` constructor field of the `:path-profile` type.
+pub fun path-profile/total-time-ms[26,3,26,15] : (^ @this : path-profile) -> std/core/types/float64;
+// Automatically generated. Retrieves the `avg-time-ms` constructor field of the `:path-profile` type.
+pub fun path-profile/avg-time-ms[27,3,27,13] : (^ @this : path-profile) -> std/core/types/float64;
+// Automatically generated. Retrieves the `complexity` constructor field of the `:path-profile` type.
+pub fun path-profile/complexity[28,3,28,12] : (^ @this : path-profile) -> complexity;
+// Automatically generated. Retrieves the `category` constructor field of the `:path-profile` type.
+pub fun path-profile/category[29,3,29,10] : (^ @this : path-profile) -> path-category;
+pub fun path-profile/@copy[23,12,23,23] : (@this : path-profile, name : (std/core/types/@optional :: V -> V)<std/core/types/string>, call-count : (std/core/types/@optional :: V -> V)<std/core/types/int>, total-time-ms : (std/core/types/@optional :: V -> V)<std/core/types/float64>, avg-time-ms : (std/core/types/@optional :: V -> V)<std/core/types/float64>, complexity : (std/core/types/@optional :: V -> V)<complexity>, category : (std/core/types/@optional :: V -> V)<path-category>) -> path-profile;
+// Automatically generated. Retrieves the `paths` constructor field of the `:profiling-session` type.
+pub fun profiling-session/paths[32,3,32,7] : (^ @this : profiling-session) -> (std/core/types/list :: V -> V)<path-profile>;
+// Automatically generated. Retrieves the `total-calls` constructor field of the `:profiling-session` type.
+pub fun profiling-session/total-calls[33,3,33,13] : (^ @this : profiling-session) -> std/core/types/int;
+// Automatically generated. Retrieves the `total-time-ms` constructor field of the `:profiling-session` type.
+pub fun profiling-session/total-time-ms[34,3,34,15] : (^ @this : profiling-session) -> std/core/types/float64;
+// Automatically generated. Retrieves the `hot-threshold-ms` constructor field of the `:profiling-session` type.
+pub fun profiling-session/hot-threshold-ms[35,3,35,18] : (^ @this : profiling-session) -> std/core/types/float64;
+pub fun profiling-session/@copy[31,12,31,28] : (@this : profiling-session, paths : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<path-profile>>, total-calls : (std/core/types/@optional :: V -> V)<std/core/types/int>, total-time-ms : (std/core/types/@optional :: V -> V)<std/core/types/float64>, hot-threshold-ms : (std/core/types/@optional :: V -> V)<std/core/types/float64>) -> profiling-session;
+pub fun complexity-to-string[39,9,39,28] : (c : complexity) -> std/core/types/string;
+pub fun category-to-string[45,9,45,26] : (cat : path-category) -> std/core/types/string;
+pub fun estimate-complexity[52,9,52,27] : (avg-time-ms : std/core/types/float64, call-count : std/core/types/int) -> complexity;
+fun estimate-category[57,5,57,21] : (name : std/core/types/string) -> path-category;
+pub fun create-profile[63,9,63,22] : (name : std/core/types/string, time-ms : std/core/types/float64) -> path-profile;
+fun json-profile[68,5,68,16] : (p : path-profile) -> std/core/types/string;
+fun extract-op[75,5,75,14] : (line : std/core/types/string) -> std/core/types/string;
+fun extract-name[83,5,83,16] : (line : std/core/types/string) -> std/core/types/string;
+// monadic lift
+fun @mlift-server-loop@10034[1,0,1,0] : (op : std/core/types/string, profiles : (std/core/types/list :: V -> V)<path-profile>, total-calls : std/core/types/int, total-time : std/core/types/float64, @c-x10018 : std/core/types/string) -> ();
+// monadic lift
+fun @mlift-server-loop@10035[1,0,1,0] : (profiles : (std/core/types/list :: V -> V)<path-profile>, total-calls : std/core/types/int, total-time : std/core/types/float64, line : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>> ();
+fun server-loop[90,5,90,15] : (total-calls : std/core/types/int, total-time : std/core/types/float64, profiles : (std/core/types/list :: V -> V)<path-profile>) -> <(std/core/io :: E)> ();
+fun main[120,5,120,8] : () -> <(std/core/io :: E)> ();
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+inline borrow "^" fip fun is-low // inline size: 1
+  = fn(complexity: complexity){
+    match (complexity) {
+      ((hot_paths/Low() : complexity ) as @pat: complexity)
+         -> std/core/types/True;
+      (@pat@0: complexity)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-medium // inline size: 1
+  = fn(complexity: complexity){
+    match (complexity) {
+      ((hot_paths/Medium() : complexity ) as @pat: complexity)
+         -> std/core/types/True;
+      (@pat@0: complexity)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-high // inline size: 1
+  = fn(complexity: complexity){
+    match (complexity) {
+      ((hot_paths/High() : complexity ) as @pat: complexity)
+         -> std/core/types/True;
+      (@pat@0: complexity)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-compute // inline size: 1
+  = fn(path-category: path-category){
+    match (path-category) {
+      ((hot_paths/Compute() : path-category ) as @pat: path-category)
+         -> std/core/types/True;
+      (@pat@0: path-category)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-memory // inline size: 1
+  = fn(path-category: path-category){
+    match (path-category) {
+      ((hot_paths/Memory() : path-category ) as @pat: path-category)
+         -> std/core/types/True;
+      (@pat@0: path-category)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-io // inline size: 1
+  = fn(path-category: path-category){
+    match (path-category) {
+      ((hot_paths/IO() : path-category ) as @pat: path-category)
+         -> std/core/types/True;
+      (@pat@0: path-category)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-mixed // inline size: 1
+  = fn(path-category: path-category){
+    match (path-category) {
+      ((hot_paths/Mixed() : path-category ) as @pat: path-category)
+         -> std/core/types/True;
+      (@pat@0: path-category)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fun path-profile/name // inline size: 0
+  = fn(@this: path-profile){
+    match (@this) {
+      ((@skip hot_paths/Path-profile((@x: std/core/types/string) : std/core/types/string, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/float64) : std/core/types/float64, (@pat@2: std/core/types/float64) : std/core/types/float64, (@pat@3: complexity) : complexity, (@pat@4: path-category) : path-category) : path-profile ) as @pat: path-profile)
+         -> @x;
+    };
+  };
+inline borrow "^" fun path-profile/call-count // inline size: 0
+  = fn(@this: path-profile){
+    match (@this) {
+      ((@skip hot_paths/Path-profile((@pat@0: std/core/types/string) : std/core/types/string, (@x: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/float64) : std/core/types/float64, (@pat@2: std/core/types/float64) : std/core/types/float64, (@pat@3: complexity) : complexity, (@pat@4: path-category) : path-category) : path-profile ) as @pat: path-profile)
+         -> @x;
+    };
+  };
+inline borrow "^" fun path-profile/total-time-ms // inline size: 0
+  = fn(@this: path-profile){
+    match (@this) {
+      ((@skip hot_paths/Path-profile((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/float64) : std/core/types/float64, (@pat@2: std/core/types/float64) : std/core/types/float64, (@pat@3: complexity) : complexity, (@pat@4: path-category) : path-category) : path-profile ) as @pat: path-profile)
+         -> @x;
+    };
+  };
+inline borrow "^" fun path-profile/avg-time-ms // inline size: 0
+  = fn(@this: path-profile){
+    match (@this) {
+      ((@skip hot_paths/Path-profile((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/float64) : std/core/types/float64, (@x: std/core/types/float64) : std/core/types/float64, (@pat@3: complexity) : complexity, (@pat@4: path-category) : path-category) : path-profile ) as @pat: path-profile)
+         -> @x;
+    };
+  };
+inline borrow "^" fun path-profile/complexity // inline size: 0
+  = fn(@this: path-profile){
+    match (@this) {
+      ((@skip hot_paths/Path-profile((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/float64) : std/core/types/float64, (@pat@3: std/core/types/float64) : std/core/types/float64, (@x: complexity) : complexity, (@pat@4: path-category) : path-category) : path-profile ) as @pat: path-profile)
+         -> @x;
+    };
+  };
+inline borrow "^" fun path-profile/category // inline size: 0
+  = fn(@this: path-profile){
+    match (@this) {
+      ((@skip hot_paths/Path-profile((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/float64) : std/core/types/float64, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: complexity) : complexity, (@x: path-category) : path-category) : path-profile ) as @pat: path-profile)
+         -> @x;
+    };
+  };
+inline borrow "^" fun profiling-session/paths // inline size: 0
+  = fn(@this: profiling-session){
+    match (@this) {
+      ((@skip hot_paths/Profiling-session((@x: (std/core/types/list :: V -> V)<path-profile>) : (std/core/types/list :: V -> V)<path-profile>, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/float64) : std/core/types/float64, (@pat@2: std/core/types/float64) : std/core/types/float64) : profiling-session ) as @pat: profiling-session)
+         -> @x;
+    };
+  };
+inline borrow "^" fun profiling-session/total-calls // inline size: 0
+  = fn(@this: profiling-session){
+    match (@this) {
+      ((@skip hot_paths/Profiling-session((@pat@0: (std/core/types/list :: V -> V)<path-profile>) : (std/core/types/list :: V -> V)<path-profile>, (@x: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/float64) : std/core/types/float64, (@pat@2: std/core/types/float64) : std/core/types/float64) : profiling-session ) as @pat: profiling-session)
+         -> @x;
+    };
+  };
+inline borrow "^" fun profiling-session/total-time-ms // inline size: 0
+  = fn(@this: profiling-session){
+    match (@this) {
+      ((@skip hot_paths/Profiling-session((@pat@0: (std/core/types/list :: V -> V)<path-profile>) : (std/core/types/list :: V -> V)<path-profile>, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/float64) : std/core/types/float64, (@pat@2: std/core/types/float64) : std/core/types/float64) : profiling-session ) as @pat: profiling-session)
+         -> @x;
+    };
+  };
+inline borrow "^" fun profiling-session/hot-threshold-ms // inline size: 0
+  = fn(@this: profiling-session){
+    match (@this) {
+      ((@skip hot_paths/Profiling-session((@pat@0: (std/core/types/list :: V -> V)<path-profile>) : (std/core/types/list :: V -> V)<path-profile>, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/float64) : std/core/types/float64, (@x: std/core/types/float64) : std/core/types/float64) : profiling-session ) as @pat: profiling-session)
+         -> @x;
+    };
+  };
+fun complexity-to-string // inline size: 2
+  = fn(c: complexity){
+    match (c) {
+      ((hot_paths/Low() : complexity ) as @pat: complexity)
+         -> "low";
+      ((hot_paths/Medium() : complexity ) as @pat@0: complexity)
+         -> "medium";
+      ((@skip hot_paths/High() : complexity ) as @pat@1: complexity)
+         -> "high";
+    };
+  };
+fun category-to-string // inline size: 3
+  = fn(cat: path-category){
+    match (cat) {
+      ((hot_paths/Compute() : path-category ) as @pat: path-category)
+         -> "compute";
+      ((hot_paths/Memory() : path-category ) as @pat@0: path-category)
+         -> "memory";
+      ((hot_paths/IO() : path-category ) as @pat@1: path-category)
+         -> "io";
+      ((@skip hot_paths/Mixed() : path-category ) as @pat@2: path-category)
+         -> "mixed";
+    };
+  };
+fun create-profile // inline size: 3
+  = fn(name: std/core/types/string, time-ms: std/core/types/float64){
+    hot_paths/Path-profile(name, 1, time-ms, time-ms, (hot_paths/estimate-complexity(time-ms, 1)), (hot_paths/estimate-category(name)));
+  };
+fun main // inline size: 1
+  = fn<(std/core/io :: E)>(){
+    hot_paths/server-loop(0, 0.0, (std/core/types/Nil<path-profile>));
+  };

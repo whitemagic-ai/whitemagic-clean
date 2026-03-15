@@ -8,7 +8,7 @@ export interface PanelState {
   bottom: { visible: boolean; height: number };
 }
 
-export type CenterTab = "editor" | "dashboard" | "graph" | "tools";
+export type CenterTab = "editor" | "dashboard" | "graph" | "tools" | "holographic";
 export type LeftTab = "explorer" | "search" | "memories" | "gardens" | "dharma";
 export type RightTab = "chat" | "ganying" | "orchestrator";
 export type BottomTab = "terminal" | "timeline" | "temporal";

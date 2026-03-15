@@ -254,14 +254,15 @@ class TestHybridRetrieval(unittest.TestCase):
         mem.memory_type.name = "LONG_TERM"
         return mem
 
-    def test_hybrid_search_lexical_only(self):
-        """When embeddings unavailable, falls back to lexical only."""
+    def test_hybrid_search_only_lexical(self):
+        """When semantic search fails or is unavailable, use lexical only."""
         from whitemagic.core.memory.unified import UnifiedMemory
 
         with patch.object(UnifiedMemory, "__init__", lambda self, *a, **kw: None):
             um = UnifiedMemory.__new__(UnifiedMemory)
             um.backend = MagicMock()
-            um.holographic = None
+            um._holographic = MagicMock()
+            um._holographic.search.return_value = []
 
             mem1 = self._make_mock_memory("m1")
             mem2 = self._make_mock_memory("m2")
@@ -287,13 +288,14 @@ class TestHybridRetrieval(unittest.TestCase):
         with patch.object(UnifiedMemory, "__init__", lambda self, *a, **kw: None):
             um = UnifiedMemory.__new__(UnifiedMemory)
             um.backend = MagicMock()
-            um.holographic = None
+            um._holographic = MagicMock()
+            um._skip_holo = False
 
             mem1 = self._make_mock_memory("m1")
             mem2 = self._make_mock_memory("m2")
             mem3 = self._make_mock_memory("m3")
             um.backend.search.return_value = [mem1, mem2]
-            um.backend.recall.return_value = mem3
+            um._holographic.search.return_value = [mem3]
 
             with patch(
                 "whitemagic.core.memory.embeddings.get_embedding_engine"
@@ -325,7 +327,8 @@ class TestHybridRetrieval(unittest.TestCase):
         with patch.object(UnifiedMemory, "__init__", lambda self, *a, **kw: None):
             um = UnifiedMemory.__new__(UnifiedMemory)
             um.backend = MagicMock()
-            um.holographic = None
+            um._holographic = MagicMock()
+            um._holographic.search.return_value = []
 
             mem1 = self._make_mock_memory("m1")
             um.backend.search.return_value = [mem1]
@@ -349,7 +352,8 @@ class TestHybridRetrieval(unittest.TestCase):
         with patch.object(UnifiedMemory, "__init__", lambda self, *a, **kw: None):
             um = UnifiedMemory.__new__(UnifiedMemory)
             um.backend = MagicMock()
-            um.holographic = None
+            um._holographic = MagicMock()
+            um._holographic.search.return_value = []
 
             um.backend.search.return_value = []
 
@@ -371,7 +375,8 @@ class TestHybridRetrieval(unittest.TestCase):
         with patch.object(UnifiedMemory, "__init__", lambda self, *a, **kw: None):
             um = UnifiedMemory.__new__(UnifiedMemory)
             um.backend = MagicMock()
-            um.holographic = None
+            um._holographic = None
+            um._skip_holo = True
 
             mems = [self._make_mock_memory(f"m{i}") for i in range(20)]
             um.backend.search.return_value = mems

@@ -474,6 +474,66 @@ class TestSecurityBreaker:
         assert alert is not None
         assert alert["action"] == "block"
 
+    def test_middleware_quiet_benchmark_mode_skips_security_monitor(self, monkeypatch):
+        from whitemagic.tools.middleware import DispatchContext, mw_security_monitor
+
+        class StubMonitor:
+            def __init__(self):
+                self.calls = 0
+
+            def record_call(self, **kwargs):
+                self.calls += 1
+                return None
+
+        stub = StubMonitor()
+        monkeypatch.setenv("WM_BENCHMARK_QUIET", "1")
+        monkeypatch.setattr("whitemagic.tools.middleware._get_security_monitor", lambda: stub)
+
+        ctx = DispatchContext(
+            tool_name="gana_ghost",
+            kwargs={},
+        )
+        ctx.meta["quiet_internal_benchmark"] = True
+        result = mw_security_monitor(ctx, lambda current: {"status": "success", "tool": current.tool_name})
+        assert result["status"] == "success"
+        assert stub.calls == 0
+
+
+    def test_dispatch_quiet_benchmark_flag_survives_sanitizer(self, monkeypatch):
+        from whitemagic.tools.dispatch_table import dispatch
+        from whitemagic.security.security_breaker import get_security_monitor
+
+        monkeypatch.setenv("WM_BENCHMARK_QUIET", "1")
+        monitor = get_security_monitor()
+        monitor.reset()
+
+        dispatch("gana_ghost", operation="search", _internal_benchmark=True)
+        status = monitor.status()
+        assert status["total_calls_monitored"] == 0
+
+    def test_middleware_quiet_mode_requires_internal_flag(self, monkeypatch):
+        from whitemagic.tools.middleware import DispatchContext, mw_security_monitor
+
+        class StubMonitor:
+            def __init__(self):
+                self.calls = 0
+
+            def record_call(self, **kwargs):
+                self.calls += 1
+                return None
+
+        stub = StubMonitor()
+        monkeypatch.setenv("WM_BENCHMARK_QUIET", "1")
+        monkeypatch.setattr("whitemagic.tools.middleware._get_security_monitor", lambda: stub)
+
+        ctx = DispatchContext(
+            tool_name="gana_ghost",
+            kwargs={},
+        )
+        result = mw_security_monitor(ctx, lambda current: {"status": "success", "tool": current.tool_name})
+        assert result["status"] == "success"
+        assert stub.calls == 1
+
 
 # =========================================================================
 # Handler Integration Tests

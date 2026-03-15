@@ -1,0 +1,465 @@
+/* Various calendars\: TAI, GPS, ISO week, Julian, Coptic, etc.
+
+*/
+module interface std/time/calendars
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/vector = std/core/vector pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/core = std/core = "";
+import std/time/instant = std/time/instant = "";
+import std/time/utc = std/time/utc = "";
+import std/time/date = std/time/date = "";
+import std/time/calendar = std/time/calendar = "";
+import std/time/duration = std/time/duration inline = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+ 
+//------------------------------
+//#kki: type declarations
+ 
+ 
+//------------------------------
+//#kki: declarations
+ 
+fun coptic-days-before-month[51,5,51,28] : (year : std/core/types/int, month : std/core/types/int) -> std/core/types/int;
+fun coptic-doy-to-month[54,5,54,23] : (year : std/core/types/int, doy : std/core/types/int) -> std/core/types/int;
+fun coptic-days-before-year[57,5,57,27] : (year : std/core/types/int) -> std/core/types/int;
+fun coptic-estimate-year[60,5,60,24] : (days : std/core/types/int) -> (std/core/types/int, (std/core/types/maybe :: V -> V)<std/core/types/int>);
+// The [Coptic](https://en.wikipedia.org/wiki/Coptic_calendar) calendar.
+// The calendar short name is ``CC``.
+pub val cal-coptic[43,9,43,18] : std/time/calendar/calendar;
+fun coptic-days-to-yeardoy[64,5,64,26] : (days : std/core/types/int) -> (std/core/types/int, std/core/types/int);
+// The [Ethiopian](https://en.wikipedia.org/wiki/Ethiopian_calendar) calendar.
+// The calendar short name is ``EC``.
+pub val cal-ethiopian[71,9,71,21] : std/time/calendar/calendar;
+fun isow-days-before-month[104,5,104,26] : (year : std/core/types/int, month : std/core/types/int) -> std/core/types/int;
+fun isow-doy-to-month[107,5,107,21] : (year : std/core/types/int, doy : std/core/types/int) -> std/core/types/int;
+// duplicate from std/time/calendar to reduce dependencies
+fun iso-days-before-year[120,5,120,24] : (year : std/core/types/int) -> std/core/types/int;
+fun isow-days-before-year[110,5,110,25] : (year : std/core/types/int) -> std/core/types/int;
+fun iso-estimate-year[125,5,125,21] : (days : std/core/types/int) -> (std/core/types/int, (std/core/types/maybe :: V -> V)<std/core/types/int>);
+fun isow-estimate-year[116,5,116,22] : (days : std/core/types/int) -> (std/core/types/int, (std/core/types/maybe :: V -> V)<std/core/types/int>);
+/* The 'ISO week' calendar. This implements the [ISO week date](https://en.wikipedia.org/wiki/ISO_week_date)
+calendar the week number is interpreted as "month" number instead, i.e. every year has 52 (or 53)
+months of 7 week days each. Short name is `"IW"`.
+
+Since its introduction in 1988, the ISO week calendar is a widely accepted standard for a weekly
+calendar. It is used mainly by businesses for fiscal year calculations.
+Weeks start on Monday (as day 1) and every common year has 52 weeks.
+Every 5 to 7 years, there is a 'leap' year with an extra week 53.
+The ISO week calendar is directly based on the Gregorian calendar.
+For example, Tuesday 2001-01-02 is denoted as 2001-W01-2 in the ISO week
+calendar: weekday 2 (Tuesday) of week 1 in 2001.
+
+The year of an ISO week is defined as the Gregorian year that has the
+Thursday of that week, &ie; contains the most days of that week. For
+example, Thursday 2004-01-01 has week date 2004-W01-4. This means that
+sometimes the Gregorian year is different for a first- or last week:
+Wednesday 2003-12-31 falls in the first week of 2004W and has week date
+2004-W01-3. Similarly, Saturday 2005-01-01 falls in the last (leap) week of
+2004W and has week date 2004-W53-6.
+*/
+pub val cal-iso-week[97,9,97,20] : std/time/calendar/calendar;
+fun isom-days-before-month[270,5,270,26] : (year : std/core/types/int, month : std/core/types/int) -> std/core/types/int;
+fun isom-doy-to-month[273,5,273,21] : (year : std/core/types/int, doy : std/core/types/int) -> std/core/types/int;
+/*
+<!--meta
+.calendar
+  .sans-serif;
+  border: 1px solid black;
+
+.mheader
+  font-weight: bold;
+
+.separator
+  padding-bottom:0.2ex;
+
+.noborder
+  border-left:none;
+  border-right:none;
+
+.spacer
+  border-left:none;
+  border-right:none;
+  height:0.4ex;
+
+.month
+  td-padding-right: 1ex;
+  tr-padding-top: 0.25ex;
+  tbody-tr-1-padding-top: 0.5ex;
+  .sans-serif
+
+-->
+This is _not_ a standard ISO calendar -- it is named this way because
+it is based directly on the standard [ISO week
+date](https://en.wikipedia.org/wiki/ISO_week_date) calendar.
+The short name of the calendar is `"IM"`.
+
+The "ISO month" calendar takes the ISO week calendar _as is_, but divides
+it up in 12 months. This is more familiar than using week numbers to
+denote a date. A common ISO week year of 52 weeks is divided into 4
+quarters of 13 weeks each. Each quarter has 3 months of 30, 30, and 31
+days respectively. So, January has 30 days, February has 30 days too,
+March has 31 days, April has 30 days again, etc. On a leap year, we have
+an extra leap week 53 that is inserted at the end of the last month,
+&ie; adds days 32 to 38 to December. Since quarters are meant to be equal
+for business purposes, we generally don't count the leap week as part of
+the 4th quarter.
+
+This monthly calendar has many good properties, not the least that it
+matches the Gregorian calendar dates very closely[^fn-match], and is based a widely supported standard ISO calendar. Moreover,
+it is [perennial](https://en.wikipedia.org/wiki/Perennial_calendar) where
+every date in the year always has the same weekday. For example, every
+year and every quarter always start on a Monday and end on a Sunday.
+Thanksgiving (the 4th Thursday of November) is always on November 23, and
+always 31 days before Christmas. Christmas and New year are always on
+Sunday, and there is never a Friday the 13th.
+
+[^fn-match]: The month date always matches within 5 days of the
+    Gregorian calendar; and 90% of the time, the date is within 3 days.
+
+When writing down a date in the monthly calendar we prefix the
+month with a capital [M]{.sans-serif} in order to distinguish these
+dates from regular Gregorian dates or ISO week dates. For example,
+
+|-----|----------------|----------------|----------------------------------------------------------|---------------|
+| Day | Gregorian date | Month date     | Remarks                                                | ISO week date |
++-----|:--------------:|:--------------:+----------------------------------------------------------|:-------------:+
+| Mon | 2018-01-01     | 2018-M01-01    | Matches since Monday starts the first week of the year.  | 2018-W01-1    |
+| Thu | 2016-11-24     | 2016-M11-23    | Thanksgiving, always on Thursday M11-23 every year.      | 2016-W47-5    |
+| Thu | 2013-07-04     | 2013-M07-04    | Independence day is always on Thursday M07-04.           | 2013-W27-4    |
+|-----|----------------|----------------|----------------------------------------------------------|---------------|
+| Thu | 2004-01-01     | 2004-M01-04    | Since the first week falls partly in 2003M.              | 2004-W01-4    |
+| Sun | 2005-01-02     | 2004-M12-38    | Since it is the last day of the leap week of 2004M.      | 2004-W53-7    |
+|-----|----------------|----------------|----------------------------------------------------------|---------------|
+{ white-space:nowrap; col-4-white-space:normal; col-3-padding-right:1ex;   }
+
+With the regularity of the new calendar, we can reuse the same calendar
+pattern for each quarter over and over; unlike the Gregorian calendar it
+never changes which makes planning for businesses, schools, government
+etc. much simpler. Here is the (perpetual) calendar with the
+corresponding ISO week numbers:
+
+~ Begin Calendar { .sans-serif; border: 1px solid #AAA; padding:1ex; }
+
++~~~:|~~~:|~~~:|~~~:|~~~:|~~~:|~~~:+~~~|~~~~:|~~~~:|~~~~:|~~~~:|~~~~~~~~~~~~~|
+|  Quarterly Calendar        ||||||| &quad;  | ISO week numbers   ||||             |{.noborder; text-align:center}
+|    |    |    |    |    |    |    |   | Q1  | Q2  | Q3  | Q4  |             |{.noborder; .mheader}
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+| Mo | Tu | We | Th | Fr | Sa | Su |   | Jan | Apr | Jul |Oct  |             |{.mheader}
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+| 1  | 2  | 3  | 4  | 5  | 6  | 7  |   | 1   | 14  | 27  | 40  |             |
+| 8  | 9  | 10 | 11 | 12 | 13 | 14 |   | 2   | 15  | 28  | 41  |             |
+| 15 | 16 | 17 | 18 | 19 | 20 | 21 |   | 3   | 16  | 29  | 42  |             |
+| 22 | 23 | 24 | 25 | 26 | 27 | 28 |   | 4   | 17  | 30  | 43  |             |
+| 29 | 30 |    |    |    |    |    |   | 5   | 18  | 31  | 44  |             |
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+|    |    |    |    |    |    |    |   |     |     |     |     |             |{.spacer}
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+| Mo | Tu | We | Th | Fr | Sa | Su |   | Feb | May | Aug | Nov |             |{.mheader}
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+|    |    | 1  | 2  | 3  | 4  | 5  |   | 5   | 18  | 31  | 44  |             |
+| 6  | 7  | 8  | 9  | 10 | 11 | 12 |   | 6   | 19  | 32  | 45  |             |
+| 13 | 14 | 15 | 16 | 17 | 18 | 19 |   | 7   | 20  | 33  | 46  |             |
+| 20 | 21 | 22 | 23 | 24 | 25 | 26 |   | 8   | 21  | 34  | 47  |             |
+| 27 | 28 | 29 | 30 |    |    |    |   | 9   | 22  | 35  | 48  |             |
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+|    |    |    |    |    |    |    |   |     |     |     |     |             |{.spacer}
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+| Mo | Tu | We | Th | Fr | Sa | Su |   | Mar | Jun | Sep | Dec |             |{.mheader}
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+|    |    |    |    | 1  | 2  | 3  |   | 9   | 22  | 35  | 48  |             |
+| 4  | 5  | 6  | 7  | 8  | 9  | 10 |   | 10  | 23  | 36  | 49  |             |
+| 11 | 12 | 13 | 14 | 15 | 16 | 17 |   | 11  | 24  | 37  | 50  |             |
+| 18 | 19 | 20 | 21 | 22 | 23 | 24 |   | 12  | 25  | 38  | 51  |             |
+| 25 | 26 | 27 | 28 | 29 | 30 | 31 |   | 13  | 26  | 39  | 52  |             |
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+|    |    |    |    |    |    |    |   |     |     |     |     |             |{.spacer}
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+|\ 32|\ 33|\ 34|\ 35|\ 36|\ 37|\ 38|   | leap week^&dagger;^     ||| 53  |             |
+|----|----|----|----|----|----|----|   |     |     |     |     |             |
+{ .month; margin-left:auto; margin-right:auto }
+
+&nbsp;
+
+^&dagger;^ A leap week is inserted
+  at the end of December. Upcoming years with a leap week are 2020, 2026, 2032, 2037, and 2043. In
+  general, a leap week is inserted whenever the corresponding Gregorian
+  year starts and/or ends on a Thursday.
+
+~ End Calendar
+
+-- Daan Leijen, 2016.
+*/
+pub val cal-iso-month[263,9,263,21] : std/time/calendar/calendar;
+fun julian-adjust[302,5,302,17] : (is-before-march : std/core/types/bool, year : std/core/types/int) -> std/core/types/int;
+fun julian-days-before-month[294,5,294,28] : (year : std/core/types/int, month : std/core/types/int) -> std/core/types/int;
+fun julian-doy-to-month[298,5,298,23] : (year : std/core/types/int, doy : std/core/types/int) -> std/core/types/int;
+fun julian-days-before-year[305,5,305,27] : (year : std/core/types/int) -> std/core/types/int;
+fun julian-estimate-year[309,5,309,24] : (days : std/core/types/int) -> (std/core/types/int, (std/core/types/maybe :: V -> V)<std/core/types/int>);
+// The [Julian calendar](https://en.wikipedia.org/wiki/Julian_calendar).
+// Uses old-style ``BC`` and ``AD`` to display era's.
+// The calendar short name is ``JC``.
+pub val cal-julian[285,9,285,18] : std/time/calendar/calendar;
+pub fun julian-gregorian[324,9,324,24] : (switch-date : (std/core/types/@optional :: V -> V)<std/time/date/date>) -> std/time/calendar/calendar;
+// The combined Julian / Gregorian calendar, using the Julian calendar for dates
+// before 1582-10-15 and the Gregorian calendar otherwise. It is possible to
+// specify a different switch date using the `julian-gregorian` function.
+// The calendar short name is ``JG``.
+pub val cal-jg[322,9,322,14] : std/time/calendar/calendar;
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+fun coptic-days-before-month // inline size: 2
+  = fn(year: std/core/types/int, month: std/core/types/int){
+    std/core/int/(*)(30, (std/core/int/int-sub(month, 1)));
+  };
+fun coptic-doy-to-month // inline size: 2
+  = fn(year: std/core/types/int, doy: std/core/types/int){
+    val x@10002[1,0,1,0] : std/core/types/int
+          = std/core/int/(/)(doy, 30);
+    std/core/int/int-add(x@10002, 1);
+  };
+fun coptic-days-before-year // inline size: 4
+  = fn(year: std/core/types/int){
+    val x@10004[1,0,1,0] : std/core/types/int
+      = std/core/int/(*)(365, (std/core/int/int-sub(year, 1)));
+    val y@10005[1,0,1,0] : std/core/types/int
+      = std/core/int/(/)(year, 4);
+    std/core/int/int-add(x@10004, y@10005);
+  };
+fun coptic-estimate-year // inline size: 7
+  = fn(days: std/core/types/int){
+    match ((std/core/int/divmod((std/core/int/int-add(days, 365)), 1461))) {
+      ((@skip std/core/types/Tuple2((era: std/core/types/int) : std/core/types/int, (doe: std/core/types/int) : std/core/types/int) : (std/core/types/int, std/core/types/int) ) as @pat: (std/core/types/int, std/core/types/int))
+         -> val x@0@10009[1,0,1,0] : std/core/types/int
+              = std/core/int/(*)(4, era);
+            val y@0@10010[1,0,1,0] : std/core/types/int
+              = std/core/int/(/)(doe, 366);
+        std/core/types/Tuple2<std/core/types/int,(std/core/types/maybe :: V -> V)<std/core/types/int>>((std/core/int/int-add(x@0@10009, y@0@10010)), (std/core/types/Just<std/core/types/int>(364)));
+    };
+  };
+fun coptic-days-to-yeardoy // inline size: 10
+  = fn(days: std/core/types/int){
+    match ((std/core/int/divmod((std/core/int/int-add(days, 365)), 1461))) {
+      ((@skip std/core/types/Tuple2((era: std/core/types/int) : std/core/types/int, (doe: std/core/types/int) : std/core/types/int) : (std/core/types/int, std/core/types/int) ) as @pat: (std/core/types/int, std/core/types/int))
+         -> val i@10015[1,0,1,0] : std/core/types/int
+              = std/core/int/(/)(doe, 365);
+            val yoe[66,7,66,9] : std/core/types/int
+              = (match ((std/core/int/(<=)(i@10015, 3))) {
+                ((std/core/types/True() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+                   -> i@10015;
+                ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0@0: std/core/types/bool)
+                   -> 3;
+              });
+            val x@0@10017[1,0,1,0] : std/core/types/int
+              = std/core/int/(*)(4, era);
+            val y@1@10020[1,0,1,0] : std/core/types/int
+              = std/core/int/(*)(365, yoe);
+        std/core/types/Tuple2<std/core/types/int,std/core/types/int>((std/core/int/int-add(x@0@10017, yoe)), (std/core/int/int-sub(doe, y@1@10020)));
+    };
+  };
+fun isow-days-before-month // inline size: 2
+  = fn(year: std/core/types/int, month: std/core/types/int){
+    std/core/int/(*)(7, (std/core/int/int-sub(month, 1)));
+  };
+fun isow-doy-to-month // inline size: 2
+  = fn(year: std/core/types/int, doy: std/core/types/int){
+    val x@10023[1,0,1,0] : std/core/types/int
+          = std/core/int/(/)(doy, 7);
+    std/core/int/int-add(x@10023, 1);
+  };
+fun iso-days-before-year // inline size: 8
+  = fn(year: std/core/types/int){
+    val y[121,7,121,7] : std/core/types/int
+      = std/core/int/int-sub(year, 1);
+    val x@0@10028[1,0,1,0] : std/core/types/int
+      = std/core/int/(/)(y, 4);
+    val y@1@10029[1,0,1,0] : std/core/types/int
+      = std/core/int/(/)(y, 100);
+    val x@10026[1,0,1,0] : std/core/types/int
+      = std/core/int/int-sub(x@0@10028, y@1@10029);
+    val y@0@10027[1,0,1,0] : std/core/types/int
+      = std/core/int/(/)(y, 400);
+    val leapdays[122,7,122,14] : std/core/types/int
+      = std/core/int/int-add(x@10026, y@0@10027);
+    val x@1@10030[1,0,1,0] : std/core/types/int
+      = std/core/int/(*)(365, y);
+    std/core/int/int-add(x@1@10030, leapdays);
+  };
+fun isow-days-before-year // inline size: 7
+  = fn(year: std/core/types/int){
+    val gdays[111,7,111,11] : std/core/types/int
+      = std/time/calendars/iso-days-before-year(year);
+    val weekday[112,7,112,13] : std/core/types/int
+      = std/core/int/(%)(gdays, 7);
+    val adjust[113,7,113,12] : std/core/types/int
+      = match ((std/core/int/(<=)(weekday, 3))) {
+        ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+           -> std/core/int/int-sub(0, weekday);
+        ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+           -> std/core/int/int-sub(7, weekday);
+      };
+    std/core/int/int-add(gdays, adjust);
+  };
+fun iso-estimate-year // inline size: 8
+  = fn(days: std/core/types/int){
+    match ((std/core/int/divmod(days, 146097))) {
+      ((@skip std/core/types/Tuple2((era: std/core/types/int) : std/core/types/int, (yoe: std/core/types/int) : std/core/types/int) : (std/core/types/int, std/core/types/int) ) as @pat: (std/core/types/int, std/core/types/int))
+         -> val y@0@10041[1,0,1,0] : std/core/types/int
+              = std/core/int/(*)(400, era);
+            val x@10038[1,0,1,0] : std/core/types/int
+              = std/core/int/int-add(1, y@0@10041);
+            val y@10039[1,0,1,0] : std/core/types/int
+              = std/core/int/(/)((std/core/int/(*)(100, yoe)), 36525);
+        std/core/types/Tuple2<std/core/types/int,(std/core/types/maybe :: V -> V)<std/core/types/int>>((std/core/int/int-add(x@10038, y@10039)), (std/core/types/Just<std/core/types/int>(363)));
+    };
+  };
+fun isow-estimate-year // inline size: 9
+  = fn(days: std/core/types/int){
+    val days@0@10042[1,0,1,0] : std/core/types/int
+          = std/core/int/int-sub(days, 3);
+    match ((std/core/int/divmod(days@0@10042, 146097))) {
+      ((@skip std/core/types/Tuple2((era: std/core/types/int) : std/core/types/int, (yoe: std/core/types/int) : std/core/types/int) : (std/core/types/int, std/core/types/int) ) as @pat: (std/core/types/int, std/core/types/int))
+         -> val y@0@10048[1,0,1,0] : std/core/types/int
+              = std/core/int/(*)(400, era);
+            val x@10045[1,0,1,0] : std/core/types/int
+              = std/core/int/int-add(1, y@0@10048);
+            val y@10046[1,0,1,0] : std/core/types/int
+              = std/core/int/(/)((std/core/int/(*)(100, yoe)), 36525);
+        std/core/types/Tuple2<std/core/types/int,(std/core/types/maybe :: V -> V)<std/core/types/int>>((std/core/int/int-add(x@10045, y@10046)), (std/core/types/Just<std/core/types/int>(363)));
+    };
+  };
+fun isom-days-before-month // inline size: 5
+  = fn(year: std/core/types/int, month: std/core/types/int){
+    val x@10049[1,0,1,0] : std/core/types/int
+      = std/core/int/(*)(30, (std/core/int/int-sub(month, 1)));
+    val y@10050[1,0,1,0] : std/core/types/int
+      = std/core/int/(/)((std/core/int/int-sub(month, 1)), 3);
+    std/core/int/int-add(x@10049, y@10050);
+  };
+fun isom-doy-to-month // inline size: 6
+  = fn(year: std/core/types/int, doy: std/core/types/int){
+    val m[274,7,274,7] : std/core/types/int
+      = std/core/int/(/)((std/core/int/(*)(100, (std/core/int/int-add(doy, 1)))), 3034);
+    val i@0@10054[1,0,1,0] : std/core/types/int
+      = std/core/int/int-add(m, 1);
+    match ((std/core/int/(<=)(i@0@10054, 12))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> i@0@10054;
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+         -> 12;
+    };
+  };
+fun julian-adjust // inline size: 4
+  = fn(is-before-march: std/core/types/bool, year: std/core/types/int){
+    match (is-before-march) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> 0;
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+         -> (match ((std/core/int/(==)((std/core/int/(%)(year, 4)), 0))) {
+          ((std/core/types/True() : std/core/types/bool ) as @pat@1: std/core/types/bool)
+             -> 1;
+          ((@skip std/core/types/False() : std/core/types/bool ) as @pat@2: std/core/types/bool)
+             -> 2;
+        });
+    };
+  };
+fun julian-days-before-month // inline size: 9
+  = fn(year: std/core/types/int, month: std/core/types/int){
+    val is-before-march@10057[1,0,1,0] : std/core/types/bool
+      = std/core/int/(<=)(month, 2);
+    val adj[295,7,295,9] : std/core/types/int
+      = match (is-before-march@10057) {
+        ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+           -> 0;
+        ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+           -> (match ((std/core/int/(==)((std/core/int/(%)(year, 4)), 0))) {
+            ((std/core/types/True() : std/core/types/bool ) as @pat@1: std/core/types/bool)
+               -> 1;
+            ((@skip std/core/types/False() : std/core/types/bool ) as @pat@2: std/core/types/bool)
+               -> 2;
+          });
+      };
+    val x@0@10061[1,0,1,0] : std/core/types/int
+      = std/core/int/(*)(367, month);
+    val x@10059[1,0,1,0] : std/core/types/int
+      = std/core/int/(/)((std/core/int/int-sub(x@0@10061, 362)), 12);
+    std/core/int/int-sub(x@10059, adj);
+  };
+fun julian-doy-to-month // inline size: 9
+  = fn(year: std/core/types/int, doy: std/core/types/int){
+    val is-before-march@10063[1,0,1,0] : std/core/types/bool
+      = std/core/int/(<=)(doy, 58);
+    val adj[299,7,299,9] : std/core/types/int
+      = match (is-before-march@10063) {
+        ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+           -> 0;
+        ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+           -> (match ((std/core/int/(==)((std/core/int/(%)(year, 4)), 0))) {
+            ((std/core/types/True() : std/core/types/bool ) as @pat@1: std/core/types/bool)
+               -> 1;
+            ((@skip std/core/types/False() : std/core/types/bool ) as @pat@2: std/core/types/bool)
+               -> 2;
+          });
+      };
+    val x@10065[1,0,1,0] : std/core/types/int
+      = std/core/int/(*)(12, (std/core/int/int-add(doy, adj)));
+    std/core/int/(/)((std/core/int/int-add(x@10065, 373)), 367);
+  };
+fun julian-days-before-year // inline size: 5
+  = fn(year: std/core/types/int){
+    val leapdays[306,7,306,14] : std/core/types/int
+      = std/core/int/(/)((std/core/int/int-sub(year, 1)), 4);
+    val x@10070[1,0,1,0] : std/core/types/int
+      = std/core/int/(*)(365, (std/core/int/int-sub(year, 1)));
+    std/core/int/int-add(x@10070, leapdays);
+  };
+fun julian-estimate-year // inline size: 7
+  = fn(days: std/core/types/int){
+    match ((std/core/int/divmod((std/core/int/int-add(days, 365)), 1461))) {
+      ((@skip std/core/types/Tuple2((era: std/core/types/int) : std/core/types/int, (yoe: std/core/types/int) : std/core/types/int) : (std/core/types/int, std/core/types/int) ) as @pat: (std/core/types/int, std/core/types/int))
+         -> val x@0@10075[1,0,1,0] : std/core/types/int
+              = std/core/int/(*)(4, era);
+            val y@0@10076[1,0,1,0] : std/core/types/int
+              = std/core/int/(/)(yoe, 366);
+        std/core/types/Tuple2<std/core/types/int,(std/core/types/maybe :: V -> V)<std/core/types/int>>((std/core/int/int-add(x@0@10075, y@0@10076)), (std/core/types/Just<std/core/types/int>(364)));
+    };
+  };

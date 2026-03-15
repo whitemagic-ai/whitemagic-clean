@@ -128,9 +128,17 @@ class TestPRATRouting:
     def test_native_operation_without_tool(self):
         """Should return native Gana operation when no tool specified."""
         result = route_prat_call("gana_ghost", operation="search")
-        assert result["status"] == "ok"
-        assert result["gana"] == "gana_ghost"
-        assert "available_tools" in result
+        assert result["status"] == "success"
+        assert result["tool"] == "gana_ghost"
+        assert result["details"]["gana"] == "gana_ghost"
+        assert "available_tools" in result["details"]
+
+
+    def test_native_operation_quiet_internal_benchmark_suppresses_resonance(self, monkeypatch):
+        monkeypatch.setenv("WM_BENCHMARK_QUIET", "1")
+        result = route_prat_call("gana_ghost", operation="search", _internal_benchmark=True)
+        assert result["status"] == "success"
+        assert "_resonance" not in result["details"]
 
     def test_route_health_report(self):
         """Should route health_report through gana_root."""
@@ -153,10 +161,13 @@ class TestPRATRouting:
         assert "status" in result
 
     def test_native_lists_available_tools(self):
-        """Native operation should list what tools are available."""
+        """Native operation should return normalized native details."""
         result = route_prat_call("gana_winnowing_basket")
-        assert "available_tools" in result
-        assert "search_memories" in result["available_tools"]
+        assert result["status"] == "success"
+        assert result["tool"] == "gana_winnowing_basket"
+        assert "details" in result
+        assert result["details"]["gana"] == "gana_winnowing_basket"
+        assert "_resonance" in result["details"]
 
 
 class TestPRATMCPIntegration:

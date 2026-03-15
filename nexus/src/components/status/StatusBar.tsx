@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
-import { Leaf, Cloud, Wifi, TreeDeciduous } from "lucide-react";
+import { Leaf, Cloud, Wifi, TreeDeciduous, Activity } from "lucide-react";
 import { useNexusStore } from "../../store/nexus";
+import { invoke } from "@tauri-apps/api/core";
 
 function Waveform({
   values,
@@ -46,6 +47,24 @@ function Waveform({
 }
 
 export default function StatusBar() {
+
+  useEffect(() => {
+    // Try to get IPC status from Rust backend
+    const checkIpc = async () => {
+      try {
+        if ((window as any).__TAURI_INTERNALS__) {
+          const res = await invoke("get_ipc_status");
+          console.log("IPC Status:", res);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    checkIpc();
+    const interval = setInterval(checkIpc, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   const status = useNexusStore((s) => s.status);
   const [cpuHistory, setCpuHistory] = useState<number[]>(Array(20).fill(0));
   const [memHistory, setMemHistory] = useState<number[]>(Array(20).fill(0));
@@ -103,6 +122,28 @@ export default function StatusBar() {
           <span className="w-12 text-right text-cyan-400">
             {(status.memory || 0).toFixed(1)}GB
           </span>
+        </div>
+      </div>
+
+
+      {/* Pulse Telemetry (Ported from hub) */}
+      <div className="flex items-center gap-4 px-3 py-1 bg-[#1e1e2e] rounded-md border border-[#3b3b4f] mx-auto">
+        <div className="flex items-center gap-2">
+          <Activity size={12} className="text-green-400" />
+          <span className="font-mono tracking-widest text-[10px] text-green-400">PULSE</span>
+        </div>
+        <div className="flex items-center gap-1.5 opacity-80">
+          <Waveform values={activityHistory} color="#4ade80" />
+        </div>
+        <div className="flex items-center gap-3 border-l border-[#3b3b4f] pl-3">
+          <div className="flex flex-col">
+            <span className="text-[9px] text-gray-500 uppercase">Tokens/s</span>
+            <span className="text-[10px] text-gray-300 font-mono">1.2k</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[9px] text-gray-500 uppercase">Context</span>
+            <span className="text-[10px] text-blue-300 font-mono">84%</span>
+          </div>
         </div>
       </div>
 

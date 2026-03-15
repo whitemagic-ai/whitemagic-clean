@@ -13,14 +13,6 @@ Modules:
     yin_controller  — Yin-Yang pacing for autonomous loops
 """
 
-from .diary import (
-    DiarySystem,
-    get_diary,
-    log_breakthrough,
-    log_hourly,
-    session_end,
-    session_start,
-)
 
 # Re-export executor subpackage top-level names for convenience
 from .executor import (

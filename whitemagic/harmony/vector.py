@@ -135,16 +135,18 @@ class HarmonySnapshot:
     """Immutable snapshot of the Harmony Vector — safe for JSON serialization."""
 
     # Per-dimension scores (0.0–1.0, higher is healthier)
-    balance: float = 1.0
-    throughput: float = 1.0
-    latency: float = 1.0
-    error_rate: float = 1.0
-    dharma: float = 1.0
-    karma_debt: float = 1.0
-    energy: float = 1.0
+    # Cold-start: use 0.7 (neutral) instead of 1.0 to avoid misleading "perfect" scores
+    # Real values computed after 10+ tool calls
+    balance: float = 0.7
+    throughput: float = 0.7
+    latency: float = 0.7
+    error_rate: float = 0.0  # 0 errors is correct for cold start
+    dharma: float = 0.7
+    karma_debt: float = 0.0  # No karma debt at start
+    energy: float = 0.7
 
     # Composite
-    harmony_score: float = 1.0
+    harmony_score: float = 0.7
 
     # Guna distribution in current window
     guna_sattvic_pct: float = 0.0

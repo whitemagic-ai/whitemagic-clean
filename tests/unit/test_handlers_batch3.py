@@ -77,7 +77,7 @@ class TestSimdHandlers(unittest.TestCase):
         result = handle_simd_batch()
         self.assertEqual(result["status"], "error")
 
-    @patch('whitemagic.core.acceleration.simd_cosine.cosine_similarity')
+    @patch('whitemagic.core.acceleration.cosine_similarity')
     def test_simd_cosine_success(self, mock_cosine):
         mock_cosine.return_value = 0.95
         from whitemagic.tools.handlers.simd import handle_simd_cosine
@@ -174,11 +174,9 @@ class TestVectorSearchHandlers(unittest.TestCase):
         self.assertEqual(result["indexed"], "m1")
         mock_vs.index_memory.assert_called_once()
 
-    @patch('whitemagic.core.memory.vector_search.get_vector_search')
-    def test_vector_status(self, mock_vs_fn):
-        mock_vs = MagicMock()
-        mock_vs.status.return_value = {"indexed": 100, "backend": "numpy"}
-        mock_vs_fn.return_value = mock_vs
+    @patch('whitemagic.core.memory.vector_search.get_vector_status')
+    def test_vector_status(self, mock_status_fn):
+        mock_status_fn.return_value = {"indexed": 100, "backend": "numpy"}
 
         from whitemagic.tools.handlers.vector_search import handle_vector_status
         result = handle_vector_status()

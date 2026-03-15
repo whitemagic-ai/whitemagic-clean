@@ -10,17 +10,23 @@ Provides shared memory channels between WhiteMagic processes:
 import json
 import atexit
 from typing import Optional, Dict, Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Lazy import of Rust module
-_whitemagic_rs = None
+_whitemagic_rust = None
 _ipc_initialized = False
 
 def _get_rs():
-    global _whitemagic_rs
-    if _whitemagic_rs is None:
-        import whitemagic_rs as rs
-        _whitemagic_rs = rs
-    return _whitemagic_rs
+    global _whitemagic_rust
+    if _whitemagic_rust is None:
+        try:
+            import whitemagic_rust as rs
+            _whitemagic_rust = rs
+        except ImportError:
+            _whitemagic_rust = False
+    return _whitemagic_rust
 
 def init_ipc(node_name: Optional[str] = None) -> Dict[str, Any]:
     """Initialize IPC bridge for this process."""
@@ -34,13 +40,17 @@ def init_ipc(node_name: Optional[str] = None) -> Dict[str, Any]:
         node_name = f"wm_{os.getpid()}"
     
     rs = _get_rs()
-    result = json.loads(rs.ipc_bridge_init(node_name))
-    
-    if result.get("initialized"):
+    if not rs or not hasattr(rs, 'ipc_bridge'):
+        return {"initialized": False, "error": "Rust bridge unavailable"}
+        
+    try:
+        rs.ipc_bridge.ipc_init(node_name)
         _ipc_initialized = True
         atexit.register(shutdown_ipc)
-    
-    return result
+        return {"initialized": True, "node": node_name}
+    except Exception as e:
+        logger.warning(f"IPC init failed (using fallback): {e}")
+        return {"initialized": False, "error": str(e)}
 
 def publish(channel: str, payload: bytes) -> Dict[str, Any]:
     """Publish bytes to an IPC channel."""
@@ -48,7 +58,14 @@ def publish(channel: str, payload: bytes) -> Dict[str, Any]:
         init_ipc()
     
     rs = _get_rs()
-    return json.loads(rs.ipc_bridge_publish(channel, payload))
+    if not rs or not hasattr(rs, 'ipc_bridge'):
+        return {"published": False, "error": "Rust bridge unavailable"}
+        
+    try:
+        rs.ipc_bridge.ipc_publish(channel, payload)
+        return {"published": True}
+    except Exception as e:
+        return {"published": False, "error": str(e)}
 
 def publish_json(channel: str, data: dict) -> Dict[str, Any]:
     """Publish JSON-serializable data to an IPC channel."""
@@ -57,7 +74,13 @@ def publish_json(channel: str, data: dict) -> Dict[str, Any]:
 def get_status() -> Dict[str, Any]:
     """Get IPC bridge status."""
     rs = _get_rs()
-    return json.loads(rs.ipc_bridge_status())
+    if not rs or not hasattr(rs, 'ipc_bridge'):
+        return {"error": "Rust bridge unavailable"}
+        
+    try:
+        return rs.ipc_bridge.ipc_status()
+    except Exception as e:
+        return {"error": str(e)}
 
 def shutdown_ipc():
     """Shutdown IPC (auto-called at exit)."""

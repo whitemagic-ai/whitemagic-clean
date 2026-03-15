@@ -379,8 +379,8 @@ def _compute_prat_economics(
     if tool_name:
         # Write/delete tools cost more (they do more work)
         try:
-            from whitemagic.tools.registry import TOOL_REGISTRY
-            td = next((t for t in TOOL_REGISTRY if t.name == tool_name), None)
+            from whitemagic.tools.tool_surface import get_callable_tool_definition
+            td = get_callable_tool_definition(tool_name)
             if td and td.safety.value == "write":
                 safety_multiplier = 1.5
             elif td and td.safety.value == "delete":

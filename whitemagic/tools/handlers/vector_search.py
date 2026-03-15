@@ -35,6 +35,5 @@ def handle_vector_index(**kwargs: Any) -> dict[str, Any]:
 
 def handle_vector_status(**kwargs: Any) -> dict[str, Any]:
     """Get vector search engine status."""
-    from whitemagic.core.memory.vector_search import get_vector_search
-    vs = get_vector_search()
-    return {"status": "success", **vs.status()}
+    from whitemagic.core.memory.vector_search import get_vector_status
+    return {"status": "success", **get_vector_status()}

@@ -16,9 +16,61 @@ preserving all middleware (circuit breaker, rate limiter, RBAC, etc.).
 """
 
 import logging
+import os
 from typing import Any
+from uuid import uuid4
+
+from whitemagic.tools.gana_native_contract import (
+    build_native_gana_details,
+    normalize_native_gana_result,
+)
 
 logger = logging.getLogger(__name__)
+
+
+def _is_quiet_internal_benchmark(kwargs: dict[str, Any] | None = None, args: dict[str, Any] | None = None) -> bool:
+    if os.getenv("WM_BENCHMARK_QUIET", "").strip().lower() not in ("1", "true", "yes"):
+        return False
+    kwargs = kwargs or {}
+    args = args or {}
+    return bool(kwargs.get("_internal_benchmark") or args.get("_internal_benchmark"))
+
+
+def _normalize_gana_native_result(gana_name: str, raw: dict[str, Any]) -> dict[str, Any]:
+    details = build_native_gana_details(
+        gana_name,
+        operation=raw.get("operation"),
+        mode=raw.get("mode"),
+        note=raw.get("note"),
+        available_tools=raw.get("available_tools"),
+        output=raw.get("output"),
+        garden=raw.get("garden"),
+        garden_status=raw.get("garden_status"),
+        mansion=raw.get("mansion"),
+        successor_hint=raw.get("successor_hint"),
+        execution_ms=raw.get("execution_ms"),
+        karma_trace=raw.get("karma_trace"),
+        predecessor_context=raw.get("predecessor_context") or raw.get("predecessor"),
+        lunar_amplification=raw.get("lunar_amplification"),
+        resonance=raw.get("_resonance"),
+        koka_latency_ms=raw.get("_koka_latency_ms"),
+        koka_path=raw.get("_koka_path"),
+        extra={
+            key: value
+            for key, value in raw.items()
+            if key not in {
+                "status", "gana", "operation", "mode", "note", "available_tools",
+                "output", "garden", "garden_status", "mansion", "successor_hint",
+                "execution_ms", "karma_trace", "predecessor_context", "predecessor",
+                "lunar_amplification", "_resonance", "_koka_latency_ms", "_koka_path",
+            }
+        },
+    )
+    return normalize_native_gana_result(
+        gana_name,
+        request_id=str(uuid4()),
+        details=details,
+    )
 
 # ──────────────────────────────────────────────────────────
 # Tool → Gana mapping by domain affinity
@@ -128,6 +180,14 @@ TOOL_TO_GANA: dict[str, str] = {
     "kg.query":                "gana_chariot",
     "kg.top":                  "gana_chariot",
     "kg.status":               "gana_chariot",
+    "kg2.extract":             "gana_chariot",
+    "kg2.batch":               "gana_chariot",
+    "kg2.entity":              "gana_chariot",
+    "kg2.stats":               "gana_chariot",
+    "embedding.daemon_start":  "gana_chariot",
+    "embedding.daemon_stop":   "gana_chariot",
+    "embedding.daemon_status": "gana_chariot",
+    "embedding.daemon_process": "gana_chariot",
 
     # ═══ ABUNDANCE — Regeneration & Dream Cycle ═══
     "dream":                   "gana_abundance",
@@ -222,6 +282,17 @@ TOOL_TO_GANA: dict[str, str] = {
     "garden_activate":         "gana_void",
     "garden_status":           "gana_void",
     "garden_health":           "gana_void",
+    "garden_synergy":          "gana_void",
+    # S025: Garden Directory Tools
+    "garden_list_files":       "gana_void",
+    "garden_list_functions":   "gana_void",
+    "garden_search":           "gana_void",
+    "garden_resonance":        "gana_void",
+    "garden_map_system":       "gana_void",
+    "garden_stats":            "gana_void",
+    # S025 Phase 6: Virtual Filesystem
+    "garden_browse":           "gana_void",
+    "garden_resolve":          "gana_void",
     "galaxy.create":           "gana_void",
     "galaxy.switch":           "gana_void",
     "galaxy.list":             "gana_void",
@@ -416,9 +487,6 @@ TOOL_TO_GANA: dict[str, str] = {
     "starter_packs.list":          "gana_dipper",
     "starter_packs.suggest":       "gana_dipper",
 
-    # ── VOID — Garden sub-tools ──
-    "garden_synergy":              "gana_void",
-
     # ── ENCAMPMENT — Gan Ying sub-tools ──
     "ganying_emit":                "gana_encampment",
     "ganying_history":             "gana_encampment",
@@ -587,6 +655,55 @@ def get_tools_for_gana(gana_name: str) -> list[str]:
     return GANA_TO_TOOLS.get(gana_name, [])
 
 
+# ── Koka Hot Path Handler Mapping (S023 VC #8) ──
+# Maps Gana → (koka_module, supported_operations)
+_KOKA_GANA_HANDLERS: dict[str, tuple[str, set[str]]] = {
+    "gana_ghost": ("gnosis", {"gnosis", "capabilities", "manifest", "telemetry"}),
+    "gana_winnowing_basket": ("prat", {"search", "read", "list", "vector"}),
+    "gana_willow": ("circuit", {"check", "reset", "status", "grimoire"}),
+}
+
+
+def _try_koka_handler(gana_name: str, tool: str | None, args: dict | None) -> dict | None:
+    """Attempt to route a Gana call through Koka native handler.
+    
+    Returns None if Koka unavailable or operation not supported.
+    Used for hot-path acceleration of 3+ Ganas (S023 VC #8).
+    """
+    handler_info = _KOKA_GANA_HANDLERS.get(gana_name)
+    if not handler_info:
+        return None  # This Gana doesn't have Koka handler
+    
+    koka_module, supported_ops = handler_info
+    
+    # Check if the operation is supported
+    op = tool or "native"
+    if op not in supported_ops and tool is not None:
+        # Check if tool name contains a supported operation
+        op_match = any(s in op for s in supported_ops)
+        if not op_match:
+            return None  # Operation not supported in Koka
+    
+    try:
+        from whitemagic.core.acceleration.koka_native_bridge import koka_dispatch
+        result = koka_dispatch(
+            koka_module,
+            f"handle_{op.replace('.', '_')}",
+            args or {},
+            timeout=2.0
+        )
+        if result:
+            # If Koka explicitly returned an error (either status='error' or 'error' key exists),
+            # we should fall back to Python
+            if result.get("status") == "error" or "error" in result:
+                return None
+            return result
+    except Exception as e:
+        logger.debug(f"Koka handler fallback for {gana_name}: {e}")
+    
+    return None  # Fallback to Python
+
+
 def build_prat_description(gana_name: str, base_desc: str) -> str:
     """Build a rich description for a PRAT Gana tool listing its nested tools."""
     tools = get_tools_for_gana(gana_name)
@@ -666,8 +783,21 @@ def route_prat_call(gana_name: str, tool: str | None = None,
     from whitemagic.tools.unified_api import call_tool
 
     # ── Step 1: Build resonance context before execution ──
+    quiet_internal_benchmark = _is_quiet_internal_benchmark(kwargs, args)
     resonance_ctx = build_resonance_context(gana_name)
     mode_hint = resonance_ctx.get("mode_hint", "normal")
+
+    # ── Koka Hot Path: Fast dispatch for 3+ Ganas (S023 VC #8) ──
+    _koka_result = _try_koka_handler(gana_name, tool, args)
+    if _koka_result is not None:
+        # Record resonance for Koka path too
+        resonance_meta = {} if quiet_internal_benchmark else record_resonance(gana_name, tool, "koka_dispatch", _koka_result)
+        if isinstance(_koka_result, dict):
+            _koka_result["_resonance"] = resonance_meta
+            _koka_result["_koka_path"] = True
+            if tool is None:
+                return _normalize_gana_native_result(gana_name, _koka_result)
+        return _koka_result
 
     # ── Wu Xing quadrant boost (Fusion: Wu Xing → Gana) ──
     try:
@@ -747,12 +877,13 @@ def route_prat_call(gana_name: str, tool: str | None = None,
             return {"status": "error", "error": str(e), "tool": tool}
 
         # ── Step 3: Record resonance state ──
-        resonance_meta = record_resonance(gana_name, tool, None, result)
+        resonance_meta = {} if quiet_internal_benchmark else record_resonance(gana_name, tool, None, result)
 
         # ── Fusion: Resonance → Emotion/Drive ──
         try:
-            from whitemagic.core.fusions import modulate_drive_from_resonance
-            modulate_drive_from_resonance(gana_name, tool)
+            if not quiet_internal_benchmark:
+                from whitemagic.core.fusions import modulate_drive_from_resonance
+                modulate_drive_from_resonance(gana_name, tool)
         except Exception:
             pass
 
@@ -773,14 +904,16 @@ def route_prat_call(gana_name: str, tool: str | None = None,
 
         # ── Step 4: Inject resonance into response ──
         if isinstance(result, dict):
-            result["_resonance"] = resonance_meta
+            if resonance_meta:
+                result["_resonance"] = resonance_meta
             if _garden_instance:
                 result["_garden"] = resonance_ctx.get("garden", "unknown")
         else:
             result = {
                 "result": result,
-                "_resonance": resonance_meta,
             }
+            if resonance_meta:
+                result["_resonance"] = resonance_meta
             if _garden_instance:
                 result["_garden"] = resonance_ctx.get("garden", "unknown")
 
@@ -796,8 +929,9 @@ def route_prat_call(gana_name: str, tool: str | None = None,
 
         # ── v14: Speculative prefetch — record transition, predict next ──
         try:
-            from whitemagic.tools.speculative_prefetch import get_prefetcher
-            get_prefetcher().on_call_complete(gana_name)
+            if not quiet_internal_benchmark:
+                from whitemagic.tools.speculative_prefetch import get_prefetcher
+                get_prefetcher().on_call_complete(gana_name)
         except Exception:
             pass
 
@@ -833,8 +967,9 @@ def route_prat_call(gana_name: str, tool: str | None = None,
         native_result["lunar_amplification"] = resonance_ctx["lunar_amplification"]
 
     # Record resonance for native operations too
-    resonance_meta = record_resonance(gana_name, None, operation, native_result)
-    native_result["_resonance"] = resonance_meta
+    resonance_meta = {} if quiet_internal_benchmark else record_resonance(gana_name, None, operation, native_result)
+    if resonance_meta:
+        native_result["_resonance"] = resonance_meta
 
     # ── Gana Vitality: record native operation ──
     try:
@@ -845,12 +980,13 @@ def route_prat_call(gana_name: str, tool: str | None = None,
 
     # ── Fusion: Resonance → Emotion/Drive (native ops too) ──
     try:
-        from whitemagic.core.fusions import modulate_drive_from_resonance
-        modulate_drive_from_resonance(gana_name, None)
+        if not quiet_internal_benchmark:
+            from whitemagic.core.fusions import modulate_drive_from_resonance
+            modulate_drive_from_resonance(gana_name, None)
     except Exception:
         pass
 
-    return native_result
+    return _normalize_gana_native_result(gana_name, native_result)
 
 
 def validate_mapping(tool_registry: list) -> dict[str, Any]:

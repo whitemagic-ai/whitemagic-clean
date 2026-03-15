@@ -1,0 +1,772 @@
+module interface src/effects/prat_resonance
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/time/duration = std/time/duration pub = "";
+import std/time/instant = std/time/instant pub = "";
+import std/time/utc = std/time/utc pub = "";
+import std/time/chrono = std/time/chrono pub = "";
+import std/time/timer = std/time/timer pub = "";
+import std/time/date = std/time/date pub = "";
+import std/time/calendar = std/time/calendar pub = "";
+import std/time/calendars = std/time/calendars pub = "";
+import std/time/time = std/time/time pub = "";
+import std/time/locale = std/time/locale pub = "";
+import std/time/format = std/time/format pub = "";
+import std/time/parse = std/time/parse pub = "";
+import std/core = std/core = "";
+import std/time = std/time = "";
+import std/num/random = std/num/random = "";
+import std/core/vector = std/core/vector = "";
+import std/num/float64 = std/num/float64 = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+ 
+//------------------------------
+//#kki: type declarations
+ 
+type ganainfo[66,1,72,16] {
+  con Ganainfo[66,8,66,15](mansion-num: std/core/types/int, quadrant: std/core/types/string, meaning: std/core/types/string, garden: std/core/types/string, chinese: std/core/types/string, pinyin: std/core/types/string){0,6,8} : (mansion-num : std/core/types/int, quadrant : std/core/types/string, meaning : std/core/types/string, garden : std/core/types/string, chinese : std/core/types/string, pinyin : std/core/types/string) -> ganainfo = 1;
+};
+type snapshot[34,1,45,24] {
+  con Snapshot[34,8,34,15](gana-name: std/core/types/string, tool-name: std/core/types/string, operation: std/core/types/string, output-preview: std/core/types/string, timestamp: std/core/types/float64, lunar-phase: std/core/types/float64, lunar-mansion-num: std/core/types/int, harmony-score: std/core/types/float64, guna-tag: std/core/types/string, quadrant: std/core/types/string, successor-hint: std/core/types/string){24,8,8} : (gana-name : std/core/types/string, tool-name : std/core/types/string, operation : std/core/types/string, output-preview : std/core/types/string, timestamp : std/core/types/float64, lunar-phase : std/core/types/float64, lunar-mansion-num : std/core/types/int, harmony-score : std/core/types/float64, guna-tag : std/core/types/string, quadrant : std/core/types/string, successor-hint : std/core/types/string) -> snapshot = 1;
+};
+recursive effect type resonance[15,1,28,28] <(e :: E),a> :: (E, V) -> V {
+  con @Hnd-resonance[15,1,15,16](@cfc: std/core/types/int, @fun-get-call-count: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, @fun-get-gana-counts: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, @fun-get-guna-tag: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, @fun-get-harmony-score: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, @fun-get-last-snapshot: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, @fun-get-lunar-mansion: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, @fun-get-lunar-phase: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, @fun-get-recent-history: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, @fun-record-snapshot: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, @fun-reset-state: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>){0,11,8} : forall<(e :: E),a> (std/core/types/int, (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) -> (resonance :: (E, V) -> V)<(e :: E),a> = 1;
+};
+type resonance-hints[239,1,246,18] {
+  con Resonance-hints[239,8,239,22](predecessor: std/core/types/string, successor: std/core/types/string, lunar-phase: std/core/types/float64, lunar-mansion-num: std/core/types/int, harmony-score: std/core/types/float64, guna-tag: std/core/types/string, quadrant: std/core/types/string){16,5,8} : (predecessor : std/core/types/string, successor : std/core/types/string, lunar-phase : std/core/types/float64, lunar-mansion-num : std/core/types/int, harmony-score : std/core/types/float64, guna-tag : std/core/types/string, quadrant : std/core/types/string) -> resonance-hints = 1;
+};
+// State record for resonance tracking
+type resonance-state[145,1,149,20] {
+  // State record for resonance tracking
+  con Resonance-state[145,8,145,22](last-snapshot: (std/core/types/maybe :: V -> V)<snapshot>, history: (std/core/types/list :: V -> V)<snapshot>, gana-counts: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, session-calls: std/core/types/int){0,5,8} : (last-snapshot : (std/core/types/maybe :: V -> V)<snapshot>, history : (std/core/types/list :: V -> V)<snapshot>, gana-counts : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, session-calls : std/core/types/int) -> resonance-state = 1;
+};
+ 
+//------------------------------
+//#kki: declarations
+ 
+// Automatically generated. Retrieves the `@cfc` constructor field of the `:resonance` type.
+fun resonance/@cfc[15,1,15,16] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> std/core/types/int;
+// runtime tag for the effect `:resonance`
+val resonance/@tag[15,1,15,16] : (std/core/hnd/htag :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>;
+// handler for the effect `:resonance`
+fun resonance/@handle[15,8,15,16] : forall<a,(e :: E),b> (hnd : (resonance :: (E, V) -> V)<(e :: E),b>, ret : (res : a) -> (e :: E) b, action : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>|(e :: E)> a) -> (e :: E) b;
+// Automatically generated. Retrieves the `@fun-get-last-snapshot` constructor field of the `:resonance` type.
+fun resonance/@fun-get-last-snapshot[17,7,17,35] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>;
+// select `get-last-snapshot` operation out of effect `:resonance`
+fun get-last-snapshot/@select[17,7,17,35] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>;
+// Core resonance operations
+
+// Call the `fun get-last-snapshot` operation of the effect `:resonance`
+fun get-last-snapshot[17,7,17,23] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> snapshot;
+// Automatically generated. Retrieves the `@fun-record-snapshot` constructor field of the `:resonance` type.
+fun resonance/@fun-record-snapshot[18,7,18,41] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>;
+// select `record-snapshot` operation out of effect `:resonance`
+fun record-snapshot/@select[18,7,18,41] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>;
+// Call the `fun record-snapshot` operation of the effect `:resonance`
+fun record-snapshot[18,7,18,21] : (snap : snapshot) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> ();
+// Automatically generated. Retrieves the `@fun-get-call-count` constructor field of the `:resonance` type.
+fun resonance/@fun-get-call-count[19,7,19,27] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>;
+// select `get-call-count` operation out of effect `:resonance`
+fun get-call-count/@select[19,7,19,27] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>;
+// Call the `fun get-call-count` operation of the effect `:resonance`
+fun get-call-count[19,7,19,20] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/int;
+// Automatically generated. Retrieves the `@fun-get-gana-counts` constructor field of the `:resonance` type.
+fun resonance/@fun-get-gana-counts[20,7,20,44] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>;
+// select `get-gana-counts` operation out of effect `:resonance`
+fun get-gana-counts/@select[20,7,20,44] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>;
+// Call the `fun get-gana-counts` operation of the effect `:resonance`
+fun get-gana-counts[20,7,20,21] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>;
+// Automatically generated. Retrieves the `@fun-get-recent-history` constructor field of the `:resonance` type.
+fun resonance/@fun-get-recent-history[21,7,21,52] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>;
+// select `get-recent-history` operation out of effect `:resonance`
+fun get-recent-history/@select[21,7,21,52] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>;
+// Call the `fun get-recent-history` operation of the effect `:resonance`
+fun get-recent-history[21,7,21,24] : (limit : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/types/list :: V -> V)<snapshot>;
+// Automatically generated. Retrieves the `@fun-reset-state` constructor field of the `:resonance` type.
+fun resonance/@fun-reset-state[22,7,22,23] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>;
+// select `reset-state` operation out of effect `:resonance`
+fun reset-state/@select[22,7,22,23] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>;
+// Call the `fun reset-state` operation of the effect `:resonance`
+fun reset-state[22,7,22,17] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> ();
+// Automatically generated. Retrieves the `@fun-get-lunar-phase` constructor field of the `:resonance` type.
+fun resonance/@fun-get-lunar-phase[25,7,25,32] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>;
+// select `get-lunar-phase` operation out of effect `:resonance`
+fun get-lunar-phase/@select[25,7,25,32] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>;
+// Lunar and harmony state
+
+// Call the `fun get-lunar-phase` operation of the effect `:resonance`
+fun get-lunar-phase[25,7,25,21] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/float64;
+// Automatically generated. Retrieves the `@fun-get-lunar-mansion` constructor field of the `:resonance` type.
+fun resonance/@fun-get-lunar-mansion[26,7,26,30] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>;
+// select `get-lunar-mansion` operation out of effect `:resonance`
+fun get-lunar-mansion/@select[26,7,26,30] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>;
+// Call the `fun get-lunar-mansion` operation of the effect `:resonance`
+fun get-lunar-mansion[26,7,26,23] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/int;
+// Automatically generated. Retrieves the `@fun-get-harmony-score` constructor field of the `:resonance` type.
+fun resonance/@fun-get-harmony-score[27,7,27,34] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>;
+// select `get-harmony-score` operation out of effect `:resonance`
+fun get-harmony-score/@select[27,7,27,34] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>;
+// Call the `fun get-harmony-score` operation of the effect `:resonance`
+fun get-harmony-score[27,7,27,23] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/float64;
+// Automatically generated. Retrieves the `@fun-get-guna-tag` constructor field of the `:resonance` type.
+fun resonance/@fun-get-guna-tag[28,7,28,28] : forall<(e :: E),a> (^ resonance : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>;
+// select `get-guna-tag` operation out of effect `:resonance`
+fun get-guna-tag/@select[28,7,28,28] : forall<(e :: E),a> (^ hnd : (resonance :: (E, V) -> V)<(e :: E),a>) -> (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>;
+// Call the `fun get-guna-tag` operation of the effect `:resonance`
+fun get-guna-tag[28,7,28,18] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/string;
+// Automatically generated. Retrieves the `gana-name` constructor field of the `:snapshot` type.
+fun snapshot/gana-name[35,3,35,11] : (^ snapshot : snapshot) -> std/core/types/string;
+// Automatically generated. Retrieves the `tool-name` constructor field of the `:snapshot` type.
+fun snapshot/tool-name[36,3,36,11] : (^ snapshot : snapshot) -> std/core/types/string;
+// Automatically generated. Retrieves the `operation` constructor field of the `:snapshot` type.
+fun snapshot/operation[37,3,37,11] : (^ snapshot : snapshot) -> std/core/types/string;
+// Automatically generated. Retrieves the `output-preview` constructor field of the `:snapshot` type.
+fun snapshot/output-preview[38,3,38,16] : (^ snapshot : snapshot) -> std/core/types/string;
+// Automatically generated. Retrieves the `timestamp` constructor field of the `:snapshot` type.
+fun snapshot/timestamp[39,3,39,11] : (^ snapshot : snapshot) -> std/core/types/float64;
+// Automatically generated. Retrieves the `lunar-phase` constructor field of the `:snapshot` type.
+fun snapshot/lunar-phase[40,3,40,13] : (^ snapshot : snapshot) -> std/core/types/float64;
+// Automatically generated. Retrieves the `lunar-mansion-num` constructor field of the `:snapshot` type.
+fun snapshot/lunar-mansion-num[41,3,41,19] : (^ snapshot : snapshot) -> std/core/types/int;
+// Automatically generated. Retrieves the `harmony-score` constructor field of the `:snapshot` type.
+fun snapshot/harmony-score[42,3,42,15] : (^ snapshot : snapshot) -> std/core/types/float64;
+// Automatically generated. Retrieves the `guna-tag` constructor field of the `:snapshot` type.
+fun snapshot/guna-tag[43,3,43,10] : (^ snapshot : snapshot) -> std/core/types/string;
+// Automatically generated. Retrieves the `quadrant` constructor field of the `:snapshot` type.
+fun snapshot/quadrant[44,3,44,10] : (^ snapshot : snapshot) -> std/core/types/string;
+// Automatically generated. Retrieves the `successor-hint` constructor field of the `:snapshot` type.
+fun snapshot/successor-hint[45,3,45,16] : (^ snapshot : snapshot) -> std/core/types/string;
+fun snapshot/@copy[34,8,34,15] : (@this : snapshot, gana-name : (std/core/types/@optional :: V -> V)<std/core/types/string>, tool-name : (std/core/types/@optional :: V -> V)<std/core/types/string>, operation : (std/core/types/@optional :: V -> V)<std/core/types/string>, output-preview : (std/core/types/@optional :: V -> V)<std/core/types/string>, timestamp : (std/core/types/@optional :: V -> V)<std/core/types/float64>, lunar-phase : (std/core/types/@optional :: V -> V)<std/core/types/float64>, lunar-mansion-num : (std/core/types/@optional :: V -> V)<std/core/types/int>, harmony-score : (std/core/types/@optional :: V -> V)<std/core/types/float64>, guna-tag : (std/core/types/@optional :: V -> V)<std/core/types/string>, quadrant : (std/core/types/@optional :: V -> V)<std/core/types/string>, successor-hint : (std/core/types/@optional :: V -> V)<std/core/types/string>) -> snapshot;
+// Automatically generated. Retrieves the `mansion-num` constructor field of the `:ganainfo` type.
+fun ganainfo/mansion-num[67,3,67,13] : (^ ganainfo : ganainfo) -> std/core/types/int;
+// Automatically generated. Retrieves the `quadrant` constructor field of the `:ganainfo` type.
+fun ganainfo/quadrant[68,3,68,10] : (^ ganainfo : ganainfo) -> std/core/types/string;
+// Automatically generated. Retrieves the `meaning` constructor field of the `:ganainfo` type.
+fun ganainfo/meaning[69,3,69,9] : (^ ganainfo : ganainfo) -> std/core/types/string;
+// Automatically generated. Retrieves the `garden` constructor field of the `:ganainfo` type.
+fun ganainfo/garden[70,3,70,8] : (^ ganainfo : ganainfo) -> std/core/types/string;
+// Automatically generated. Retrieves the `chinese` constructor field of the `:ganainfo` type.
+fun ganainfo/chinese[71,3,71,9] : (^ ganainfo : ganainfo) -> std/core/types/string;
+// Automatically generated. Retrieves the `pinyin` constructor field of the `:ganainfo` type.
+fun ganainfo/pinyin[72,3,72,8] : (^ ganainfo : ganainfo) -> std/core/types/string;
+fun ganainfo/@copy[66,8,66,15] : (@this : ganainfo, mansion-num : (std/core/types/@optional :: V -> V)<std/core/types/int>, quadrant : (std/core/types/@optional :: V -> V)<std/core/types/string>, meaning : (std/core/types/@optional :: V -> V)<std/core/types/string>, garden : (std/core/types/@optional :: V -> V)<std/core/types/string>, chinese : (std/core/types/@optional :: V -> V)<std/core/types/string>, pinyin : (std/core/types/@optional :: V -> V)<std/core/types/string>) -> ganainfo;
+val gana-metadata[74,5,74,17] : (std/core/types/list :: V -> V)<(std/core/types/string, ganainfo)>;
+val gana-order[106,5,106,14] : (std/core/types/list :: V -> V)<std/core/types/string>;
+fun get-gana-meta[117,5,117,17] : (gana-name : std/core/types/string) -> ganainfo;
+fun get-predecessor[122,5,122,19] : (gana-name : std/core/types/string) -> std/core/types/string;
+fun get-successor[131,5,131,17] : (gana-name : std/core/types/string) -> std/core/types/string;
+// Automatically generated. Retrieves the `last-snapshot` constructor field of the `:resonance-state` type.
+fun resonance-state/last-snapshot[146,3,146,15] : (^ @this : resonance-state) -> (std/core/types/maybe :: V -> V)<snapshot>;
+// Automatically generated. Retrieves the `history` constructor field of the `:resonance-state` type.
+fun resonance-state/history[147,3,147,9] : (^ @this : resonance-state) -> (std/core/types/list :: V -> V)<snapshot>;
+// Automatically generated. Retrieves the `gana-counts` constructor field of the `:resonance-state` type.
+fun resonance-state/gana-counts[148,3,148,13] : (^ @this : resonance-state) -> (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>;
+// Automatically generated. Retrieves the `session-calls` constructor field of the `:resonance-state` type.
+fun resonance-state/session-calls[149,3,149,15] : (^ @this : resonance-state) -> std/core/types/int;
+fun resonance-state/@copy[145,8,145,22] : (@this : resonance-state, last-snapshot : (std/core/types/@optional :: V -> V)<(std/core/types/maybe :: V -> V)<snapshot>>, history : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<snapshot>>, gana-counts : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>>, session-calls : (std/core/types/@optional :: V -> V)<std/core/types/int>) -> resonance-state;
+fun empty-state[151,5,151,15] : () -> resonance-state;
+fun record-in-state[154,5,154,19] : (st : resonance-state, snap : snapshot) -> resonance-state;
+fun calculate-lunar-phase[172,5,172,25] : () -> std/core/types/float64;
+fun calculate-lunar-mansion[177,5,177,27] : () -> std/core/types/int;
+fun calculate-harmony-score[182,5,182,27] : (counts : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) -> std/core/types/float64;
+fun calculate-guna-tag[192,5,192,22] : (phase : std/core/types/float64) -> std/core/types/string;
+fun handle-resonance[199,5,199,20] : forall<a> (action : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> a) -> a;
+// Automatically generated. Retrieves the `predecessor` constructor field of the `:resonance-hints` type.
+fun resonance-hints/predecessor[240,3,240,13] : (^ @this : resonance-hints) -> std/core/types/string;
+// Automatically generated. Retrieves the `successor` constructor field of the `:resonance-hints` type.
+fun resonance-hints/successor[241,3,241,11] : (^ @this : resonance-hints) -> std/core/types/string;
+// Automatically generated. Retrieves the `lunar-phase` constructor field of the `:resonance-hints` type.
+fun resonance-hints/lunar-phase[242,3,242,13] : (^ @this : resonance-hints) -> std/core/types/float64;
+// Automatically generated. Retrieves the `lunar-mansion-num` constructor field of the `:resonance-hints` type.
+fun resonance-hints/lunar-mansion-num[243,3,243,19] : (^ @this : resonance-hints) -> std/core/types/int;
+// Automatically generated. Retrieves the `harmony-score` constructor field of the `:resonance-hints` type.
+fun resonance-hints/harmony-score[244,3,244,15] : (^ @this : resonance-hints) -> std/core/types/float64;
+// Automatically generated. Retrieves the `guna-tag` constructor field of the `:resonance-hints` type.
+fun resonance-hints/guna-tag[245,3,245,10] : (^ @this : resonance-hints) -> std/core/types/string;
+// Automatically generated. Retrieves the `quadrant` constructor field of the `:resonance-hints` type.
+fun resonance-hints/quadrant[246,3,246,10] : (^ @this : resonance-hints) -> std/core/types/string;
+fun snapshot-to-json[47,5,47,20] : (s : snapshot) -> std/core/types/string;
+fun resonance-hints/@copy[239,8,239,22] : (@this : resonance-hints, predecessor : (std/core/types/@optional :: V -> V)<std/core/types/string>, successor : (std/core/types/@optional :: V -> V)<std/core/types/string>, lunar-phase : (std/core/types/@optional :: V -> V)<std/core/types/float64>, lunar-mansion-num : (std/core/types/@optional :: V -> V)<std/core/types/int>, harmony-score : (std/core/types/@optional :: V -> V)<std/core/types/float64>, guna-tag : (std/core/types/@optional :: V -> V)<std/core/types/string>, quadrant : (std/core/types/@optional :: V -> V)<std/core/types/string>) -> resonance-hints;
+// monadic lift
+fun @mlift-generate-hints@10115[1,0,1,0] : (@y-x10089 : std/core/types/float64, @y-x10090 : std/core/types/int, @y-x10091 : std/core/types/float64, meta@0 : ganainfo, pred : std/core/types/string, succ : std/core/types/string, @y-x10092 : std/core/types/string) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> resonance-hints;
+// monadic lift
+fun @mlift-generate-hints@10116[1,0,1,0] : (@y-x10089 : std/core/types/float64, @y-x10090 : std/core/types/int, meta@0 : ganainfo, pred : std/core/types/string, succ : std/core/types/string, @y-x10091 : std/core/types/float64) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> resonance-hints;
+// monadic lift
+fun @mlift-generate-hints@10117[1,0,1,0] : (@y-x10089 : std/core/types/float64, meta@0 : ganainfo, pred : std/core/types/string, succ : std/core/types/string, @y-x10090 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> resonance-hints;
+// monadic lift
+fun @mlift-generate-hints@10118[1,0,1,0] : (meta@0 : ganainfo, pred : std/core/types/string, succ : std/core/types/string, @y-x10089 : std/core/types/float64) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> resonance-hints;
+fun generate-hints[248,5,248,18] : (gana-name : std/core/types/string) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> resonance-hints;
+fun hints-to-json[263,5,263,17] : (h : resonance-hints) -> std/core/types/string;
+// monadic lift
+fun @mlift-track-prat-invocation@10119[1,0,1,0] : (snap : snapshot, wild_ : ()) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> snapshot;
+// monadic lift
+fun @mlift-track-prat-invocation@10120[1,0,1,0] : (gana-name : std/core/types/string, operation : std/core/types/string, output : std/core/types/string, tool-name : std/core/types/string, hints : resonance-hints) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> snapshot;
+fun track-prat-invocation[278,5,278,25] : (gana-name : std/core/types/string, tool-name : std/core/types/string, operation : std/core/types/string, output : std/core/types/string) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> snapshot;
+// Main entry point for FFI bridge
+fun main[304,5,304,8] : () -> std/core/types/int;
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+specialize "*" fun get-gana-meta // inline size: 1
+  = fn(gana-name: std/core/types/string){
+    match ((std/core/list/find<(std/core/types/string, ganainfo),(std/core/types/total :: E)>(src/effects/prat_resonance/gana-metadata, (fn(p: (std/core/types/string, ganainfo)){
+        (std/core/string/(==)((match (p) {
+            ((@skip std/core/types/Tuple2((@x: std/core/types/string) : std/core/types/string, (@pat@0: ganainfo) : ganainfo) : (std/core/types/string, ganainfo) ) as @pat: (std/core/types/string, ganainfo))
+               -> @x;
+          }), gana-name));
+      })))) {
+      ((std/core/types/Just(((@skip std/core/types/Tuple2((@pat@1@0: std/core/types/string) : std/core/types/string, ((@skip src/effects/prat_resonance/Ganainfo((@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/string) : std/core/types/string, (@pat@5: std/core/types/string) : std/core/types/string, (@pat@6: std/core/types/string) : std/core/types/string, (@pat@7: std/core/types/string) : std/core/types/string) : ganainfo ) as meta: ganainfo) : ganainfo) : (std/core/types/string, ganainfo) ) as @pat@0@0: (std/core/types/string, ganainfo)) : (std/core/types/string, ganainfo)) : (std/core/types/maybe :: V -> V)<(std/core/types/string, ganainfo)> ) as @pat@1: ((std/core/types/maybe :: V -> V)<(std/core/types/string, ganainfo)>))
+         -> meta;
+      ((@skip std/core/types/Nothing() : (std/core/types/maybe :: V -> V)<(std/core/types/string, ganainfo)> ) as @pat@8: ((std/core/types/maybe :: V -> V)<(std/core/types/string, ganainfo)>))
+         -> src/effects/prat_resonance/Ganainfo(0, "Unknown", gana-name, "None", "?", "?");
+    };
+  };
+specialize "*" fun get-predecessor // inline size: 1
+  = fn(gana-name: std/core/types/string){
+    val idx[123,7,123,9] : std/core/types/int
+          = std/core/list/index-of<std/core/types/string,(std/core/types/total :: E)>(src/effects/prat_resonance/gana-order, (fn(g: std/core/types/string){
+              (std/core/string/(==)(g, gana-name));
+            }));
+    match ((std/core/int/(>=)(idx, 0))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> val x@0@10019[1,0,1,0] : std/core/types/int
+              = std/core/int/int-sub(idx, 1);
+            val xs@10018[1,0,1,0] : (std/core/types/list :: V -> V)<std/core/types/string>
+              = std/core/list/drop<std/core/types/string>(src/effects/prat_resonance/gana-order, (std/core/int/(%)((std/core/int/int-add(x@0@10019, 28)), 28)));
+        (match (xs@10018) {
+          ((std/core/types/Cons((x: std/core/types/string) : std/core/types/string, (@pat@0@0: (std/core/types/list :: V -> V)<std/core/types/string>) : (std/core/types/list :: V -> V)<std/core/types/string>) : (std/core/types/list :: V -> V)<std/core/types/string> ) as @pat@0: ((std/core/types/list :: V -> V)<std/core/types/string>))
+             -> x;
+          ((@skip std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/string> ) as @pat@1: ((std/core/types/list :: V -> V)<std/core/types/string>))
+             -> (match ((std/core/types/Nothing<std/core/types/string>)) {
+              ((std/core/types/Just((g@0: std/core/types/string) : std/core/types/string) : (std/core/types/maybe :: V -> V)<std/core/types/string> ) as @pat@0@1: ((std/core/types/maybe :: V -> V)<std/core/types/string>))
+                 -> g@0;
+              ((@skip std/core/types/Nothing() : (std/core/types/maybe :: V -> V)<std/core/types/string> ) as @pat@1@0: ((std/core/types/maybe :: V -> V)<std/core/types/string>))
+                 -> "gana_horn";
+            });
+        });
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@2: std/core/types/bool)
+         -> "gana_horn";
+    };
+  };
+specialize "*" fun get-successor // inline size: 1
+  = fn(gana-name: std/core/types/string){
+    val idx[132,7,132,9] : std/core/types/int
+          = std/core/list/index-of<std/core/types/string,(std/core/types/total :: E)>(src/effects/prat_resonance/gana-order, (fn(g: std/core/types/string){
+              (std/core/string/(==)(g, gana-name));
+            }));
+    match ((std/core/int/(>=)(idx, 0))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> val xs@10023[1,0,1,0] : (std/core/types/list :: V -> V)<std/core/types/string>
+                  = std/core/list/drop<std/core/types/string>(src/effects/prat_resonance/gana-order, (std/core/int/(%)((std/core/int/int-add(idx, 1)), 28)));
+        (match (xs@10023) {
+          ((std/core/types/Cons((x: std/core/types/string) : std/core/types/string, (@pat@0@0: (std/core/types/list :: V -> V)<std/core/types/string>) : (std/core/types/list :: V -> V)<std/core/types/string>) : (std/core/types/list :: V -> V)<std/core/types/string> ) as @pat@0: ((std/core/types/list :: V -> V)<std/core/types/string>))
+             -> x;
+          ((@skip std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/string> ) as @pat@1: ((std/core/types/list :: V -> V)<std/core/types/string>))
+             -> (match ((std/core/types/Nothing<std/core/types/string>)) {
+              ((std/core/types/Just((g@0: std/core/types/string) : std/core/types/string) : (std/core/types/maybe :: V -> V)<std/core/types/string> ) as @pat@0@1: ((std/core/types/maybe :: V -> V)<std/core/types/string>))
+                 -> g@0;
+              ((@skip std/core/types/Nothing() : (std/core/types/maybe :: V -> V)<std/core/types/string> ) as @pat@1@0: ((std/core/types/maybe :: V -> V)<std/core/types/string>))
+                 -> "gana_horn";
+            });
+        });
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@2: std/core/types/bool)
+         -> "gana_horn";
+    };
+  };
+specialize "_*" fun record-in-state // inline size: 1
+  = fn(st: resonance-state, snap: snapshot){
+    val new-counts[155,7,155,16] : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>
+          = match ((std/core/list/find<(std/core/types/string, std/core/types/int),(std/core/types/total :: E)>((match (st) {
+              ((@skip src/effects/prat_resonance/Resonance-state((@pat@0: (std/core/types/maybe :: V -> V)<snapshot>) : (std/core/types/maybe :: V -> V)<snapshot>, (@pat@1: (std/core/types/list :: V -> V)<snapshot>) : (std/core/types/list :: V -> V)<snapshot>, (@x: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, (@pat@2: std/core/types/int) : std/core/types/int) : resonance-state ) as @pat: resonance-state)
+                 -> @x;
+            }), (fn(p: (std/core/types/string, std/core/types/int)){
+              (std/core/string/(==)((match (p) {
+                  ((@skip std/core/types/Tuple2((@x@0: std/core/types/string) : std/core/types/string, (@pat@0@0: std/core/types/int) : std/core/types/int) : (std/core/types/string, std/core/types/int) ) as @pat@3: (std/core/types/string, std/core/types/int))
+                     -> @x@0;
+                }), (match (snap) {
+                  ((@skip src/effects/prat_resonance/Snapshot((@x@1: std/core/types/string) : std/core/types/string, (@pat@0@1: std/core/types/string) : std/core/types/string, (@pat@1@0: std/core/types/string) : std/core/types/string, (@pat@2@0: std/core/types/string) : std/core/types/string, (@pat@3@0: std/core/types/float64) : std/core/types/float64, (@pat@4@0: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/int) : std/core/types/int, (@pat@6: std/core/types/float64) : std/core/types/float64, (@pat@7: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat@4: snapshot)
+                     -> @x@1;
+                })));
+            })))) {
+            ((std/core/types/Just(((@skip std/core/types/Tuple2((name: std/core/types/string) : std/core/types/string, (count: std/core/types/int) : std/core/types/int) : (std/core/types/string, std/core/types/int) ) as @pat@0@2: (std/core/types/string, std/core/types/int)) : (std/core/types/string, std/core/types/int)) : (std/core/types/maybe :: V -> V)<(std/core/types/string, std/core/types/int)> ) as @pat@10: ((std/core/types/maybe :: V -> V)<(std/core/types/string, std/core/types/int)>))
+               -> std/core/types/Cons<(std/core/types/string, std/core/types/int)>((std/core/types/Tuple2<std/core/types/string,std/core/types/int>(name, (std/core/int/int-add(count, 1)))), (std/core/list/filter<(std/core/types/string, std/core/types/int),(std/core/types/total :: E)>((match (st) {
+                    ((@skip src/effects/prat_resonance/Resonance-state((@pat@0@3: (std/core/types/maybe :: V -> V)<snapshot>) : (std/core/types/maybe :: V -> V)<snapshot>, (@pat@1@1: (std/core/types/list :: V -> V)<snapshot>) : (std/core/types/list :: V -> V)<snapshot>, (@x@2: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, (@pat@2@1: std/core/types/int) : std/core/types/int) : resonance-state ) as @pat@11: resonance-state)
+                       -> @x@2;
+                  }), (fn(p@0: (std/core/types/string, std/core/types/int)){
+                    (std/core/string/(!=)((match (p@0) {
+                        ((@skip std/core/types/Tuple2((@x@3: std/core/types/string) : std/core/types/string, (@pat@0@4: std/core/types/int) : std/core/types/int) : (std/core/types/string, std/core/types/int) ) as @pat@12: (std/core/types/string, std/core/types/int))
+                           -> @x@3;
+                      }), name));
+                  }))));
+            ((@skip std/core/types/Nothing() : (std/core/types/maybe :: V -> V)<(std/core/types/string, std/core/types/int)> ) as @pat@1@2: ((std/core/types/maybe :: V -> V)<(std/core/types/string, std/core/types/int)>))
+               -> std/core/types/Cons<(std/core/types/string, std/core/types/int)>((std/core/types/Tuple2<std/core/types/string,std/core/types/int>((match (snap) {
+                    ((@skip src/effects/prat_resonance/Snapshot((@x@4: std/core/types/string) : std/core/types/string, (@pat@0@5: std/core/types/string) : std/core/types/string, (@pat@1@3: std/core/types/string) : std/core/types/string, (@pat@2@2: std/core/types/string) : std/core/types/string, (@pat@3@1: std/core/types/float64) : std/core/types/float64, (@pat@4@1: std/core/types/float64) : std/core/types/float64, (@pat@5@0: std/core/types/int) : std/core/types/int, (@pat@6@0: std/core/types/float64) : std/core/types/float64, (@pat@7@0: std/core/types/string) : std/core/types/string, (@pat@8@0: std/core/types/string) : std/core/types/string, (@pat@9@0: std/core/types/string) : std/core/types/string) : snapshot ) as @pat@13: snapshot)
+                       -> @x@4;
+                  }), 1)), (match (st) {
+                  ((@skip src/effects/prat_resonance/Resonance-state((@pat@0@6: (std/core/types/maybe :: V -> V)<snapshot>) : (std/core/types/maybe :: V -> V)<snapshot>, (@pat@1@4: (std/core/types/list :: V -> V)<snapshot>) : (std/core/types/list :: V -> V)<snapshot>, (@x@5: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, (@pat@2@3: std/core/types/int) : std/core/types/int) : resonance-state ) as @pat@14: resonance-state)
+                     -> @x@5;
+                }));
+          };
+    src/effects/prat_resonance/Resonance-state((std/core/types/Just<snapshot>(snap)), (std/core/list/take<snapshot>((std/core/types/Cons<snapshot>(snap, (match (st) {
+            ((@skip src/effects/prat_resonance/Resonance-state((@pat@0@7: (std/core/types/maybe :: V -> V)<snapshot>) : (std/core/types/maybe :: V -> V)<snapshot>, (@x@6: (std/core/types/list :: V -> V)<snapshot>) : (std/core/types/list :: V -> V)<snapshot>, (@pat@1@5: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, (@pat@2@4: std/core/types/int) : std/core/types/int) : resonance-state ) as @pat@15: resonance-state)
+               -> @x@6;
+          }))), 50)), new-counts, (std/core/int/int-add((match (st) {
+          ((@skip src/effects/prat_resonance/Resonance-state((@pat@0@8: (std/core/types/maybe :: V -> V)<snapshot>) : (std/core/types/maybe :: V -> V)<snapshot>, (@pat@1@6: (std/core/types/list :: V -> V)<snapshot>) : (std/core/types/list :: V -> V)<snapshot>, (@pat@2@5: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, (@x@7: std/core/types/int) : std/core/types/int) : resonance-state ) as @pat@16: resonance-state)
+             -> @x@7;
+        }), 1)));
+  };
+inline borrow "^" fun resonance/@cfc // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@x: std/core/types/int) : std/core/types/int, (@pat@0: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun resonance/@fun-get-last-snapshot // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@x: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun get-last-snapshot/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@fun-get-last-snapshot: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-get-last-snapshot;
+    });
+  };
+inline fun get-last-snapshot // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(){
+    std/core/hnd/@perform0<snapshot,<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(resonance :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#get-last-snapshot/@select);
+  };
+inline borrow "^" fun resonance/@fun-record-snapshot // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@x: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun record-snapshot/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@fun-record-snapshot: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-record-snapshot;
+    });
+  };
+inline fun record-snapshot // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(snap: snapshot){
+    std/core/hnd/@perform1<snapshot,(),(resonance :: (E, V) -> V),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#record-snapshot/@select, snap);
+  };
+inline borrow "^" fun resonance/@fun-get-call-count // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@x: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun get-call-count/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@fun-get-call-count: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-get-call-count;
+    });
+  };
+inline fun get-call-count // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(){
+    std/core/hnd/@perform0<std/core/types/int,<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(resonance :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#get-call-count/@select);
+  };
+inline borrow "^" fun resonance/@fun-get-gana-counts // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@x: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun get-gana-counts/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@fun-get-gana-counts: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-get-gana-counts;
+    });
+  };
+inline fun get-gana-counts // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(){
+    std/core/hnd/@perform0<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(resonance :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#get-gana-counts/@select);
+  };
+inline borrow "^" fun resonance/@fun-get-recent-history // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@x: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun get-recent-history/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@fun-get-recent-history: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-get-recent-history;
+    });
+  };
+inline fun get-recent-history // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(limit: std/core/types/int){
+    std/core/hnd/@perform1<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#get-recent-history/@select, limit);
+  };
+inline borrow "^" fun resonance/@fun-reset-state // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@x: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun reset-state/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@fun-reset-state: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-reset-state;
+    });
+  };
+inline fun reset-state // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(){
+    std/core/hnd/@perform0<(),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(resonance :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#reset-state/@select);
+  };
+inline borrow "^" fun resonance/@fun-get-lunar-phase // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@x: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun get-lunar-phase/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@fun-get-lunar-phase: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-get-lunar-phase;
+    });
+  };
+inline fun get-lunar-phase // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(){
+    std/core/hnd/@perform0<std/core/types/float64,<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(resonance :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#get-lunar-phase/@select);
+  };
+inline borrow "^" fun resonance/@fun-get-lunar-mansion // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@x: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun get-lunar-mansion/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@fun-get-lunar-mansion: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-get-lunar-mansion;
+    });
+  };
+inline fun get-lunar-mansion // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(){
+    std/core/hnd/@perform0<std/core/types/int,<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(resonance :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#get-lunar-mansion/@select);
+  };
+inline borrow "^" fun resonance/@fun-get-harmony-score // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@x: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun get-harmony-score/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@fun-get-harmony-score: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-get-harmony-score;
+    });
+  };
+inline fun get-harmony-score // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(){
+    std/core/hnd/@perform0<std/core/types/float64,<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(resonance :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#get-harmony-score/@select);
+  };
+inline borrow "^" fun resonance/@fun-get-guna-tag // inline size: 0
+  = forall<(e :: E),a> fn(resonance: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (resonance) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@x: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @x;
+    });
+  };
+inline borrow "^" fun get-guna-tag/@select // inline size: 0
+  = forall<(e :: E),a> fn(hnd: (resonance :: (E, V) -> V)<(e :: E),a>){
+    (match (hnd) {
+      ((@skip src/effects/prat_resonance/@Hnd-resonance((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@2: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>,(resonance :: (E, V) -> V),(e :: E),a>, (@fun-get-guna-tag: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/string,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@3: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@4: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<snapshot,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@5: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/int,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@6: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<std/core/types/float64,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@7: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<std/core/types/int,(std/core/types/list :: V -> V)<snapshot>,(resonance :: (E, V) -> V),(e :: E),a>, (@pat@8: (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause1 :: (V, V, (E, V) -> V, E, V) -> V)<snapshot,(),(resonance :: (E, V) -> V),(e :: E),a>, (@pat@9: (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (std/core/hnd/clause0 :: (V, (E, V) -> V, E, V) -> V)<(),(resonance :: (E, V) -> V),(e :: E),a>) : (resonance :: (E, V) -> V)<(e :: E),a> ) as @pat: ((resonance :: (E, V) -> V)<(e :: E),a>))
+         -> @fun-get-guna-tag;
+    });
+  };
+inline fun get-guna-tag // inline size: 5
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>>(){
+    std/core/hnd/@perform0<std/core/types/string,<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(resonance :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(resonance :: (E, V) -> V)>>((std/core/hnd/@evv-at<(resonance :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(resonance :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), src/effects/prat_resonance/#get-guna-tag/@select);
+  };
+inline borrow "^" fun snapshot/gana-name // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@x: std/core/types/string) : std/core/types/string, (@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/int) : std/core/types/int, (@pat@6: std/core/types/float64) : std/core/types/float64, (@pat@7: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/tool-name // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/int) : std/core/types/int, (@pat@6: std/core/types/float64) : std/core/types/float64, (@pat@7: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/operation // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/int) : std/core/types/int, (@pat@6: std/core/types/float64) : std/core/types/float64, (@pat@7: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/output-preview // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/int) : std/core/types/int, (@pat@6: std/core/types/float64) : std/core/types/float64, (@pat@7: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/timestamp // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@x: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/int) : std/core/types/int, (@pat@6: std/core/types/float64) : std/core/types/float64, (@pat@7: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/lunar-phase // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/float64) : std/core/types/float64, (@x: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/int) : std/core/types/int, (@pat@6: std/core/types/float64) : std/core/types/float64, (@pat@7: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/lunar-mansion-num // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/float64) : std/core/types/float64, (@x: std/core/types/int) : std/core/types/int, (@pat@6: std/core/types/float64) : std/core/types/float64, (@pat@7: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/harmony-score // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/float64) : std/core/types/float64, (@pat@6: std/core/types/int) : std/core/types/int, (@x: std/core/types/float64) : std/core/types/float64, (@pat@7: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/guna-tag // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/float64) : std/core/types/float64, (@pat@6: std/core/types/int) : std/core/types/int, (@pat@7: std/core/types/float64) : std/core/types/float64, (@x: std/core/types/string) : std/core/types/string, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/quadrant // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/float64) : std/core/types/float64, (@pat@6: std/core/types/int) : std/core/types/int, (@pat@7: std/core/types/float64) : std/core/types/float64, (@pat@8: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun snapshot/successor-hint // inline size: 0
+  = fn(snapshot: snapshot){
+    match (snapshot) {
+      ((@skip src/effects/prat_resonance/Snapshot((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/float64) : std/core/types/float64, (@pat@6: std/core/types/int) : std/core/types/int, (@pat@7: std/core/types/float64) : std/core/types/float64, (@pat@8: std/core/types/string) : std/core/types/string, (@pat@9: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string) : snapshot ) as @pat: snapshot)
+         -> @x;
+    };
+  };
+inline borrow "^" fun ganainfo/mansion-num // inline size: 0
+  = fn(ganainfo: ganainfo){
+    match (ganainfo) {
+      ((@skip src/effects/prat_resonance/Ganainfo((@x: std/core/types/int) : std/core/types/int, (@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/string) : std/core/types/string) : ganainfo ) as @pat: ganainfo)
+         -> @x;
+    };
+  };
+inline borrow "^" fun ganainfo/quadrant // inline size: 0
+  = fn(ganainfo: ganainfo){
+    match (ganainfo) {
+      ((@skip src/effects/prat_resonance/Ganainfo((@pat@0: std/core/types/int) : std/core/types/int, (@x: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/string) : std/core/types/string) : ganainfo ) as @pat: ganainfo)
+         -> @x;
+    };
+  };
+inline borrow "^" fun ganainfo/meaning // inline size: 0
+  = fn(ganainfo: ganainfo){
+    match (ganainfo) {
+      ((@skip src/effects/prat_resonance/Ganainfo((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/string) : std/core/types/string) : ganainfo ) as @pat: ganainfo)
+         -> @x;
+    };
+  };
+inline borrow "^" fun ganainfo/garden // inline size: 0
+  = fn(ganainfo: ganainfo){
+    match (ganainfo) {
+      ((@skip src/effects/prat_resonance/Ganainfo((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/string) : std/core/types/string) : ganainfo ) as @pat: ganainfo)
+         -> @x;
+    };
+  };
+inline borrow "^" fun ganainfo/chinese // inline size: 0
+  = fn(ganainfo: ganainfo){
+    match (ganainfo) {
+      ((@skip src/effects/prat_resonance/Ganainfo((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/string) : std/core/types/string) : ganainfo ) as @pat: ganainfo)
+         -> @x;
+    };
+  };
+inline borrow "^" fun ganainfo/pinyin // inline size: 0
+  = fn(ganainfo: ganainfo){
+    match (ganainfo) {
+      ((@skip src/effects/prat_resonance/Ganainfo((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string) : ganainfo ) as @pat: ganainfo)
+         -> @x;
+    };
+  };
+fun get-gana-meta // inline size: 4
+  = fn(gana-name: std/core/types/string){
+    match ((std/core/list/find<(std/core/types/string, ganainfo),(std/core/types/total :: E)>(src/effects/prat_resonance/gana-metadata, (fn(p: (std/core/types/string, ganainfo)){
+        (std/core/string/(==)((match (p) {
+            ((@skip std/core/types/Tuple2((@x: std/core/types/string) : std/core/types/string, (@pat@0: ganainfo) : ganainfo) : (std/core/types/string, ganainfo) ) as @pat: (std/core/types/string, ganainfo))
+               -> @x;
+          }), gana-name));
+      })))) {
+      ((std/core/types/Just(((@skip std/core/types/Tuple2((@pat@1@0: std/core/types/string) : std/core/types/string, ((@skip src/effects/prat_resonance/Ganainfo((@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/string) : std/core/types/string, (@pat@5: std/core/types/string) : std/core/types/string, (@pat@6: std/core/types/string) : std/core/types/string, (@pat@7: std/core/types/string) : std/core/types/string) : ganainfo ) as meta: ganainfo) : ganainfo) : (std/core/types/string, ganainfo) ) as @pat@0@0: (std/core/types/string, ganainfo)) : (std/core/types/string, ganainfo)) : (std/core/types/maybe :: V -> V)<(std/core/types/string, ganainfo)> ) as @pat@1: ((std/core/types/maybe :: V -> V)<(std/core/types/string, ganainfo)>))
+         -> meta;
+      ((@skip std/core/types/Nothing() : (std/core/types/maybe :: V -> V)<(std/core/types/string, ganainfo)> ) as @pat@8: ((std/core/types/maybe :: V -> V)<(std/core/types/string, ganainfo)>))
+         -> src/effects/prat_resonance/Ganainfo(0, "Unknown", gana-name, "None", "?", "?");
+    };
+  };
+inline borrow "^" fun resonance-state/last-snapshot // inline size: 0
+  = fn(@this: resonance-state){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-state((@x: (std/core/types/maybe :: V -> V)<snapshot>) : (std/core/types/maybe :: V -> V)<snapshot>, (@pat@0: (std/core/types/list :: V -> V)<snapshot>) : (std/core/types/list :: V -> V)<snapshot>, (@pat@1: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, (@pat@2: std/core/types/int) : std/core/types/int) : resonance-state ) as @pat: resonance-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-state/history // inline size: 0
+  = fn(@this: resonance-state){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-state((@pat@0: (std/core/types/maybe :: V -> V)<snapshot>) : (std/core/types/maybe :: V -> V)<snapshot>, (@x: (std/core/types/list :: V -> V)<snapshot>) : (std/core/types/list :: V -> V)<snapshot>, (@pat@1: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, (@pat@2: std/core/types/int) : std/core/types/int) : resonance-state ) as @pat: resonance-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-state/gana-counts // inline size: 0
+  = fn(@this: resonance-state){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-state((@pat@0: (std/core/types/maybe :: V -> V)<snapshot>) : (std/core/types/maybe :: V -> V)<snapshot>, (@pat@1: (std/core/types/list :: V -> V)<snapshot>) : (std/core/types/list :: V -> V)<snapshot>, (@x: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, (@pat@2: std/core/types/int) : std/core/types/int) : resonance-state ) as @pat: resonance-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-state/session-calls // inline size: 0
+  = fn(@this: resonance-state){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-state((@pat@0: (std/core/types/maybe :: V -> V)<snapshot>) : (std/core/types/maybe :: V -> V)<snapshot>, (@pat@1: (std/core/types/list :: V -> V)<snapshot>) : (std/core/types/list :: V -> V)<snapshot>, (@pat@2: (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>) : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/int)>, (@x: std/core/types/int) : std/core/types/int) : resonance-state ) as @pat: resonance-state)
+         -> @x;
+    };
+  };
+fun empty-state // inline size: 1
+  = fn(){
+    src/effects/prat_resonance/Resonance-state((std/core/types/Nothing<snapshot>), (std/core/types/Nil<snapshot>), (std/core/types/Nil<(std/core/types/string, std/core/types/int)>), 0);
+  };
+inline fun calculate-lunar-phase // inline size: 0
+  = fn(){
+    0.5;
+  };
+inline fun calculate-lunar-mansion // inline size: 0
+  = fn(){
+    14;
+  };
+inline fun calculate-guna-tag // inline size: 0
+  = fn(phase: std/core/types/float64){
+    "rajasic";
+  };
+inline borrow "^" fun resonance-hints/predecessor // inline size: 0
+  = fn(@this: resonance-hints){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-hints((@x: std/core/types/string) : std/core/types/string, (@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/float64) : std/core/types/float64, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/string) : std/core/types/string, (@pat@5: std/core/types/string) : std/core/types/string) : resonance-hints ) as @pat: resonance-hints)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-hints/successor // inline size: 0
+  = fn(@this: resonance-hints){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-hints((@pat@0: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/float64) : std/core/types/float64, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/string) : std/core/types/string, (@pat@5: std/core/types/string) : std/core/types/string) : resonance-hints ) as @pat: resonance-hints)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-hints/lunar-phase // inline size: 0
+  = fn(@this: resonance-hints){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-hints((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@x: std/core/types/float64) : std/core/types/float64, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/string) : std/core/types/string, (@pat@5: std/core/types/string) : std/core/types/string) : resonance-hints ) as @pat: resonance-hints)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-hints/lunar-mansion-num // inline size: 0
+  = fn(@this: resonance-hints){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-hints((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/float64) : std/core/types/float64, (@x: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/string) : std/core/types/string, (@pat@5: std/core/types/string) : std/core/types/string) : resonance-hints ) as @pat: resonance-hints)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-hints/harmony-score // inline size: 0
+  = fn(@this: resonance-hints){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-hints((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/float64) : std/core/types/float64, (@pat@3: std/core/types/int) : std/core/types/int, (@x: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/string) : std/core/types/string, (@pat@5: std/core/types/string) : std/core/types/string) : resonance-hints ) as @pat: resonance-hints)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-hints/guna-tag // inline size: 0
+  = fn(@this: resonance-hints){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-hints((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/float64) : std/core/types/float64, (@pat@3: std/core/types/int) : std/core/types/int, (@pat@4: std/core/types/float64) : std/core/types/float64, (@x: std/core/types/string) : std/core/types/string, (@pat@5: std/core/types/string) : std/core/types/string) : resonance-hints ) as @pat: resonance-hints)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-hints/quadrant // inline size: 0
+  = fn(@this: resonance-hints){
+    match (@this) {
+      ((@skip src/effects/prat_resonance/Resonance-hints((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/float64) : std/core/types/float64, (@pat@3: std/core/types/int) : std/core/types/int, (@pat@4: std/core/types/float64) : std/core/types/float64, (@pat@5: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string) : resonance-hints ) as @pat: resonance-hints)
+         -> @x;
+    };
+  };
+inline fun main // inline size: 0
+  = fn(){
+    0;
+  };

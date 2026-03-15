@@ -57,6 +57,8 @@ POLYGLOT_EXTENSIONS: dict[str, list[str]] = {
     "Go": [".go"],
     "Julia": [".jl"],
     "Markdown": [".md"],
+    "Koka": [".kk"],
+    "Shell": [".sh"]
 }
 
 # ---------------------------------------------------------------------------
@@ -653,6 +655,7 @@ def run_census() -> dict[str, Any]:
         "category_stats": dict(category_stats),
         "bio_stats": dict(bio_stats),
         "dead_code": dead_code,
+        "redundancy_pairs_full": redundancy_pairs,
         "redundancy_pairs": redundancy_pairs[:50],  # top 50
         "top_importers": [{"path": f.path, "imports": len(f.imports)} for f in top_importers],
         "top_imported": [{"path": f.path, "imported_by": len(f.imported_by)} for f in top_imported],

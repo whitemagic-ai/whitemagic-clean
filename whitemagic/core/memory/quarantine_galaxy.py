@@ -2,14 +2,16 @@
 Moves noisy/duplicate memories from active DB to archival quarantine.
 """
 
-import os
-import json
 import hashlib
+import os
+import sqlite3
 from datetime import datetime
-from typing import List, Dict, Tuple, Optional
+from typing import Any, Dict, List, Optional, Tuple
+from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 
+from whitemagic.core.memory.unified_types import MemoryGalaxy
 
-class QuarantineGalaxy:
+class QuarantineGalaxy(MemoryGalaxy):
     """
     Manages a separate galaxy/DB for noisy, duplicate, or low-value memories.
     
@@ -32,7 +34,6 @@ class QuarantineGalaxy:
         """Initialize quarantine database."""
         os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
         
-        import sqlite3
         conn = sqlite3.connect(self.db_path)
         conn.executescript('''
             CREATE TABLE IF NOT EXISTS memories (
@@ -80,7 +81,7 @@ class QuarantineGalaxy:
                 source_galaxy,
                 reason,
                 datetime.now().isoformat(),
-                json.dumps(original_metadata) if original_metadata else None
+                _json_dumps(original_metadata) if original_metadata else None
             ))
             conn.commit()
             conn.close()
@@ -216,7 +217,7 @@ class NoisyMemoryDetector:
                 'id': row['id'],
                 'title': row['title'],
                 'content': row['content'],
-                'tags': json.loads(row['tags']) if row['tags'] else [],
+                'tags': _json_loads(row['tags']) if row['tags'] else [],
                 'source': 'sqlite',
                 'created_at': row['created_at']
             }

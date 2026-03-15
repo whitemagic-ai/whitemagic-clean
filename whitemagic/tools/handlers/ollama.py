@@ -71,6 +71,23 @@ def _request_timeout(default: float) -> float:
         return default
 
 
+def _ollama_runtime_status() -> dict[str, Any]:
+    status: dict[str, Any] = {"ollama_url": _ollama_url()}
+    try:
+        _require_aiohttp()
+        status["aiohttp_available"] = True
+    except ImportError as exc:
+        status["aiohttp_available"] = False
+        status["dependency_error"] = str(exc)
+        return status
+
+    preflight_error = _ollama_preflight()
+    status["service_available"] = preflight_error is None
+    if preflight_error is not None:
+        status["service_error"] = preflight_error
+    return status
+
+
 def _ollama_preflight() -> str | None:
     preflight = os.environ.get("WHITEMAGIC_OLLAMA_PREFLIGHT", "1").strip().lower()
     if preflight in {"0", "false", "no", "off"}:
@@ -259,18 +276,21 @@ async def _chat(model: str, messages: list[dict[str, Any]]) -> dict[str, Any]:
 
 def handle_ollama_models(**kwargs: Any) -> dict[str, Any]:
     """List available Ollama models."""
-    try:
-        _require_aiohttp()
-    except ImportError as exc:
-        return {"status": "error", "error": str(exc), "error_code": "missing_dependency"}
-
-    preflight_error = _ollama_preflight()
-    if preflight_error:
+    runtime_status = _ollama_runtime_status()
+    if not runtime_status.get("aiohttp_available", False):
         return {
             "status": "error",
-            "error": preflight_error,
+            "error": runtime_status.get("dependency_error", "aiohttp unavailable"),
+            "error_code": "missing_dependency",
+            **runtime_status,
+        }
+
+    if not runtime_status.get("service_available", False):
+        return {
+            "status": "error",
+            "error": runtime_status.get("service_error", "Ollama unavailable"),
             "error_code": "service_unavailable",
-            "ollama_url": _ollama_url(),
+            **runtime_status,
         }
     try:
         models = _run(_list_models())
@@ -286,15 +306,16 @@ def handle_ollama_models(**kwargs: Any) -> dict[str, Any]:
             "status": "success",
             "count": len(model_list),
             "models": model_list,
-            "ollama_url": _ollama_url(),
+            **runtime_status,
         }
     except ImportError as exc:
-        return {"status": "error", "error": str(exc), "error_code": "missing_dependency"}
+        return {"status": "error", "error": str(exc), "error_code": "missing_dependency", **runtime_status}
     except Exception as exc:
         return {
             "status": "error",
             "error": f"Cannot reach Ollama at {_ollama_url()}: {exc}",
-            "ollama_url": _ollama_url(),
+            "error_code": "service_unavailable",
+            **runtime_status,
         }
 
 

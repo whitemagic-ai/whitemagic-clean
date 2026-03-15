@@ -8,6 +8,45 @@ export default function MonacoEditor() {
   const setActiveFile = useEditorStore((s) => s.setActiveFile);
   const closeFile = useEditorStore((s) => s.closeFile);
   const updateContent = useEditorStore((s) => s.updateContent);
+  
+
+  
+
+  const handleEditorDidMount = (editor: any, monaco: any) => {
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+      const state = useEditorStore.getState();
+      if (state.activeFile) {
+        state.saveFile(state.activeFile);
+      }
+    });
+
+    // Add Windsurf/Cascade-style inline agent command (Cmd+L)
+    const triggerAgent = () => {
+      const selection = editor.getSelection();
+      const text = editor.getModel().getValueInRange(selection);
+      const state = useEditorStore.getState();
+      
+      const event = new CustomEvent('open-ai-chat-with-context', {
+        detail: {
+          file: state.activeFile,
+          selection: text,
+          range: selection,
+        }
+      });
+      window.dispatchEvent(event);
+    };
+
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL, triggerAgent);
+    
+    // Add right-click context menu action
+    editor.addAction({
+      id: 'aria-inline-agent',
+      label: 'Ask ARIA about this...',
+      contextMenuGroupId: 'navigation',
+      contextMenuOrder: 1.5,
+      run: triggerAgent
+    });
+  };
 
   const currentFile = openFiles.find((f) => f.path === activeFile);
 
@@ -60,6 +99,7 @@ export default function MonacoEditor() {
       {/* Monaco editor */}
       <div className="flex-1 overflow-hidden">
         <Editor
+        onMount={handleEditorDidMount}
           height="100%"
           language={currentFile.language}
           value={currentFile.content}

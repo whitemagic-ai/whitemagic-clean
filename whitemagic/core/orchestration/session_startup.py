@@ -15,6 +15,7 @@ v4.3.0 Enhancement: Memory Context Loading
 
 import logging
 import os
+import queue
 import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -63,6 +64,30 @@ class SessionStartupOrchestrator:
             logger.warning(f"⚠️ {name} failed: {e}")
         self.systems[name] = status
         return status
+
+    def _run_with_timeout(self, name: str, fn: Callable[[], None], timeout_s: float = 2.0) -> None:
+        """Run a startup action in a daemon thread with a bounded wait."""
+        result_queue: queue.Queue[BaseException | None] = queue.Queue(maxsize=1)
+
+        def _runner() -> None:
+            try:
+                fn()
+                result_queue.put(None)
+            except BaseException as exc:
+                result_queue.put(exc)
+
+        thread = threading.Thread(target=_runner, name=f"wm-startup-{name}", daemon=True)
+        thread.start()
+        thread.join(timeout_s)
+
+        if thread.is_alive():
+            logger.warning(f"⚠️ {name} startup still running after {timeout_s:.1f}s; continuing in background")
+            return
+
+        if not result_queue.empty():
+            exc = result_queue.get_nowait()
+            if exc is not None:
+                raise exc
 
     def start_core_systems(self) -> list[SystemStatus]:
         """Start core infrastructure systems."""
@@ -168,6 +193,14 @@ class SessionStartupOrchestrator:
             start_decay_daemon()
         results.append(self._safe_activate("Decay Daemon", start_decay))
 
+        # 2.5. Embedding Daemon (background embedding for unembedded memories)
+        def start_embedding() -> None:
+            from whitemagic.core.memory.embedding_daemon import get_embedding_daemon
+            daemon = get_embedding_daemon()
+            self._run_with_timeout("embedding_daemon", daemon.start, timeout_s=1.5)
+            logger.info(f"Embedding Daemon activation triggered (rust={daemon._stats.rust_available})")
+        results.append(self._safe_activate("Embedding Daemon", start_embedding))
+
         # 3. Predictive Cache (Markov chain pre-warming, 91% accuracy)
         def start_predictive_cache() -> None:
             from whitemagic.optimization.predictive_cache import get_memory_cache
@@ -189,7 +222,7 @@ class SessionStartupOrchestrator:
             def start_local_ml() -> None:
                 from whitemagic.local_ml.engine import get_local_ml_engine
                 engine = get_local_ml_engine()
-                engine.start()
+                self._run_with_timeout("local_ml_engine", engine.start, timeout_s=2.0)
                 status = engine.get_status()
                 logger.info(f"🧠 Local ML Engine active (Default: {status.get('default_backend')})")
 
@@ -199,7 +232,7 @@ class SessionStartupOrchestrator:
         def start_hologram() -> None:
             from whitemagic.core.intelligence.hologram.engine import get_hologram_engine
             engine = get_hologram_engine()
-            engine.start()
+            self._run_with_timeout("hologram_engine", engine.start, timeout_s=2.0)
             if engine.enabled:
                 logger.info(f"🌌 Hologram Engine active with backend: {engine.get_stats().get('backend', 'unknown')}")
             else:
@@ -212,7 +245,7 @@ class SessionStartupOrchestrator:
                 get_emergence_engine,
             )
             engine = get_emergence_engine()
-            engine.start()
+            self._run_with_timeout("emergence_engine", engine.start, timeout_s=2.0)
         results.append(self._safe_activate("Emergence Engine", start_emergence))
 
         # 6. Feedback Controller (The Observer that Acts) - Added in Phase Connection
@@ -221,7 +254,7 @@ class SessionStartupOrchestrator:
                 get_feedback_controller,
             )
             controller = get_feedback_controller()
-            controller.start()
+            self._run_with_timeout("feedback_controller", controller.start, timeout_s=2.0)
         results.append(self._safe_activate("Feedback Controller", start_feedback))
 
 
@@ -285,12 +318,8 @@ class SessionStartupOrchestrator:
         try:
             from whitemagic.autonomous.continuous_awareness import get_awareness  # type: ignore[import-not-found]
             awareness = get_awareness()
-            # Start in background thread to not block
-            # In Phase 5: Ensure it emits a startup observation
-            awareness.observe_once()
-            thread = threading.Thread(target=awareness.observe_once, daemon=True)
-            thread.start()
-            logger.info("👁️ Continuous Awareness active and first observation recorded")
+            self._run_with_timeout("continuous_awareness", awareness.observe_once, timeout_s=1.0)
+            logger.info("👁️ Continuous Awareness activation triggered")
         except ImportError:
             pass
 
@@ -301,14 +330,18 @@ class SessionStartupOrchestrator:
             from whitemagic.interfaces.api.routes.dashboard_api import (
                 activate_all_systems,
             )
-            try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    asyncio.ensure_future(activate_all_systems())
-                else:
-                    loop.run_until_complete(activate_all_systems())
-            except RuntimeError:
-                asyncio.run(activate_all_systems())
+
+            def _activate_dashboard() -> None:
+                try:
+                    loop = asyncio.get_event_loop()
+                    if loop.is_running():
+                        asyncio.ensure_future(activate_all_systems())
+                    else:
+                        loop.run_until_complete(activate_all_systems())
+                except RuntimeError:
+                    asyncio.run(activate_all_systems())
+
+            self._run_with_timeout("dashboard_systems", _activate_dashboard, timeout_s=2.0)
         except ImportError:
             pass
 
@@ -327,7 +360,7 @@ class SessionStartupOrchestrator:
 
         # 1. User Profile Sync (New in Phase 5)
         def sync_user_profile() -> None:
-            from whitemagic.core.resonance import emit_event
+            from whitemagic.core.resonance.gan_ying import emit_event
             from whitemagic.core.user import get_user_manager
             manager = get_user_manager()
             profile = manager.profile
@@ -409,8 +442,8 @@ class SessionStartupOrchestrator:
                 get_temporal_scheduler,
             )
             scheduler = get_temporal_scheduler()
-            scheduler.start()
-            logger.info("Temporal Scheduler started (FAST/MEDIUM/SLOW lanes)")
+            self._run_with_timeout("temporal_scheduler", scheduler.start, timeout_s=1.5)
+            logger.info("Temporal Scheduler activation triggered (FAST/MEDIUM/SLOW lanes)")
         results.append(self._safe_activate("Temporal Scheduler", init_temporal_scheduler))
 
         # 5. Homeostatic Loop — self-regulation feedback
@@ -502,6 +535,9 @@ class SessionStartupOrchestrator:
 
                 thread = threading.Thread(target=run_swarm_breath, daemon=True)
                 thread.start()
+                thread.join(1.0)
+                if thread.is_alive():
+                    logger.warning("⚠️ GanaSwarm breath cycle still initializing; continuing in background")
                 logger.info("🫁 GanaSwarm breath cycle activated")
             except ImportError as e:
                 logger.warning(f"⚠️ GanaSwarm could not be activated: {e}")

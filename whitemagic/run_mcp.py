@@ -15,6 +15,8 @@ from importlib.util import find_spec
 from pathlib import Path
 from typing import Callable, Any
 
+from whitemagic.runtime_status import get_runtime_status
+
 # Add project root to path
 ROOT_DIR = Path(__file__).resolve().parent
 CORE_SYSTEM_DIR = ROOT_DIR.parent
@@ -55,8 +57,19 @@ def register_resources() -> None:
     if _RESOURCES_REGISTERED:
         return
 
+    prologue_path = ROOT_DIR / "grimoire" / "00_PROLOGUE.md"
     ai_primary_path = CORE_SYSTEM_DIR / "AI_PRIMARY.md"
     grimoire_index_path = ROOT_DIR / "grimoire" / "00_INDEX.md"
+
+    @mcp.resource(
+        "whitemagic://orientation/prologue",
+        name="orientation_prologue",
+        title="Whitemagic Prologue",
+        description="Canonical introduction and documentation router for WhiteMagic.",
+        mime_type="text/markdown",
+    )
+    def orientation_prologue() -> str:
+        return _safe_read_text(prologue_path)
 
     @mcp.resource(
         "whitemagic://orientation/ai-primary",
@@ -72,7 +85,7 @@ def register_resources() -> None:
         "whitemagic://grimoire/index",
         name="grimoire_index",
         title="Grimoire Index",
-        description="Top-level Grimoire index for chapter navigation and session guidance.",
+        description="Top-level Grimoire index for chapter navigation after the prologue.",
         mime_type="text/markdown",
     )
     def grimoire_index() -> str:
@@ -120,23 +133,23 @@ _LITE_TOOLS = {
 
 
 def _register_prat_tools(mcp_client: str) -> int:
-    """Register 28 PRAT Gana meta-tools (collapses 181 → 28)."""
+    """Register the 28 PRAT Gana meta-tools for the stable MCP contract."""
     from whitemagic.tools.registry import TOOL_REGISTRY
     from whitemagic.tools.schema_adapter import adapt_schema
+    from whitemagic.tools.tool_surface import GANA_NAMES, GANA_SHORT_DESC, get_callable_tool_definitions
     from whitemagic.tools.prat_router import (
         build_prat_description, build_prat_schema, route_prat_call,
         get_tools_for_gana,
     )
 
-    count = 0
-    for tool_def in TOOL_REGISTRY:
-        if not tool_def.name.startswith("gana_"):
-            continue
+    callable_tool_defs = get_callable_tool_definitions()
 
-        gana_name = tool_def.name
+    count = 0
+    for gana_name in GANA_NAMES:
         get_tools_for_gana(gana_name)
-        description = build_prat_description(gana_name, tool_def.description)
-        schema = build_prat_schema(gana_name, TOOL_REGISTRY)
+        base_desc = GANA_SHORT_DESC.get(gana_name, f"Gana {gana_name}")
+        description = build_prat_description(gana_name, base_desc)
+        schema = build_prat_schema(gana_name, callable_tool_defs)
 
         if mcp_client:
             schema = adapt_schema(schema, mcp_client)
@@ -179,10 +192,27 @@ def _register_prat_tools(mcp_client: str) -> int:
     return count
 
 
+def get_registered_tool_definitions(*, lite_mode: bool = False) -> list[Any]:
+    from whitemagic.tools.tool_surface import get_callable_tool_definitions
+
+    tool_defs = get_callable_tool_definitions()
+    if not lite_mode:
+        return tool_defs
+
+    filtered: list[Any] = []
+    for tool_def in tool_defs:
+        name = tool_def.name
+        cat = tool_def.category.value if hasattr(tool_def.category, "value") else str(tool_def.category)
+        if cat in _LITE_CATEGORIES or name in _LITE_TOOLS:
+            filtered.append(tool_def)
+    return filtered
+
+
 def register_tools() -> None:
     """Register all tools from the canonical registry.py with dynamic signatures."""
     try:
         from whitemagic.tools.registry import TOOL_REGISTRY
+        from whitemagic.tools.tool_surface import get_callable_tool_definitions
         from whitemagic.tools.unified_api import call_tool
         from whitemagic.tools.schema_adapter import adapt_schema
     except ImportError as e:
@@ -195,11 +225,14 @@ def register_tools() -> None:
     if mcp_client:
         logger.info(f"🔧 Schema adaptation active for client: {mcp_client}")
 
+    runtime_status = get_runtime_status()
+
     # PRAT mode: register only 28 Gana meta-tools
     if prat_mode:
-        logger.info("🔮 PRAT mode: registering 28 Gana meta-tools (181 tools nested)")
+        logger.info("🔮 PRAT mode: registering 28 Gana meta-tools for the stable MCP contract")
         count = _register_prat_tools(mcp_client)
-        msg = f"🔮 PRAT WhiteMagic MCP Server with {count} Gana tools (all tools nested inside)"
+        status_suffix = " [DEGRADED]" if runtime_status.get("degraded_mode") else ""
+        msg = f"🔮 PRAT WhiteMagic MCP Server with {count} Gana tools{status_suffix}"
         print(msg, file=sys.stderr)
         logger.info(msg)
         return
@@ -215,19 +248,14 @@ def register_tools() -> None:
             return call_fn(tool_name, **filtered)
         return wrapper
 
+    tool_defs = get_registered_tool_definitions(lite_mode=lite_mode)
+
     count = 0
     skipped = 0
-    for tool_def in TOOL_REGISTRY:
+    for tool_def in tool_defs:
         try:
             name = tool_def.name
             description = tool_def.description
-
-            # In lite mode, skip non-essential tools
-            if lite_mode:
-                cat = tool_def.category.value if hasattr(tool_def.category, 'value') else str(tool_def.category)
-                if cat not in _LITE_CATEGORIES and name not in _LITE_TOOLS:
-                    skipped += 1
-                    continue
 
             schema = adapt_schema(tool_def.input_schema, mcp_client) if mcp_client else tool_def.input_schema
 
@@ -267,7 +295,8 @@ def register_tools() -> None:
         except Exception as e:
             logger.error(f"Failed to register {name}: {e}")
 
-    msg = f"✨ Hydrated WhiteMagic MCP Server with {count} tools"
+    status_suffix = " [DEGRADED]" if runtime_status.get("degraded_mode") else ""
+    msg = f"✨ Hydrated WhiteMagic MCP Server with {count} tools{status_suffix}"
     if skipped:
         msg += f" ({skipped} deferred in lite mode)"
     print(msg + ".", file=sys.stderr)

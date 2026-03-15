@@ -5,6 +5,7 @@ Stores embeddings in SQLite. In-memory brute-force cosine search.
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import logging
 import math
 import os
@@ -16,16 +17,19 @@ from dataclasses import dataclass
 from typing import Any
 
 logger = logging.getLogger(__name__)
-HAS_SBERT = False
 _sbert_model = None
 _sbert_lock = threading.Lock()
 _sbert_init_attempted = False
 _sbert_error: str | None = None
-try:
-    from sentence_transformers import SentenceTransformer
-    HAS_SBERT = True
-except ImportError:
-    pass
+_sbert_class: Any | None = None
+_has_sbert_package: bool | None = None
+
+
+def _has_sbert() -> bool:
+    global _has_sbert_package
+    if _has_sbert_package is None:
+        _has_sbert_package = importlib.util.find_spec("sentence_transformers") is not None
+    return bool(_has_sbert_package)
 
 
 def _allow_remote_model_download() -> bool:
@@ -34,23 +38,24 @@ def _allow_remote_model_download() -> bool:
 
 
 def _get_sbert() -> Any:
-    global _sbert_model, _sbert_error, _sbert_init_attempted
-    if _sbert_model is None and HAS_SBERT and not _sbert_init_attempted:
+    global _sbert_model, _sbert_error, _sbert_init_attempted, _sbert_class
+    if _sbert_model is None and _has_sbert() and not _sbert_init_attempted:
         with _sbert_lock:
             if _sbert_model is None and not _sbert_init_attempted:
                 _sbert_init_attempted = True
                 name = os.environ.get("WM_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
                 try:
+                    if _sbert_class is None:
+                        from sentence_transformers import SentenceTransformer as _SentenceTransformer
+                        _sbert_class = _SentenceTransformer
                     kwargs: dict[str, Any] = {}
                     if not _allow_remote_model_download():
-                        # Default to local-only to avoid network stalls in offline environments.
                         kwargs["local_files_only"] = True
-                    _sbert_model = SentenceTransformer(name, **kwargs)
+                    _sbert_model = _sbert_class(name, **kwargs)
                     _sbert_error = None
                 except Exception as exc:
                     _sbert_error = str(exc)
                     logger.info("SBERT unavailable; using TF-IDF fallback: %s", exc)
-                    pass
     return _sbert_model
 
 class TFIDFEmbedder:
@@ -131,40 +136,103 @@ class VectorSearch:
         with self._lock:
             self._cache[memory_id]=vec
             self._meta[memory_id]={"title":title,"snippet":snip}
+            
+            # Sync to Koka SHM Engine
+            try:
+                from whitemagic.core.memory.shm_manager import get_shm_manager
+                shm = get_shm_manager()
+                shm.add_or_update(memory_id, vec)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Failed to sync embedding to SHM: {e}")
 
     def search(self, query: str, limit: int = 10) -> list[VSearchResult]:
-        qvec = self._encode([query])[0]
-        scored = []
-        with self._lock:
-            # Try Zig SIMD batch top-K for large corpora
-            if len(self._cache) > 50:
-                try:
-                    from whitemagic.core.acceleration.simd_vector_batch import (
-                        batch_topk_cosine,
-                    )
-                    ids = list(self._cache.keys())
-                    vecs = list(self._cache.values())
-                    topk = batch_topk_cosine(qvec, vecs, limit)
-                    scored = [(ids[idx], score) for idx, score in topk]
-                except Exception:
-                    scored = []
-            if not scored:
-                for mid,vec in self._cache.items():
-                    s = _cosine(qvec, vec)
-                    scored.append((mid, s))
-                scored.sort(key=lambda x:x[1], reverse=True)
-        results = []
-        for mid,s in scored[:limit]:
-            m = self._meta.get(mid,{})
-            results.append(VSearchResult(memory_id=mid,score=s,title=m.get("title",""),snippet=m.get("snippet","")))
-        return results
+            qvec = self._encode([query])[0]
+            scored = []
+        
+            # 1. Try Koka Shared Memory Bridge (Native C AVX2) - Fastest!
+            try:
+                from whitemagic.core.memory.shm_manager import get_shm_manager
+                from whitemagic.core.acceleration.koka_native_bridge import get_koka_bridge
+            
+                shm = get_shm_manager()
+                bridge = get_koka_bridge()
+            
+                # Ensure DB is loaded into SHM if not already
+                if shm.get_count() == 0:
+                    from whitemagic.core.memory.db_manager import get_db_pool
+                    import os
+                    default_db = os.path.expanduser("~/.whitemagic/memory/whitemagic.db")
+                    pool = get_db_pool(default_db)
+                    shm.sync_from_db(pool)
+                
+                if bridge.is_available("shm_search") and shm.get_count() > 0:
+                    # We need to write the query vector into the SHM segment
+                    # We'll use index count + 1 as the temporary query slot
+                    query_idx = shm.get_count() + 1
+                    shm.write_query(query_idx, qvec)
+                
+                    # Dispatch to Koka
+                    res = bridge.dispatch("shm_search", "search", {"query_id": query_idx})
+                
+                    if res and res.get("status") == "ok":
+                        results = []
+                        for item in res.get("results", []):
+                            int_id = item["id"]
+                            score = item["score"]
+                        
+                            # Only return top limit
+                            if len(results) >= limit: break
+                            
+                            # Lookup UUID from SHM manager
+                            mem_id = shm.get_uuid(int_id)
+                            if mem_id:
+                                m = self._meta.get(mem_id, {})
+                                results.append(
+                                    VSearchResult(
+                                        memory_id=mem_id,
+                                        score=score,
+                                        title=m.get("title", ""),
+                                        snippet=m.get("snippet", "")
+                                    )
+                                )
+                        # If we got results, return them immediately
+                        if results:
+                            return results
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Koka SHM Search failed, falling back to Python: {e}")
+
+            with self._lock:
+                # Try Zig SIMD batch top-K for large corpora
+                if len(self._cache) > 50:
+                    try:
+                        from whitemagic.core.acceleration.simd_vector_batch import (
+                            batch_topk_cosine,
+                        )
+                        ids = list(self._cache.keys())
+                        vecs = list(self._cache.values())
+                        topk = batch_topk_cosine(qvec, vecs, limit)
+                        scored = [(ids[idx], score) for idx, score in topk]
+                    except Exception:
+                        scored = []
+                if not scored:
+                    for mid,vec in self._cache.items():
+                        s = _cosine(qvec, vec)
+                        scored.append((mid, s))
+                    scored.sort(key=lambda x:x[1], reverse=True)
+            results = []
+            for mid,s in scored[:limit]:
+                m = self._meta.get(mid,{})
+                results.append(VSearchResult(memory_id=mid,score=s,title=m.get("title",""),snippet=m.get("snippet","")))
+            return results
 
     def index_count(self) -> int: return len(self._cache)
 
     def status(self) -> dict[str, Any]:
         return {
             "indexed": len(self._cache),
-            "has_sbert": HAS_SBERT,
+            "has_sbert": _has_sbert(),
             "sbert_loaded": _sbert_model is not None,
             "sbert_init_attempted": _sbert_init_attempted,
             "sbert_error": _sbert_error,
@@ -175,6 +243,42 @@ class VectorSearch:
 
 _vs=None
 _vs_lock=threading.Lock()
+def get_vector_status() -> dict[str, Any]:
+    db = os.path.join(os.environ.get("WM_STATE_ROOT", os.path.expanduser("~/.whitemagic")), "memory", "embeddings.db")
+    indexed = 0
+    db_exists = os.path.exists(db)
+    db_size_bytes = os.path.getsize(db) if db_exists else 0
+
+    if _vs is not None:
+        status = _vs.status()
+        status["db_exists"] = db_exists
+        status["db_size_bytes"] = db_size_bytes
+        status["engine_initialized"] = True
+        return status
+
+    try:
+        if db_exists:
+            with sqlite3.connect(db) as c:
+                row = c.execute("SELECT COUNT(*) FROM embeddings").fetchone()
+                indexed = int(row[0]) if row else 0
+    except Exception:
+        indexed = 0
+
+    return {
+        "indexed": indexed,
+        "has_sbert": _has_sbert(),
+        "sbert_loaded": _sbert_model is not None,
+        "sbert_init_attempted": _sbert_init_attempted,
+        "sbert_error": _sbert_error,
+        "allow_model_download": _allow_remote_model_download(),
+        "model": os.environ.get("WM_EMBEDDING_MODEL", "all-MiniLM-L6-v2"),
+        "db": db,
+        "db_exists": db_exists,
+        "db_size_bytes": db_size_bytes,
+        "engine_initialized": False,
+    }
+
+
 def get_vector_search() -> VectorSearch:
     global _vs
     if _vs is None:

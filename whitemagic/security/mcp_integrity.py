@@ -90,10 +90,10 @@ class McpIntegrity:
 
     def snapshot(self) -> dict[str, Any]:
         """Capture current tool registry as the integrity baseline."""
-        from whitemagic.tools.registry import TOOL_REGISTRY
+        from whitemagic.tools.tool_surface import get_callable_tool_definitions
 
         fingerprints: dict[str, ToolFingerprint] = {}
-        for tool in TOOL_REGISTRY:
+        for tool in get_callable_tool_definitions():
             fp = self._fingerprint_tool(tool)
             fingerprints[tool.name] = fp
 
@@ -115,7 +115,7 @@ class McpIntegrity:
 
     def verify(self) -> dict[str, Any]:
         """Compare current registry against the baseline snapshot."""
-        from whitemagic.tools.registry import TOOL_REGISTRY
+        from whitemagic.tools.tool_surface import get_callable_tool_definitions
 
         with self._lock:
             if not self._baseline:
@@ -126,7 +126,7 @@ class McpIntegrity:
                 }
 
         current: dict[str, ToolFingerprint] = {}
-        for tool in TOOL_REGISTRY:
+        for tool in get_callable_tool_definitions():
             fp = self._fingerprint_tool(tool)
             current[tool.name] = fp
 

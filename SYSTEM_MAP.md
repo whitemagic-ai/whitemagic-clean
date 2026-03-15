@@ -719,3 +719,17 @@ Layer 0: BUS
 - Polyglot languages: **7** (Python + Rust + Haskell + Elixir + Go + Zig + Mojo)
 - Memories: **111,665** | Associations: **2,247,642** | DB: **2.0 GB**
 - Constellations: **30** | Communities: **182** | Bridge nodes: **10**
+
+## Codebase Statistics (Auto-Generated)
+
+> Last synced: 2026-03-07 23:53
+
+| Metric | Value |
+|--------|-------|
+| Total files | 8,384 |
+| Total LOC | 1,237,030 |
+| Python files | 1,209 |
+| Python LOC | 229,972 |
+| Dead code candidates | N/A (0 LOC) |
+
+*Run `python scripts/codebase_census.py` to refresh.*

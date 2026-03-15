@@ -1,3 +1,4 @@
+from whitemagic.tools.errors import ToolExecutionError
 """Unified Tool API - Bridge between MCP and Python Tools
 Expanded to support all 44 MCP tools.
 """
@@ -5,6 +6,8 @@ Expanded to support all 44 MCP tools.
 import asyncio
 import logging
 import os
+import queue
+import threading
 import time
 
 from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
@@ -17,15 +20,37 @@ from uuid import uuid4
 
 # Tool contract helpers (AI-first)
 from whitemagic.config.paths import WM_ROOT, ensure_paths
-from whitemagic.tools.envelope import err, normalize_raw
 from whitemagic.tools.errors import ErrorCode
-from whitemagic.tools.idempotency import get_record, put_record
-from whitemagic.tools.registry import ToolSafety, get_tool
-from whitemagic.tools.schema import validate_params
 from whitemagic.utils.time import now_iso, override_now
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T")
+_DEFAULT_TOOL_DISPATCH_TIMEOUT_S = float(os.getenv("WM_TOOL_DISPATCH_TIMEOUT_S", "8.0"))
+_TOOL_TIMEOUT_CLASS_BUDGETS_S: dict[str, float] = {
+    "default": _DEFAULT_TOOL_DISPATCH_TIMEOUT_S,
+    "cold_status": float(os.getenv("WM_TOOL_TIMEOUT_COLD_STATUS_S", "15.0")),
+    "local_generation": float(os.getenv("WM_TOOL_TIMEOUT_LOCAL_GENERATION_S", "30.0")),
+    "agent_generation": float(os.getenv("WM_TOOL_TIMEOUT_AGENT_GENERATION_S", "45.0")),
+}
+_TOOL_TIMEOUT_CLASS_BY_TOOL: dict[str, str] = {
+    "vector.status": "cold_status",
+    "ollama.generate": "local_generation",
+    "ollama.chat": "local_generation",
+    "ollama.agent": "agent_generation",
+}
+_LIGHTWEIGHT_STATUS_TOOLS: set[str] = {
+    "vector.status",
+    "prompt.list",
+    "forge.status",
+}
+_FAST_INTERACTIVE_WRITE_TOOLS: set[str] = {
+    "create_memory",
+}
+
+
+def _dispatch_timeout_for_tool(tool_name: str) -> float:
+    timeout_class = _TOOL_TIMEOUT_CLASS_BY_TOOL.get(tool_name, "default")
+    return _TOOL_TIMEOUT_CLASS_BUDGETS_S.get(timeout_class, _DEFAULT_TOOL_DISPATCH_TIMEOUT_S)
 
 def _nervous_system_check(tool_name: str) -> tuple[bool, str]:
     """Pre-dispatch check via Nervous System (StateBoard + DispatchBridge).
@@ -88,7 +113,7 @@ def _emit_gan_ying(event_type_name: str, data: dict[str, Any], source: str = "mc
     """Emit Gan Ying events without breaking tool flows."""
     try:
         # Use the public wrapper (handles unknown string event types safely).
-        from whitemagic.core.resonance import emit_event
+        from whitemagic.core.resonance.gan_ying import emit_event
 
         emit_event(event_type_name, data, source=source, confidence=1.0)
     except Exception as exc:
@@ -97,8 +122,11 @@ def _emit_gan_ying(event_type_name: str, data: dict[str, Any], source: str = "mc
 def _load_rust() -> tuple[object | None, str | None]:
     """Load the Rust bridge if available."""
     try:
-        import whitemagic_rs  # type: ignore
-        return whitemagic_rs, None
+        try:
+            import whitemagic_rust as rs_module  # type: ignore
+        except ImportError:
+            import whitemagic_rs as rs_module  # type: ignore
+        return rs_module, None
     except Exception as exc:  # pragma: no cover - best-effort availability
         return None, str(exc)
 
@@ -216,6 +244,75 @@ def _dispatch_tool(tool_name: str, **kwargs: Any) -> Any:
     return _table_dispatch(tool_name, **kwargs)
 
 
+def _dispatch_lightweight_tool(tool_name: str, **kwargs: Any) -> Any:
+    if tool_name == "vector.status":
+        from whitemagic.core.memory.vector_search import get_vector_status
+        return {"status": "success", **get_vector_status()}
+    if tool_name == "prompt.list":
+        from whitemagic.prompts import get_prompt_engine
+        tag = kwargs.get("tag")
+        engine = get_prompt_engine()
+        return {
+            "status": "success",
+            "templates": engine.list_templates(tag=tag),
+            **engine.status(),
+        }
+    if tool_name == "forge.status":
+        from whitemagic.tools.gana_forge import _DEFAULT_EXT_DIR, discover_extensions
+        ext_dir = _DEFAULT_EXT_DIR
+        manifests = discover_extensions(ext_dir)
+        loaded_names: list[str] = []
+        try:
+            from whitemagic.tools.prat_router import TOOL_TO_GANA
+            loaded_names = [
+                name for name in TOOL_TO_GANA
+                if name.startswith("ext.") or name.startswith("custom.")
+            ]
+        except Exception:
+            pass
+        return {
+            "status": "success",
+            "extensions_dir": str(ext_dir),
+            "extensions_dir_exists": ext_dir.exists(),
+            "manifests_found": len(manifests),
+            "manifest_files": [m.get("_source_path", "?") for m in manifests],
+            "loaded_extension_tools": loaded_names,
+            "usage": (
+                "Place YAML manifests in ~/.whitemagic/extensions/ with format:\n"
+                "tool:\n"
+                "  name: custom.my_tool\n"
+                "  description: What it does\n"
+                "  gana: gana_ghost\n"
+                "  safety: read\n"
+                "  handler: 'my_module:my_function'"
+            ),
+        }
+    raise KeyError(tool_name)
+
+
+def _dispatch_tool_with_timeout(tool_name: str, timeout_s: float, **kwargs: Any) -> Any:
+    """Run tool dispatch with a hard client-facing timeout."""
+    result_queue: queue.Queue[tuple[str, Any]] = queue.Queue(maxsize=1)
+
+    def _worker() -> None:
+        try:
+            result_queue.put(("ok", _dispatch_tool(tool_name, **kwargs)))
+        except Exception as exc:
+            result_queue.put(("err", exc))
+
+    thread = threading.Thread(target=_worker, name=f"wm-tool-{tool_name}", daemon=True)
+    thread.start()
+
+    try:
+        status, payload = result_queue.get(timeout=timeout_s)
+    except queue.Empty as exc:
+        raise TimeoutError(f"Tool dispatch timed out after {timeout_s:.1f}s: {tool_name}") from exc
+
+    if status == "err":
+        raise payload
+    return payload
+
+
 # Dead code removed: the 1400-line if/elif dispatcher was replaced by
 # whitemagic.tools.dispatch_table (Phase 2 refactor, v11 hardening).
 # Original handlers live in whitemagic/tools/handlers/*.py
@@ -298,7 +395,9 @@ def call_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
     - Provide idempotency for write tools via `idempotency_key`
     - Normalize all outputs into the stable envelope format
     """
-    from whitemagic.security.tool_gating import check_tool_execution
+    from whitemagic.tools.envelope import err, normalize_raw
+    from whitemagic.tools.registry import ToolSafety, get_tool
+    from whitemagic.tools.schema import validate_params
 
     ensure_paths()
 
@@ -312,19 +411,20 @@ def call_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
     ts = now_override or now_iso()
     call_started_at = time.time()
 
-    # Touch dream cycle idle timer on every tool call
-    try:
-        from whitemagic.core.dreaming import get_dream_cycle
-        get_dream_cycle().touch()
-    except Exception:
-        pass
+    if canonical not in _FAST_INTERACTIVE_WRITE_TOOLS:
+        # Touch dream cycle idle timer on every tool call
+        try:
+            from whitemagic.core.dreaming import get_dream_cycle
+            get_dream_cycle().touch()
+        except Exception:
+            pass
 
-    # Cross-session learning — record tool usage
-    try:
-        from whitemagic.core.learning import get_session_learner
-        get_session_learner().record_tool_use(canonical)
-    except Exception:
-        pass
+        # Cross-session learning — record tool usage
+        try:
+            from whitemagic.core.learning import get_session_learner
+            get_session_learner().record_tool_use(canonical)
+        except Exception:
+            pass
 
     def _record_telemetry(out: dict[str, Any]) -> None:
         duration = time.time() - call_started_at
@@ -336,13 +436,15 @@ def call_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
             get_telemetry().record_call(canonical, duration, telemetry_status, telemetry_error)
         except Exception:
             pass
-        # OpenTelemetry span export
         try:
             from whitemagic.core.monitoring.otel_export import record_tool_span
             record_tool_span(canonical, duration, telemetry_status)
         except Exception:
             pass
-        # Feed the Harmony Vector (MandalaOS integration)
+        if canonical in _LIGHTWEIGHT_STATUS_TOOLS:
+            return
+        if canonical in _FAST_INTERACTIVE_WRITE_TOOLS:
+            return
         declared_safety = "READ"
         if tool_def is not None:
             declared_safety = tool_def.safety.value.upper()
@@ -357,14 +459,12 @@ def call_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
                 declared_safety=declared_safety,
                 actual_writes=actual_writes,
             )
-            # Inject harmony score into envelope metrics
             metrics = out.get("metrics")
             if isinstance(metrics, dict):
                 metrics["harmony_score"] = snap.harmony_score
-                metrics["guna"] = snap.guna_rajasic_pct  # dominant guna hint
+                metrics["guna"] = snap.guna_rajasic_pct
         except Exception:
             pass
-        # Feed the Karma Ledger (declared vs actual side-effects)
         try:
             from whitemagic.dharma.karma_ledger import get_karma_ledger
             get_karma_ledger().record(
@@ -398,23 +498,26 @@ def call_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
                 ))
             kwargs = sanitized
 
-        # ToolGate policy checks + param sanitation (applies to all tools).
-        allowed, reason, sanitized_params = check_tool_execution(canonical, kwargs)
-        if not allowed:
-            return _finish(err(
-                tool=canonical,
-                request_id=request_id,
-                idempotency_key=idempotency_key,
-                timestamp=ts,
-                error_code=ErrorCode.POLICY_BLOCKED,
-                message=reason,
-                details={"tool": canonical},
-                retryable=False,
-            ))
-        kwargs = sanitized_params
+        # ToolGate policy checks + param sanitation (applies to all non-lightweight tools).
+        if canonical not in _LIGHTWEIGHT_STATUS_TOOLS:
+            from whitemagic.security.tool_gating import check_tool_execution
+            allowed, reason, sanitized_params = check_tool_execution(canonical, kwargs)
+            if not allowed:
+                return _finish(err(
+                    tool=canonical,
+                    request_id=request_id,
+                    idempotency_key=idempotency_key,
+                    timestamp=ts,
+                    error_code=ErrorCode.POLICY_BLOCKED,
+                    message=reason,
+                    details={"tool": canonical},
+                    retryable=False,
+                ))
+            kwargs = sanitized_params
 
         # Idempotency replay (write/delete tools only)
         if idempotency_key and tool_def is not None and tool_def.safety != ToolSafety.READ:
+            from whitemagic.tools.idempotency import get_record
             record = get_record(canonical, str(idempotency_key))
             if record is not None:
                 replay = dict(record.response)
@@ -432,18 +535,21 @@ def call_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
                 return _finish(replay)
 
         # Nervous System pre-dispatch check (circuit breakers, rate limits)
-        ns_allowed, ns_reason = _nervous_system_check(canonical)
-        if not ns_allowed:
-            return _finish(err(
-                tool=canonical,
-                request_id=request_id,
-                idempotency_key=idempotency_key,
-                timestamp=ts,
-                error_code=ErrorCode.POLICY_BLOCKED,
-                message=ns_reason,
-                details={"tool": canonical, "source": "nervous_system"},
-                retryable=True,
-            ))
+        ns_allowed = True
+        ns_reason = ""
+        if canonical not in _LIGHTWEIGHT_STATUS_TOOLS:
+            ns_allowed, ns_reason = _nervous_system_check(canonical)
+            if not ns_allowed:
+                return _finish(err(
+                    tool=canonical,
+                    request_id=request_id,
+                    idempotency_key=idempotency_key,
+                    timestamp=ts,
+                    error_code=ErrorCode.POLICY_BLOCKED,
+                    message=ns_reason,
+                    details={"tool": canonical, "source": "nervous_system"},
+                    retryable=True,
+                ))
 
         # Dispatch to handler.
         try:
@@ -454,7 +560,10 @@ def call_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
             # — tell the middleware pipeline to skip redundant Python checks
             if ns_allowed:
                 dispatch_kwargs["_zig_prevalidated"] = True
-            raw = _dispatch_tool(canonical, **dispatch_kwargs)
+            if canonical in _LIGHTWEIGHT_STATUS_TOOLS:
+                raw = _dispatch_lightweight_tool(canonical, **dispatch_kwargs)
+            else:
+                raw = _dispatch_tool_with_timeout(canonical, _dispatch_timeout_for_tool(canonical), **dispatch_kwargs)
         except ImportError as exc:
             out = err(
                 tool=canonical,
@@ -465,6 +574,17 @@ def call_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
                 message=str(exc),
                 details={"tool": canonical},
                 retryable=False,
+            )
+        except ToolExecutionError as exc:
+            out = err(
+                tool=canonical,
+                request_id=request_id,
+                idempotency_key=idempotency_key,
+                timestamp=ts,
+                error_code=exc.error_code,
+                message=exc.message,
+                details=exc.details or {},
+                retryable=exc.retryable,
             )
         except Exception as exc:
             out = err(
@@ -500,17 +620,22 @@ def call_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
             and out.get("status") == "success"
         ):
             try:
+                from whitemagic.tools.idempotency import put_record
                 put_record(canonical, str(idempotency_key), out)
             except Exception:
                 # Never fail a tool call due to idempotency persistence.
                 pass
 
         # Nervous System post-dispatch sync
-        _nervous_system_post(
-            canonical,
-            time.time() - call_started_at,
-            out.get("status") in ("success", "ok"),
-        )
+        if (
+            canonical not in _LIGHTWEIGHT_STATUS_TOOLS
+            and canonical not in _FAST_INTERACTIVE_WRITE_TOOLS
+        ):
+            _nervous_system_post(
+                canonical,
+                time.time() - call_started_at,
+                out.get("status") in ("success", "ok"),
+            )
 
         return _finish(out)
 

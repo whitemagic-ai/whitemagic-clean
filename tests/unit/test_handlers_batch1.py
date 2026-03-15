@@ -136,20 +136,23 @@ class TestMemoryHandlers(unittest.TestCase):
 
     def test_create_memory_missing_title(self):
         from whitemagic.tools.handlers.memory import handle_create_memory
-        result = handle_create_memory(content="test content")
-        self.assertEqual(result["status"], "error")
-        self.assertIn("title", result["message"])
+        from whitemagic.tools.errors import ToolExecutionError
+        with self.assertRaises(ToolExecutionError) as ctx:
+            handle_create_memory(content="test content")
+        self.assertIn("title", str(ctx.exception))
 
     def test_create_memory_missing_content(self):
         from whitemagic.tools.handlers.memory import handle_create_memory
-        result = handle_create_memory(title="test title")
-        self.assertEqual(result["status"], "error")
-        self.assertIn("content", result["message"])
+        from whitemagic.tools.errors import ToolExecutionError
+        with self.assertRaises(ToolExecutionError) as ctx:
+            handle_create_memory(title="test title")
+        self.assertIn("content", str(ctx.exception))
 
     def test_create_memory_empty_title(self):
         from whitemagic.tools.handlers.memory import handle_create_memory
-        result = handle_create_memory(title="   ", content="some content")
-        self.assertEqual(result["status"], "error")
+        from whitemagic.tools.errors import ToolExecutionError
+        with self.assertRaises(ToolExecutionError):
+            handle_create_memory(title="   ", content="some content")
 
     @patch('whitemagic.tools.handlers.memory._emit')
     @patch('whitemagic.core.memory.unified.remember')
@@ -164,6 +167,7 @@ class TestMemoryHandlers(unittest.TestCase):
             content="Test content here",
             tags=["test", "unit"],
             type="short_term",
+            emit_gan_ying=True,
         )
         self.assertEqual(result["status"], "success")
         self.assertEqual(result["memory_id"], "test-id-123")

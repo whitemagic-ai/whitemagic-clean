@@ -6,11 +6,61 @@ import os
 import queue
 import sqlite3
 import threading
+import time
 from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
-from typing import cast
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
+
+# Transient error codes that warrant retry
+_TRANSIENT_ERRORS = {
+    sqlite3.SQLITE_BUSY: "database is locked",
+    sqlite3.SQLITE_LOCKED: "table is locked", 
+    sqlite3.SQLITE_PROTOCOL: "locking protocol error",
+}
+
+def _is_transient_error(error: Exception) -> bool:
+    """Check if error is transient and worth retrying."""
+    if isinstance(error, sqlite3.OperationalError):
+        # Check error codes
+        for code in _TRANSIENT_ERRORS:
+            if str(code) in str(error) or f"({code})" in str(error):
+                return True
+        # Check error messages
+        err_str = str(error).lower()
+        return any(msg in err_str for msg in ["locked", "busy", "protocol"])
+    return False
+
+
+def retry_with_backoff(
+    func: Any,
+    max_retries: int = 3,
+    base_delay: float = 0.1,
+    max_delay: float = 2.0,
+) -> Any:
+    """Decorator for retrying operations with exponential backoff.
+    
+    Usage:
+        @retry_with_backoff
+        def my_db_operation():
+            ...
+    """
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        last_error = None
+        delay = base_delay
+        for attempt in range(max_retries + 1):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                if not _is_transient_error(e) or attempt == max_retries:
+                    raise
+                last_error = e
+                logger.debug(f"Transient DB error, retrying in {delay:.2f}s: {e}")
+                time.sleep(delay)
+                delay = min(delay * 2, max_delay)
+        raise last_error
+    return wrapper
 
 try:
     import sqlcipher3  # type: ignore[import-untyped]  # noqa: F401

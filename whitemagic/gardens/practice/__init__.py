@@ -17,6 +17,7 @@ from whitemagic.core.resonance.integration_helpers import (
     listen_for,
 )
 from whitemagic.gardens.base_garden import BaseGarden, CoordinateBias
+from whitemagic.gardens.practice.zodiac import get_zodiac_council
 
 
 class PracticeGarden(BaseGarden, GanYingMixin):
@@ -72,9 +73,28 @@ class PracticeGarden(BaseGarden, GanYingMixin):
         """Grounding enhances practice."""
         self.deepen_practice("grounded_awareness")
 
+    # ===== Metal Garden Integration (S023 Consolidation) =====
+    def consult_zodiac(self, sign: str, context: dict[str, Any] | None = None) -> Any:
+        """Consult the Zodiac Council for a disciplined perspective.
+
+        Metal garden functionality folded into Practice (S023).
+        Metal tools enable disciplined practice and mastery.
+
+        Args:
+            sign: Zodiac sign to consult
+            context: Additional context for the consultation
+
+        Returns:
+            CoreResponse with the zodiac core's perspective
+        """
+        council = get_zodiac_council()
+        result = council.activate_core(sign, context or {})  # type: ignore[call-arg,func-returns-value,arg-type]
+        self.emit(EventType.GARDEN_RESONANCE, {"sign": sign, "source": "practice_metal"})
+        return result
+
+
 _instance = None
 def get_practice_garden() -> PracticeGarden:
     global _instance
     if _instance is None:
         _instance = PracticeGarden()
-    return _instance

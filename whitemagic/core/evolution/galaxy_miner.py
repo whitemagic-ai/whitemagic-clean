@@ -19,6 +19,16 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 logger = logging.getLogger(__name__)
 
+# Rust acceleration (S026 VC4)
+try:
+    import whitemagic_rust as _wr
+    _rust_galaxy_miner = _wr.galaxy_miner
+    RUST_GALAXY_MINER_AVAILABLE = True
+except ImportError:
+    _rust_galaxy_miner = None
+    RUST_GALAXY_MINER_AVAILABLE = False
+    logger.debug("Rust galaxy_miner not available, using Python fallback")
+
 
 @dataclass
 class AccessPattern:
@@ -89,6 +99,30 @@ class GalaxyPatternMiner:
         Returns:
             List of discovered access patterns
         """
+        # Route to Rust if available
+        if RUST_GALAXY_MINER_AVAILABLE:
+            patterns = []
+            for db_path in self.galaxy_paths:
+                if Path(db_path).exists():
+                    try:
+                        rust_patterns = _rust_galaxy_miner.mine_access_patterns(db_path, min_frequency)
+                        for rp in rust_patterns:
+                            patterns.append(AccessPattern(
+                                pattern_id=rp.pattern_id,
+                                pattern_type=rp.pattern_type,
+                                memory_ids=rp.memory_ids,
+                                frequency=rp.frequency,
+                                confidence=rp.confidence,
+                                metadata={'source_galaxy': rp.source_galaxy},
+                                discovered_at=datetime.now().isoformat()
+                            ))
+                    except Exception as e:
+                        logger.warning(f"Rust mining failed for {db_path}: {e}")
+            self.patterns.extend(patterns)
+            logger.info(f"✓ Discovered {len(patterns)} access patterns (Rust)")
+            return patterns
+        
+        # Python fallback
         logger.info("🔍 Mining access patterns...")
         patterns = []
         
@@ -203,6 +237,30 @@ class GalaxyPatternMiner:
         Returns:
             List of cache candidate patterns
         """
+        # Route to Rust if available
+        if RUST_GALAXY_MINER_AVAILABLE:
+            patterns = []
+            for db_path in self.galaxy_paths:
+                if Path(db_path).exists():
+                    try:
+                        rust_patterns = _rust_galaxy_miner.mine_cache_candidates(db_path, min_access, min_importance)
+                        for rp in rust_patterns:
+                            patterns.append(AccessPattern(
+                                pattern_id=rp.pattern_id,
+                                pattern_type=rp.pattern_type,
+                                memory_ids=rp.memory_ids,
+                                frequency=rp.frequency,
+                                confidence=rp.confidence,
+                                metadata={'source_galaxy': rp.source_galaxy},
+                                discovered_at=datetime.now().isoformat()
+                            ))
+                    except Exception as e:
+                        logger.warning(f"Rust cache mining failed for {db_path}: {e}")
+            self.patterns.extend(patterns)
+            logger.info(f"✓ Discovered {len(patterns)} cache candidates (Rust)")
+            return patterns
+        
+        # Python fallback
         logger.info("🔍 Mining cache candidates...")
         patterns = []
         
@@ -260,6 +318,29 @@ class GalaxyPatternMiner:
         Returns:
             List of semantic clusters
         """
+        # Route to Rust if available
+        if RUST_GALAXY_MINER_AVAILABLE:
+            clusters = []
+            for db_path in self.galaxy_paths:
+                if Path(db_path).exists():
+                    try:
+                        rust_clusters = _rust_galaxy_miner.mine_semantic_clusters(db_path, min_cluster_size)
+                        for rc in rust_clusters:
+                            clusters.append(SemanticCluster(
+                                cluster_id=rc.cluster_id,
+                                memory_ids=rc.memory_ids,
+                                common_tags=set(rc.common_tags),
+                                avg_importance=rc.avg_importance,
+                                galaxy_sources=[Path(db_path).name],
+                                confidence=min(1.0, rc.size / 50.0)
+                            ))
+                    except Exception as e:
+                        logger.warning(f"Rust cluster mining failed for {db_path}: {e}")
+            self.clusters.extend(clusters)
+            logger.info(f"✓ Discovered {len(clusters)} semantic clusters (Rust)")
+            return clusters
+        
+        # Python fallback
         logger.info("🔍 Mining semantic clusters...")
         clusters = []
         

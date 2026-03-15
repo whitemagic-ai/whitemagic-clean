@@ -553,10 +553,19 @@ class EmbeddingEngine:
 
             if not rows:
                 return [], np.empty((0, EMBEDDING_DIM), dtype=np.float32)
-            ids = [r[0] for r in rows]
+            # Filter by embedding dimension (avoid inhomogeneous shape errors)
+            valid_ids = []
+            valid_vecs = []
+            for r in rows:
+                vec = _unpack_embedding(r[1])
+                if len(vec) == EMBEDDING_DIM:
+                    valid_ids.append(r[0])
+                    valid_vecs.append(vec)
+            
+            ids = valid_ids
             # Unpack all blobs into a single contiguous float32 array
             vecs = np.array(
-                [_unpack_embedding(r[1]) for r in rows],
+                valid_vecs,
                 dtype=np.float32,
             )
             if vecs.ndim == 1:
@@ -799,7 +808,7 @@ class EmbeddingEngine:
         """
         # Try Rust SimHash LSH first (50× faster for large N, proper cosine similarity)
         try:
-            import whitemagic_rs
+            import whitemagic_rust
             import json
             
             # Load cached embeddings directly (no DB queries needed!)
@@ -815,7 +824,7 @@ class EmbeddingEngine:
             # Call Rust SimHash LSH duplicate finder (H001 optimization)
             # Uses random hyperplane LSH to preserve cosine similarity
             # Pure Rust hot path - no DB queries, no keyword extraction
-            result_json = whitemagic_rs.simhash_find_duplicates(
+            result_json = whitemagic_rust.simhash_lsh.simhash_find_duplicates(
                 embeddings_flat,
                 embedding_dim,
                 threshold,

@@ -18,18 +18,36 @@ from whitemagic.utils.rust_helper import get_rust_module, is_rust_available
 from whitemagic.utils.time import now_iso
 
 logger = logging.getLogger(__name__)
+_HOLO_FACTORY: Any | None = None
+_HOLO_FACTORY_ATTEMPTED = False
+_GAN_YING_EVENT_TYPE: Any | None = None
+_GAN_YING_EVENT_TYPE_ATTEMPTED = False
 
-try:
-    from whitemagic.core.memory.holographic import get_holographic_memory
-    _HOLO_AVAILABLE = True
-except ImportError:
-    _HOLO_AVAILABLE = False
 
-try:
-    from whitemagic.core.resonance.gan_ying_enhanced import EventType
-    _GAN_YING_AVAILABLE = True
-except ImportError:
-    _GAN_YING_AVAILABLE = False
+def _get_holographic_factory() -> Any | None:
+    global _HOLO_FACTORY, _HOLO_FACTORY_ATTEMPTED
+    if _HOLO_FACTORY_ATTEMPTED:
+        return _HOLO_FACTORY
+    _HOLO_FACTORY_ATTEMPTED = True
+    try:
+        from whitemagic.core.memory.holographic import get_holographic_memory as factory
+        _HOLO_FACTORY = factory
+    except ImportError:
+        _HOLO_FACTORY = None
+    return _HOLO_FACTORY
+
+
+def _get_gan_ying_event_type() -> Any | None:
+    global _GAN_YING_EVENT_TYPE, _GAN_YING_EVENT_TYPE_ATTEMPTED
+    if _GAN_YING_EVENT_TYPE_ATTEMPTED:
+        return _GAN_YING_EVENT_TYPE
+    _GAN_YING_EVENT_TYPE_ATTEMPTED = True
+    try:
+        from whitemagic.core.resonance.gan_ying_enhanced import EventType as event_type
+        _GAN_YING_EVENT_TYPE = event_type
+    except ImportError:
+        _GAN_YING_EVENT_TYPE = None
+    return _GAN_YING_EVENT_TYPE
 
 # Note: RefiningFire is imported inside prune() to avoid circular dependency
 
@@ -54,29 +72,59 @@ class UnifiedMemory:
         # Initialize SQLite Backend
         self.backend = SQLiteBackend(self.db_path)
 
-        # Holographic Memory
-        _skip_holo = os.getenv("WM_SKIP_HOLO_INDEX", "").strip()
-        self.holographic = get_holographic_memory() if (_HOLO_AVAILABLE and not _skip_holo) else None
+        # Holographic Memory (lazy-loaded via property)
+        self._skip_holo = bool(os.getenv("WM_SKIP_HOLO_INDEX", "").strip())
+        self._holographic = None
+        self._holographic_loaded = False
+        self._holographic_lock = None  # Lazy-init for thread safety
 
-        # Load Holographic Index from DB
-        count = 0
-        if self.holographic:
+        if not os.getenv("WM_SILENT_INIT"):
+            stats = self.backend.get_stats()
+            logger.info(f"🧠 Unified Memory initialized: {stats['total_memories']} memories (SQLite)")
+
+    @property
+    def holographic(self):
+        """Lazy-load holographic index on first access."""
+        if self._skip_holo:
+            return None
+        if self._holographic is None:
+            factory = _get_holographic_factory()
+            if factory is None:
+                return None
+            try:
+                self._holographic = factory()
+            except Exception:
+                self._holographic = False
+                return None
+        if self._holographic is False:
+            return None
+        if self._holographic_loaded:
+            return self._holographic
+        
+        # Thread-safe lazy loading
+        if self._holographic_lock is None:
+            import threading
+            self._holographic_lock = threading.Lock()
+        
+        with self._holographic_lock:
+            if self._holographic_loaded:
+                return self._holographic
+            
+            count = 0
             try:
                 coords_map = self.backend.get_all_coords()
                 for mem_id, coords in coords_map.items():
                     x, y, z, w = coords[0], coords[1], coords[2], coords[3]
                     v = coords[4] if len(coords) > 4 else 0.5
-                    if self.holographic.add_memory_with_coords(mem_id, x, y, z, w, v):
+                    if self._holographic.add_memory_with_coords(mem_id, x, y, z, w, v):
                         count += 1
+                self._holographic_loaded = True
+                if count > 0 and not os.getenv("WM_SILENT_INIT"):
+                    logger.info(f"🌌 Holographic Index loaded: {count} points (lazy)")
             except Exception as e:
                 logger.info(f"⚠️  Failed to load holographic index: {e}")
-                count = 0
-
-        if not os.getenv("WM_SILENT_INIT"):
-            stats = self.backend.get_stats()
-            logger.info(f"🧠 Unified Memory initialized: {stats['total_memories']} memories (SQLite)")
-            if self.holographic and count > 0:
-                logger.info(f"🌌 Holographic Index loaded: {count} points")
+            
+            return self._holographic
 
     def store(self, content: Any, memory_type: MemoryType | str = MemoryType.SHORT_TERM,
               tags: set[str] | None = None, emotional_valence: float = 0.0,
@@ -95,6 +143,9 @@ class UnifiedMemory:
                 memory_type = MemoryType.SHORT_TERM
         
         metadata = metadata or {}
+        enable_surprise_gate = bool(kwargs.pop("enable_surprise_gate", True))
+        enable_entity_extraction = bool(kwargs.pop("enable_entity_extraction", True))
+        enable_holographic_index = bool(kwargs.pop("enable_holographic_index", True))
 
         # v14.1.1: Content hash dedup — check for exact duplicates before anything else
         content_hash = hashlib.sha256(str(content).encode()).hexdigest()
@@ -115,36 +166,37 @@ class UnifiedMemory:
 
         # v14.0: Surprise-gated ingestion
         surprise_verdict = None
-        try:
-            from whitemagic.core.memory.surprise_gate import get_surprise_gate, SurpriseAction
-            gate = get_surprise_gate()
-            content_str_for_eval = str(content)[:2000]
-            surprise_verdict = gate.evaluate(content_str_for_eval)
+        if enable_surprise_gate:
+            try:
+                from whitemagic.core.memory.surprise_gate import get_surprise_gate, SurpriseAction
+                gate = get_surprise_gate()
+                content_str_for_eval = str(content)[:2000]
+                surprise_verdict = gate.evaluate(content_str_for_eval)
 
-            if surprise_verdict.action == SurpriseAction.REINFORCE:
-                # Redundant content: reinforce nearest neighbor instead
-                target_id = surprise_verdict.nearest_memory_id
-                if target_id:
-                    try:
-                        existing = self.backend.recall(target_id)
-                        if existing:
-                            existing.access_count += 1
-                            existing.importance = min(1.0, existing.importance + 0.03)
-                            existing.metadata["last_reinforced"] = now_iso()
-                            existing.metadata["reinforcement_count"] = existing.metadata.get("reinforcement_count", 0) + 1
-                            self.backend.store(existing)
-                            logger.debug(f"Surprise gate: reinforced {target_id} instead of creating duplicate")
-                            return existing
-                    except Exception:
-                        pass  # Fall through to normal create
+                if surprise_verdict.action == SurpriseAction.REINFORCE:
+                    # Redundant content: reinforce nearest neighbor instead
+                    target_id = surprise_verdict.nearest_memory_id
+                    if target_id:
+                        try:
+                            existing = self.backend.recall(target_id)
+                            if existing:
+                                existing.access_count += 1
+                                existing.importance = min(1.0, existing.importance + 0.03)
+                                existing.metadata["last_reinforced"] = now_iso()
+                                existing.metadata["reinforcement_count"] = existing.metadata.get("reinforcement_count", 0) + 1
+                                self.backend.store(existing)
+                                logger.debug(f"Surprise gate: reinforced {target_id} instead of creating duplicate")
+                                return existing
+                        except Exception:
+                            pass  # Fall through to normal create
 
-            elif surprise_verdict.action == SurpriseAction.CREATE_BOOSTED:
-                importance = min(1.0, importance + 0.15)
-                metadata["surprise_boosted"] = True
-                metadata["surprise_score"] = round(surprise_verdict.surprise_score, 3)
+                elif surprise_verdict.action == SurpriseAction.CREATE_BOOSTED:
+                    importance = min(1.0, importance + 0.15)
+                    metadata["surprise_boosted"] = True
+                    metadata["surprise_score"] = round(surprise_verdict.surprise_score, 3)
 
-        except Exception:
-            pass  # Surprise gate unavailable — proceed normally
+            except Exception:
+                pass  # Surprise gate unavailable — proceed normally
 
         # Generate ID
         content_str = str(content)[:1000]
@@ -167,7 +219,7 @@ class UnifiedMemory:
         self.backend.store(memory, content_hash=content_hash)
 
         # Index in Holographic Memory (5D Spatial: x, y, z, w, v)
-        if self.holographic:
+        if enable_holographic_index and self.holographic:
             coords = self.holographic.index_memory(memory.id, memory.to_dict())
             if coords:
                 self.backend.store_coords(memory.id, *coords)
@@ -185,15 +237,28 @@ class UnifiedMemory:
                 pass  # Embedding unavailable — skip silently
 
         # v15.2: Auto-extract entities and relations into knowledge graph
-        try:
-            from whitemagic.core.intelligence.entity_extractor import get_entity_extractor
-            extractor = get_entity_extractor()
-            content_for_extraction = str(content)[:4000]
-            if title:
-                content_for_extraction = f"{title}\n{content_for_extraction}"
-            extractor.extract_and_store(memory.id, content_for_extraction)
-        except Exception:
-            pass  # Entity extraction unavailable — skip silently
+        # v16: Use LightNER for fast pattern-based extraction, fall back to LLM
+        if enable_entity_extraction:
+            try:
+                content_for_extraction = str(content)[:4000]
+                if title:
+                    content_for_extraction = f"{title}\n{content_for_extraction}"
+
+                # Try LightNER first (fast, no LLM dependency)
+                from whitemagic.core.intelligence.knowledge_graph_v2 import get_kg_v2
+                kg = get_kg_v2()
+                result = kg.extract_and_store(memory.id, content_for_extraction)
+
+                # If no relations found and LLM is available, try LLM-based extraction
+                if result.get("relations_extracted", 0) == 0:
+                    try:
+                        from whitemagic.core.intelligence.entity_extractor import get_entity_extractor
+                        extractor = get_entity_extractor()
+                        extractor.extract_and_store(memory.id, content_for_extraction)
+                    except Exception:
+                        pass  # LLM extraction unavailable
+            except Exception:
+                pass  # Entity extraction unavailable — skip silently
 
         return memory
 
@@ -231,12 +296,13 @@ class UnifiedMemory:
                 pass
 
         # Emit search event for Gan Ying integration
-        if _GAN_YING_AVAILABLE:
+        event_type = _get_gan_ying_event_type()
+        if event_type is not None:
             try:
                 from whitemagic.core.resonance.gan_ying import emit_event
                 emit_event(
                     source="memory_manager",
-                    event_type=EventType.SEARCH_COMPLETED,
+                    event_type=event_type.SEARCH_COMPLETED,
                     data={
                         "query": query,
                         "memory_type": memory_type.value if memory_type else None,
@@ -282,14 +348,15 @@ class UnifiedMemory:
                                 results.append(mem)
 
                         # Emit specific pattern detection event
-                        if _GAN_YING_AVAILABLE:
+                        event_type = _get_gan_ying_event_type()
+                        if event_type is not None:
                             try:
                                 from whitemagic.core.resonance.gan_ying import (
                                     emit_event,
                                 )
                                 emit_event(
                                     source="memory_manager",
-                                    event_type=EventType.PATTERN_DETECTED,
+                                    event_type=event_type.PATTERN_DETECTED,
                                     data={
                                         "type": "rust_simd_batch_search",
                                         "query": query,

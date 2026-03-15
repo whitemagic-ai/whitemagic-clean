@@ -1,4 +1,5 @@
-//! 5D Holographic Encoder — Batch coordinate encoding for WhiteMagic memories
+//! Holographic Encoder — 5D coordinate encoding for memories
+//! WhiteMagic memories
 //!
 //! Ports the hot path from Python's `intelligence/hologram/encoder.py`:
 //! - X: Logic ↔ Emotion (-1.0 to +1.0)
@@ -10,6 +11,8 @@
 //! The Python encoder processes memories one-at-a-time. This Rust version
 //! uses Rayon to encode batches in parallel — critical for galactic sweeps
 //! over 107K+ memories.
+
+#![allow(dead_code)]
 
 use pyo3::prelude::*;
 use rayon::prelude::*;
@@ -278,6 +281,18 @@ pub fn holographic_nearest_5d(
 
     serde_json::to_string(&distances)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e)))
+}
+
+// ---------------------------------------------------------------------------
+// Python module registration
+// ---------------------------------------------------------------------------
+
+#[cfg(feature = "python")]
+pub fn register_holographic_encoder(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(holographic_encode_batch, m)?)?;
+    m.add_function(wrap_pyfunction!(holographic_encode_single, m)?)?;
+    m.add_function(wrap_pyfunction!(holographic_nearest_5d, m)?)?;
+    Ok(())
 }
 
 // ---------------------------------------------------------------------------

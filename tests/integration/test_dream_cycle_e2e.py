@@ -245,16 +245,16 @@ class TestDreamCycleE2E:
             assert r.duration_ms >= 0
             assert isinstance(r.details, dict)
             d = r.to_dict()
-            assert d["phase"] in ("triage", "consolidation", "serendipity", "governance", "narrative", "kaizen", "oracle", "decay")
+            assert d["phase"] in ("triage", "consolidation", "serendipity", "governance", "narrative", "kaizen", "oracle", "decay", "constellation", "prediction", "enrichment", "harmonize")
 
     def test_phase_rotation_wraps_around(self):
-        """After 8 phases, phase 9 should be TRIAGE again."""
+        """After 12 phases, phase 13 should be TRIAGE again."""
         dc = DreamCycle()
-        for _ in range(9):
+        for _ in range(13):
             dc._run_phase()
 
-        assert dc._total_cycles == 9
-        # Phase 9 (index 8) should wrap to TRIAGE (index 0)
+        assert dc._total_cycles == 13
+        # Phase 13 (index 12) should wrap to TRIAGE (index 0)
         assert dc._history[-1].phase == DreamPhase.TRIAGE
 
     def test_status_reflects_history(self):

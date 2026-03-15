@@ -12,15 +12,61 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Rust acceleration (S026 VC3)
+try:
+    import whitemagic_rust as _wr
+    _rust_hnsw = _wr.hnsw_index
+    RUST_HNSW_AVAILABLE = True
+except ImportError:
+    _rust_hnsw = None
+    RUST_HNSW_AVAILABLE = False
+    logger.debug("Rust HNSW not available, using Python fallback")
+
+
+class RustHNSWWrapper:
+    """Wrapper for Rust HNSW implementation with Python-compatible interface."""
+    
+    def __init__(self, dim: int = 384, m: int = 16, ef_construction: int = 200):
+        self.dim = dim
+        self.m = m
+        self.ef_construction = ef_construction
+        self._index = _rust_hnsw.HNSWIndex(dim, m, ef_construction) if RUST_HNSW_AVAILABLE else None
+        self._node_vectors: Dict[str, np.ndarray] = {}  # Store vectors for save/load
+    
+    def add_item(self, memory_id: str, vector: np.ndarray):
+        """Add a vector to the index."""
+        vector = vector.astype(np.float32)
+        self._node_vectors[memory_id] = vector
+        if self._index:
+            self._index.add_item(memory_id, vector.tolist())
+    
+    def search(self, query: np.ndarray, k: int = 10, ef: int = 50) -> List[Tuple[str, float]]:
+        """Search for k nearest neighbors."""
+        query = query.astype(np.float32)
+        if self._index:
+            results = self._index.search(query.tolist(), k, ef)
+            return [(str(r[0]), float(r[1])) for r in results]
+        return []
+    
+    def __len__(self) -> int:
+        return len(self._node_vectors)
+    
+    @property
+    def nodes(self) -> Dict[str, Dict]:
+        """Compatibility property for Python interface."""
+        return {mid: {'vector': v} for mid, v in self._node_vectors.items()}
+
 class HNSWIndex:
     """Hierarchical Navigable Small World index for approximate nearest neighbors.
     
     Implements the HNSW algorithm for sub-millisecond similarity search
     on large embedding corpora (100K+ vectors).
+    
+    Uses Rust implementation when available for 10-100x speedup.
     """
     
     def __init__(self, dim: int = 384, m: int = 16, ef_construction: int = 200, 
-                 db_path: Optional[Path] = None):
+                 db_path: Optional[Path] = None, use_rust: bool = True):
         self.dim = dim
         self.m = m  # Number of neighbors per layer
         self.ef_construction = ef_construction
@@ -28,6 +74,12 @@ class HNSWIndex:
         self.nodes: Dict[str, Dict] = {}  # memory_id -> {vector, level, neighbors}
         self.entry_point: Optional[str] = None
         self.db_path = db_path or Path.home() / ".whitemagic/memory/hnsw_index.pkl"
+        
+        # Use Rust implementation if available and requested
+        self._rust_index = None
+        if use_rust and RUST_HNSW_AVAILABLE:
+            self._rust_index = RustHNSWWrapper(dim, m, ef_construction)
+            logger.info("Using Rust HNSW implementation for accelerated search")
         
     def _distance(self, a: np.ndarray, b: np.ndarray) -> float:
         """Cosine distance (1 - cosine similarity)."""
@@ -43,6 +95,14 @@ class HNSWIndex:
     def add_item(self, memory_id: str, vector: np.ndarray):
         """Add a vector to the HNSW index."""
         vector = vector.astype(np.float32)
+        
+        # Route to Rust implementation if available
+        if self._rust_index:
+            self._rust_index.add_item(memory_id, vector)
+            # Still maintain Python nodes for save/load compatibility
+            self.nodes[memory_id] = {'vector': vector, 'level': 0, 'neighbors': {}}
+            return
+        
         level = self._get_random_level()
         
         self.nodes[memory_id] = {
@@ -117,6 +177,10 @@ class HNSWIndex:
     
     def search(self, query: np.ndarray, k: int = 10, ef: int = 50) -> List[Tuple[str, float]]:
         """Approximate nearest neighbor search."""
+        # Route to Rust implementation if available
+        if self._rust_index:
+            return self._rust_index.search(query, k, ef)
+        
         if self.entry_point is None:
             return []
         

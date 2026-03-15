@@ -54,6 +54,15 @@ except ImportError:
     _hungarian = None  # type: ignore[assignment]
     _SCIPY_AVAILABLE = False
 
+# Rust acceleration (S026 VC1)
+try:
+    import whitemagic_rust as _wr
+    _rust_const = _wr.constellations
+    _RUST_AVAILABLE = True
+except ImportError:
+    _rust_const = None  # type: ignore[assignment]
+    _RUST_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -175,7 +184,16 @@ class ConstellationDetector:
 
     @staticmethod
     def _distance_5d(a: tuple[float, ...], b: tuple[float, ...]) -> float:
-        """Euclidean distance in 5D space. Uses Zig SIMD when available."""
+        """Euclidean distance in 5D space. Uses Rust when available."""
+        if _RUST_AVAILABLE:
+            try:
+                return _rust_const.py_distance_5d(
+                    (a[0], a[1], a[2], a[3], a[4]),
+                    (b[0], b[1], b[2], b[3], b[4]),
+                )
+            except Exception:
+                pass  # Fall back to Python
+        # Zig SIMD fallback
         try:
             from whitemagic.core.acceleration.simd_holographic import (
                 holographic_5d_distance,
@@ -381,6 +399,18 @@ class ConstellationDetector:
 
         Returns (groups, stabilities) — stabilities are always 0.0 for grid.
         """
+        # Try Rust implementation first (S026 VC1)
+        if _RUST_AVAILABLE and len(coords) > 0:
+            try:
+                # Convert to format expected by Rust
+                coords_5d = [(c[0], c[1], c[2], c[3], c[4]) for c in coords]
+                groups = _rust_const.py_detect_grid(
+                    coords_5d, self._bins, self._min_size, self._max_constellations
+                )
+                return groups, [0.0] * len(groups)
+            except Exception:
+                pass  # Fall back to Python
+
         # Compute axis ranges
         ranges = {}
         for i, axis in enumerate(["x", "y", "z", "w", "v"]):
@@ -995,6 +1025,29 @@ class ConstellationDetector:
 
         if n_old == 0 or n_new == 0:
             return {}, list(new_names), list(old_names)
+
+        # Try Rust implementation first (S026 VC1)
+        if _RUST_AVAILABLE:
+            try:
+                old_centroids_5d = {
+                    name: (c[0], c[1], c[2], c[3], c[4])
+                    for name, c in old_centroids.items()
+                }
+                new_centroids_5d = {
+                    name: (c[0], c[1], c[2], c[3], c[4])
+                    for name, c in new_centroids.items()
+                }
+                matched, novel, forgotten = _rust_const.py_hungarian_match(
+                    old_centroids_5d, new_centroids_5d, max_match_distance
+                )
+                if novel or forgotten:
+                    logger.info(
+                        f"Drift tracking: {len(matched)} matched, "
+                        f"{len(novel)} novel, {len(forgotten)} forgotten",
+                    )
+                return matched, novel, forgotten
+            except Exception:
+                pass  # Fall back to Python/NumPy
 
         # Build cost matrix: n_new × n_old (distances)
         import numpy as np

@@ -7,6 +7,13 @@ defmodule WhitemagicCore.Application do
 
   @impl true
   def start(_type, _args) do
+    # Initialize the POSIX Shared Memory Event Ring for the Fast Lane
+    try do
+      WhiteMagic.EventRing.Nif.init_shm_ring()
+    rescue
+      e -> IO.puts("Warning: Failed to initialize Event Ring SHM: #{inspect(e)}")
+    end
+
     redis_url = System.get_env("REDIS_URL", "redis://localhost:6379/0")
 
     children = [

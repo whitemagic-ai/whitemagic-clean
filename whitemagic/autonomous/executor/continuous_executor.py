@@ -112,6 +112,23 @@ class ContinuousExecutor:
         from .assessor import ProgressAssessor
         from .limits import ResourceLimits
         from .objective_generator import ObjectiveGenerator
+        
+        # Load Unified Nervous System
+        try:
+            from whitemagic.core.intelligence.nervous_system import get_nervous_system
+            self.nervous_system = get_nervous_system()
+            if self.nervous_system and not self.nervous_system.is_active:
+                self.nervous_system.start()
+        except ImportError:
+            self.nervous_system = None
+        try:
+            import whitemagic_rust as rs
+            if hasattr(rs, 'ContinuousDaemon'):
+                self._rust_daemon = rs.ContinuousDaemon()
+            else:
+                self._rust_daemon = None
+        except Exception:
+            self._rust_daemon = None
 
         self.limits = ResourceLimits(config)
         self.generator = ObjectiveGenerator()
@@ -138,6 +155,12 @@ class ContinuousExecutor:
     def has_objectives(self) -> bool:
         """Check if there are pending objectives."""
         return len(self.objectives) > 0
+        
+    def get_rust_stats(self) -> dict:
+        """Get runtime stats from the Rust background daemon."""
+        if self._rust_daemon and self._rust_daemon.is_running():
+            return self._rust_daemon.get_stats()
+        return {}
 
     def should_stop(self) -> tuple[bool, str | None]:
         """Check if execution should stop."""
@@ -164,7 +187,22 @@ class ContinuousExecutor:
                 should_stop, reason = self.should_stop()
                 if should_stop:
                     self.log(f"Stopping: {reason}", "WARN")
+                    if self._rust_daemon and self._rust_daemon.is_running():
+                        self._rust_daemon.stop()
                     break
+                    
+                # Homeostasis / Biological Subsystem pulse
+                # Update iteration count to properly trigger pulses
+                self.current_iteration = getattr(self, 'current_iteration', 0) + 1
+                
+                # Homeostasis / Biological Subsystem pulse
+                if self.current_iteration % 5 == 0:  # Lowered from 50 to 5 for testing
+                    self.log("🧠 Triggering Nervous System Pulse")
+                    if self.nervous_system:
+                        try:
+                            self.nervous_system.pulse()
+                        except Exception as e:
+                            self.log(f"Nervous system pulse failed: {e}", "WARN")
 
                 # Execute or self-direct
                 if self.has_objectives():

@@ -154,37 +154,39 @@ class AnomalyDetector:
         except Exception:
             pass
 
+    def _active_alerts_unlocked(self) -> list[dict[str, Any]]:
+        alerts = []
+        for dim in HARMONY_DIMENSIONS:
+            window = self._windows[dim]
+            if len(window) < 10:
+                continue
+
+            value = window[-1]
+            mean = sum(window) / len(window)
+            variance = sum((x - mean) ** 2 for x in window) / len(window)
+            std_dev = math.sqrt(variance) if variance > 0 else 0.0
+
+            if std_dev < 1e-10:
+                continue
+
+            z_score = (value - mean) / std_dev
+            abs_z = abs(z_score)
+
+            if abs_z >= self._warning_z:
+                alerts.append({
+                    "dimension": dim,
+                    "z_score": round(z_score, 2),
+                    "current": round(value, 4),
+                    "mean": round(mean, 4),
+                    "severity": "critical" if abs_z >= self._critical_z else "warning",
+                })
+
+        return alerts
+
     def check(self) -> list[dict[str, Any]]:
         """Check current state — returns any active alerts from last observation."""
         with self._lock:
-            # Re-check last values
-            alerts = []
-            for dim in HARMONY_DIMENSIONS:
-                window = self._windows[dim]
-                if len(window) < 10:
-                    continue
-
-                value = window[-1]
-                mean = sum(window) / len(window)
-                variance = sum((x - mean) ** 2 for x in window) / len(window)
-                std_dev = math.sqrt(variance) if variance > 0 else 0.0
-
-                if std_dev < 1e-10:
-                    continue
-
-                z_score = (value - mean) / std_dev
-                abs_z = abs(z_score)
-
-                if abs_z >= self._warning_z:
-                    alerts.append({
-                        "dimension": dim,
-                        "z_score": round(z_score, 2),
-                        "current": round(value, 4),
-                        "mean": round(mean, 4),
-                        "severity": "critical" if abs_z >= self._critical_z else "warning",
-                    })
-
-            return alerts
+            return self._active_alerts_unlocked()
 
     def recent_alerts(self, limit: int = 20) -> list[dict[str, Any]]:
         """Get recent alerts."""
@@ -214,7 +216,7 @@ class AnomalyDetector:
                 "total_ingested": self._total_ingested,
                 "total_alerts": self._total_alerts,
                 "dimensions": dim_stats,
-                "active_alerts": self.check(),
+                "active_alerts": self._active_alerts_unlocked(),
             }
 
 

@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { invoke } from "@tauri-apps/api/core";
+// @ts-ignore
 
 export interface OpenFile {
   path: string;
@@ -15,6 +17,7 @@ interface EditorState {
   closeFile: (path: string) => void;
   setActiveFile: (path: string) => void;
   updateContent: (path: string, content: string) => void;
+  saveFile: (path: string) => Promise<void>;
 }
 
 function detectLanguage(name: string): string {
@@ -127,10 +130,31 @@ export const useEditorStore = create<EditorState>((set) => ({
 
   setActiveFile: (path) => set({ activeFile: path }),
 
+
   updateContent: (path, content) =>
     set((state) => ({
       openFiles: state.openFiles.map((f) =>
         f.path === path ? { ...f, content, dirty: true } : f
       ),
     })),
+
+  saveFile: async (path) => {
+    const state = useEditorStore.getState();
+    const file = state.openFiles.find((f) => f.path === path);
+    if (!file || !file.dirty) return;
+    
+    try {
+      if ((window as any).__TAURI_INTERNALS__) {
+        // Need to add this endpoint to Rust
+        await invoke("write_file", { filePath: path, content: file.content });
+        set((s) => ({
+          openFiles: s.openFiles.map((f) =>
+            f.path === path ? { ...f, dirty: false } : f
+          ),
+        }));
+      }
+    } catch (e) {
+      console.error("Failed to save file", e);
+    }
+  },
 }));

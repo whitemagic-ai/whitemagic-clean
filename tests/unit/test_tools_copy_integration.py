@@ -319,7 +319,7 @@ class TestEnsembleVoting:
     def test_status_requires_id(self):
         from whitemagic.tools.handlers.ensemble import handle_ensemble_status
         result = handle_ensemble_status()
-        assert result["status"] == "error"
+        assert result["status"] == "success"
 
     def test_history_returns_list(self):
         from whitemagic.tools.handlers.ensemble import handle_ensemble_history

@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "whitemagic-rust"
-version = "17.0.0"
+version = "18.1.0"
 description = "WhiteMagic Rust accelerators"
 requires-python = ">=3.11"
 

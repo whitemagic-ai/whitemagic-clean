@@ -1,7 +1,10 @@
 
 from typing import Any
+from uuid import uuid4
 
 from whitemagic.core.bridge.utils import logger
+from whitemagic.tools.envelope import normalize_raw
+from whitemagic.tools.gana_native_contract import build_native_gana_details, normalize_native_gana_result
 
 
 def gana_invoke(
@@ -98,18 +101,29 @@ def gana_invoke(
             result = asyncio.run(run_gana())
 
         # Serialize result
-        return {
-            "output": result.output,
-            "mansion": result.mansion.name,
-            "garden": result.garden,
-            "successor_hint": result.successor_hint,
-            "execution_ms": result.execution_time_ms,
-            "karma_trace": result.karma_trace,
-        }
+        details = build_native_gana_details(
+            actual_tool,
+            operation=actual_args.get("operation"),
+            output=result.output,
+            garden=result.garden,
+            mansion=result.mansion.name,
+            successor_hint=result.successor_hint,
+            execution_ms=result.execution_time_ms,
+            karma_trace=result.karma_trace,
+        )
+        return normalize_native_gana_result(
+            actual_tool,
+            request_id=str(uuid4()),
+            details=details,
+        )
     except Exception as e:
         import os
         import traceback
         resp = {"error": str(e)}
         if os.getenv("WM_DEBUG"):
             resp["trace"] = traceback.format_exc()
-        return resp
+        return normalize_raw(
+            tool=actual_tool or "gana_invoke",
+            request_id=str(uuid4()),
+            raw=resp,
+        )

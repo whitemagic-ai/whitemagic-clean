@@ -1,112 +1,112 @@
-"""Governance Tools Registry — Sabha Council & Forge Management
-===========================================================
+"""Governance Tools — Gana Sabha, Gana Forge, Gana Vitality.
 
-Registry definitions for governance-related MCP tools:
-- Sabha council convening and status
-- Forge validation, reloading, and status
+Implements the Bhīṣma governance principles from Mahābhārata 12.108:
+- Sabha (Council Protocol) — 12.108.25
+- Forge (Declarative Extension) — 12.108.17
+- Vitality (Performance Reputation) — 12.108.20 + 12.108.29
 """
 
 from whitemagic.tools.tool_types import ToolCategory, ToolDefinition, ToolSafety
 
-#: Sabha Council Tools
-SABHA_TOOLS = [
-    ToolDefinition(
-        name="sabha.convene",
-        description="Convene the full Zodiac Council (Sabha) for deliberation on complex tasks",
-        category=ToolCategory.GOVERNANCE,
-        safety=ToolSafety.READ,
-        input_schema={
-            "type": "object",
-            "properties": {
-                "task": {
-                    "type": "string",
-                    "description": "The complex task requiring council deliberation"
-                },
-                "ganas": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional specific Ganas to convene (defaults to all 28)"
-                }
+TOOLS: list[ToolDefinition] = [
+# ── Gana Sabha (Council Protocol) ────────────────────────────────
+ToolDefinition(
+    name="sabha.convene",
+    description=(
+        "Convene a Gana Sabhā (council) for cross-quadrant deliberation. "
+        "When a task spans multiple quadrants of the 28-mansion mandala, "
+        "the Sabhā gathers perspectives from quadrant elders, detects "
+        "inter-Gana conflicts, and produces an arbiter recommendation. "
+        "Based on Mahābhārata 12.108.25: 'The king, acting in concert "
+        "with the leaders, should do what is for the good of the whole order.'"
+    ),
+    category=ToolCategory.GOVERNANCE,
+    safety=ToolSafety.READ,
+    input_schema={
+        "type": "object",
+        "properties": {
+            "task": {
+                "type": "string",
+                "description": "Description of the task requiring cross-quadrant council",
             },
-            "required": ["task"]
-        },
-        gana="gana_star",
-        garden="Truth",
-        quadrant="East",
-        element="Metal"
-    ),
-    ToolDefinition(
-        name="sabha.status",
-        description="Get current status of the Zodiac Council and recent deliberations",
-        category=ToolCategory.GOVERNANCE,
-        safety=ToolSafety.READ,
-        input_schema={
-            "type": "object",
-            "properties": {}
-        },
-        gana="gana_star",
-        garden="Truth",
-        quadrant="East",
-        element="Metal"
-    ),
-]
-
-#: Forge Management Tools
-FORGE_TOOLS = [
-    ToolDefinition(
-        name="forge.status",
-        description="Get current status of the Forge (tool compilation system)",
-        category=ToolCategory.GOVERNANCE,
-        safety=ToolSafety.READ,
-        input_schema={
-            "type": "object",
-            "properties": {}
-        },
-        gana="gana_star",
-        garden="Metal",
-        quadrant="West",
-        element="Metal"
-    ),
-    ToolDefinition(
-        name="forge.reload",
-        description="Reload the Forge and re-scan for available tools",
-        category=ToolCategory.GOVERNANCE,
-        safety=ToolSafety.WRITE,
-        input_schema={
-            "type": "object",
-            "properties": {
-                "domain": {
-                    "type": "string",
-                    "description": "Optional specific domain to reload (e.g., 'gana')"
-                }
-            }
-        },
-        gana="gana_star",
-        garden="Metal",
-        quadrant="West",
-        element="Metal"
-    ),
-    ToolDefinition(
-        name="forge.validate",
-        description="Validate a tool manifest without loading it",
-        category=ToolCategory.GOVERNANCE,
-        safety=ToolSafety.READ,
-        input_schema={
-            "type": "object",
-            "properties": {
-                "manifest_path": {
-                    "type": "string",
-                    "description": "Path to the tool manifest JSON file"
-                }
+            "ganas": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Specific Ganas to include (optional, defaults to quadrant elders)",
             },
-            "required": ["manifest_path"]
+            "quadrants": {
+                "type": "array",
+                "items": {"type": "string", "enum": ["East", "South", "West", "North"]},
+                "description": "Specific quadrants to consult (optional, defaults to all)",
+            },
         },
-        gana="gana_star",
-        garden="Metal",
-        quadrant="West",
-        element="Metal"
+        "required": ["task"],
+    },
+    gana="ThreeStars", garden="dharma", quadrant="western", element="metal",
+),
+ToolDefinition(
+    name="sabha.status",
+    description=(
+        "Get the collective vitality status of all 28 Ganas. Shows how many "
+        "are healthy, degraded, silent, or struggling. Reports the overall "
+        "saṃghāta (unity) score. Based on 12.108.31: 'Unity is the great "
+        "refuge of the gaṇas.'"
     ),
-]
+    category=ToolCategory.GOVERNANCE,
+    safety=ToolSafety.READ,
+    input_schema={
+        "type": "object",
+        "properties": {},
+    },
+    gana="ThreeStars", garden="dharma", quadrant="western", element="metal",
+),
 
-#: All Governance Tools
-TOOLS = SABHA_TOOLS + FORGE_TOOLS
+# ── Gana Forge (Declarative Extension Protocol) ──────────────────
+ToolDefinition(
+    name="forge.status",
+    description=(
+        "Show current Forge status — loaded extensions and available manifests. "
+        "Extensions are YAML files in ~/.whitemagic/extensions/ that define new "
+        "tools declaratively. Any AI can create these manifests to extend the "
+        "Gana system without modifying source code."
+    ),
+    category=ToolCategory.GOVERNANCE,
+    safety=ToolSafety.READ,
+    input_schema={
+        "type": "object",
+        "properties": {},
+    },
+    gana="Star", garden="beauty", quadrant="southern", element="fire",
+),
+ToolDefinition(
+    name="forge.reload",
+    description=(
+        "Reload all extension manifests from ~/.whitemagic/extensions/. "
+        "Validates each manifest against the Dharma engine, resolves handlers, "
+        "and injects valid tools into the dispatch pipeline and PRAT router. "
+        "Invalid manifests are logged but do not block loading."
+    ),
+    category=ToolCategory.GOVERNANCE,
+    safety=ToolSafety.WRITE,
+    input_schema={
+        "type": "object",
+        "properties": {},
+    },
+    gana="Star", garden="beauty", quadrant="southern", element="fire",
+),
+ToolDefinition(
+    name="forge.validate",
+    description=(
+        "Validate extension manifests without loading them. Checks each YAML "
+        "file for required fields (name, description, gana, handler, safety) "
+        "and reports errors. Use this before forge.reload to preview."
+    ),
+    category=ToolCategory.GOVERNANCE,
+    safety=ToolSafety.READ,
+    input_schema={
+        "type": "object",
+        "properties": {},
+    },
+    gana="Star", garden="beauty", quadrant="southern", element="fire",
+),
+]

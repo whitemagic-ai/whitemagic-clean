@@ -4,7 +4,7 @@ import {
   Layers,
 } from "lucide-react";
 import { useNexusStore, type BottomTab } from "../../store/nexus";
-import TerminalPanel from "./TerminalPanel";
+import XTermTerminal from "./XTermTerminal";
 
 const bottomTabs: { id: BottomTab; icon: typeof TerminalIcon; title: string }[] = [
   { id: "terminal", icon: TerminalIcon, title: "Terminal" },
@@ -49,7 +49,7 @@ export default function BottomPanel() {
 
       {/* Content */}
       <div className="flex-1 overflow-auto">
-        {activeTab === "terminal" && <TerminalPanel />}
+        {activeTab === "terminal" && <XTermTerminal />}
 
         {activeTab === "timeline" && (
           <div className="p-3">

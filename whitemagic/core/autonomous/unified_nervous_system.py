@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from whitemagic.core.dreaming.background_dreamer import get_background_dreamer
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum, auto
@@ -413,8 +414,13 @@ def wire_default_subsystems() -> UnifiedNervousSystem:
     
     # Wire Dream to respond to critical coherence
     def dream_handler(event: BiologicalEvent) -> None:
-        if event.event_type == "coherence.critical":
-            logger.info("💤 Dream: Triggering emergency dream cycle")
+        if event.event_type == "coherence.critical" or event.event_type == "dream.trigger":
+            logger.info("💤 Dream: Triggering emergency or idle dream cycle")
+            try:
+                dreamer = get_background_dreamer()
+                dreamer.trigger_dream_cycle()
+            except Exception as e:
+                logger.error(f"Failed to trigger background dreamer: {e}")
     
     uns.register_subsystem(
         BiologicalSubsystem.DREAM,

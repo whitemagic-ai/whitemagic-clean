@@ -28,7 +28,7 @@ class TestHarmonyVector:
         from whitemagic.harmony.vector import HarmonyVector
         hv = HarmonyVector()
         snap = hv.snapshot()
-        assert snap.harmony_score == 1.0
+        assert snap.harmony_score == 0.7
         assert snap.tool_calls_in_window == 0
 
     def test_record_call_updates_snapshot(self):

@@ -8,28 +8,11 @@ Path definitions are centralized in paths.py:
 - WM_ROOT: user state location (configurable, defaults to ~/.whitemagic)
 - MEMORY_DIR, DATA_DIR, CACHE_DIR: subdirs of WM_ROOT
 """
+from __future__ import annotations
+
 import logging
+from typing import Any
 
-from whitemagic.config.concurrency import (
-    ASYNC_TASK_LIMIT,
-    CPU_WORKERS,
-    IO_WORKERS,
-    MAX_WORKERS,
-    get_concurrency_config,
-    get_max_workers,
-)
-from whitemagic.config.manager import (
-    ConfigManager,
-    DatabaseConfig,
-    Environment,
-    SecurityConfig,
-    WhiteMagicConfig,
-    get_config,
-    get_config_manager,
-    setup_config_environment,
-)
-
-# Import path configuration from centralized module
 from whitemagic.config.paths import (
     ARCHIVE_DIR,
     ARTIFACTS_DIR,
@@ -51,19 +34,66 @@ _version_file = PROJECT_ROOT / "VERSION"
 if _version_file.exists():
     VERSION = _version_file.read_text().strip()
 else:
-    # Last-resort import in editable installs
     try:
         from whitemagic import __version__ as VERSION  # type: ignore
     except Exception:
         VERSION = "unknown"
 
 
+_CONCURRENCY_EXPORTS = {
+    "ASYNC_TASK_LIMIT",
+    "CPU_WORKERS",
+    "IO_WORKERS",
+    "MAX_WORKERS",
+    "get_concurrency_config",
+    "get_max_workers",
+}
+
+_MANAGER_EXPORTS = {
+    "ConfigManager",
+    "DatabaseConfig",
+    "Environment",
+    "SecurityConfig",
+    "WhiteMagicConfig",
+    "get_config",
+    "get_config_manager",
+    "setup_config_environment",
+    "config",
+}
+
+
+def _load_concurrency_attr(name: str) -> Any:
+    from whitemagic.config import concurrency as _concurrency
+    return getattr(_concurrency, name)
+
+
+def _load_manager_attr(name: str) -> Any:
+    from whitemagic.config import manager as _manager
+    if name == "config":
+        cfg = _manager.get_config()
+        _manager.setup_config_environment(cfg)
+        return cfg
+    return getattr(_manager, name)
+
+
+def __getattr__(name: str) -> Any:
+    if name in _CONCURRENCY_EXPORTS:
+        value = _load_concurrency_attr(name)
+        globals()[name] = value
+        return value
+    if name in _MANAGER_EXPORTS:
+        value = _load_manager_attr(name)
+        globals()[name] = value
+        return value
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
 def show_config() -> None:
     """Print a safe, minimal configuration summary for diagnostics."""
     try:
-        current = get_config()
+        current = _load_manager_attr("config")
     except Exception:
-        current = config
+        current = None
 
     env_value = getattr(current, "environment", "unknown")
     debug_value = getattr(current, "debug", "unknown")
@@ -73,36 +103,6 @@ def show_config() -> None:
     logger.info(f"  debug: {debug_value}")
 
 
-# Initialize configuration on import
-try:
-    config = get_config()
-    setup_config_environment(config)
-except Exception as e:
-    import warnings
-
-    warnings.warn(f"Failed to initialize configuration: {e}")
-    # Use minimal default config
-    config = WhiteMagicConfig(
-        environment=Environment.DEVELOPMENT,
-        debug=True,
-        database=DatabaseConfig(
-            url=f"sqlite:///{DB_PATH}",
-            pool_size=5,
-            max_overflow=10,
-            echo=False,
-        ),
-        security=SecurityConfig(
-            secret_key="dev-secret-key",
-            csrf_enabled=True,
-            content_security_policy=True,
-            ssl_required=False,
-            session_timeout=3600,
-        ),
-        data_dir=str(DATA_DIR),
-        log_dir=str(LOGS_DIR),
-        temp_dir=str(CACHE_DIR / "tmp"),
-    )
-
 __all__ = [
     "config",
     "get_config",
@@ -111,7 +111,6 @@ __all__ = [
     "WhiteMagicConfig",
     "ConfigManager",
     "Environment",
-    # Path configuration (from paths.py)
     "PROJECT_ROOT",
     "SCRIPTS_DIR",
     "ARCHIVE_DIR",
@@ -125,7 +124,6 @@ __all__ = [
     "DB_PATH",
     "VERSION",
     "show_config",
-    # Concurrency configuration
     "get_max_workers",
     "get_concurrency_config",
     "MAX_WORKERS",

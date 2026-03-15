@@ -37,9 +37,13 @@ class TestMCPStdioRoundTrip:
         assert mcp.name == "WhiteMagic Core"
 
     def test_registry_tool_count(self):
-        """TOOL_REGISTRY has ≥165 tools (post-V002 pruning: ~170)."""
+        """Unified callable registry exposes the live callable tool surface."""
         from whitemagic.tools.registry import TOOL_REGISTRY
-        assert len(TOOL_REGISTRY) >= 165, f"Only {len(TOOL_REGISTRY)} tools in registry"
+        from whitemagic.tools.tool_surface import get_surface_counts
+        counts = get_surface_counts()
+        assert len(TOOL_REGISTRY) == counts["callable_tools"]
+        assert counts["callable_tools"] >= counts["dispatch_tools"]
+        assert counts["gana_tools"] == 28
 
     def test_all_registry_tools_have_schemas(self):
         """Every registered tool has a non-empty input_schema."""

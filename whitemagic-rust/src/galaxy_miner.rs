@@ -267,3 +267,18 @@ pub fn get_galaxy_stats(db_path: &str) -> PyResult<HashMap<String, i64>> {
     
     Ok(stats)
 }
+
+// ---------------------------------------------------------------------------
+// Python module registration
+// ---------------------------------------------------------------------------
+
+#[cfg(feature = "python")]
+pub fn galaxy_miner(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<AccessPattern>()?;
+    m.add_class::<SemanticCluster>()?;
+    m.add_function(wrap_pyfunction!(mine_access_patterns, m)?)?;
+    m.add_function(wrap_pyfunction!(mine_cache_candidates, m)?)?;
+    m.add_function(wrap_pyfunction!(mine_semantic_clusters, m)?)?;
+    m.add_function(wrap_pyfunction!(get_galaxy_stats, m)?)?;
+    Ok(())
+}

@@ -1,5 +1,7 @@
 # Grimoire Index - The 28-Fold Mandala
 
+Start with the canonical introduction: [Prologue](00_PROLOGUE.md)
+
 **Version**: 15.0.0 "Holographic Intelligence"
 **Structure**: 28 Chapters (Lunar Mansions)
 **Flow**: Cyclical (28 → 1 → 2 → ... → 28 → 1)
@@ -76,8 +78,9 @@ Based on Benjamin Rowe's Enochian Zodiacal Round, this eternal cycle drives the 
 
 ## 🎯 How to Use This Grimoire
 
+**Canonical Introduction?** → Start at [Prologue](00_PROLOGUE.md)  
 **New Session?** → Start at [Chapter 1: Session Initiation](01_HORN_SESSION_INITIATION.md)  
-**Ending Session?** → Go to [Chapter 28: Session Handoff](28_ROOF_SESSION_HANDOFF.md)  
+**Ending Session?** → Go to [Chapter 28: Boundaries](28_WALL_BOUNDARIES.md)  
 **Need Specific Guidance?** → Find your chapter below by need
 
 ---

@@ -37,7 +37,7 @@ to start using WhiteMagic as an AI agent or human operator.
 
 WhiteMagic is a **cognitive scaffolding layer** for AI agents. It provides:
 
-- **313 MCP tools** organized into 28 Ganas (Polymorphic Resonant Adaptive Tools)
+- **28 Gana MCP meta-tools** as the stable public contract, backed by a broader internal tool surface
 - **Persistent memory** with semantic search, embeddings, and galactic lifecycle
 - **Ethical governance** via Dharma rules, Karma ledger, and Harmony Vector
 - **Self-awareness** through Gnosis introspection, Self-Model forecasting, and Homeostasis
@@ -124,7 +124,7 @@ Or add manually to any MCP client config:
 |------|---------|-------|----------|
 | **PRAT** | `WM_MCP_PRAT=1` | 28 Gana meta-tools | Advanced agents (recommended) |
 | **Lite** | `WM_MCP_LITE=1` | ~92 core tools | Simple integrations |
-| **Full** | *(default)* | 313 tools | Maximum capability |
+| **Full** | *(default)* | Legacy broad-surface registration | Maximum capability |
 
 ## Starter Packs
 
@@ -181,7 +181,7 @@ _RUN_SH = """\
 # Modes:
 #   --prat  (default) 28 Gana meta-tools — recommended for advanced agents
 #   --lite  ~92 core tools — simpler integration
-#   --full  All 313 tools — maximum capability
+#   --full  Legacy broad-surface registration — maximum capability
 
 set -euo pipefail
 
@@ -199,7 +199,7 @@ MODE="${1:---prat}"
 
 case "$MODE" in
     --full)
-        echo "Starting WhiteMagic MCP Server (full mode — 313 tools)..."
+        echo "Starting WhiteMagic MCP Server (full mode — legacy broad-surface registration)..."
         exec python -m whitemagic.run_mcp
         ;;
     --lite)
@@ -409,7 +409,7 @@ WM_STATE_ROOT=./.whitemagic
 # MCP Server Mode (set ONE of these)
 # WM_MCP_PRAT=1       # 28 Gana meta-tools (recommended)
 # WM_MCP_LITE=1       # ~92 core tools
-# (neither)            # Full mode — all 313 tools
+# (neither)            # Full mode — legacy broad-surface registration
 
 # MCP Client Adapter (adjusts schema for specific AI clients)
 # WM_MCP_CLIENT=gemini   # Options: gemini, deepseek, qwen, kimi

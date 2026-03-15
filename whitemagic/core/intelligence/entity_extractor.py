@@ -128,7 +128,8 @@ class EntityExtractor:
                 f"{self._ollama_url}/api/tags",
                 method="GET",
             )
-            with urllib.request.urlopen(req, timeout=5) as resp:
+            # Reduced timeout from 5s to 1s for faster fallback
+            with urllib.request.urlopen(req, timeout=1) as resp:
                 if resp.status == 200:
                     self._ollama_available = True
                     return True

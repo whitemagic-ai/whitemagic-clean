@@ -18,6 +18,7 @@ import logging
 from collections.abc import Callable
 from datetime import datetime
 from typing import Any
+from whitemagic.cascade.holographic_context import get_holographic_injector
 
 from whitemagic.cascade.context_synthesizer import (
     ContextSynthesizer,
@@ -118,6 +119,13 @@ class AdaptiveToolPortal:
 
         # 1. Gather context
         context = self.synthesizer.gather()
+        
+        # 1.5 Inject Holographic Context
+        try:
+            injector = get_holographic_injector()
+            context.attributes["holographic_system_map"] = injector.generate_system_prompt_injection(str(params))
+        except Exception as e:
+            logger.debug(f"Holographic injection failed: {e}")
 
         # 2. Determine morphology
         if force_morphology:

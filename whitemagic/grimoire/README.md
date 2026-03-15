@@ -17,8 +17,9 @@ This Grimoire is a **28-fold cyclical instruction system** aligned with the Luna
 
 ## 🎯 Quick Start
 
+**Need the canonical introduction?** → [Prologue](00_PROLOGUE.md)  
 **Starting a new session?** → [Chapter 1: Session Initiation](01_HORN_SESSION_INITIATION.md)  
-**Ending a session?** → [Chapter 28: Session Handoff](28_ROOF_SESSION_HANDOFF.md)  
+**Ending a session?** → [Chapter 28: Boundaries](28_WALL_BOUNDARIES.md)  
 **Browse all chapters** → [Index](00_INDEX.md)
 
 ---

@@ -266,3 +266,8 @@ mod tests {
         assert!(!dups.is_empty(), "Should find the similar pair");
     }
 }
+
+pub fn simhash_lsh(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(simhash_find_duplicates, m)?)?;
+    Ok(())
+}

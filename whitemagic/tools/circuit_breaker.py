@@ -35,6 +35,8 @@ import logging
 import threading
 import time
 from dataclasses import dataclass
+
+from whitemagic.runtime_status import get_runtime_status
 from enum import Enum
 from typing import Any
 
@@ -139,6 +141,7 @@ class CircuitBreaker:
                 0.0,
                 self.config.cooldown_seconds - (time.time() - self._opened_at),
             )
+        runtime_status = get_runtime_status()
         return {
             "status": "error",
             "error_code": "circuit_breaker_open",
@@ -148,6 +151,9 @@ class CircuitBreaker:
                 f"Retry in ~{int(remaining)}s."
             ),
             "retryable": True,
+            "degraded_mode": True,
+            "degraded_reasons": ["circuit_breaker_open", *runtime_status.get("degraded_reasons", [])],
+            "resolution": {"suggested_action": "retry_after_cooldown_or_enable_debug", "debug_hint": "Set WM_DEBUG=1 for verbose diagnostics"},
             "circuit_breaker": {
                 "state": self._state.value,
                 "cooldown_remaining_s": round(remaining, 1),

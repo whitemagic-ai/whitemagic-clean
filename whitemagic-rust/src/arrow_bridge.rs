@@ -19,6 +19,8 @@
 //!   - memory_type: Utf8
 //!   - tags: List<Utf8>
 
+#![allow(dead_code)]
+
 #[cfg(feature = "arrow")]
 use arrow::array::{
     ArrayRef, Float64Array, Float64Builder, ListBuilder, RecordBatch,
@@ -187,7 +189,7 @@ pub fn arrow_to_memories(batch: &RecordBatch) -> Vec<MemoryRecord> {
 /// Output: Arrow IPC file bytes.
 #[cfg(feature = "python")]
 #[pyfunction]
-pub fn arrow_encode_memories(json_str: &str) -> PyResult<Vec<u8>> {
+pub fn arrow_encode_memories<'py>(py: Python<'py>, json_str: &str) -> PyResult<Bound<'py, pyo3::types::PyBytes>> {
     let records: Vec<MemoryRecord> = serde_json::from_str(json_str)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("JSON parse: {}", e)))?;
 
@@ -197,12 +199,12 @@ pub fn arrow_encode_memories(json_str: &str) -> PyResult<Vec<u8>> {
             .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(format!("Arrow: {}", e)))?;
         let ipc = arrow_to_ipc_bytes(&batch)
             .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(format!("IPC: {}", e)))?;
-        Ok(ipc)
+        Ok(pyo3::types::PyBytes::new_bound(py, &ipc))
     }
     #[cfg(not(feature = "arrow"))]
     {
         // Fallback: return JSON bytes
-        Ok(json_str.as_bytes().to_vec())
+        Ok(pyo3::types::PyBytes::new_bound(py, json_str.as_bytes()))
     }
 }
 
@@ -348,4 +350,56 @@ mod tests {
         assert!(ipc.len() > 0);
         eprintln!("Arrow IPC: {} bytes, JSON: {} bytes", ipc.len(), json_size);
     }
+}
+
+
+#[cfg(feature = "pyo3")]
+#[pyclass]
+pub struct ArrowIPCBridge {
+    ipc_file_path: String,
+}
+
+#[cfg(feature = "pyo3")]
+#[pymethods]
+impl ArrowIPCBridge {
+    #[new]
+    fn new(path: String) -> Self {
+        ArrowIPCBridge { ipc_file_path: path }
+    }
+
+    /// Read an Arrow IPC file and return basic stats (demonstrating zero-copy read capability)
+    fn read_ipc_stats(&self) -> PyResult<String> {
+        #[cfg(feature = "arrow")]
+        {
+            use std::fs::File;
+            use arrow::ipc::reader::FileReader;
+            
+            let file = File::open(&self.ipc_file_path).map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
+            let mut reader = FileReader::try_new(file, None).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
+            
+            let mut total_records = 0;
+            let mut batches = 0;
+            
+            while let Some(Ok(batch)) = reader.next() {
+                total_records += batch.num_rows();
+                batches += 1;
+            }
+            
+            Ok(format!("Read {} records across {} batches from {}", total_records, batches, self.ipc_file_path))
+        }
+        #[cfg(not(feature = "arrow"))]
+        {
+            Err(pyo3::exceptions::PyRuntimeError::new_err("Arrow feature not enabled in build"))
+        }
+    }
+}
+
+#[cfg(feature = "pyo3")]
+pub fn arrow_bridge(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<ArrowIPCBridge>()?;
+    m.add_function(wrap_pyfunction!(arrow_encode_memories, m)?)?;
+    m.add_function(wrap_pyfunction!(arrow_decode_memories, m)?)?;
+    m.add_function(wrap_pyfunction!(arrow_schema_info, m)?)?;
+    m.add_function(wrap_pyfunction!(arrow_roundtrip_bench, m)?)?;
+    Ok(())
 }

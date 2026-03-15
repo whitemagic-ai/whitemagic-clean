@@ -20,6 +20,7 @@ from __future__ import annotations
 import importlib
 import logging
 import types
+import warnings
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -32,7 +33,7 @@ _module_cache: dict[str, Any] = {}
 
 # Garden name -> module mapping for lazy imports
 _GARDEN_MODULES = {
-    "air": "whitemagic.gardens.air",
+    # 28-fold gardens (complete)
     "joy": "whitemagic.gardens.joy",
     "love": "whitemagic.gardens.love",
     "beauty": "whitemagic.gardens.beauty",
@@ -61,7 +62,9 @@ _GARDEN_MODULES = {
     "reverence": "whitemagic.gardens.reverence",
     "stillness": "whitemagic.gardens.stillness",
     "protection": "whitemagic.gardens.protection",
-    "metal": "whitemagic.gardens.metal",
+    # Deprecated: Folded into 28-fold (S023)
+    # "air": "whitemagic.gardens.air",  # Folded into voice
+    # "metal": "whitemagic.gardens.metal",  # Folded into practice
 }
 
 
@@ -98,6 +101,37 @@ def _get_garden_getter(garden_name: str) -> Callable[..., Any] | None:
 # Lazy attribute access for backward compatibility
 def __getattr__(name: str) -> Any:
     """Lazy load garden classes and getters on access."""
+    # Handle deprecated air/metal redirects (S023 consolidation)
+    if name == "AirGarden" or name == "get_air_garden":
+        warnings.warn(
+            "air garden folded into voice (S023). Use VoiceGarden/get_voice_garden instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from whitemagic.gardens.voice import VoiceGarden, get_voice_garden
+
+        if name == "AirGarden":
+            globals()[name] = VoiceGarden
+            return VoiceGarden
+        else:
+            globals()[name] = get_voice_garden
+            return get_voice_garden
+
+    if name == "MetalGarden" or name == "get_metal_garden":
+        warnings.warn(
+            "metal garden folded into practice (S023). Use PracticeGarden/get_practice_garden instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from whitemagic.gardens.practice import PracticeGarden, get_practice_garden
+
+        if name == "MetalGarden":
+            globals()[name] = PracticeGarden
+            return PracticeGarden
+        else:
+            globals()[name] = get_practice_garden
+            return get_practice_garden
+
     # Handle garden class access (e.g., JoyGarden)
     if name.endswith("Garden"):
         garden_name = name[:-6].lower()
@@ -136,8 +170,7 @@ else:
         __version__ = "unknown"
 
 __all__ = [
-    # Gardens
-    "AirGarden",
+    # 28-fold gardens (complete S023)
     "JoyGarden",
     "LoveGarden",
     "BeautyGarden",
@@ -152,11 +185,9 @@ __all__ = [
     "PresenceGarden",
     "VoiceGarden",
     "DharmaGarden",
-    # New gardens (v3.0.0)
     "CourageGarden",
     "GratitudeGarden",
     "PatienceGarden",
-    # Phase 4 gardens (v4.10.0)
     "GriefGarden",
     "AweGarden",
     "HumorGarden",
@@ -166,12 +197,12 @@ __all__ = [
     "SanctuaryGarden",
     "AdventureGarden",
     "ReverenceGarden",
-    # 28-fold symmetry gardens (v5.0.0-alpha)
     "StillnessGarden",
     "ProtectionGarden",
-    "MetalGarden",
+    # Deprecated: Folded into 28-fold (S023)
+    "AirGarden",  # Folded into voice
+    "MetalGarden",  # Folded into practice
     # Getters
-    "get_air_garden",
     "get_joy_garden",
     "get_love_garden",
     "get_beauty_garden",
@@ -186,11 +217,9 @@ __all__ = [
     "get_presence_garden",
     "get_voice_garden",
     "get_dharma_garden",
-    # New garden getters
     "get_courage_garden",
     "get_gratitude_garden",
     "get_patience_garden",
-    # Phase 4 garden getters
     "get_grief_garden",
     "get_awe_garden",
     "get_humor_garden",
@@ -200,10 +229,11 @@ __all__ = [
     "get_sanctuary_garden",
     "get_adventure_garden",
     "get_reverence_garden",
-    # 28-fold symmetry garden getters
     "get_stillness_garden",
     "get_protection_garden",
-    "get_metal_garden",
+    # Deprecated getters (S023)
+    "get_air_garden",  # Use get_voice_garden
+    "get_metal_garden",  # Use get_practice_garden
     # Universal getter
     "get_garden",
     "get_all_gardens",

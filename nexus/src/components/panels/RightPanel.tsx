@@ -6,8 +6,17 @@ import {
   Sparkles,
   Radio,
   Users,
+  Code2,
+  Terminal,
+  Check,
+  Search
 } from "lucide-react";
+
+
 import { useNexusStore, type RightTab } from "../../store/nexus";
+
+import CascadeActionPanel from "./CascadeActionPanel";
+import SwarmOrchestrator from "./SwarmOrchestrator";
 
 const rightTabs: { id: RightTab; icon: typeof Sparkles; title: string }[] = [
   { id: "chat", icon: Sparkles, title: "AI Chat" },
@@ -166,6 +175,22 @@ export default function RightPanel() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setInput(val);
+    
+    // Simple mock of @-mentions for context
+    if (val.endsWith('@')) {
+      // Trigger a contextual menu (in a real app, this would open a popup)
+      console.log("Trigger fast context search");
+      // Pre-fill some holographic context
+      setTimeout(() => {
+        setInput(prev => prev + "workspace ");
+      }, 500);
+    }
+  };
+
   const handleSend = () => {
     if (!input.trim()) return;
     const userMsg: Message = {
@@ -243,38 +268,60 @@ export default function RightPanel() {
                         : "bg-wm-bg text-gray-300"
                     }`}
                   >
-                    {msg.content}
+                    {/* Windsurf-style Context Pill */}
+                    {msg.role === "user" && msg.content.includes("I am looking at") && (
+                      <div className="flex items-center gap-1.5 mb-2 px-2 py-1 bg-wm-purple-500/10 border border-wm-purple-500/30 rounded-md text-[10px] text-wm-purple-300 w-fit">
+                        <Code2 size={10} />
+                        <span>Current File Context</span>
+                      </div>
+                    )}
+                    
+                    {/* Tool Call Status for Assistant */}
+                    {msg.role === "assistant" && msg.content.includes("Holographic") && (
+                      <div className="flex flex-col gap-2 mb-2">
+                        <div className="flex items-center gap-2 text-[10px] bg-[#0d1117] border border-gray-800 rounded p-1.5 text-gray-400">
+                          <Search size={10} className="text-blue-400" />
+                          <span className="font-mono">arrow_ipc.search_holographic()</span>
+                          <span className="ml-auto text-green-400 flex items-center gap-1"><Check size={10}/> Done</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] bg-[#0d1117] border border-gray-800 rounded p-1.5 text-gray-400">
+                          <Terminal size={10} className="text-purple-400" />
+                          <span className="font-mono">sutra.evaluate_intent()</span>
+                          <span className="ml-auto text-green-400 flex items-center gap-1"><Check size={10}/> Safe</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {msg.content.replace(/I am looking at `.*`\.\s*/, '')}
                   </div>
                 </div>
               ))}
               <div ref={messagesEndRef} />
             </div>
 
+            
+            <CascadeActionPanel />
             {/* Input */}
-            <div className="p-3 border-t border-wm-border flex-shrink-0">
-              <div className="flex gap-2">
+            <div className="p-3 border-t border-wm-border bg-wm-bg-panel">
+              <div className="relative">
                 <input
+                  id="ai-chat-input"
                   type="text"
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                  placeholder="Ask anything..."
-                  className="flex-1 px-3 py-2 rounded-lg bg-wm-bg border border-wm-border text-sm focus:border-wm-purple-500 focus:outline-none text-gray-200 placeholder-gray-500"
+                  onChange={handleInput}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleSend(); }}
+                  placeholder="Command the swarm..."
+                  className="w-full bg-wm-bg border border-wm-border rounded-lg pl-3 pr-10 py-2 text-sm focus:outline-none focus:border-wm-purple-500/50"
                 />
-                <button
+                <button 
                   onClick={handleSend}
-                  disabled={!input.trim()}
-                  className="px-3 py-2 rounded-lg bg-wm-purple-500 hover:bg-wm-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-wm-purple-400 hover:text-wm-purple-300 p-1"
                 >
                   <Send size={14} />
                 </button>
               </div>
             </div>
+
           </>
         )}
 
@@ -351,7 +398,9 @@ export default function RightPanel() {
           </div>
         )}
 
-        {activeTab === "orchestrator" && (
+        {activeTab === "orchestrator" && <SwarmOrchestrator />}
+      {/* Legacy orchestrator stub (removed) */}
+      {false && (
           <div className="flex-1 overflow-auto p-3">
             <div className="text-xs text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <Users size={12} />

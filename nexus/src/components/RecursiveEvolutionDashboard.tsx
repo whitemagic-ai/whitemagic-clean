@@ -3,7 +3,7 @@
  * Real-time monitoring of pattern discovery, adaptations, and system coherence
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Pattern {
   id: string;
@@ -31,8 +31,8 @@ interface Metrics {
 }
 
 export const RecursiveEvolutionDashboard: React.FC = () => {
-  const [patterns, setPatterns] = useState<Pattern[]>([]);
-  const [adaptations, setAdaptations] = useState<Adaptation[]>([]);
+  const [patterns] = useState<Pattern[]>([]);
+  const [adaptations] = useState<Adaptation[]>([]);
   const [metrics, setMetrics] = useState<Metrics>({
     events_processed: 0,
     patterns_discovered: 0,

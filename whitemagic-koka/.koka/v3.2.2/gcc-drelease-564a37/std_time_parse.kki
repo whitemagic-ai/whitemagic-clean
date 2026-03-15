@@ -1,0 +1,843 @@
+// Parsing of time strings.
+module interface std/time/parse
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/vector = std/core/vector pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/core = std/core = "";
+import std/text/parse = std/text/parse = "";
+import std/num/ddouble = std/num/ddouble = "";
+import std/time/duration = std/time/duration = "";
+import std/time/instant = std/time/instant = "";
+import std/time/date = std/time/date = "";
+import std/time/calendar = std/time/calendar = "";
+import std/time/calendars = std/time/calendars = "";
+import std/time/time = std/time/time = "";
+import std/time/locale = std/time/locale = "";
+import std/time/utc = std/time/utc = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+ 
+//------------------------------
+//#kki: type declarations
+ 
+ 
+//------------------------------
+//#kki: declarations
+ 
+// monadic lift
+fun @mlift-optchar@11094[1,0,1,0] : (c : std/core/types/char, @y-x10668 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+fun optchar[120,5,120,11] : (c : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// monadic lift
+fun @mlift-dash@11095[1,0,1,0] : (@y-x10671 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+fun dash[114,5,114,8] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// monadic lift
+fun @mlift-colon@11096[1,0,1,0] : (@y-x10674 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+fun colon[117,5,117,9] : () -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// lifted local: @lift-num@10608, num, @spec-x10156
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10151, using:
+// @uniq-f@10151 = fn<(std/text/parse/parse :: (E, V) -> V)>(x: int, d: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@0: int, y: int){
+//     (std/core/int/int-add(x@0, y));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x, 10)), d);
+// }
+fun @lift-num@10609[1,0,1,0] : (@uniq-xs@10149 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10150 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: num, @spec-x10148
+// specialized: std/core/list/foldl, on parameters @uniq-f@10145, using:
+// @uniq-f@10145 = fn<(std/text/parse/parse :: (E, V) -> V)>(x: int, d: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@0: int, y: int){
+//     (std/core/int/int-add(x@0, y));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x, 10)), d);
+// }
+fun @lift-num@10608[1,0,1,0] : (@uniq-xs@10143 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10144 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-num@10611@11097[1,0,1,0] : (@uniq-acc@10163 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10162 : std/core/types/int, @uniq-x@10170 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-num@10610, num, @spec-x10173
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10164, using:
+// @uniq-p@10164 = std/text/parse/digit
+fun @lift-num@10611[1,0,1,0] : (@uniq-n@10162 : std/core/types/int, @uniq-acc@10163 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: num, @spec-x10161
+// specialized: std/text/parse/count, on parameters @uniq-p@10160, using:
+// @uniq-p@10160 = std/text/parse/digit
+fun @lift-num@10610[1,0,1,0] : (@uniq-n@10159 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// monadic lift
+fun @mlift-num@11098[1,0,1,0] : (@y-x10685 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+fun num[123,5,123,7] : (n : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: @lift-ptime@10612, hour, ptime, @spec-x10187
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10182, using:
+// @uniq-f@10182 = fn<(std/text/parse/parse :: (E, V) -> V)>(x: int, d: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@0: int, y: int){
+//     (std/core/int/int-add(x@0, y));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x, 10)), d);
+// }
+fun @lift-ptime@10613[1,0,1,0] : (@uniq-xs@10180 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10181 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: hour, ptime, @spec-x10179
+// specialized: std/core/list/foldl, on parameters @uniq-f@10176, using:
+// @uniq-f@10176 = fn<(std/text/parse/parse :: (E, V) -> V)>(x: int, d: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@0: int, y: int){
+//     (std/core/int/int-add(x@0, y));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x, 10)), d);
+// }
+fun @lift-ptime@10612[1,0,1,0] : (@uniq-xs@10174 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10175 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-ptime@10615@11099[1,0,1,0] : (@uniq-acc@10194 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10193 : std/core/types/int, @uniq-x@10201 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-ptime@10614, hour, ptime, @spec-x10204
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10195, using:
+// @uniq-p@10195 = std/text/parse/digit
+fun @lift-ptime@10615[1,0,1,0] : (@uniq-n@10193 : std/core/types/int, @uniq-acc@10194 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: hour, ptime, @spec-x10192
+// specialized: std/text/parse/count, on parameters @uniq-p@10191, using:
+// @uniq-p@10191 = std/text/parse/digit
+fun @lift-ptime@10614[1,0,1,0] : (@uniq-n@10190 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-ptime@10616, min, ptime, @spec-x10218
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10213, using:
+// @uniq-f@10213 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@1: int, d@0: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@2: int, y@0: int){
+//     (std/core/int/int-add(x@2, y@0));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@1, 10)), d@0);
+// }
+fun @lift-ptime@10617[1,0,1,0] : (@uniq-xs@10211 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10212 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: min, ptime, @spec-x10210
+// specialized: std/core/list/foldl, on parameters @uniq-f@10207, using:
+// @uniq-f@10207 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@1: int, d@0: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@2: int, y@0: int){
+//     (std/core/int/int-add(x@2, y@0));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@1, 10)), d@0);
+// }
+fun @lift-ptime@10616[1,0,1,0] : (@uniq-xs@10205 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10206 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-ptime@10619@11100[1,0,1,0] : (@uniq-acc@10225 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10224 : std/core/types/int, @uniq-x@10232 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-ptime@10618, min, ptime, @spec-x10235
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10226, using:
+// @uniq-p@10226 = std/text/parse/digit
+fun @lift-ptime@10619[1,0,1,0] : (@uniq-n@10224 : std/core/types/int, @uniq-acc@10225 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: min, ptime, @spec-x10223
+// specialized: std/text/parse/count, on parameters @uniq-p@10222, using:
+// @uniq-p@10222 = std/text/parse/digit
+fun @lift-ptime@10618[1,0,1,0] : (@uniq-n@10221 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-ptime@10620, s, secs, ptime, @spec-x10249
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10244, using:
+// @uniq-f@10244 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@3: int, d@1: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@4: int, y@1: int){
+//     (std/core/int/int-add(x@4, y@1));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@3, 10)), d@1);
+// }
+fun @lift-ptime@10621[1,0,1,0] : (@uniq-xs@10242 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10243 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: s, secs, ptime, @spec-x10241
+// specialized: std/core/list/foldl, on parameters @uniq-f@10238, using:
+// @uniq-f@10238 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@3: int, d@1: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@4: int, y@1: int){
+//     (std/core/int/int-add(x@4, y@1));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@3, 10)), d@1);
+// }
+fun @lift-ptime@10620[1,0,1,0] : (@uniq-xs@10236 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10237 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-ptime@10623@11101[1,0,1,0] : (@uniq-acc@10256 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10255 : std/core/types/int, @uniq-x@10263 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-ptime@10622, s, secs, ptime, @spec-x10266
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10257, using:
+// @uniq-p@10257 = std/text/parse/digit
+fun @lift-ptime@10623[1,0,1,0] : (@uniq-n@10255 : std/core/types/int, @uniq-acc@10256 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: s, secs, ptime, @spec-x10254
+// specialized: std/text/parse/count, on parameters @uniq-p@10253, using:
+// @uniq-p@10253 = std/text/parse/digit
+fun @lift-ptime@10622[1,0,1,0] : (@uniq-n@10252 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-ptime@10624, tzhour, ps@10020, ptime, @spec-x10280
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10275, using:
+// @uniq-f@10275 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@6: int, d@2: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@7: int, y@2: int){
+//     (std/core/int/int-add(x@7, y@2));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@6, 10)), d@2);
+// }
+fun @lift-ptime@10625[1,0,1,0] : (@uniq-xs@10273 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10274 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: tzhour, ps@10020, ptime, @spec-x10272
+// specialized: std/core/list/foldl, on parameters @uniq-f@10269, using:
+// @uniq-f@10269 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@6: int, d@2: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@7: int, y@2: int){
+//     (std/core/int/int-add(x@7, y@2));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@6, 10)), d@2);
+// }
+fun @lift-ptime@10624[1,0,1,0] : (@uniq-xs@10267 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10268 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-ptime@10627@11102[1,0,1,0] : (@uniq-acc@10287 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10286 : std/core/types/int, @uniq-x@10294 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-ptime@10626, tzhour, ps@10020, ptime, @spec-x10297
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10288, using:
+// @uniq-p@10288 = std/text/parse/digit
+fun @lift-ptime@10627[1,0,1,0] : (@uniq-n@10286 : std/core/types/int, @uniq-acc@10287 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: tzhour, ps@10020, ptime, @spec-x10285
+// specialized: std/text/parse/count, on parameters @uniq-p@10284, using:
+// @uniq-p@10284 = std/text/parse/digit
+fun @lift-ptime@10626[1,0,1,0] : (@uniq-n@10283 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-ptime@10628, tzmin, ps@10020, ptime, @spec-x10311
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10306, using:
+// @uniq-f@10306 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@8: int, d@3: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@9: int, y@3: int){
+//     (std/core/int/int-add(x@9, y@3));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@8, 10)), d@3);
+// }
+fun @lift-ptime@10629[1,0,1,0] : (@uniq-xs@10304 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10305 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: tzmin, ps@10020, ptime, @spec-x10303
+// specialized: std/core/list/foldl, on parameters @uniq-f@10300, using:
+// @uniq-f@10300 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@8: int, d@3: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@9: int, y@3: int){
+//     (std/core/int/int-add(x@9, y@3));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@8, 10)), d@3);
+// }
+fun @lift-ptime@10628[1,0,1,0] : (@uniq-xs@10298 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10299 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-ptime@10631@11103[1,0,1,0] : (@uniq-acc@10318 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10317 : std/core/types/int, @uniq-x@10325 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-ptime@10630, tzmin, ps@10020, ptime, @spec-x10328
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10319, using:
+// @uniq-p@10319 = std/text/parse/digit
+fun @lift-ptime@10631[1,0,1,0] : (@uniq-n@10317 : std/core/types/int, @uniq-acc@10318 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: tzmin, ps@10020, ptime, @spec-x10316
+// specialized: std/text/parse/count, on parameters @uniq-p@10315, using:
+// @uniq-p@10315 = std/text/parse/digit
+fun @lift-ptime@10630[1,0,1,0] : (@uniq-n@10314 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// monadic lift
+fun @mlift-ptime@11104[1,0,1,0] : (tzmin : std/core/types/int, @c-x10768 : std/core/types/int) -> std/time/calendar/timezone;
+// monadic lift
+fun @mlift-ptime@11105[1,0,1,0] : (@y-x10765 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-ptime@11106[1,0,1,0] : (sign : std/core/types/char, tzhour : std/core/types/int, tzmin : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/calendar/timezone;
+// monadic lift
+fun @mlift-ptime@11107[1,0,1,0] : (@y-x10761 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// monadic lift
+fun @mlift-ptime@11108[1,0,1,0] : (sign : std/core/types/char, tzhour : std/core/types/int, wild_@3 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/calendar/timezone;
+// monadic lift
+fun @mlift-ptime@11109[1,0,1,0] : (@y-x10758 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-ptime@11110[1,0,1,0] : (sign : std/core/types/char, tzhour : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/calendar/timezone;
+// monadic lift
+fun @mlift-ptime@11111[1,0,1,0] : (sign : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/calendar/timezone;
+// monadic lift
+fun @mlift-ptime@11112[1,0,1,0] : (@c-x10772 : std/core/types/char) -> std/time/calendar/timezone;
+// monadic lift
+fun @mlift-ptime@11113[1,0,1,0] : (@y-x10770 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/calendar/timezone;
+// monadic lift
+fun @mlift-ptime@11114[1,0,1,0] : (@c-x10740 : std/core/types/int, @c-x10756 : std/num/ddouble/ddouble, cal : std/time/calendar/calendar, date : std/time/date/date, hour : std/core/types/int, @c-x10776 : std/time/calendar/timezone) -> std/time/time/time;
+// monadic lift
+fun @mlift-ptime@11115[1,0,1,0] : (s : std/core/types/int, @c-x10755 : std/num/ddouble/ddouble) -> std/num/ddouble/ddouble;
+// monadic lift
+fun @mlift-ptime@11116[1,0,1,0] : (wild_@2 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/core/types/string;
+// monadic lift
+fun @mlift-ptime@11117[1,0,1,0] : (s : std/core/types/int, @c-x10754 : std/core/types/string) -> std/num/ddouble/ddouble;
+// monadic lift
+fun @mlift-ptime@11118[1,0,1,0] : (s : std/core/types/int, @y-x10751 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/num/ddouble/ddouble;
+// monadic lift
+fun @mlift-ptime@11119[1,0,1,0] : (@y-x10747 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-ptime@11120[1,0,1,0] : (s : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/num/ddouble/ddouble;
+// monadic lift
+fun @mlift-ptime@11121[1,0,1,0] : (@c-x10740 : std/core/types/int, cal : std/time/calendar/calendar, date : std/time/date/date, hour : std/core/types/int, @c-x10756 : std/num/ddouble/ddouble) -> std/time/time/time;
+// monadic lift
+fun @mlift-ptime@11122[1,0,1,0] : (@c-x10740 : std/core/types/int, cal : std/time/calendar/calendar, date : std/time/date/date, hour : std/core/types/int, @y-x10746 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+// monadic lift
+fun @mlift-ptime@11123[1,0,1,0] : (@y-x10741 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// monadic lift
+fun @mlift-ptime@11124[1,0,1,0] : (@c-x10740 : std/core/types/int, cal : std/time/calendar/calendar, date : std/time/date/date, hour : std/core/types/int, wild_@1 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+// monadic lift
+fun @mlift-ptime@11125[1,0,1,0] : (@y-x10737 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-ptime@11126[1,0,1,0] : (cal : std/time/calendar/calendar, date : std/time/date/date, hour : std/core/types/int, @c-x10740 : std/core/types/int) -> std/time/time/time;
+// monadic lift
+fun @mlift-ptime@11127[1,0,1,0] : (cal : std/time/calendar/calendar, date : std/time/date/date, hour : std/core/types/int, @y-x10736 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+// monadic lift
+fun @mlift-ptime@11128[1,0,1,0] : (@y-x10731 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// monadic lift
+fun @mlift-ptime@11129[1,0,1,0] : (cal : std/time/calendar/calendar, date : std/time/date/date, hour : std/core/types/int, wild_@0 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+// monadic lift
+fun @mlift-ptime@11130[1,0,1,0] : (@y-x10728 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-ptime@11131[1,0,1,0] : (cal : std/time/calendar/calendar, date : std/time/date/date, hour : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+// monadic lift
+fun @mlift-ptime@11132[1,0,1,0] : (cal : std/time/calendar/calendar, date : std/time/date/date, wild_ : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+fun ptime[93,5,93,9] : (date : std/time/date/date, cal : std/time/calendar/calendar) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+// lifted local: @lift-piso@10632, year, piso, @spec-x10342
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10337, using:
+// @uniq-f@10337 = fn<(std/text/parse/parse :: (E, V) -> V)>(x: int, d: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@0: int, y: int){
+//     (std/core/int/int-add(x@0, y));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x, 10)), d);
+// }
+fun @lift-piso@10633[1,0,1,0] : (@uniq-xs@10335 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10336 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: year, piso, @spec-x10334
+// specialized: std/core/list/foldl, on parameters @uniq-f@10331, using:
+// @uniq-f@10331 = fn<(std/text/parse/parse :: (E, V) -> V)>(x: int, d: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@0: int, y: int){
+//     (std/core/int/int-add(x@0, y));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x, 10)), d);
+// }
+fun @lift-piso@10632[1,0,1,0] : (@uniq-xs@10329 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10330 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-piso@10635@11133[1,0,1,0] : (@uniq-acc@10349 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10348 : std/core/types/int, @uniq-x@10356 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10634, year, piso, @spec-x10359
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10350, using:
+// @uniq-p@10350 = std/text/parse/digit
+fun @lift-piso@10635[1,0,1,0] : (@uniq-n@10348 : std/core/types/int, @uniq-acc@10349 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: year, piso, @spec-x10347
+// specialized: std/text/parse/count, on parameters @uniq-p@10346, using:
+// @uniq-p@10346 = std/text/parse/digit
+fun @lift-piso@10634[1,0,1,0] : (@uniq-n@10345 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10636, m, ps@10029, piso, @spec-x10373
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10368, using:
+// @uniq-f@10368 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@1: int, d@0: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@2: int, y@0: int){
+//     (std/core/int/int-add(x@2, y@0));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@1, 10)), d@0);
+// }
+fun @lift-piso@10637[1,0,1,0] : (@uniq-xs@10366 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10367 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: m, ps@10029, piso, @spec-x10365
+// specialized: std/core/list/foldl, on parameters @uniq-f@10362, using:
+// @uniq-f@10362 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@1: int, d@0: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@2: int, y@0: int){
+//     (std/core/int/int-add(x@2, y@0));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@1, 10)), d@0);
+// }
+fun @lift-piso@10636[1,0,1,0] : (@uniq-xs@10360 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10361 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-piso@10639@11134[1,0,1,0] : (@uniq-acc@10380 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10379 : std/core/types/int, @uniq-x@10387 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10638, m, ps@10029, piso, @spec-x10390
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10381, using:
+// @uniq-p@10381 = std/text/parse/digit
+fun @lift-piso@10639[1,0,1,0] : (@uniq-n@10379 : std/core/types/int, @uniq-acc@10380 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: m, ps@10029, piso, @spec-x10378
+// specialized: std/text/parse/count, on parameters @uniq-p@10377, using:
+// @uniq-p@10377 = std/text/parse/digit
+fun @lift-piso@10638[1,0,1,0] : (@uniq-n@10376 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10640, d@2, ps@10029, piso, @spec-x10404
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10399, using:
+// @uniq-f@10399 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@3: int, d@1: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@4: int, y@1: int){
+//     (std/core/int/int-add(x@4, y@1));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@3, 10)), d@1);
+// }
+fun @lift-piso@10641[1,0,1,0] : (@uniq-xs@10397 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10398 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: d@2, ps@10029, piso, @spec-x10396
+// specialized: std/core/list/foldl, on parameters @uniq-f@10393, using:
+// @uniq-f@10393 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@3: int, d@1: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@4: int, y@1: int){
+//     (std/core/int/int-add(x@4, y@1));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@3, 10)), d@1);
+// }
+fun @lift-piso@10640[1,0,1,0] : (@uniq-xs@10391 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10392 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-piso@10643@11135[1,0,1,0] : (@uniq-acc@10411 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10410 : std/core/types/int, @uniq-x@10418 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10642, d@2, ps@10029, piso, @spec-x10421
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10412, using:
+// @uniq-p@10412 = std/text/parse/digit
+fun @lift-piso@10643[1,0,1,0] : (@uniq-n@10410 : std/core/types/int, @uniq-acc@10411 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: d@2, ps@10029, piso, @spec-x10409
+// specialized: std/text/parse/count, on parameters @uniq-p@10408, using:
+// @uniq-p@10408 = std/text/parse/digit
+fun @lift-piso@10642[1,0,1,0] : (@uniq-n@10407 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10644, w, ps@10029, piso, @spec-x10435
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10430, using:
+// @uniq-f@10430 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@5: int, d@3: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@6: int, y@2: int){
+//     (std/core/int/int-add(x@6, y@2));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@5, 10)), d@3);
+// }
+fun @lift-piso@10645[1,0,1,0] : (@uniq-xs@10428 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10429 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: w, ps@10029, piso, @spec-x10427
+// specialized: std/core/list/foldl, on parameters @uniq-f@10424, using:
+// @uniq-f@10424 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@5: int, d@3: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@6: int, y@2: int){
+//     (std/core/int/int-add(x@6, y@2));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@5, 10)), d@3);
+// }
+fun @lift-piso@10644[1,0,1,0] : (@uniq-xs@10422 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10423 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-piso@10647@11136[1,0,1,0] : (@uniq-acc@10442 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10441 : std/core/types/int, @uniq-x@10449 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10646, w, ps@10029, piso, @spec-x10452
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10443, using:
+// @uniq-p@10443 = std/text/parse/digit
+fun @lift-piso@10647[1,0,1,0] : (@uniq-n@10441 : std/core/types/int, @uniq-acc@10442 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: w, ps@10029, piso, @spec-x10440
+// specialized: std/text/parse/count, on parameters @uniq-p@10439, using:
+// @uniq-p@10439 = std/text/parse/digit
+fun @lift-piso@10646[1,0,1,0] : (@uniq-n@10438 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10648, d@0@0, ps@10029, piso, @spec-x10466
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10461, using:
+// @uniq-f@10461 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@7: int, d@4: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@8: int, y@3: int){
+//     (std/core/int/int-add(x@8, y@3));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@7, 10)), d@4);
+// }
+fun @lift-piso@10649[1,0,1,0] : (@uniq-xs@10459 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10460 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: d@0@0, ps@10029, piso, @spec-x10458
+// specialized: std/core/list/foldl, on parameters @uniq-f@10455, using:
+// @uniq-f@10455 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@7: int, d@4: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@8: int, y@3: int){
+//     (std/core/int/int-add(x@8, y@3));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@7, 10)), d@4);
+// }
+fun @lift-piso@10648[1,0,1,0] : (@uniq-xs@10453 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10454 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-piso@10651@11137[1,0,1,0] : (@uniq-acc@10473 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10472 : std/core/types/int, @uniq-x@10480 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10650, d@0@0, ps@10029, piso, @spec-x10483
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10474, using:
+// @uniq-p@10474 = std/text/parse/digit
+fun @lift-piso@10651[1,0,1,0] : (@uniq-n@10472 : std/core/types/int, @uniq-acc@10473 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: d@0@0, ps@10029, piso, @spec-x10471
+// specialized: std/text/parse/count, on parameters @uniq-p@10470, using:
+// @uniq-p@10470 = std/text/parse/digit
+fun @lift-piso@10650[1,0,1,0] : (@uniq-n@10469 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10652, d@1@0, ps@10029, piso, @spec-x10497
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10492, using:
+// @uniq-f@10492 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@9: int, d@5: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@10: int, y@4: int){
+//     (std/core/int/int-add(x@10, y@4));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@9, 10)), d@5);
+// }
+fun @lift-piso@10653[1,0,1,0] : (@uniq-xs@10490 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10491 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: d@1@0, ps@10029, piso, @spec-x10489
+// specialized: std/core/list/foldl, on parameters @uniq-f@10486, using:
+// @uniq-f@10486 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@9: int, d@5: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@10: int, y@4: int){
+//     (std/core/int/int-add(x@10, y@4));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@9, 10)), d@5);
+// }
+fun @lift-piso@10652[1,0,1,0] : (@uniq-xs@10484 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10485 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-piso@10655@11138[1,0,1,0] : (@uniq-acc@10504 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10503 : std/core/types/int, @uniq-x@10511 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10654, d@1@0, ps@10029, piso, @spec-x10514
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10505, using:
+// @uniq-p@10505 = std/text/parse/digit
+fun @lift-piso@10655[1,0,1,0] : (@uniq-n@10503 : std/core/types/int, @uniq-acc@10504 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: d@1@0, ps@10029, piso, @spec-x10502
+// specialized: std/text/parse/count, on parameters @uniq-p@10501, using:
+// @uniq-p@10501 = std/text/parse/digit
+fun @lift-piso@10654[1,0,1,0] : (@uniq-n@10500 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10656, m@0, ps@10029, piso, @spec-x10528
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10523, using:
+// @uniq-f@10523 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@11: int, d@6: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@12: int, y@5: int){
+//     (std/core/int/int-add(x@12, y@5));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@11, 10)), d@6);
+// }
+fun @lift-piso@10657[1,0,1,0] : (@uniq-xs@10521 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10522 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: m@0, ps@10029, piso, @spec-x10520
+// specialized: std/core/list/foldl, on parameters @uniq-f@10517, using:
+// @uniq-f@10517 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@11: int, d@6: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@12: int, y@5: int){
+//     (std/core/int/int-add(x@12, y@5));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@11, 10)), d@6);
+// }
+fun @lift-piso@10656[1,0,1,0] : (@uniq-xs@10515 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10516 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-piso@10659@11139[1,0,1,0] : (@uniq-acc@10535 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10534 : std/core/types/int, @uniq-x@10542 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10658, m@0, ps@10029, piso, @spec-x10545
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10536, using:
+// @uniq-p@10536 = std/text/parse/digit
+fun @lift-piso@10659[1,0,1,0] : (@uniq-n@10534 : std/core/types/int, @uniq-acc@10535 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: m@0, ps@10029, piso, @spec-x10533
+// specialized: std/text/parse/count, on parameters @uniq-p@10532, using:
+// @uniq-p@10532 = std/text/parse/digit
+fun @lift-piso@10658[1,0,1,0] : (@uniq-n@10531 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10660, d@2@0, ps@10029, piso, @spec-x10559
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10554, using:
+// @uniq-f@10554 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@13: int, d@7: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@14: int, y@6: int){
+//     (std/core/int/int-add(x@14, y@6));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@13, 10)), d@7);
+// }
+fun @lift-piso@10661[1,0,1,0] : (@uniq-xs@10552 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10553 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: d@2@0, ps@10029, piso, @spec-x10551
+// specialized: std/core/list/foldl, on parameters @uniq-f@10548, using:
+// @uniq-f@10548 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@13: int, d@7: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@14: int, y@6: int){
+//     (std/core/int/int-add(x@14, y@6));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@13, 10)), d@7);
+// }
+fun @lift-piso@10660[1,0,1,0] : (@uniq-xs@10546 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10547 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-piso@10663@11140[1,0,1,0] : (@uniq-acc@10566 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10565 : std/core/types/int, @uniq-x@10573 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10662, d@2@0, ps@10029, piso, @spec-x10576
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10567, using:
+// @uniq-p@10567 = std/text/parse/digit
+fun @lift-piso@10663[1,0,1,0] : (@uniq-n@10565 : std/core/types/int, @uniq-acc@10566 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: d@2@0, ps@10029, piso, @spec-x10564
+// specialized: std/text/parse/count, on parameters @uniq-p@10563, using:
+// @uniq-p@10563 = std/text/parse/digit
+fun @lift-piso@10662[1,0,1,0] : (@uniq-n@10562 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10664, d@3@0, ps@10029, piso, @spec-x10590
+// specialized: std/core/list/@unroll-foldl@10005, on parameters @uniq-f@10585, using:
+// @uniq-f@10585 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@15: int, d@8: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@16: int, y@7: int){
+//     (std/core/int/int-add(x@16, y@7));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@15, 10)), d@8);
+// }
+fun @lift-piso@10665[1,0,1,0] : (@uniq-xs@10583 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10584 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// lifted local: d@3@0, ps@10029, piso, @spec-x10582
+// specialized: std/core/list/foldl, on parameters @uniq-f@10579, using:
+// @uniq-f@10579 = fn<(std/text/parse/parse :: (E, V) -> V)>(x@15: int, d@8: int){
+//   std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(x : int, y : int) -> int,(x : int, y : int) -> (std/text/parse/parse :: (E, V) -> V) int>((fn(x@16: int, y@7: int){
+//     (std/core/int/int-add(x@16, y@7));
+//   }))((std/core/types/@open<(total :: E),(std/text/parse/parse :: (E, V) -> V),(int, int) -> int,(int, int) -> (std/text/parse/parse :: (E, V) -> V) int>(std/core/int/(*))(x@15, 10)), d@8);
+// }
+fun @lift-piso@10664[1,0,1,0] : (@uniq-xs@10577 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10578 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-lift-piso@10667@11141[1,0,1,0] : (@uniq-acc@10597 : (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-n@10596 : std/core/types/int, @uniq-x@10604 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: @lift-piso@10666, d@3@0, ps@10029, piso, @spec-x10607
+// specialized: std/text/parse/count-acc, on parameters @uniq-p@10598, using:
+// @uniq-p@10598 = std/text/parse/digit
+fun @lift-piso@10667[1,0,1,0] : (@uniq-n@10596 : std/core/types/int, @uniq-acc@10597 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// lifted local: d@3@0, ps@10029, piso, @spec-x10595
+// specialized: std/text/parse/count, on parameters @uniq-p@10594, using:
+// @uniq-p@10594 = std/text/parse/digit
+fun @lift-piso@10666[1,0,1,0] : (@uniq-n@10593 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/types/list :: V -> V)<std/core/types/int>;
+// monadic lift
+fun @mlift-piso@11142[1,0,1,0] : (@y-x10864 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-piso@11143[1,0,1,0] : (calendar : std/time/calendar/calendar, m : std/core/types/int, year : std/core/types/int, d@2 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11144[1,0,1,0] : (@y-x10860 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// monadic lift
+fun @mlift-piso@11145[1,0,1,0] : (calendar : std/time/calendar/calendar, m : std/core/types/int, year : std/core/types/int, wild_@0 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11146[1,0,1,0] : (@y-x10857 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-piso@11147[1,0,1,0] : (calendar : std/time/calendar/calendar, year : std/core/types/int, m : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11148[1,0,1,0] : (@y-x10877 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-piso@11149[1,0,1,0] : (w : std/core/types/int, year : std/core/types/int, @c-x10880 : std/core/types/int) -> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11150[1,0,1,0] : (w : std/core/types/int, year : std/core/types/int, @y-x10876 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11151[1,0,1,0] : (@y-x10871 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// monadic lift
+fun @mlift-piso@11152[1,0,1,0] : (w : std/core/types/int, year : std/core/types/int, wild_@2 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11153[1,0,1,0] : (@y-x10868 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-piso@11154[1,0,1,0] : (year : std/core/types/int, w : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11155[1,0,1,0] : (year : std/core/types/int, wild_@1 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11156[1,0,1,0] : (@y-x10881 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-piso@11157[1,0,1,0] : (calendar : std/time/calendar/calendar, year : std/core/types/int, d@1@0 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11158[1,0,1,0] : (@y-x10892 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-piso@11159[1,0,1,0] : (m@0 : std/core/types/int, year : std/core/types/int, d@2@0 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11160[1,0,1,0] : (@y-x10888 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// monadic lift
+fun @mlift-piso@11161[1,0,1,0] : (m@0 : std/core/types/int, year : std/core/types/int, wild_@4 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11162[1,0,1,0] : (@y-x10885 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-piso@11163[1,0,1,0] : (year : std/core/types/int, m@0 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11164[1,0,1,0] : (year : std/core/types/int, wild_@3 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11165[1,0,1,0] : (@y-x10896 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-piso@11166[1,0,1,0] : (year : std/core/types/int, d@3@0 : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11167[1,0,1,0] : (year : std/core/types/int, wild_@5 : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/time/date/date, std/time/calendar/calendar);
+// monadic lift
+fun @mlift-piso@11168[1,0,1,0] : (cal : std/time/calendar/calendar, date : std/time/date/date, default@4@10041 : std/time/time/time, @y-x10905 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+// monadic lift
+fun @mlift-piso@11169[1,0,1,0] : (cal : std/time/calendar/calendar, date : std/time/date/date, default@4@10041 : std/time/time/time) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/time/time/time;
+// monadic lift
+fun @mlift-piso@11170[1,0,1,0] : (@c-x10902 : (std/time/date/date, std/time/calendar/calendar)) -> std/time/time/time;
+// monadic lift
+fun @mlift-piso@11171[1,0,1,0] : (@y-x10853 : std/core/types/bool) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/char;
+// monadic lift
+fun @mlift-piso@11172[1,0,1,0] : (calendar : std/time/calendar/calendar, year : std/core/types/int, wild_ : std/core/types/char) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+// monadic lift
+fun @mlift-piso@11173[1,0,1,0] : (@y-x10850 : (std/core/types/list :: V -> V)<std/core/types/int>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/int;
+// monadic lift
+fun @mlift-piso@11174[1,0,1,0] : (calendar : std/time/calendar/calendar, year : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+fun piso[62,5,62,8] : (calendar : std/time/calendar/calendar) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/time/time/time;
+// monadic lift
+fun @mlift-parse-iso@11175[1,0,1,0] : (@y-x10910 : (std/text/parse/parse-error :: V -> V)<std/time/time/time>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/core/types/maybe :: V -> V)<std/time/time/time>;
+pub fun parse-iso[59,9,59,17] : (s : std/core/types/string, calendar : (std/core/types/@optional :: V -> V)<std/time/calendar/calendar>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/core/types/maybe :: V -> V)<std/time/time/time>;
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+fun optchar // inline size: 7
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(c: std/core/types/char){
+    match ((std/core/hnd/@perform0<std/core/types/bool,<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>,(std/text/parse/parse :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(std/text/parse/parse :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(std/text/parse/parse :: (E, V) -> V)>>((std/core/hnd/@evv-at<(std/text/parse/parse :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), std/text/parse/#pick/@select))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> std/text/parse/char(c);
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+         -> c;
+    };
+  };
+fun dash // inline size: 7
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(){
+    match ((std/core/hnd/@perform0<std/core/types/bool,<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>,(std/text/parse/parse :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(std/text/parse/parse :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(std/text/parse/parse :: (E, V) -> V)>>((std/core/hnd/@evv-at<(std/text/parse/parse :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), std/text/parse/#pick/@select))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> std/text/parse/char('-');
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+         -> '-';
+    };
+  };
+fun colon // inline size: 7
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(){
+    match ((std/core/hnd/@perform0<std/core/types/bool,<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>,(std/text/parse/parse :: (E, V) -> V)>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>,(i : std/core/hnd/ev-index) -> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(std/text/parse/parse :: (E, V) -> V)>,(i : std/core/hnd/ev-index) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> (std/core/hnd/ev :: ((E, V) -> V) -> V)<(std/text/parse/parse :: (E, V) -> V)>>((std/core/hnd/@evv-at<(std/text/parse/parse :: (E, V) -> V)>))((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>,(i : std/core/types/int) -> std/core/types/ssize_t,(i : std/core/types/int) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>> std/core/types/ssize_t>(std/core/types/@make-ssize_t)(0)))), std/text/parse/#pick/@select))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> std/text/parse/char(':');
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+         -> ':';
+    };
+  };
+fun @lift-num@10608 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10143: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10144: std/core/types/int){
+    match (@uniq-xs@10143) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10146: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10144;
+      (@uniq-pat@10147: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-num@10609(@uniq-xs@10143, @uniq-z@10144);
+    };
+  };
+fun @lift-num@10610 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10159: std/core/types/int){
+    std/time/parse/@lift-num@10611(@uniq-n@10159, (std/core/types/Nil<std/core/types/int>));
+  };
+fun num // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(n: std/core/types/int){
+    std/time/parse/@lift-num@10608((std/time/parse/@lift-num@10610(n)), 0);
+  };
+fun @lift-ptime@10612 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10174: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10175: std/core/types/int){
+    match (@uniq-xs@10174) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10177: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10175;
+      (@uniq-pat@10178: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-ptime@10613(@uniq-xs@10174, @uniq-z@10175);
+    };
+  };
+fun @lift-ptime@10614 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10190: std/core/types/int){
+    std/time/parse/@lift-ptime@10615(@uniq-n@10190, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-ptime@10616 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10205: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10206: std/core/types/int){
+    match (@uniq-xs@10205) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10208: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10206;
+      (@uniq-pat@10209: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-ptime@10617(@uniq-xs@10205, @uniq-z@10206);
+    };
+  };
+fun @lift-ptime@10618 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10221: std/core/types/int){
+    std/time/parse/@lift-ptime@10619(@uniq-n@10221, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-ptime@10620 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10236: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10237: std/core/types/int){
+    match (@uniq-xs@10236) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10239: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10237;
+      (@uniq-pat@10240: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-ptime@10621(@uniq-xs@10236, @uniq-z@10237);
+    };
+  };
+fun @lift-ptime@10622 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10252: std/core/types/int){
+    std/time/parse/@lift-ptime@10623(@uniq-n@10252, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-ptime@10624 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10267: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10268: std/core/types/int){
+    match (@uniq-xs@10267) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10270: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10268;
+      (@uniq-pat@10271: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-ptime@10625(@uniq-xs@10267, @uniq-z@10268);
+    };
+  };
+fun @lift-ptime@10626 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10283: std/core/types/int){
+    std/time/parse/@lift-ptime@10627(@uniq-n@10283, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-ptime@10628 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10298: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10299: std/core/types/int){
+    match (@uniq-xs@10298) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10301: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10299;
+      (@uniq-pat@10302: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-ptime@10629(@uniq-xs@10298, @uniq-z@10299);
+    };
+  };
+fun @lift-ptime@10630 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10314: std/core/types/int){
+    std/time/parse/@lift-ptime@10631(@uniq-n@10314, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-piso@10632 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10329: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10330: std/core/types/int){
+    match (@uniq-xs@10329) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10332: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10330;
+      (@uniq-pat@10333: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-piso@10633(@uniq-xs@10329, @uniq-z@10330);
+    };
+  };
+fun @lift-piso@10634 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10345: std/core/types/int){
+    std/time/parse/@lift-piso@10635(@uniq-n@10345, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-piso@10636 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10360: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10361: std/core/types/int){
+    match (@uniq-xs@10360) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10363: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10361;
+      (@uniq-pat@10364: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-piso@10637(@uniq-xs@10360, @uniq-z@10361);
+    };
+  };
+fun @lift-piso@10638 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10376: std/core/types/int){
+    std/time/parse/@lift-piso@10639(@uniq-n@10376, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-piso@10640 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10391: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10392: std/core/types/int){
+    match (@uniq-xs@10391) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10394: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10392;
+      (@uniq-pat@10395: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-piso@10641(@uniq-xs@10391, @uniq-z@10392);
+    };
+  };
+fun @lift-piso@10642 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10407: std/core/types/int){
+    std/time/parse/@lift-piso@10643(@uniq-n@10407, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-piso@10644 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10422: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10423: std/core/types/int){
+    match (@uniq-xs@10422) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10425: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10423;
+      (@uniq-pat@10426: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-piso@10645(@uniq-xs@10422, @uniq-z@10423);
+    };
+  };
+fun @lift-piso@10646 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10438: std/core/types/int){
+    std/time/parse/@lift-piso@10647(@uniq-n@10438, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-piso@10648 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10453: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10454: std/core/types/int){
+    match (@uniq-xs@10453) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10456: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10454;
+      (@uniq-pat@10457: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-piso@10649(@uniq-xs@10453, @uniq-z@10454);
+    };
+  };
+fun @lift-piso@10650 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10469: std/core/types/int){
+    std/time/parse/@lift-piso@10651(@uniq-n@10469, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-piso@10652 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10484: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10485: std/core/types/int){
+    match (@uniq-xs@10484) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10487: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10485;
+      (@uniq-pat@10488: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-piso@10653(@uniq-xs@10484, @uniq-z@10485);
+    };
+  };
+fun @lift-piso@10654 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10500: std/core/types/int){
+    std/time/parse/@lift-piso@10655(@uniq-n@10500, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-piso@10656 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10515: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10516: std/core/types/int){
+    match (@uniq-xs@10515) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10518: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10516;
+      (@uniq-pat@10519: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-piso@10657(@uniq-xs@10515, @uniq-z@10516);
+    };
+  };
+fun @lift-piso@10658 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10531: std/core/types/int){
+    std/time/parse/@lift-piso@10659(@uniq-n@10531, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-piso@10660 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10546: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10547: std/core/types/int){
+    match (@uniq-xs@10546) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10549: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10547;
+      (@uniq-pat@10550: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-piso@10661(@uniq-xs@10546, @uniq-z@10547);
+    };
+  };
+fun @lift-piso@10662 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10562: std/core/types/int){
+    std/time/parse/@lift-piso@10663(@uniq-n@10562, (std/core/types/Nil<std/core/types/int>));
+  };
+fun @lift-piso@10664 // inline size: 2
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-xs@10577: (std/core/types/list :: V -> V)<std/core/types/int>, @uniq-z@10578: std/core/types/int){
+    match (@uniq-xs@10577) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<std/core/types/int> ) as @uniq-pat@0@10580: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> @uniq-z@10578;
+      (@uniq-pat@10581: ((std/core/types/list :: V -> V)<std/core/types/int>))
+         -> std/time/parse/@lift-piso@10665(@uniq-xs@10577, @uniq-z@10578);
+    };
+  };
+fun @lift-piso@10666 // inline size: 1
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>>>(@uniq-n@10593: std/core/types/int){
+    std/time/parse/@lift-piso@10667(@uniq-n@10593, (std/core/types/Nil<std/core/types/int>));
+  };
+fun parse-iso // inline size: 11
+  = fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>>>(s: std/core/types/string, calendar: (std/core/types/@optional :: V -> V)<std/time/calendar/calendar>){
+    std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>>,(perr : (std/text/parse/parse-error :: V -> V)<std/time/time/time>) -> (std/core/types/maybe :: V -> V)<std/time/time/time>,(perr : (std/text/parse/parse-error :: V -> V)<std/time/time/time>) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> (std/core/types/maybe :: V -> V)<std/time/time/time>>((fn(perr: (std/text/parse/parse-error :: V -> V)<std/time/time/time>){
+      (match (perr) {
+        ((std/text/parse/ParseOk((x@0: std/time/time/time) : std/time/time/time, ((@skip std/core/sslice/Sslice((@pat@1@0: std/core/types/string) : std/core/types/string, (@pat@2@0: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/int) : std/core/types/int) : std/core/sslice/sslice ) as @pat@0@0: std/core/sslice/sslice) : std/core/sslice/sslice) : (std/text/parse/parse-error :: V -> V)<std/time/time/time> ) as @pat@2: ((std/text/parse/parse-error :: V -> V)<std/time/time/time>))
+           -> std/core/types/Just<std/time/time/time>(x@0);
+        ((@skip std/text/parse/ParseError((msg: std/core/types/string) : std/core/types/string, ((@skip std/core/sslice/Sslice((@pat@6: std/core/types/string) : std/core/types/string, (@pat@7: std/core/types/int) : std/core/types/int, (@pat@8: std/core/types/int) : std/core/types/int) : std/core/sslice/sslice ) as @pat@5: std/core/sslice/sslice) : std/core/sslice/sslice) : (std/text/parse/parse-error :: V -> V)<std/time/time/time> ) as @pat@4: ((std/text/parse/parse-error :: V -> V)<std/time/time/time>))
+           -> std/core/types/Nothing<std/time/time/time>;
+      });
+    }))((std/text/parse/parse-eof<std/time/time/time,<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>>>((std/core/types/@open<(std/core/types/total :: E),<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>>,(s : std/core/types/string) -> std/core/sslice/sslice,(s : std/core/types/string) -> <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>> std/core/sslice/sslice>((fn(s@0: std/core/types/string){
+        (std/core/sslice/Sslice(s@0, 0, (std/core/sslice/length(s@0))));
+      }))(s)), (fn<<(std/core/types/handled :: ((E, V) -> V) -> X)<(std/text/parse/parse :: (E, V) -> V)>,(std/core/types/handled :: ((E, V) -> V) -> X)<(std/time/utc/utc :: (E, V) -> V)>>>(){
+        (std/time/parse/piso((match (calendar) {
+          ((std/core/types/@Optional((@uniq-calendar@766: std/time/calendar/calendar) : std/time/calendar/calendar) : (std/core/types/@optional :: V -> V)<std/time/calendar/calendar> ) as @pat: ((std/core/types/@optional :: V -> V)<std/time/calendar/calendar>))
+             -> @uniq-calendar@766;
+          ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/time/calendar/calendar> ) as @pat@0: ((std/core/types/@optional :: V -> V)<std/time/calendar/calendar>))
+             -> std/time/calendar/cal-iso;
+        })));
+      }))));
+  };

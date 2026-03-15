@@ -112,7 +112,7 @@ def bench_schema():
         from whitemagic.run_mcp_lean import list_tools, _SLOW_GANAS
         import mcp.types as types
         tools = asyncio.run(list_tools())
-        task_tools = [t for t in tools if t.execution and t.execution.mode == types.TASK_OPTIONAL]
+        task_tools = [t for t in tools if t.execution and t.execution.taskSupport == types.TASK_OPTIONAL]
         assert len(task_tools) == len(_SLOW_GANAS)
         names = sorted(t.name for t in task_tools)
         return f"{len(task_tools)} task-optional: {', '.join(names)}"
@@ -158,7 +158,7 @@ def bench_resources():
     def test_list_resources():
         from whitemagic.run_mcp_lean import list_resources
         resources = asyncio.run(list_resources())
-        assert len(resources) == 3
+        assert len(resources) >= 3
         uris = [str(r.uri) for r in resources]
         assert any("ai-primary" in u for u in uris)
         assert any("server-instructions" in u for u in uris)

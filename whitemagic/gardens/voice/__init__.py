@@ -38,6 +38,7 @@ class VoiceGarden(BaseGarden, GanYingMixin):
         self.expressions: list[dict[str, Any]] = []
         self.stories_told: list[dict[str, Any]] = []
         self.authenticity = 0.9
+        self.last_breath: dict[str, Any] | None = None  # Air garden integration
 
         # Initialize engines
         self.narrative = get_narrative_engine()
@@ -175,6 +176,30 @@ class VoiceGarden(BaseGarden, GanYingMixin):
         hexagram = event.data.get("hexagram", "unknown")
         wisdom = event.data.get("wisdom", "Ancient wisdom speaks through the pattern")
         self.speak(f"The hexagram {hexagram} reveals: {wisdom}", context={"type": "oracle"})
+
+    # ===== Air Garden Integration (S023 Consolidation) =====
+    def breathe(self, note: str = "") -> dict[str, Any]:
+        """Record a breath and emit a calm signal.
+
+        Air garden functionality folded into Voice (S023).
+        Air is the medium of voice - breath enables speech.
+        """
+        payload = {"note": note, "medium": "air"}
+        self.last_breath = payload
+        self.emit(EventType.MINDFULNESS_ACHIEVED, payload)
+        return payload
+
+    def clear(self) -> dict[str, Any]:
+        """Clear stale state and emit a clarity signal.
+
+        Air garden functionality folded into Voice (S023).
+        Clear air enables clear voice.
+        """
+        self.last_breath = None
+        payload = {"cleared": True, "clarity": "air_cleared"}
+        self.emit(EventType.GARDEN_RESONANCE, payload)
+        return payload
+
 
 _instance = None
 def get_voice_garden() -> VoiceGarden:

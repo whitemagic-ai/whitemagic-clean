@@ -1,0 +1,365 @@
+module interface gan_ying
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/vector = std/core/vector pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/core = std/core = "";
+import std/os/readline = std/os/readline = "";
+import std/num/float64 = std/num/float64 = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+// The `:io` effect is used for functions that perform arbitrary I/O operations.
+local alias std/core/io[78,1,78,29] :: E = <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,((std/core/io-noexn :: E) == 3 <(std/core/types/div :: X),((std/core/io-total :: E) == 2 <(std/core/types/ndet :: X),(std/core/console/console :: X),(std/core/net :: X),(std/core/fsys :: X),(std/core/ui :: X),((std/core/types/st :: H -> E)<(std/core/types/global :: H)> == 1 <(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/types/write :: H -> X)<(std/core/types/global :: H)>,(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>>)>)>)> = 4;
+ 
+//------------------------------
+//#kki: type declarations
+ 
+pub value{1,0,1} type event-type[12,1,26,17] {
+  pub con SystemStarted[13,3,13,15]{0,0,0} : event-type = 1;
+  pub con SystemStopped[14,3,14,15]{0,0,0} : event-type = 2;
+  pub con SystemHealthChanged[15,3,15,21]{0,0,0} : event-type = 3;
+  pub con MemoryCreated[16,3,16,15]{0,0,0} : event-type = 4;
+  pub con MemoryUpdated[17,3,17,15]{0,0,0} : event-type = 5;
+  pub con MemoryRecalled[18,3,18,16]{0,0,0} : event-type = 6;
+  pub con MemoryConsolidated[19,3,19,20]{0,0,0} : event-type = 7;
+  pub con GardenActivated[20,3,20,17]{0,0,0} : event-type = 8;
+  pub con JoyTriggered[21,3,21,14]{0,0,0} : event-type = 9;
+  pub con WisdomIntegrated[22,3,22,18]{0,0,0} : event-type = 10;
+  pub con ThreatDetected[23,3,23,16]{0,0,0} : event-type = 11;
+  pub con AnomalyDetected[24,3,24,17]{0,0,0} : event-type = 12;
+  pub con FlowStateEntered[25,3,25,18]{0,0,0} : event-type = 13;
+  pub con FlowStateExited[26,3,26,17]{0,0,0} : event-type = 14;
+};
+pub type cascade-trigger[37,1,40,15] {
+  pub con Cascade-trigger[37,12,37,26](event-type: event-type, handler-count: std/core/types/int, priority: std/core/types/int){1,2,8} : (event-type : event-type, handler-count : std/core/types/int, priority : std/core/types/int) -> cascade-trigger = 1;
+};
+pub type resonance-event[30,1,35,21] {
+  pub con Resonance-event[30,12,30,26](source: std/core/types/string, event-type: event-type, data: std/core/types/string, timestamp: std/core/types/int, confidence: std/core/types/float64){9,3,8} : (source : std/core/types/string, event-type : event-type, data : std/core/types/string, timestamp : std/core/types/int, confidence : std/core/types/float64) -> resonance-event = 1;
+};
+ 
+//------------------------------
+//#kki: declarations
+ 
+// Automatically generated. Tests for the `SystemStarted` constructor of the `:event-type` type.
+pub fip fun is-systemStarted[13,3,13,15] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `SystemStopped` constructor of the `:event-type` type.
+pub fip fun is-systemStopped[14,3,14,15] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `SystemHealthChanged` constructor of the `:event-type` type.
+pub fip fun is-systemHealthChanged[15,3,15,21] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `MemoryCreated` constructor of the `:event-type` type.
+pub fip fun is-memoryCreated[16,3,16,15] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `MemoryUpdated` constructor of the `:event-type` type.
+pub fip fun is-memoryUpdated[17,3,17,15] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `MemoryRecalled` constructor of the `:event-type` type.
+pub fip fun is-memoryRecalled[18,3,18,16] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `MemoryConsolidated` constructor of the `:event-type` type.
+pub fip fun is-memoryConsolidated[19,3,19,20] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `GardenActivated` constructor of the `:event-type` type.
+pub fip fun is-gardenActivated[20,3,20,17] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `JoyTriggered` constructor of the `:event-type` type.
+pub fip fun is-joyTriggered[21,3,21,14] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `WisdomIntegrated` constructor of the `:event-type` type.
+pub fip fun is-wisdomIntegrated[22,3,22,18] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `ThreatDetected` constructor of the `:event-type` type.
+pub fip fun is-threatDetected[23,3,23,16] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `AnomalyDetected` constructor of the `:event-type` type.
+pub fip fun is-anomalyDetected[24,3,24,17] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `FlowStateEntered` constructor of the `:event-type` type.
+pub fip fun is-flowStateEntered[25,3,25,18] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Tests for the `FlowStateExited` constructor of the `:event-type` type.
+pub fip fun is-flowStateExited[26,3,26,17] : (^ event-type : event-type) -> std/core/types/bool;
+// Automatically generated. Retrieves the `source` constructor field of the `:resonance-event` type.
+pub fun resonance-event/source[31,3,31,8] : (^ @this : resonance-event) -> std/core/types/string;
+// Automatically generated. Retrieves the `event-type` constructor field of the `:resonance-event` type.
+pub fun resonance-event/event-type[32,3,32,12] : (^ @this : resonance-event) -> event-type;
+// Automatically generated. Retrieves the `data` constructor field of the `:resonance-event` type.
+pub fun resonance-event/data[33,3,33,6] : (^ @this : resonance-event) -> std/core/types/string;
+// Automatically generated. Retrieves the `timestamp` constructor field of the `:resonance-event` type.
+pub fun resonance-event/timestamp[34,3,34,11] : (^ @this : resonance-event) -> std/core/types/int;
+// Automatically generated. Retrieves the `confidence` constructor field of the `:resonance-event` type.
+pub fun resonance-event/confidence[35,3,35,12] : (^ @this : resonance-event) -> std/core/types/float64;
+pub fun resonance-event/@copy[30,12,30,26] : (@this : resonance-event, source : (std/core/types/@optional :: V -> V)<std/core/types/string>, event-type : (std/core/types/@optional :: V -> V)<event-type>, data : (std/core/types/@optional :: V -> V)<std/core/types/string>, timestamp : (std/core/types/@optional :: V -> V)<std/core/types/int>, confidence : (std/core/types/@optional :: V -> V)<std/core/types/float64>) -> resonance-event;
+// Automatically generated. Retrieves the `event-type` constructor field of the `:cascade-trigger` type.
+pub fun cascade-trigger/event-type[38,3,38,12] : (^ @this : cascade-trigger) -> event-type;
+// Automatically generated. Retrieves the `handler-count` constructor field of the `:cascade-trigger` type.
+pub fun cascade-trigger/handler-count[39,3,39,15] : (^ @this : cascade-trigger) -> std/core/types/int;
+// Automatically generated. Retrieves the `priority` constructor field of the `:cascade-trigger` type.
+pub fun cascade-trigger/priority[40,3,40,10] : (^ @this : cascade-trigger) -> std/core/types/int;
+pub fun cascade-trigger/@copy[37,12,37,26] : (@this : cascade-trigger, event-type : (std/core/types/@optional :: V -> V)<event-type>, handler-count : (std/core/types/@optional :: V -> V)<std/core/types/int>, priority : (std/core/types/@optional :: V -> V)<std/core/types/int>) -> cascade-trigger;
+pub fun event-type-to-string[44,9,44,28] : (et : event-type) -> std/core/types/string;
+pub fun string-to-event-type[61,9,61,28] : (s : std/core/types/string) -> event-type;
+fun emit-event[81,5,81,14] : (source : std/core/types/string, et : event-type, data : std/core/types/string, confidence : std/core/types/float64, count : std/core/types/int) -> (resonance-event, std/core/types/int);
+fun check-cascade[85,5,85,17] : (et : event-type) -> cascade-trigger;
+fun json-response[99,5,99,17] : (op : std/core/types/string, result : std/core/types/string) -> std/core/types/string;
+fun json-event-response[102,5,102,23] : (event : resonance-event) -> std/core/types/string;
+fun extract-op[107,5,107,14] : (line : std/core/types/string) -> std/core/types/string;
+fun extract-type[116,5,116,16] : (line : std/core/types/string) -> event-type;
+// monadic lift
+fun @mlift-server-loop@10056[1,0,1,0] : (event-count : std/core/types/int, op : std/core/types/string, @c-x10017 : std/core/types/string) -> ();
+// monadic lift
+fun @mlift-server-loop@10057[1,0,1,0] : (event-count : std/core/types/int, line : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>> ();
+fun server-loop[125,5,125,15] : (event-count : std/core/types/int) -> <(std/core/io :: E)> ();
+fun main[161,5,161,8] : () -> <(std/core/io :: E)> ();
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+inline borrow "^" fip fun is-systemStarted // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/SystemStarted() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-systemStopped // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/SystemStopped() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-systemHealthChanged // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/SystemHealthChanged() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-memoryCreated // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/MemoryCreated() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-memoryUpdated // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/MemoryUpdated() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-memoryRecalled // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/MemoryRecalled() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-memoryConsolidated // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/MemoryConsolidated() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-gardenActivated // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/GardenActivated() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-joyTriggered // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/JoyTriggered() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-wisdomIntegrated // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/WisdomIntegrated() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-threatDetected // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/ThreatDetected() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-anomalyDetected // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/AnomalyDetected() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-flowStateEntered // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/FlowStateEntered() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fip fun is-flowStateExited // inline size: 1
+  = fn(event-type: event-type){
+    match (event-type) {
+      ((gan_ying/FlowStateExited() : event-type ) as @pat: event-type)
+         -> std/core/types/True;
+      (@pat@0: event-type)
+         -> std/core/types/False;
+    };
+  };
+inline borrow "^" fun resonance-event/source // inline size: 0
+  = fn(@this: resonance-event){
+    match (@this) {
+      ((@skip gan_ying/Resonance-event((@x: std/core/types/string) : std/core/types/string, (@pat@0: event-type) : event-type, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/float64) : std/core/types/float64) : resonance-event ) as @pat: resonance-event)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-event/event-type // inline size: 0
+  = fn(@this: resonance-event){
+    match (@this) {
+      ((@skip gan_ying/Resonance-event((@pat@0: std/core/types/string) : std/core/types/string, (@x: event-type) : event-type, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/float64) : std/core/types/float64) : resonance-event ) as @pat: resonance-event)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-event/data // inline size: 0
+  = fn(@this: resonance-event){
+    match (@this) {
+      ((@skip gan_ying/Resonance-event((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: event-type) : event-type, (@x: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/float64) : std/core/types/float64) : resonance-event ) as @pat: resonance-event)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-event/timestamp // inline size: 0
+  = fn(@this: resonance-event){
+    match (@this) {
+      ((@skip gan_ying/Resonance-event((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: event-type) : event-type, (@pat@2: std/core/types/string) : std/core/types/string, (@x: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/float64) : std/core/types/float64) : resonance-event ) as @pat: resonance-event)
+         -> @x;
+    };
+  };
+inline borrow "^" fun resonance-event/confidence // inline size: 0
+  = fn(@this: resonance-event){
+    match (@this) {
+      ((@skip gan_ying/Resonance-event((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: event-type) : event-type, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/int) : std/core/types/int, (@x: std/core/types/float64) : std/core/types/float64) : resonance-event ) as @pat: resonance-event)
+         -> @x;
+    };
+  };
+inline borrow "^" fun cascade-trigger/event-type // inline size: 0
+  = fn(@this: cascade-trigger){
+    match (@this) {
+      ((@skip gan_ying/Cascade-trigger((@x: event-type) : event-type, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int) : cascade-trigger ) as @pat: cascade-trigger)
+         -> @x;
+    };
+  };
+inline borrow "^" fun cascade-trigger/handler-count // inline size: 0
+  = fn(@this: cascade-trigger){
+    match (@this) {
+      ((@skip gan_ying/Cascade-trigger((@pat@0: event-type) : event-type, (@x: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int) : cascade-trigger ) as @pat: cascade-trigger)
+         -> @x;
+    };
+  };
+inline borrow "^" fun cascade-trigger/priority // inline size: 0
+  = fn(@this: cascade-trigger){
+    match (@this) {
+      ((@skip gan_ying/Cascade-trigger((@pat@0: event-type) : event-type, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int) : cascade-trigger ) as @pat: cascade-trigger)
+         -> @x;
+    };
+  };
+fun cascade-trigger/@copy // inline size: 4
+  = fn(@this: cascade-trigger, event-type: (std/core/types/@optional :: V -> V)<event-type>, handler-count: (std/core/types/@optional :: V -> V)<std/core/types/int>, priority: (std/core/types/@optional :: V -> V)<std/core/types/int>){
+    gan_ying/Cascade-trigger((match (event-type) {
+        ((std/core/types/@Optional((@uniq-event-type@305: event-type) : event-type) : (std/core/types/@optional :: V -> V)<event-type> ) as @pat: ((std/core/types/@optional :: V -> V)<event-type>))
+           -> @uniq-event-type@305;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<event-type> ) as @pat@0: ((std/core/types/@optional :: V -> V)<event-type>))
+           -> (match (@this) {
+            ((@skip gan_ying/Cascade-trigger((@x: event-type) : event-type, (@pat@0@0: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/int) : std/core/types/int) : cascade-trigger ) as @pat@1: cascade-trigger)
+               -> @x;
+          });
+      }), (match (handler-count) {
+        ((std/core/types/@Optional((@uniq-handler-count@313: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@1@1: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-handler-count@313;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@2: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip gan_ying/Cascade-trigger((@pat@0@1: event-type) : event-type, (@x@0: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/int) : std/core/types/int) : cascade-trigger ) as @pat@3: cascade-trigger)
+               -> @x@0;
+          });
+      }), (match (priority) {
+        ((std/core/types/@Optional((@uniq-priority@321: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@3@0: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-priority@321;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@4: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip gan_ying/Cascade-trigger((@pat@0@2: event-type) : event-type, (@pat@1@3: std/core/types/int) : std/core/types/int, (@x@1: std/core/types/int) : std/core/types/int) : cascade-trigger ) as @pat@5: cascade-trigger)
+               -> @x@1;
+          });
+      }));
+  };
+fun emit-event // inline size: 3
+  = fn(source: std/core/types/string, et: event-type, data: std/core/types/string, confidence: std/core/types/float64, count: std/core/types/int){
+    val new-count[82,7,82,15] : std/core/types/int
+          = std/core/int/int-add(count, 1);
+    std/core/types/Tuple2<resonance-event,std/core/types/int>((gan_ying/Resonance-event(source, et, data, 0, confidence)), new-count);
+  };
+fun json-response // inline size: 4
+  = fn(op: std/core/types/string, result: std/core/types/string){
+    std/core/types/(++)("{\x22op\x22:\x22", (std/core/types/(++)(op, (std/core/types/(++)("\x22,\x22result\x22:\x22", (std/core/types/(++)(result, "\x22}")))))));
+  };
+fun main // inline size: 1
+  = fn<(std/core/io :: E)>(){
+    gan_ying/server-loop(0);
+  };

@@ -1,10 +1,12 @@
-# AI Primary Spec — Whitemagic v15.9.0
+# AI Primary Spec
 
 **The tool contract for AI agents using Whitemagic.**
 
-Whitemagic is a memory and tool substrate for AI agents. It provides 375 MCP tools (28 in PRAT mode), tiered persistent memory, ethical governance, and polyglot accelerators. Agents bring reasoning; Whitemagic provides Hands, Memory, and Conscience.
+Whitemagic is a memory and tool substrate for AI agents. Agents bring reasoning; Whitemagic provides Hands, Memory, and Conscience.
 
-- **Hands** — 375 MCP tools for acting on the world
+Canonical introduction: `whitemagic/grimoire/00_PROLOGUE.md`
+
+- **Hands** — a unified MCP tool surface for acting on the world
 - **Memory** — Tiered, persistent, semantic, no-delete galactic lifecycle
 - **Conscience** — Dharma rules, Karma ledger, Harmony Vector, Homeostatic Loop
 
@@ -36,7 +38,7 @@ WM_MCP_PRAT=1 python -m whitemagic.run_mcp
 # Or lean mode (28 Gana meta-tools, recommended for new clients)
 python -m whitemagic.run_mcp_lean
 
-# Or classic mode (all 375 individual tools)
+# Or classic mode (legacy broad-surface registration; verify live availability before relying on exact counts)
 python -m whitemagic.run_mcp
 
 # Or lite mode (92 core tools)
@@ -72,7 +74,7 @@ cd whitemagic-mojo && mojo build src/satkona_yang.mojo  # Mojo 0.26+ — batch e
 
 Primary:
 - **MCP server (stdio):** `WM_MCP_PRAT=1 python -m whitemagic.run_mcp` (28 Gana meta-tools)
-- **MCP server (classic):** `python -m whitemagic.run_mcp` (375 individual tools)
+- **MCP server (classic):** `python -m whitemagic.run_mcp` (legacy broad-surface registration)
 
 Secondary:
 - **In-process Python:** `from whitemagic.tools.unified_api import call_tool`
@@ -84,12 +86,13 @@ If you are an AI runtime integrating Whitemagic, prefer **MCP with PRAT mode** (
 ### MCP Orientation Resources
 
 On first connection, read these resources before tool calls:
+- `whitemagic://orientation/prologue`
 - `whitemagic://orientation/ai-primary`
 - `whitemagic://grimoire/index`
 
 ## PRAT Mode — 28 Gana Meta-Tools
 
-The Polymorphic Resonant Adaptive Tools (PRAT) router maps all 375 tools into 28 Ganas — consciousness lenses based on the Chinese Lunar Mansions (Xiu 宿). Each Gana:
+The Polymorphic Resonant Adaptive Tools (PRAT) router presents WhiteMagic through 28 Ganas — consciousness lenses based on the Chinese Lunar Mansions (Xiu 宿). Each Gana:
 
 1. **Has a domain** — a specific operational concern (session, memory, health, ethics, etc.)
 2. **Supports 4 polymorphic operations** — search / analyze / transform / consolidate

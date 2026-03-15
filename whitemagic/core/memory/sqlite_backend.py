@@ -15,6 +15,9 @@ from whitemagic.core.memory.db_manager import get_db_pool
 from whitemagic.core.memory.unified_types import Memory, MemoryType
 from whitemagic.utils.core import parse_datetime
 from whitemagic.utils.fast_json import dumps_str as _fast_dumps
+from whitemagic.security.zodiac.ledger import get_ledger
+from whitemagic.core.bridge.sutra_bridge import get_sutra_kernel
+from whitemagic.core.autonomous.unified_nervous_system import get_nervous_system, BiologicalEvent, BiologicalSubsystem
 
 logger = logging.getLogger(__name__)
 
@@ -313,6 +316,37 @@ class SQLiteBackend:
 
     def store(self, memory: Memory, content_hash: str | None = None) -> str:
         """Store or update a memory."""
+        
+        # 0. Rust Sutra Kernel Check (Ahimsa/Satya/Harmony)
+        sutra = get_sutra_kernel()
+        verdict = sutra.evaluate_action(
+            action_type="memory_store", 
+            intent_score=1.0, 
+            karma_debt=0.0
+        )
+        if verdict.startswith("Panic"):
+            import logging
+            logging.getLogger(__name__).critical(f"SUTRA KERNEL PANIC: {verdict}")
+            raise RuntimeError(verdict)
+
+        # 1. Cryptographic Ledger Record
+        ledger = get_ledger()
+        ledger.record_action(
+            actor_id="whitemagic_core",
+            action_type="memory_store",
+            payload={"memory_id": memory.id, "type": str(memory.memory_type)},
+            context_id=memory.id
+        )
+        
+        # 2. Nervous System Broadcast
+        ns = get_nervous_system()
+        ns.emit(
+            event_type="memory.stored",
+            source=BiologicalSubsystem.METABOLISM,
+            target=BiologicalSubsystem.APOTHEOSIS,
+            payload={"memory_id": memory.id, "importance": memory.importance}
+        )
+        
         with self.pool.connection() as conn:
             with conn: # Standard transaction context manager
                 # Upsert Memory

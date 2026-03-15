@@ -27,3 +27,20 @@ class ErrorCode:
     CIRCUIT_BREAKER_OPEN = "circuit_breaker_open"
     MATURITY_GATE = "maturity_gate"
 
+
+class ToolExecutionError(Exception):
+    """Exception raised when a tool execution fails with a specific contract error code."""
+
+    def __init__(
+        self,
+        message: str,
+        error_code: str = ErrorCode.INTERNAL_ERROR,
+        details: dict[str, Any] | None = None,
+        retryable: bool = False,
+    ):
+        super().__init__(message)
+        self.message = message
+        self.error_code = error_code
+        self.details = details or {}
+        self.retryable = retryable
+

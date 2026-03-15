@@ -94,7 +94,7 @@ class UnifiedMemoryV2:
         """
         if not RUST_AVAILABLE:
             # Fallback to Python
-            return self._fallback.hybrid_recall(query, limit=limit)
+            return self._fallback.hybrid_recall(query, final_limit=limit)
         
         # Route query with Zig (if available) or use provided strategy
         if strategy is None and ZIG_AVAILABLE:
@@ -115,7 +115,7 @@ class UnifiedMemoryV2:
         except Exception as e:
             logger.error(f"Rust search failed: {e}, falling back to Python")
             if hasattr(self, '_fallback'):
-                return self._fallback.hybrid_recall(query, limit=limit)
+                return self._fallback.hybrid_recall(query, final_limit=limit)
             raise
     
     def store(

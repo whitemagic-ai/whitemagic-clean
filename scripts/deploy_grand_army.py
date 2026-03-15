@@ -80,6 +80,7 @@ from whitemagic.agents.campaign_loader import (  # noqa: E402
 from whitemagic.agents.progress_tracker import (  # noqa: E402
     ProgressTracker, CampaignProgressTracker, YinYangCycleTracker,
 )
+from whitemagic.tools.time_tracking import WorkflowTimer, timed, get_local_time  # noqa: E402
 
 tracker = new_tracker()
 
@@ -225,10 +226,11 @@ def print_phase(n: int, total: int, desc: str):
 # PRE-FLIGHT
 # ===========================================================================
 
-def preflight() -> dict:
+def preflight(timer: WorkflowTimer) -> dict:
     """Run pre-flight checks and return system status."""
-    print_header("PRE-FLIGHT CHECKS")
-    status = {}
+    with timer.phase("preflight"):
+        print_header("PRE-FLIGHT CHECKS")
+        status = {}
 
     # Rust bridge
     if RUST_OK:
@@ -3564,8 +3566,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Pre-flight
-    if not args.status:
-        preflight()
+    if not args.status and not any([args.objective, args.all, args.army, args.campaigns]):
+        workflow = WorkflowTimer("preflight_only")
+        preflight(workflow)
 
     # 1. Status Dashboard
     if args.status:
@@ -3574,69 +3577,103 @@ if __name__ == "__main__":
 
     # 2. Specific Objective
     if args.objective:
-        run_specific_objective(args.objective)
+        workflow = WorkflowTimer(f"objective_{args.objective}")
+        workflow.start_workflow()
+        preflight(workflow)
+        with workflow.phase("execution"):
+            run_single_objective(args.objective)
+        workflow.end_workflow()
+        workflow.print_report()
         sys.exit(0)
 
     # 3. Full Army Deployment
     if args.all:
-        run_army_alpha()
-        run_army_beta()
-        run_army_gamma()
+        workflow = WorkflowTimer("operation_iron_lotus")
+        workflow.start_workflow()
+        preflight(workflow)
+        
+        with workflow.phase("army_alpha"):
+            run_army_alpha()
+        with workflow.phase("army_beta"):
+            run_army_beta()
+        with workflow.phase("army_gamma"):
+            run_army_gamma()
+            
+        workflow.end_workflow()
         # Generate victory report from built-in campaigns
         print("\n" + "="*70)
         print("  OPERATION IRON LOTUS COMPLETE")
         print("="*70)
+        workflow.print_report()
         sys.exit(0)
 
     # 4. Specific Army
     if args.army:
-        if args.army == "alpha":
-            run_army_alpha()
-        elif args.army == "beta":
-            run_army_beta()
-        elif args.army == "gamma":
-            run_army_gamma()
+        workflow = WorkflowTimer(f"army_{args.army}")
+        workflow.start_workflow()
+        preflight(workflow)
+        
+        with workflow.phase("execution"):
+            if args.army == "alpha":
+                run_army_alpha()
+            elif args.army == "beta":
+                run_army_beta()
+            elif args.army == "gamma":
+                run_army_gamma()
+                
+        workflow.end_workflow()
         # Generate victory report from built-in campaigns
         print("\n" + "="*70)
         print(f"  ARMY {args.army.upper()} DEPLOYMENT COMPLETE")
         print("="*70)
+        workflow.print_report()
         sys.exit(0)
 
     # 5. Campaign Mode (Sun Bin)
     if args.campaigns:
-        print_header("SUN BIN STRATEGY — MULTI-COLUMN CAMPAIGN EXECUTION")
-        active_campaigns = load_all_campaigns(CAMPAIGNS_DIR)
+        workflow = WorkflowTimer("sun_bin_campaigns")
+        workflow.start_workflow()
+        preflight(workflow)
         
-        if not active_campaigns:
-            print("No campaigns found in campaigns/")
-            sys.exit(0)
-        
-        # Filter campaigns if --filter specified
-        if args.filter:
-            filter_codes = [c.strip() for c in args.filter.split(",")]
-            filtered = [c for c in active_campaigns if c.codename in filter_codes]
-            print(f"\n  Filtering: {len(filtered)}/{len(active_campaigns)} campaigns selected")
-            for c in filtered:
-                print(f"    - {c.codename}: {c.name} ({c.clone_count:,} clones, {len(c.victory_conditions)} VCs)")
-            active_campaigns = filtered
+        with workflow.phase("setup"):
+            print_header("SUN BIN STRATEGY — MULTI-COLUMN CAMPAIGN EXECUTION")
+            active_campaigns = load_all_campaigns(CAMPAIGNS_DIR)
+            
             if not active_campaigns:
-                print("\n  No campaigns match filter criteria")
+                print("No campaigns found in campaigns/")
                 sys.exit(0)
-            print()
+            
+            # Filter campaigns if --filter specified
+            if args.filter:
+                filter_codes = [c.strip() for c in args.filter.split(",")]
+                filtered = [c for c in active_campaigns if c.codename in filter_codes]
+                print(f"\n  Filtering: {len(filtered)}/{len(active_campaigns)} campaigns selected")
+                for c in filtered:
+                    print(f"    - {c.codename}: {c.name} ({c.clone_count:,} clones, {len(c.victory_conditions)} VCs)")
+                active_campaigns = filtered
+                if not active_campaigns:
+                    print("\n  No campaigns match filter criteria")
+                    sys.exit(0)
+                print()
 
-        # Check for --yin-yang mode (Autonomous Cycle)
-        if args.yin_yang:
-            print("☯️  YIN-YANG AUTONOMOUS ENGINE ACTIVATED")
-            # This would integrate with the YinYangEngine if we had full import access
-            # For now, we simulate the cycle within the time limit
-            run_campaigns_sun_bin(active_campaigns, time_limit=args.time_limit, use_yin_yang=True)
-        else:
-            run_campaigns_sun_bin(active_campaigns, time_limit=args.time_limit)
+        with workflow.phase("execution"):
+            # Check for --yin-yang mode (Autonomous Cycle)
+            if args.yin_yang:
+                print("☯️  YIN-YANG AUTONOMOUS ENGINE ACTIVATED")
+                # This would integrate with the YinYangEngine if we had full import access
+                # For now, we simulate the cycle within the time limit
+                run_campaigns_sun_bin(active_campaigns, time_limit=args.time_limit, use_yin_yang=True)
+            else:
+                run_campaigns_sun_bin(active_campaigns, time_limit=args.time_limit)
         
-        # Generate victory report from campaigns
-        vr_path = REPORTS_DIR / f"victory_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
-        vr_path.write_text(victory_report(active_campaigns))
-        print(f"\n  Victory report: {vr_path}")
+        with workflow.phase("reporting"):
+            # Generate victory report from campaigns
+            vr_path = REPORTS_DIR / f"victory_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+            vr_path.write_text(victory_report(active_campaigns))
+            print(f"\n  Victory report: {vr_path}")
+            
+        workflow.end_workflow()
+        workflow.print_report()
         sys.exit(0)
 
     # Default: Show help

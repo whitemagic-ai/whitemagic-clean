@@ -19,8 +19,10 @@ import platform
 import re
 import subprocess
 import sys
+import time
 from collections.abc import Iterator
 from dataclasses import asdict
+from functools import lru_cache
 from importlib.util import find_spec
 from pathlib import Path
 from typing import Any
@@ -38,11 +40,70 @@ from whitemagic.config.paths import (
     WM_ROOT,
 )
 from whitemagic.tools.contract import ENV_VARS, ENVELOPE_VERSION, TOOL_CONTRACT_VERSION
-from whitemagic.tools.registry import TOOL_REGISTRY
+from whitemagic.tools.tool_surface import get_callable_tool_definitions, get_surface_counts
 
 
 def _has_module(name: str) -> bool:
     return find_spec(name) is not None
+
+
+_CAPABILITIES_META_CACHE: dict[tuple[bool, bool], tuple[float, dict[str, Any]]] = {}
+_CAPABILITIES_META_TTL_S = 5.0
+
+
+@lru_cache(maxsize=1)
+def _feature_flags() -> dict[str, bool]:
+    return {
+        "mcp_server": _has_module("fastmcp"),
+        "rust_bridge": _has_module("whitemagic_rs"),
+        "rich_cli": _has_module("rich"),
+        "fastapi": _has_module("fastapi"),
+    }
+
+
+def _capabilities_base(*, include_env: bool, include_schemas: bool) -> dict[str, Any]:
+    cache_key = (include_env, include_schemas)
+    now = time.monotonic()
+    cached = _CAPABILITIES_META_CACHE.get(cache_key)
+    if cached and (now - cached[0]) < _CAPABILITIES_META_TTL_S:
+        return dict(cached[1])
+
+    caps: dict[str, Any] = {
+        "package_version": __version__,
+        "tool_contract_version": TOOL_CONTRACT_VERSION,
+        "envelope_version": ENVELOPE_VERSION,
+        "runtime": {
+            "python": sys.version.split(" ")[0],
+            "platform": platform.platform(),
+        },
+        "surface_counts": get_surface_counts(),
+        "features": _feature_flags(),
+        "state": state_paths(),
+        "limits": {
+            "batch_read_memories.max_batch_size": 50,
+        },
+        "tool_groups": {
+            "memory": ["create_memory", "search_memories", "read_memory", "list_memories", "update_memory", "delete_memory"],
+            "session": ["create_session", "checkpoint_session", "resume_session", "session_bootstrap"],
+            "scratchpad": ["scratchpad_create", "scratchpad_update", "scratchpad_finalize"],
+            "introspection": ["capabilities", "manifest", "state.paths", "state.summary", "repo.summary", "ship.check"],
+        },
+    }
+    if include_env:
+        caps["env_vars"] = [asdict(e) for e in ENV_VARS]
+
+    _CAPABILITIES_META_CACHE[cache_key] = (now, dict(caps))
+    return dict(caps)
+
+
+def _serialize_callable_tools(*, include_schemas: bool) -> list[dict[str, Any]]:
+    tools_out = []
+    for t in get_callable_tool_definitions():
+        d = t.to_dict()
+        if not include_schemas:
+            d.pop("input_schema", None)
+        tools_out.append(d)
+    return tools_out
 
 
 def _dir_size_bytes(path: Path, *, max_files: int = 10000) -> int:
@@ -106,18 +167,29 @@ def state_summary(*, include_sizes: bool = True) -> dict[str, Any]:
 
 
 def manifest(*, format: str = "summary", include_schemas: bool = False) -> dict[str, Any]:
+    from whitemagic.tools.errors import ToolExecutionError, ErrorCode
+    
+    if format not in ["summary", "whitemagic", "mcp"]:
+        raise ToolExecutionError(
+            f"unknown format: {format}",
+            error_code=ErrorCode.INVALID_PARAMS,
+        )
+        
+    callable_tools = get_callable_tool_definitions()
+    surface_counts = get_surface_counts()
     if format == "summary":
         return {
             "package_version": __version__,
             "tool_contract_version": TOOL_CONTRACT_VERSION,
             "envelope_version": ENVELOPE_VERSION,
-            "tool_count": len(TOOL_REGISTRY),
-            "categories": sorted({t.category.value for t in TOOL_REGISTRY}),
+            "tool_count": len(callable_tools),
+            "surface_counts": surface_counts,
+            "categories": sorted({t.category.value for t in callable_tools}),
         }
 
     if format == "whitemagic":
         whitemagic_tools: list[dict[str, Any]] = []
-        for tool_def in TOOL_REGISTRY:
+        for tool_def in callable_tools:
             d = tool_def.to_dict()
             if not include_schemas:
                 d.pop("input_schema", None)
@@ -125,7 +197,7 @@ def manifest(*, format: str = "summary", include_schemas: bool = False) -> dict[
         return {"format": "whitemagic", "tools": whitemagic_tools}
 
     if format == "mcp":
-        mcp_tools: list[dict[str, Any]] = [tool_def.to_mcp_tool() for tool_def in TOOL_REGISTRY]
+        mcp_tools: list[dict[str, Any]] = [tool_def.to_mcp_tool() for tool_def in callable_tools]
         if not include_schemas:
             for tool_item in mcp_tools:
                 tool_item.pop("inputSchema", None)
@@ -133,7 +205,7 @@ def manifest(*, format: str = "summary", include_schemas: bool = False) -> dict[
 
     if format == "openai":
         openai_tools: list[dict[str, Any]] = [
-            tool_def.to_openai_function() for tool_def in TOOL_REGISTRY
+            tool_def.to_openai_function() for tool_def in callable_tools
         ]
         if not include_schemas:
             for tool_item in openai_tools:
@@ -147,45 +219,9 @@ def manifest(*, format: str = "summary", include_schemas: bool = False) -> dict[
 
 
 def capabilities(*, include_tools: bool = True, include_schemas: bool = False, include_env: bool = True) -> dict[str, Any]:
-    caps: dict[str, Any] = {
-        "package_version": __version__,
-        "tool_contract_version": TOOL_CONTRACT_VERSION,
-        "envelope_version": ENVELOPE_VERSION,
-        "runtime": {
-            "python": sys.version.split(" ")[0],
-            "platform": platform.platform(),
-        },
-        "features": {
-            "mcp_server": _has_module("fastmcp"),
-            "rust_bridge": _has_module("whitemagic_rs"),
-            "rich_cli": _has_module("rich"),
-            "fastapi": _has_module("fastapi"),
-        },
-        "state": state_paths(),
-        "limits": {
-            "batch_read_memories.max_batch_size": 50,
-        },
-        "tool_groups": {
-            # Stable group names for AI callers (prefer groups over gardens).
-            "memory": ["create_memory", "search_memories", "read_memory", "list_memories", "update_memory", "delete_memory"],
-            "session": ["create_session", "checkpoint_session", "resume_session", "session_bootstrap"],
-            "scratchpad": ["scratchpad_create", "scratchpad_update", "scratchpad_finalize"],
-            "introspection": ["capabilities", "manifest", "state.paths", "state.summary", "repo.summary", "ship.check"],
-        },
-    }
-
-    if include_env:
-        caps["env_vars"] = [asdict(e) for e in ENV_VARS]
-
+    caps = _capabilities_base(include_env=include_env, include_schemas=include_schemas)
     if include_tools:
-        tools_out = []
-        for t in TOOL_REGISTRY:
-            d = t.to_dict()
-            if not include_schemas:
-                d.pop("input_schema", None)
-            tools_out.append(d)
-        caps["tools"] = tools_out
-
+        caps["tools"] = _serialize_callable_tools(include_schemas=include_schemas)
     return caps
 
 

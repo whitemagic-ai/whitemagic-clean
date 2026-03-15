@@ -1,11 +1,97 @@
 """Introspection tool handlers — core system introspection + health report."""
 import logging
+import shutil
+import sqlite3
+import time
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Callable, cast
 
+from whitemagic.runtime_status import get_runtime_status
 from whitemagic.tools import introspection as _core
 
 logger = logging.getLogger(__name__)
+
+_HEALTH_CACHE_TTL_S = 10.0
+_HEALTH_CACHE: dict[str, tuple[float, Any]] = {}
+
+
+def _ttl_get(key: str, ttl_s: float, loader: Callable[[], Any]) -> Any:
+    now = time.monotonic()
+    cached = _HEALTH_CACHE.get(key)
+    if cached and (now - cached[0]) < ttl_s:
+        return cached[1]
+    value = loader()
+    _HEALTH_CACHE[key] = (now, value)
+    return value
+
+
+def _load_cached_state_summary() -> dict[str, Any]:
+    return cast('dict[str, Any]', _ttl_get('state_summary', _HEALTH_CACHE_TTL_S, lambda: _core.state_summary(include_sizes=True)))
+
+
+def _load_cached_rust_status() -> dict[str, Any]:
+    def _loader() -> dict[str, Any]:
+        from whitemagic.tools.handlers.rust_bridge import handle_rust_status
+        rust = handle_rust_status()
+        return {
+            'available': rust.get('available', False),
+            'version': rust.get('version', 'unknown'),
+        }
+    return cast('dict[str, Any]', _ttl_get('rust_status', _HEALTH_CACHE_TTL_S, _loader))
+
+
+def _load_cached_garden_health() -> dict[str, Any]:
+    def _loader() -> dict[str, Any]:
+        from whitemagic.tools.handlers.garden import handle_garden_health
+        gardens = handle_garden_health()
+        return cast('dict[str, Any]', gardens.get('health', {}))
+    return cast('dict[str, Any]', _ttl_get('garden_health', _HEALTH_CACHE_TTL_S, _loader))
+
+
+def _load_cached_archaeology_stats() -> dict[str, Any]:
+    def _loader() -> dict[str, Any]:
+        from whitemagic.tools.handlers.archaeology import handle_archaeology_stats
+        arch = handle_archaeology_stats()
+        return {
+            'files_tracked': arch.get('total_files', 0),
+            'total_reads': arch.get('total_reads', 0),
+        }
+    return cast('dict[str, Any]', _ttl_get('archaeology_stats', _HEALTH_CACHE_TTL_S, _loader))
+
+
+def _load_cached_yin_yang_balance() -> dict[str, Any]:
+    def _loader() -> dict[str, Any]:
+        from whitemagic.tools.handlers.balance import handle_get_yin_yang_balance
+        balance = handle_get_yin_yang_balance()
+        return cast('dict[str, Any]', balance.get('balance', {}))
+    return cast('dict[str, Any]', _ttl_get('yin_yang_balance', _HEALTH_CACHE_TTL_S, _loader))
+
+
+def _load_cached_db_stats() -> dict[str, Any]:
+    from whitemagic.config.paths import DB_PATH
+    def _loader() -> dict[str, Any]:
+        db = Path(DB_PATH)
+        if not db.exists():
+            return {'path': str(db), 'exists': False}
+        conn = sqlite3.connect(str(db))
+        try:
+            count = conn.execute('SELECT COUNT(*) FROM memories').fetchone()[0]
+        finally:
+            conn.close()
+        return {
+            'path': str(db),
+            'size_mb': round(db.stat().st_size / (1024 * 1024), 1),
+            'memory_count': count,
+        }
+    return cast('dict[str, Any]', _ttl_get('db_stats', _HEALTH_CACHE_TTL_S, _loader))
+
+
+def _load_cached_binary_status(binary_name: str, fallback_path: str) -> dict[str, Any]:
+    key = f'binary::{binary_name}::{fallback_path}'
+    def _loader() -> dict[str, Any]:
+        binary_path = shutil.which(binary_name) or fallback_path
+        return {'available': Path(binary_path).exists(), 'path': binary_path}
+    return cast('dict[str, Any]', _ttl_get(key, 60.0, _loader))
 
 def handle_capabilities(**kwargs: Any) -> dict[str, Any]:
     return cast(
@@ -67,20 +153,23 @@ def handle_gnosis(**kwargs: Any) -> dict[str, Any]:
 def handle_health_report(**kwargs: Any) -> dict[str, Any]:
     """Consolidated system health report aggregating multiple subsystems."""
     report: dict[str, Any] = {"status": "success"}
+    runtime_status = get_runtime_status()
+    report["runtime"] = runtime_status
 
     # 1. Capabilities / version info
     try:
-        caps = _core.capabilities(include_tools=True, include_schemas=False, include_env=True)
+        caps = _core.capabilities(include_tools=False, include_schemas=False, include_env=False)
         report["version"] = caps.get("package_version", caps.get("version", "unknown"))
         runtime = caps.get("runtime", {})
-        report["python_version"] = runtime.get("python_version", "unknown")
-        report["tool_count"] = len(caps.get("tools", []))
+        report["python_version"] = runtime.get("python", runtime.get("python_version", "unknown"))
+        report["tool_count"] = caps.get("surface_counts", {}).get("callable_tools", 0)
+        report["features"] = caps.get("features", {})
     except Exception as e:
         report["capabilities_error"] = str(e)
 
     # 2. State summary
     try:
-        state = _core.state_summary(include_sizes=True)
+        state = _load_cached_state_summary()
         sizes = state.get("sizes_bytes", {})
         total_bytes = sum(sizes.values()) if isinstance(sizes, dict) else 0
         report["state"] = {
@@ -93,75 +182,43 @@ def handle_health_report(**kwargs: Any) -> dict[str, Any]:
 
     # 3. Rust bridge
     try:
-        from whitemagic.tools.handlers.rust_bridge import handle_rust_status
-        rust = handle_rust_status()
-        report["rust"] = {
-            "available": rust.get("available", False),
-            "version": rust.get("version", "unknown"),
-        }
+        report["rust"] = _load_cached_rust_status()
     except Exception as e:
         report["rust"] = {"available": False, "error": str(e)}
 
     # 4. Garden health
     try:
-        from whitemagic.tools.handlers.garden import handle_garden_health
-        gardens = handle_garden_health()
-        report["gardens"] = gardens.get("health", {})
+        report["gardens"] = _load_cached_garden_health()
     except Exception as e:
         report["gardens_error"] = str(e)
 
     # 5. Archaeology stats
     try:
-        from whitemagic.tools.handlers.archaeology import handle_archaeology_stats
-        arch = handle_archaeology_stats()
-        report["archaeology"] = {
-            "files_tracked": arch.get("total_files", 0),
-            "total_reads": arch.get("total_reads", 0),
-        }
+        report["archaeology"] = _load_cached_archaeology_stats()
     except Exception as e:
         report["archaeology_error"] = str(e)
 
     # 6. Yin-Yang balance
     try:
-        from whitemagic.tools.handlers.balance import handle_get_yin_yang_balance
-        balance = handle_get_yin_yang_balance()
-        report["yin_yang"] = balance.get("balance", {})
+        report["yin_yang"] = _load_cached_yin_yang_balance()
     except Exception as e:
         report["yin_yang_error"] = str(e)
 
     # 7. DB stats
     try:
-        from whitemagic.config.paths import DB_PATH
-        db = Path(DB_PATH)
-        if db.exists():
-            import sqlite3
-            conn = sqlite3.connect(str(db))
-            cursor = conn.execute("SELECT COUNT(*) FROM memories")
-            count = cursor.fetchone()[0]
-            conn.close()
-            report["db"] = {
-                "path": str(db),
-                "size_mb": round(db.stat().st_size / (1024 * 1024), 1),
-                "memory_count": count,
-            }
-        else:
-            report["db"] = {"path": str(db), "exists": False}
+        report["db"] = _load_cached_db_stats()
     except Exception as e:
         report["db_error"] = str(e)
 
     # 8. Julia bridge
     try:
-        import shutil
-        julia_path = shutil.which("julia") or "/snap/bin/julia"
-        report["julia"] = {"available": Path(julia_path).exists(), "path": julia_path}
+        report["julia"] = _load_cached_binary_status("julia", "/snap/bin/julia")
     except Exception:
         report["julia"] = {"available": False}
 
     # 9. Haskell bridge
     try:
-        import shutil
-        ghc_path = shutil.which("ghc") or str(Path.home() / ".ghcup/bin/ghc")
-        report["haskell"] = {"available": Path(ghc_path).exists(), "path": ghc_path}
+        report["haskell"] = _load_cached_binary_status("ghc", str(Path.home() / ".ghcup/bin/ghc"))
     except Exception:
         report["haskell"] = {"available": False}
 
@@ -174,7 +231,13 @@ def handle_health_report(**kwargs: Any) -> dict[str, Any]:
     checks.append("gardens" in report)
     health_score = sum(1 for c in checks if c) / max(len(checks), 1)
     report["health_score"] = round(health_score, 2)
-    report["health_status"] = "healthy" if health_score >= 0.8 else "degraded" if health_score >= 0.5 else "critical"
+    computed_health = "healthy" if health_score >= 0.8 else "degraded" if health_score >= 0.5 else "critical"
+    if runtime_status.get("degraded_mode") and computed_health == "healthy":
+        computed_health = "degraded"
+    report["health_status"] = computed_health
+    report["degraded_mode"] = runtime_status.get("degraded_mode", False)
+    report["degraded_reasons"] = runtime_status.get("degraded_reasons", [])
+    report["debug_enabled"] = runtime_status.get("debug_enabled", False)
 
     return report
 

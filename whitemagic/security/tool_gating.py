@@ -426,12 +426,23 @@ def get_tool_gate() -> ToolGate:
 def check_tool_execution(
     tool_name: str, params: dict[str, Any],
 ) -> tuple[bool, str, dict[str, Any]]:
-    """Check if a tool can be executed with given parameters.
+    """Check if a tool can be executed with given parameters."""
+    
+    # NEW: SutraCode Kernel check (hard stop)
+    try:
+        import whitemagic_rust
+        if hasattr(whitemagic_rust, 'sutra_kernel'):
+            kernel = whitemagic_rust.sutra_kernel.SutraKernel()
+            import json
+            # Serialize params for the Rust kernel
+            payload_str = json.dumps(params, default=str)
+            # This will panic and crash the thread if a violation is found
+            kernel.verify_action("mcp_client", tool_name, payload_str)
+    except Exception as e:
+        # We only catch Python-level exceptions here (like missing module).
+        # Rust panics will bubble up and crash the worker thread safely.
+        pass
 
-    Returns:
-        (allowed: bool, reason: str, sanitized_params: dict)
-
-    """
     gate = get_tool_gate()
 
     # Check tool allowed

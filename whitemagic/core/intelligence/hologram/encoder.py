@@ -39,9 +39,22 @@ v2.0 Changes:
 """
 
 import hashlib
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, cast
+
+logger = logging.getLogger(__name__)
+
+# Rust acceleration (S026 VC6)
+try:
+    import whitemagic_rust as _wr
+    _rust_holographic = _wr.holographic_encoder_5d
+    RUST_HOLOGRAPHIC_AVAILABLE = True
+except ImportError:
+    _rust_holographic = None
+    RUST_HOLOGRAPHIC_AVAILABLE = False
+    logger.debug("Rust holographic_encoder_5d not available, using Python fallback")
 
 
 @dataclass
@@ -148,30 +161,58 @@ class CoordinateEncoder:
         Uses Rust Rayon parallelism when available, falls back to
         sequential Python encoding.
         """
-        # Try Rust v13.1 batch encoding (Rayon parallel)
-        try:
-            from whitemagic.optimization.rust_accelerators import (
-                holographic_encode_batch,
-                rust_v131_available,
-            )
-            if rust_v131_available() and len(memories) > 1:
-                results = holographic_encode_batch(memories)
-                if results and len(results) == len(memories):
-                    return [
-                        HolographicCoordinate(
-                            r.get("x", 0.0),
-                            r.get("y", 0.0),
-                            r.get("z", 0.0),
-                            r.get("w", 0.5),
-                            r.get("v", 0.5),
-                        )
-                        for r in results
-                    ]
-        except Exception:
-            pass
-
+        # Try Rust batch encoding (Rayon parallel)
+        if RUST_HOLOGRAPHIC_AVAILABLE and len(memories) > 1:
+            try:
+                import json
+                # Prepare memories for Rust (simplified format)
+                rust_memories = []
+                for m in memories:
+                    rust_memories.append({
+                        "id": m.get("id", ""),
+                        "content": str(m.get("content", "")),
+                        "importance": float(m.get("importance") or 0.5),
+                        "access_count": int(m.get("access_count") or 0),
+                        "age_days": self._get_age_days(m),
+                        "galactic_distance": float(m.get("galactic_distance") or 0.5),
+                        "garden": m.get("metadata", {}).get("garden", "") if isinstance(m.get("metadata"), dict) else "",
+                        "tags": list(m.get("tags", [])) if isinstance(m.get("tags"), (list, set)) else [],
+                    })
+                
+                result_json = _rust_holographic.holographic_encode_batch(json.dumps(rust_memories))
+                results = json.loads(result_json)
+                
+                return [
+                    HolographicCoordinate(
+                        r.get("x", 0.0),
+                        r.get("y", 0.0),
+                        r.get("z", 0.0),
+                        r.get("w", 0.5),
+                        r.get("v", 0.5),
+                    )
+                    for r in results
+                ]
+            except Exception as e:
+                logger.warning(f"Rust batch encoding failed: {e}, falling back to Python")
+        
         # Python fallback: encode one at a time
         return [self.encode(m) for m in memories]
+    
+    def _get_age_days(self, memory: dict[str, Any]) -> float:
+        """Calculate age in days from timestamp."""
+        timestamp_str = memory.get("created_at") or memory.get("timestamp")
+        if timestamp_str:
+            try:
+                if isinstance(timestamp_str, str):
+                    for fmt in ["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]:
+                        try:
+                            ts = datetime.strptime(timestamp_str[:26], fmt)
+                            return (datetime.now() - ts).days
+                        except ValueError:
+                            continue
+            except Exception:
+                pass
+        return 0.0
 
     def _get_garden_bias(self, memory: dict[str, Any]) -> dict[str, float] | None:
         """Extract garden bias from memory if garden affiliation exists."""

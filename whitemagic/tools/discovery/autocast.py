@@ -116,7 +116,7 @@ class ToolDiscovery:
     def discover_by_category(self, category: str) -> list[dict[str, Any]]:
         """Discover tools by category."""
         try:
-            from whitemagic.tools.registry import TOOL_REGISTRY
+            from whitemagic.tools.tool_surface import get_callable_tool_definitions
             
             tools = [
                 {
@@ -125,7 +125,7 @@ class ToolDiscovery:
                     "category": t.category.value,
                     "usage_count": self.metrics.get(t.name, ToolUsageMetrics(t.name)).call_count,
                 }
-                for t in TOOL_REGISTRY
+                for t in get_callable_tool_definitions()
                 if t.category.value == category
             ]
             
@@ -139,12 +139,12 @@ class ToolDiscovery:
     def discover_by_search(self, query: str, limit: int = 10) -> list[dict[str, Any]]:
         """Discover tools by search query."""
         try:
-            from whitemagic.tools.registry import TOOL_REGISTRY
+            from whitemagic.tools.tool_surface import get_callable_tool_definitions
             
             query_lower = query.lower()
             tools = []
             
-            for t in TOOL_REGISTRY:
+            for t in get_callable_tool_definitions():
                 score = 0
                 if query_lower in t.name.lower():
                     score += 10
@@ -238,11 +238,11 @@ class ToolDiscovery:
         # Strategy 4: Random exploration (10% weight)
         if include_random:
             try:
-                from whitemagic.tools.registry import TOOL_REGISTRY
+                from whitemagic.tools.tool_surface import get_callable_tool_definitions
                 
                 # Pick 1-2 random tools not in recent calls
                 recent_tool_names = {name for name, _ in self.recent_calls}
-                available = [t.name for t in TOOL_REGISTRY if t.name not in recent_tool_names]
+                available = [t.name for t in get_callable_tool_definitions() if t.name not in recent_tool_names]
                 
                 if available:
                     num_random = min(2, len(available))

@@ -73,6 +73,16 @@ DISPATCH_TABLE: dict[str, Callable[..., dict[str, Any]]] = {
     "garden_status": LazyHandler("garden", "handle_garden_status"),
     "garden_synergy": LazyHandler("garden", "handle_garden_synergy"),
     "garden_health": LazyHandler("garden", "handle_garden_health"),
+    # S025: Garden Directory Tools
+    "garden_list_files": LazyHandler("garden", "handle_garden_list_files"),
+    "garden_list_functions": LazyHandler("garden", "handle_garden_list_functions"),
+    "garden_search": LazyHandler("garden", "handle_garden_search"),
+    "garden_resonance": LazyHandler("garden", "handle_garden_resonance"),
+    "garden_map_system": LazyHandler("garden", "handle_garden_map_system"),
+    "garden_stats": LazyHandler("garden", "handle_garden_stats"),
+    # S025 Phase 6: Virtual Filesystem
+    "garden_browse": LazyHandler("garden", "handle_garden_browse"),
+    "garden_resolve": LazyHandler("garden", "handle_garden_resolve"),
 
     # --- Memory ---
     "create_memory": LazyHandler("memory", "handle_create_memory"),
@@ -109,6 +119,18 @@ DISPATCH_TABLE: dict[str, Callable[..., dict[str, Any]]] = {
     "kg.query": LazyHandler("knowledge_graph", "handle_kg_query"),
     "kg.top": LazyHandler("knowledge_graph", "handle_kg_top"),
     "kg.status": LazyHandler("knowledge_graph", "handle_kg_status"),
+    
+    # --- Knowledge Graph 2.0 (v16: LightNER + typed edges) ---
+    "kg2.extract": LazyHandler("knowledge_graph", "handle_kg2_extract"),
+    "kg2.batch": LazyHandler("knowledge_graph", "handle_kg2_batch"),
+    "kg2.entity": LazyHandler("knowledge_graph", "handle_kg2_entity"),
+    "kg2.stats": LazyHandler("knowledge_graph", "handle_kg2_stats"),
+    
+    # --- Embedding Daemon (v16) ---
+    "embedding.daemon_start": LazyHandler("knowledge_graph", "handle_embedding_daemon_start"),
+    "embedding.daemon_stop": LazyHandler("knowledge_graph", "handle_embedding_daemon_stop"),
+    "embedding.daemon_status": LazyHandler("knowledge_graph", "handle_embedding_daemon_status"),
+    "embedding.daemon_process": LazyHandler("knowledge_graph", "handle_embedding_daemon_process"),
 
     # --- Tool Sandboxing ---
     "sandbox.status": LazyHandler("sandbox", "handle_sandbox_status"),
@@ -701,9 +723,11 @@ def _build_pipeline() -> Any:
         mw_governor,
         mw_input_sanitizer,
         mw_maturity_gate,
+        mw_observability,
         mw_rate_limiter,
         mw_security_monitor,
         mw_tool_permissions,
+        mw_sutra_auto_execute,
     )
     p = DispatchPipeline()
     p.use("input_sanitizer", mw_input_sanitizer)
@@ -713,6 +737,7 @@ def _build_pipeline() -> Any:
     p.use("tool_permissions", mw_tool_permissions)
     p.use("maturity_gate",   mw_maturity_gate)
     p.use("governor",        mw_governor)
+    p.use("observability",   mw_observability)
     p.use("core_router",     _mw_core_router)
     return p
 
@@ -727,10 +752,12 @@ def dispatch(tool_name: str, **kwargs: Any) -> dict[str, Any] | None:
       1. Input sanitizer   — validate args
       2. Circuit breaker   — fast-fail on cooldown + post-feedback
       3. Rate limiter      — per-agent, per-tool throttling
-      4. Tool permissions  — per-agent RBAC
-      5. Maturity gate     — developmental stage gating
-      6. Governor          — ethical validation
-      7. Core router       — Gana prefix → dispatch table → bridge fallback
+      4. Security monitor  — anomaly detection
+      5. Tool permissions  — per-agent RBAC
+      6. Maturity gate     — developmental stage gating
+      7. Governor          — ethical validation
+      8. Observability     — Prometheus + OTel metrics
+      9. Core router       — Gana prefix → dispatch table → bridge fallback
 
     Post-pipeline:
       - Compact response mode (token-efficient output)

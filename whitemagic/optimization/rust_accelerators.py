@@ -43,9 +43,16 @@ _RUST_V131 = False
 _rs: Any = None
 
 try:
-    import whitemagic_rs as _rs_mod
-
+    import whitemagic_rust as _rs_mod
     _rs = _rs_mod
+except ImportError:
+    try:
+        import whitemagic_rs as _rs_mod
+        _rs = _rs_mod
+    except ImportError as e:
+        logger.debug(f"Rust extension not available — using Python fallback: {e}")
+
+if _rs is not None:
     # Check for v12.3 accelerator functions
     if hasattr(_rs, "galactic_batch_score"):
         _RUST_AVAILABLE = True
@@ -56,12 +63,11 @@ try:
     # Check for v15.10 galaxy miner functions
     if hasattr(_rs, "mine_access_patterns"):
         logger.debug("Rust v15.10 galaxy miner loaded")
-    # Check for v13.1 accelerator functions
+
+    # Check for v13.1 features (holographic/minhash)
     if hasattr(_rs, "holographic_encode_batch"):
         _RUST_V131 = True
         logger.debug("Rust v13.1 accelerators loaded")
-except ImportError as e:
-    logger.debug(f"Rust extension not available — using Python fallback: {e}")
 
 
 def rust_available() -> bool:
@@ -561,9 +567,8 @@ def search_query(
     if not _RUST_SEARCH:
         return None
     try:
-        result_json = _rs.search_query(query, limit)
-        parsed: list[dict[str, Any]] = _json_loads(result_json)
-        return parsed
+        results_json: str = _rs.search_query(query, limit)
+        return _json_loads(results_json)
     except Exception as e:
         logger.debug(f"Rust search_query failed: {e}")
         return None
@@ -584,9 +589,8 @@ def search_fuzzy(
     if not _RUST_SEARCH:
         return None
     try:
-        result_json = _rs.search_fuzzy(query, limit, max_distance)
-        parsed: list[dict[str, Any]] = _json_loads(result_json)
-        return parsed
+        results_json: str = _rs.search_fuzzy(query, limit, max_distance)
+        return _json_loads(results_json)
     except Exception as e:
         logger.debug(f"Rust search_fuzzy failed: {e}")
         return None
@@ -606,9 +610,8 @@ def search_and_query(
     if not _RUST_SEARCH:
         return None
     try:
-        result_json = _rs.search_and_query(query, limit)
-        parsed: list[dict[str, Any]] = _json_loads(result_json)
-        return parsed
+        results_json: str = _rs.search_boolean_and(query, limit)
+        return _json_loads(results_json)
     except Exception as e:
         logger.debug(f"Rust search_and_query failed: {e}")
         return None
@@ -625,14 +628,11 @@ def search_stats() -> dict[str, Any] | None:
     if not _RUST_SEARCH:
         return None
     try:
-        result_json = _rs.search_stats()
-        parsed: dict[str, Any] = _json_loads(result_json)
-        return parsed
+        stats_json: str = _rs.search_stats()
+        return _json_loads(stats_json)
     except Exception as e:
         logger.debug(f"Rust search_stats failed: {e}")
         return None
-
-
 # ---------------------------------------------------------------------------
 # v13.2 — Atomic Rate Limiter
 # ---------------------------------------------------------------------------

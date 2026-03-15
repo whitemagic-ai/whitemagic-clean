@@ -213,11 +213,11 @@ def _blocked(tool_name: str, roles: list[str], reason: str) -> dict[str, Any]:
 def _get_tool_category(tool_name: str) -> str | None:
     """Look up tool category from registry (cached)."""
     try:
-        from whitemagic.tools.registry import TOOL_REGISTRY
-        for tool_def in TOOL_REGISTRY:
-            if tool_def.name == tool_name:
-                category_value = getattr(tool_def.category, "value", None)
-                return str(category_value) if category_value is not None else None
+        from whitemagic.tools.tool_surface import get_callable_tool_definition
+        tool_def = get_callable_tool_definition(tool_name)
+        if tool_def is not None:
+            category_value = getattr(tool_def.category, "value", None)
+            return str(category_value) if category_value is not None else None
     except Exception:
         pass
     return None

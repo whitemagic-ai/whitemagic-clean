@@ -1,0 +1,666 @@
+module interface src/orchestrator
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/vector = std/core/vector pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/time/duration = std/time/duration pub = "";
+import std/time/instant = std/time/instant pub = "";
+import std/time/utc = std/time/utc pub = "";
+import std/time/chrono = std/time/chrono pub = "";
+import std/time/timer = std/time/timer pub = "";
+import std/time/date = std/time/date pub = "";
+import std/time/calendar = std/time/calendar pub = "";
+import std/time/calendars = std/time/calendars pub = "";
+import std/time/time = std/time/time pub = "";
+import std/time/locale = std/time/locale pub = "";
+import std/time/format = std/time/format pub = "";
+import std/time/parse = std/time/parse pub = "";
+import std/core = std/core = "";
+import std/os/readline = std/os/readline = "";
+import std/os/process = std/os/process = "";
+import std/num/float64 = std/num/float64 = "";
+import std/num/int64 = std/num/int64 = "";
+import std/time = std/time = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+// The `:io` effect is used for functions that perform arbitrary I/O operations.
+local alias std/core/io[78,1,78,29] :: E = <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,((std/core/io-noexn :: E) == 3 <(std/core/types/div :: X),((std/core/io-total :: E) == 2 <(std/core/types/ndet :: X),(std/core/console/console :: X),(std/core/net :: X),(std/core/fsys :: X),(std/core/ui :: X),((std/core/types/st :: H -> E)<(std/core/types/global :: H)> == 1 <(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/types/write :: H -> X)<(std/core/types/global :: H)>,(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>>)>)>)> = 4;
+ 
+//------------------------------
+//#kki: type declarations
+ 
+type managed-process[15,1,21,20] {
+  con Managed-process[15,8,15,22](name: std/core/types/string, pid: std/core/types/int, binary-path: std/core/types/string, status: std/core/types/string, start-time: std/core/types/float64, restart-count: std/core/types/int){8,5,8} : (name : std/core/types/string, pid : std/core/types/int, binary-path : std/core/types/string, status : std/core/types/string, start-time : std/core/types/float64, restart-count : std/core/types/int) -> managed-process = 1;
+};
+type orchestrator-state[23,1,26,28] {
+  con Orchestrator-state[23,8,23,25](processes: (std/core/types/list :: V -> V)<managed-process>, total-restarts: std/core/types/int, last-health-check: std/core/types/float64){8,2,8} : (processes : (std/core/types/list :: V -> V)<managed-process>, total-restarts : std/core/types/int, last-health-check : std/core/types/float64) -> orchestrator-state = 1;
+};
+ 
+//------------------------------
+//#kki: declarations
+ 
+// Automatically generated. Retrieves the `name` constructor field of the `:managed-process` type.
+fun managed-process/name[16,3,16,6] : (^ @this : managed-process) -> std/core/types/string;
+// Automatically generated. Retrieves the `pid` constructor field of the `:managed-process` type.
+fun managed-process/pid[17,3,17,5] : (^ @this : managed-process) -> std/core/types/int;
+// Automatically generated. Retrieves the `binary-path` constructor field of the `:managed-process` type.
+fun managed-process/binary-path[18,3,18,13] : (^ @this : managed-process) -> std/core/types/string;
+// Automatically generated. Retrieves the `status` constructor field of the `:managed-process` type.
+fun managed-process/status[19,3,19,8] : (^ @this : managed-process) -> std/core/types/string;
+// Automatically generated. Retrieves the `start-time` constructor field of the `:managed-process` type.
+fun managed-process/start-time[20,3,20,12] : (^ @this : managed-process) -> std/core/types/float64;
+// Automatically generated. Retrieves the `restart-count` constructor field of the `:managed-process` type.
+fun managed-process/restart-count[21,3,21,15] : (^ @this : managed-process) -> std/core/types/int;
+fun managed-process/@copy[15,8,15,22] : (@this : managed-process, name : (std/core/types/@optional :: V -> V)<std/core/types/string>, pid : (std/core/types/@optional :: V -> V)<std/core/types/int>, binary-path : (std/core/types/@optional :: V -> V)<std/core/types/string>, status : (std/core/types/@optional :: V -> V)<std/core/types/string>, start-time : (std/core/types/@optional :: V -> V)<std/core/types/float64>, restart-count : (std/core/types/@optional :: V -> V)<std/core/types/int>) -> managed-process;
+// Automatically generated. Retrieves the `processes` constructor field of the `:orchestrator-state` type.
+fun orchestrator-state/processes[24,3,24,11] : (^ @this : orchestrator-state) -> (std/core/types/list :: V -> V)<managed-process>;
+// Automatically generated. Retrieves the `total-restarts` constructor field of the `:orchestrator-state` type.
+fun orchestrator-state/total-restarts[25,3,25,16] : (^ @this : orchestrator-state) -> std/core/types/int;
+// Automatically generated. Retrieves the `last-health-check` constructor field of the `:orchestrator-state` type.
+fun orchestrator-state/last-health-check[26,3,26,19] : (^ @this : orchestrator-state) -> std/core/types/float64;
+fun orchestrator-state/@copy[23,8,23,25] : (@this : orchestrator-state, processes : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<managed-process>>, total-restarts : (std/core/types/@optional :: V -> V)<std/core/types/int>, last-health-check : (std/core/types/@optional :: V -> V)<std/core/types/float64>) -> orchestrator-state;
+val binary-registry[30,5,30,19] : (std/core/types/list :: V -> V)<(std/core/types/string, std/core/types/string)>;
+// lifted local: @lift-find-process@10241, find-process, @spec-x10147
+// specialized: std/core/list/@unroll-foreach-while@10009, on parameters @uniq-action@10140, using:
+// @uniq-action@10140 = fn(@uniq-x@10134: src/orchestrator/managed-process){
+//   match (val p@10138 : src/orchestrator/managed-process
+//                = @uniq-x@10134;
+//   (std/core/string/(==)((match (p@10138) {
+//       ((@skip src/orchestrator/Managed-process((@x: string) : string, (@pat@0: int) : int, (@pat@1: string) : string, (@pat@2: string) : string, (@pat@3: float64) : float64, (@pat@4: int) : int) : src/orchestrator/managed-process ) as @pat: src/orchestrator/managed-process)
+//          -> @x;
+//     }), proc-name))) {
+//     ((std/core/types/True() : bool ) as @uniq-pat@1@10135: bool)
+//        -> std/core/types/Just<src/orchestrator/managed-process>(@uniq-x@10134);
+//     ((@skip std/core/types/False() : bool ) as @uniq-pat@0@0@10136: bool)
+//        -> std/core/types/Nothing<src/orchestrator/managed-process>;
+//   };
+// }
+fun @lift-find-process@10242[1,0,1,0] : (proc-name : std/core/types/string, @uniq-xs@10139 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/maybe :: V -> V)<managed-process>;
+// lifted local: find-process, @spec-x10137
+// specialized: std/core/list/find, on parameters @uniq-pred@10131, using:
+// @uniq-pred@10131 = fn(p: src/orchestrator/managed-process){
+//   std/core/string/(==)((match (p) {
+//       ((@skip src/orchestrator/Managed-process((@x: string) : string, (@pat@0: int) : int, (@pat@1: string) : string, (@pat@2: string) : string, (@pat@3: float64) : float64, (@pat@4: int) : int) : src/orchestrator/managed-process ) as @pat: src/orchestrator/managed-process)
+//          -> @x;
+//     }), proc-name);
+// }
+fun @lift-find-process@10241[1,0,1,0] : (proc-name : std/core/types/string, @uniq-xs@10130 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/maybe :: V -> V)<managed-process>;
+fun find-process[43,5,43,16] : (proc-name : std/core/types/string, processes : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/maybe :: V -> V)<managed-process>;
+// lifted local: @lift-update-process@10243, update-process, @spec-x10160
+// specialized: std/core/list/@unroll-map@10010, on parameters @uniq-f@10155, using:
+// @uniq-f@10155 = fn(p: src/orchestrator/managed-process){
+//   match ((std/core/string/(==)((match (p) {
+//       ((@skip src/orchestrator/Managed-process((@x@0: string) : string, (@pat@0@0: int) : int, (@pat@1@0: string) : string, (@pat@2@0: string) : string, (@pat@3: float64) : float64, (@pat@4: int) : int) : src/orchestrator/managed-process ) as @pat@2: src/orchestrator/managed-process)
+//          -> @x@0;
+//     }), proc-name))) {
+//     ((std/core/types/True() : bool ) as @pat@5: bool)
+//        -> src/orchestrator/Managed-process((match (p) {
+//           ((@skip src/orchestrator/Managed-process((@x@1: string) : string, (@pat@0@1: int) : int, (@pat@1@1: string) : string, (@pat@2@1: string) : string, (@pat@3@0: float64) : float64, (@pat@4@0: int) : int) : src/orchestrator/managed-process ) as @pat@6: src/orchestrator/managed-process)
+//              -> @x@1;
+//         }), (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@2: string) : string, (@x@2: int) : int, (@pat@1@2: string) : string, (@pat@2@2: string) : string, (@pat@3@1: float64) : float64, (@pat@4@1: int) : int) : src/orchestrator/managed-process ) as @pat@7: src/orchestrator/managed-process)
+//              -> @x@2;
+//         }), (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@3: string) : string, (@pat@1@3: int) : int, (@x@3: string) : string, (@pat@2@3: string) : string, (@pat@3@2: float64) : float64, (@pat@4@2: int) : int) : src/orchestrator/managed-process ) as @pat@8: src/orchestrator/managed-process)
+//              -> @x@3;
+//         }), new-status, (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@4: string) : string, (@pat@1@4: int) : int, (@pat@2@4: string) : string, (@pat@3@3: string) : string, (@x@4: float64) : float64, (@pat@4@3: int) : int) : src/orchestrator/managed-process ) as @pat@9: src/orchestrator/managed-process)
+//              -> @x@4;
+//         }), (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@5: string) : string, (@pat@1@5: int) : int, (@pat@2@5: string) : string, (@pat@3@4: string) : string, (@pat@4@4: float64) : float64, (@x@5: int) : int) : src/orchestrator/managed-process ) as @pat@10: src/orchestrator/managed-process)
+//              -> @x@5;
+//         }));
+//     ((@skip std/core/types/False() : bool ) as @pat@0@6: bool)
+//        -> p;
+//   };
+// }
+fun @trmc-lift-update-process@10244[1,0,1,0] : (new-status : std/core/types/string, proc-name : std/core/types/string, @uniq-xs@10154 : (std/core/types/list :: V -> V)<managed-process>, ^ @acc : (std/core/types/ctx :: V -> V)<(std/core/types/list :: V -> V)<managed-process>>) -> (std/core/types/list :: V -> V)<managed-process>;
+// lifted local: @lift-update-process@10243, update-process, @spec-x10160
+// specialized: std/core/list/@unroll-map@10010, on parameters @uniq-f@10155, using:
+// @uniq-f@10155 = fn(p: src/orchestrator/managed-process){
+//   match ((std/core/string/(==)((match (p) {
+//       ((@skip src/orchestrator/Managed-process((@x@0: string) : string, (@pat@0@0: int) : int, (@pat@1@0: string) : string, (@pat@2@0: string) : string, (@pat@3: float64) : float64, (@pat@4: int) : int) : src/orchestrator/managed-process ) as @pat@2: src/orchestrator/managed-process)
+//          -> @x@0;
+//     }), proc-name))) {
+//     ((std/core/types/True() : bool ) as @pat@5: bool)
+//        -> src/orchestrator/Managed-process((match (p) {
+//           ((@skip src/orchestrator/Managed-process((@x@1: string) : string, (@pat@0@1: int) : int, (@pat@1@1: string) : string, (@pat@2@1: string) : string, (@pat@3@0: float64) : float64, (@pat@4@0: int) : int) : src/orchestrator/managed-process ) as @pat@6: src/orchestrator/managed-process)
+//              -> @x@1;
+//         }), (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@2: string) : string, (@x@2: int) : int, (@pat@1@2: string) : string, (@pat@2@2: string) : string, (@pat@3@1: float64) : float64, (@pat@4@1: int) : int) : src/orchestrator/managed-process ) as @pat@7: src/orchestrator/managed-process)
+//              -> @x@2;
+//         }), (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@3: string) : string, (@pat@1@3: int) : int, (@x@3: string) : string, (@pat@2@3: string) : string, (@pat@3@2: float64) : float64, (@pat@4@2: int) : int) : src/orchestrator/managed-process ) as @pat@8: src/orchestrator/managed-process)
+//              -> @x@3;
+//         }), new-status, (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@4: string) : string, (@pat@1@4: int) : int, (@pat@2@4: string) : string, (@pat@3@3: string) : string, (@x@4: float64) : float64, (@pat@4@3: int) : int) : src/orchestrator/managed-process ) as @pat@9: src/orchestrator/managed-process)
+//              -> @x@4;
+//         }), (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@5: string) : string, (@pat@1@5: int) : int, (@pat@2@5: string) : string, (@pat@3@4: string) : string, (@pat@4@4: float64) : float64, (@x@5: int) : int) : src/orchestrator/managed-process ) as @pat@10: src/orchestrator/managed-process)
+//              -> @x@5;
+//         }));
+//     ((@skip std/core/types/False() : bool ) as @pat@0@6: bool)
+//        -> p;
+//   };
+// }
+fun @lift-update-process@10244[1,0,1,0] : (new-status : std/core/types/string, proc-name : std/core/types/string, @uniq-xs@10154 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/list :: V -> V)<managed-process>;
+// lifted local: update-process, @spec-x10153
+// specialized: std/core/list/map, on parameters @uniq-f@10150, using:
+// @uniq-f@10150 = fn(p: src/orchestrator/managed-process){
+//   match ((std/core/string/(==)((match (p) {
+//       ((@skip src/orchestrator/Managed-process((@x@0: string) : string, (@pat@0@0: int) : int, (@pat@1@0: string) : string, (@pat@2@0: string) : string, (@pat@3: float64) : float64, (@pat@4: int) : int) : src/orchestrator/managed-process ) as @pat@2: src/orchestrator/managed-process)
+//          -> @x@0;
+//     }), proc-name))) {
+//     ((std/core/types/True() : bool ) as @pat@5: bool)
+//        -> src/orchestrator/Managed-process((match (p) {
+//           ((@skip src/orchestrator/Managed-process((@x@1: string) : string, (@pat@0@1: int) : int, (@pat@1@1: string) : string, (@pat@2@1: string) : string, (@pat@3@0: float64) : float64, (@pat@4@0: int) : int) : src/orchestrator/managed-process ) as @pat@6: src/orchestrator/managed-process)
+//              -> @x@1;
+//         }), (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@2: string) : string, (@x@2: int) : int, (@pat@1@2: string) : string, (@pat@2@2: string) : string, (@pat@3@1: float64) : float64, (@pat@4@1: int) : int) : src/orchestrator/managed-process ) as @pat@7: src/orchestrator/managed-process)
+//              -> @x@2;
+//         }), (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@3: string) : string, (@pat@1@3: int) : int, (@x@3: string) : string, (@pat@2@3: string) : string, (@pat@3@2: float64) : float64, (@pat@4@2: int) : int) : src/orchestrator/managed-process ) as @pat@8: src/orchestrator/managed-process)
+//              -> @x@3;
+//         }), new-status, (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@4: string) : string, (@pat@1@4: int) : int, (@pat@2@4: string) : string, (@pat@3@3: string) : string, (@x@4: float64) : float64, (@pat@4@3: int) : int) : src/orchestrator/managed-process ) as @pat@9: src/orchestrator/managed-process)
+//              -> @x@4;
+//         }), (match (p) {
+//           ((@skip src/orchestrator/Managed-process((@pat@0@5: string) : string, (@pat@1@5: int) : int, (@pat@2@5: string) : string, (@pat@3@4: string) : string, (@pat@4@4: float64) : float64, (@x@5: int) : int) : src/orchestrator/managed-process ) as @pat@10: src/orchestrator/managed-process)
+//              -> @x@5;
+//         }));
+//     ((@skip std/core/types/False() : bool ) as @pat@0@6: bool)
+//        -> p;
+//   };
+// }
+fun @lift-update-process@10243[1,0,1,0] : (new-status : std/core/types/string, proc-name : std/core/types/string, @uniq-xs@10149 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/list :: V -> V)<managed-process>;
+fun update-process[46,5,46,18] : (state : orchestrator-state, proc-name : std/core/types/string, new-status : std/core/types/string) -> orchestrator-state;
+fun check-health[57,5,57,16] : (process : managed-process) -> std/core/types/string;
+// lifted local: @lift-health-summary@10245, health-summary, @spec-x10175
+// specialized: std/core/list/@unroll-filter@10007, on parameters @uniq-pred@10168, using:
+// @uniq-pred@10168 = fn(p: src/orchestrator/managed-process){
+//   std/core/string/(==)((match (p) {
+//       ((@skip src/orchestrator/Managed-process((@pat@0@2: string) : string, (@pat@1@3: int) : int, (@pat@2@0: string) : string, (@x@1: string) : string, (@pat@3@0: float64) : float64, (@pat@4@0: int) : int) : src/orchestrator/managed-process ) as @pat@4: src/orchestrator/managed-process)
+//          -> @x@1;
+//     }), "running");
+// }
+fun @trmc-lift-health-summary@10246[1,0,1,0] : (@uniq-xs@10167 : (std/core/types/list :: V -> V)<managed-process>, @acc : (std/core/types/ctx :: V -> V)<(std/core/types/list :: V -> V)<managed-process>>) -> (std/core/types/list :: V -> V)<managed-process>;
+// lifted local: @lift-health-summary@10245, health-summary, @spec-x10175
+// specialized: std/core/list/@unroll-filter@10007, on parameters @uniq-pred@10168, using:
+// @uniq-pred@10168 = fn(p: src/orchestrator/managed-process){
+//   std/core/string/(==)((match (p) {
+//       ((@skip src/orchestrator/Managed-process((@pat@0@2: string) : string, (@pat@1@3: int) : int, (@pat@2@0: string) : string, (@x@1: string) : string, (@pat@3@0: float64) : float64, (@pat@4@0: int) : int) : src/orchestrator/managed-process ) as @pat@4: src/orchestrator/managed-process)
+//          -> @x@1;
+//     }), "running");
+// }
+fun @lift-health-summary@10246[1,0,1,0] : (@uniq-xs@10167 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/list :: V -> V)<managed-process>;
+// lifted local: health-summary, @spec-x10166
+// specialized: std/core/list/filter, on parameters @uniq-pred@10163, using:
+// @uniq-pred@10163 = fn(p: src/orchestrator/managed-process){
+//   std/core/string/(==)((match (p) {
+//       ((@skip src/orchestrator/Managed-process((@pat@0@2: string) : string, (@pat@1@3: int) : int, (@pat@2@0: string) : string, (@x@1: string) : string, (@pat@3@0: float64) : float64, (@pat@4@0: int) : int) : src/orchestrator/managed-process ) as @pat@4: src/orchestrator/managed-process)
+//          -> @x@1;
+//     }), "running");
+// }
+fun @lift-health-summary@10245[1,0,1,0] : (@uniq-xs@10162 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/list :: V -> V)<managed-process>;
+// lifted local: @lift-health-summary@10247, health-summary, @spec-x10190
+// specialized: std/core/list/@unroll-filter@10007, on parameters @uniq-pred@10183, using:
+// @uniq-pred@10183 = fn(p@0: src/orchestrator/managed-process){
+//   std/core/string/(==)((match (p@0) {
+//       ((@skip src/orchestrator/Managed-process((@pat@0@4: string) : string, (@pat@1@6: int) : int, (@pat@2@1: string) : string, (@x@3: string) : string, (@pat@3@1: float64) : float64, (@pat@4@1: int) : int) : src/orchestrator/managed-process ) as @pat@7: src/orchestrator/managed-process)
+//          -> @x@3;
+//     }), "crashed");
+// }
+fun @trmc-lift-health-summary@10248[1,0,1,0] : (@uniq-xs@10182 : (std/core/types/list :: V -> V)<managed-process>, @acc : (std/core/types/ctx :: V -> V)<(std/core/types/list :: V -> V)<managed-process>>) -> (std/core/types/list :: V -> V)<managed-process>;
+// lifted local: @lift-health-summary@10247, health-summary, @spec-x10190
+// specialized: std/core/list/@unroll-filter@10007, on parameters @uniq-pred@10183, using:
+// @uniq-pred@10183 = fn(p@0: src/orchestrator/managed-process){
+//   std/core/string/(==)((match (p@0) {
+//       ((@skip src/orchestrator/Managed-process((@pat@0@4: string) : string, (@pat@1@6: int) : int, (@pat@2@1: string) : string, (@x@3: string) : string, (@pat@3@1: float64) : float64, (@pat@4@1: int) : int) : src/orchestrator/managed-process ) as @pat@7: src/orchestrator/managed-process)
+//          -> @x@3;
+//     }), "crashed");
+// }
+fun @lift-health-summary@10248[1,0,1,0] : (@uniq-xs@10182 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/list :: V -> V)<managed-process>;
+// lifted local: health-summary, @spec-x10181
+// specialized: std/core/list/filter, on parameters @uniq-pred@10178, using:
+// @uniq-pred@10178 = fn(p@0: src/orchestrator/managed-process){
+//   std/core/string/(==)((match (p@0) {
+//       ((@skip src/orchestrator/Managed-process((@pat@0@4: string) : string, (@pat@1@6: int) : int, (@pat@2@1: string) : string, (@x@3: string) : string, (@pat@3@1: float64) : float64, (@pat@4@1: int) : int) : src/orchestrator/managed-process ) as @pat@7: src/orchestrator/managed-process)
+//          -> @x@3;
+//     }), "crashed");
+// }
+fun @lift-health-summary@10247[1,0,1,0] : (@uniq-xs@10177 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/list :: V -> V)<managed-process>;
+fun health-summary[63,5,63,18] : (state : orchestrator-state) -> std/core/types/string;
+fun extract-op[71,5,71,14] : (line : std/core/types/string) -> std/core/types/string;
+fun extract-binary[81,5,81,18] : (cmd-line : std/core/types/string) -> std/core/types/string;
+// lifted local: @lift-server-loop@10249, response, server-loop, @spec-x10209
+// specialized: std/core/list/@unroll-foreach-while@10009, on parameters @uniq-action@10202, using:
+// @uniq-action@10202 = fn(@uniq-x@10196: src/orchestrator/managed-process){
+//   match (val p@10200 : src/orchestrator/managed-process
+//                = @uniq-x@10196;
+//   (std/core/string/(==)((match (p@10200) {
+//       ((@skip src/orchestrator/Managed-process((@x@4: string) : string, (@pat@0@5: int) : int, (@pat@1@7: string) : string, (@pat@2@1: string) : string, (@pat@3@1: float64) : float64, (@pat@4@0: int) : int) : src/orchestrator/managed-process ) as @pat@15: src/orchestrator/managed-process)
+//          -> @x@4;
+//     }), proc-name))) {
+//     ((std/core/types/True() : bool ) as @uniq-pat@1@10197: bool)
+//        -> std/core/types/Just<src/orchestrator/managed-process>(@uniq-x@10196);
+//     ((@skip std/core/types/False() : bool ) as @uniq-pat@0@0@10198: bool)
+//        -> std/core/types/Nothing<src/orchestrator/managed-process>;
+//   };
+// }
+fun @lift-server-loop@10250[1,0,1,0] : (proc-name : std/core/types/string, @uniq-xs@10201 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/maybe :: V -> V)<managed-process>;
+// lifted local: response, server-loop, @spec-x10199
+// specialized: std/core/list/find, on parameters @uniq-pred@10193, using:
+// @uniq-pred@10193 = fn(p: src/orchestrator/managed-process){
+//   std/core/string/(==)((match (p) {
+//       ((@skip src/orchestrator/Managed-process((@x@4: string) : string, (@pat@0@5: int) : int, (@pat@1@7: string) : string, (@pat@2@1: string) : string, (@pat@3@1: float64) : float64, (@pat@4@0: int) : int) : src/orchestrator/managed-process ) as @pat@15: src/orchestrator/managed-process)
+//          -> @x@4;
+//     }), proc-name);
+// }
+fun @lift-server-loop@10249[1,0,1,0] : (proc-name : std/core/types/string, @uniq-xs@10192 : (std/core/types/list :: V -> V)<managed-process>) -> (std/core/types/maybe :: V -> V)<managed-process>;
+// lifted local: @lift-server-loop@10251, response, server-loop, @spec-x10222
+// specialized: std/core/list/@unroll-map@10010, on parameters @uniq-f@10217, using:
+// @uniq-f@10217 = fn<<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>>(p@0@0: src/orchestrator/managed-process){
+//   std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(x : string, y : string) -> string,(x : string, y : string) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>(std/core/types/(++))("\x22", (std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(x : string, y : string) -> string,(x : string, y : string) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>(std/core/types/(++))((std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(src/orchestrator/managed-process) -> string,(src/orchestrator/managed-process) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>((fn(@this@10: src/orchestrator/managed-process){
+//         (match (@this@10) {
+//           ((@skip src/orchestrator/Managed-process((@x@10: string) : string, (@pat@0@11: int) : int, (@pat@1@13: string) : string, (@pat@2@5: string) : string, (@pat@3@5: float64) : float64, (@pat@4@4: int) : int) : src/orchestrator/managed-process ) as @pat@27: src/orchestrator/managed-process)
+//              -> @x@10;
+//         });
+//       }))(p@0@0)), "\x22")));
+// }
+fun @trmc-lift-server-loop@10252[1,0,1,0] : (@uniq-xs@10216 : (std/core/types/list :: V -> V)<managed-process>, ^ @acc : (std/core/types/ctx :: V -> V)<(std/core/types/list :: V -> V)<std/core/types/string>>) -> <(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> (std/core/types/list :: V -> V)<std/core/types/string>;
+// lifted local: @lift-server-loop@10251, response, server-loop, @spec-x10222
+// specialized: std/core/list/@unroll-map@10010, on parameters @uniq-f@10217, using:
+// @uniq-f@10217 = fn<<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>>(p@0@0: src/orchestrator/managed-process){
+//   std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(x : string, y : string) -> string,(x : string, y : string) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>(std/core/types/(++))("\x22", (std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(x : string, y : string) -> string,(x : string, y : string) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>(std/core/types/(++))((std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(src/orchestrator/managed-process) -> string,(src/orchestrator/managed-process) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>((fn(@this@10: src/orchestrator/managed-process){
+//         (match (@this@10) {
+//           ((@skip src/orchestrator/Managed-process((@x@10: string) : string, (@pat@0@11: int) : int, (@pat@1@13: string) : string, (@pat@2@5: string) : string, (@pat@3@5: float64) : float64, (@pat@4@4: int) : int) : src/orchestrator/managed-process ) as @pat@27: src/orchestrator/managed-process)
+//              -> @x@10;
+//         });
+//       }))(p@0@0)), "\x22")));
+// }
+fun @lift-server-loop@10252[1,0,1,0] : (@uniq-xs@10216 : (std/core/types/list :: V -> V)<managed-process>) -> <(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> (std/core/types/list :: V -> V)<std/core/types/string>;
+// lifted local: response, server-loop, @spec-x10215
+// specialized: std/core/list/map, on parameters @uniq-f@10212, using:
+// @uniq-f@10212 = fn<<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>>(p@0@0: src/orchestrator/managed-process){
+//   std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(x : string, y : string) -> string,(x : string, y : string) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>(std/core/types/(++))("\x22", (std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(x : string, y : string) -> string,(x : string, y : string) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>(std/core/types/(++))((std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(src/orchestrator/managed-process) -> string,(src/orchestrator/managed-process) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>((fn(@this@10: src/orchestrator/managed-process){
+//         (match (@this@10) {
+//           ((@skip src/orchestrator/Managed-process((@x@10: string) : string, (@pat@0@11: int) : int, (@pat@1@13: string) : string, (@pat@2@5: string) : string, (@pat@3@5: float64) : float64, (@pat@4@4: int) : int) : src/orchestrator/managed-process ) as @pat@27: src/orchestrator/managed-process)
+//              -> @x@10;
+//         });
+//       }))(p@0@0)), "\x22")));
+// }
+fun @lift-server-loop@10251[1,0,1,0] : (@uniq-xs@10211 : (std/core/types/list :: V -> V)<managed-process>) -> <(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> (std/core/types/list :: V -> V)<std/core/types/string>;
+// monadic lift
+fun @mlift-lift-server-loop@10253@10350[1,0,1,0] : (@c-x10274 : (std/core/types/list :: V -> V)<std/core/types/string>) -> std/core/types/string;
+// lifted local: response, server-loop, @spec-x10240
+// specialized: std/core/list/show, on parameters @implicit/@uniq-show@10225, using:
+// @implicit/@uniq-show@10225 = std/core/types/@open<(total :: E),<(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>>,(s : string) -> string,(s : string) -> <(alloc :: H -> X)<(global :: H)>,(console/console :: X),(div :: X),(exn :: (E, V) -> V),(fsys :: X),(ndet :: X),(net :: X),(read :: H -> X)<(global :: H)>,(ui :: X),(write :: H -> X)<(global :: H)>> string>(std/core/show/string/show)
+fun @lift-server-loop@10253[1,0,1,0] : (@uniq-xs@10224 : (std/core/types/list :: V -> V)<std/core/types/string>) -> <(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> std/core/types/string;
+// monadic lift
+fun @mlift-server-loop@10351[1,0,1,0] : (state : orchestrator-state, @y-x10282 : std/core/types/string) -> <(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> std/core/types/string;
+// monadic lift
+fun @mlift-server-loop@10352[1,0,1,0] : (state : orchestrator-state, names : (std/core/types/list :: V -> V)<std/core/types/string>) -> <(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> std/core/types/string;
+// monadic lift
+fun @mlift-server-loop@10353[1,0,1,0] : (binary : std/core/types/string, op : std/core/types/string, state : orchestrator-state, @c-x10283 : std/core/types/string) -> ();
+// monadic lift
+fun @mlift-server-loop@10354[1,0,1,0] : (state : orchestrator-state, line : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>> ();
+fun server-loop[92,5,92,15] : (state : orchestrator-state) -> <(std/core/io :: E)> ();
+fun main[163,5,163,8] : () -> <(std/core/io :: E)> ();
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+specialize "*_" fun find-process // inline size: 1
+  = fn(proc-name: std/core/types/string, processes: (std/core/types/list :: V -> V)<managed-process>){
+    std/core/list/find<managed-process,(std/core/types/total :: E)>(processes, (fn(p: managed-process){
+        (std/core/string/(==)((match (p) {
+            ((@skip src/orchestrator/Managed-process((@x: std/core/types/string) : std/core/types/string, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat: managed-process)
+               -> @x;
+          }), proc-name));
+      }));
+  };
+specialize "_**" fun update-process // inline size: 1
+  = fn(state: orchestrator-state, proc-name: std/core/types/string, new-status: std/core/types/string){
+    val new-processes[47,7,47,19] : (std/core/types/list :: V -> V)<managed-process>
+          = std/core/list/map<managed-process,managed-process,(std/core/types/total :: E)>((match (state) {
+              ((@skip src/orchestrator/Orchestrator-state((@x: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat: orchestrator-state)
+                 -> @x;
+            }), (fn(p: managed-process){
+              (match ((std/core/string/(==)((match (p) {
+                  ((@skip src/orchestrator/Managed-process((@x@0: std/core/types/string) : std/core/types/string, (@pat@0@0: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/string) : std/core/types/string, (@pat@2@0: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@2: managed-process)
+                     -> @x@0;
+                }), proc-name))) {
+                ((std/core/types/True() : std/core/types/bool ) as @pat@5: std/core/types/bool)
+                   -> src/orchestrator/Managed-process((match (p) {
+                      ((@skip src/orchestrator/Managed-process((@x@1: std/core/types/string) : std/core/types/string, (@pat@0@1: std/core/types/int) : std/core/types/int, (@pat@1@1: std/core/types/string) : std/core/types/string, (@pat@2@1: std/core/types/string) : std/core/types/string, (@pat@3@0: std/core/types/float64) : std/core/types/float64, (@pat@4@0: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@6: managed-process)
+                         -> @x@1;
+                    }), (match (p) {
+                      ((@skip src/orchestrator/Managed-process((@pat@0@2: std/core/types/string) : std/core/types/string, (@x@2: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/string) : std/core/types/string, (@pat@2@2: std/core/types/string) : std/core/types/string, (@pat@3@1: std/core/types/float64) : std/core/types/float64, (@pat@4@1: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@7: managed-process)
+                         -> @x@2;
+                    }), (match (p) {
+                      ((@skip src/orchestrator/Managed-process((@pat@0@3: std/core/types/string) : std/core/types/string, (@pat@1@3: std/core/types/int) : std/core/types/int, (@x@3: std/core/types/string) : std/core/types/string, (@pat@2@3: std/core/types/string) : std/core/types/string, (@pat@3@2: std/core/types/float64) : std/core/types/float64, (@pat@4@2: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@8: managed-process)
+                         -> @x@3;
+                    }), new-status, (match (p) {
+                      ((@skip src/orchestrator/Managed-process((@pat@0@4: std/core/types/string) : std/core/types/string, (@pat@1@4: std/core/types/int) : std/core/types/int, (@pat@2@4: std/core/types/string) : std/core/types/string, (@pat@3@3: std/core/types/string) : std/core/types/string, (@x@4: std/core/types/float64) : std/core/types/float64, (@pat@4@3: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@9: managed-process)
+                         -> @x@4;
+                    }), (match (p) {
+                      ((@skip src/orchestrator/Managed-process((@pat@0@5: std/core/types/string) : std/core/types/string, (@pat@1@5: std/core/types/int) : std/core/types/int, (@pat@2@5: std/core/types/string) : std/core/types/string, (@pat@3@4: std/core/types/string) : std/core/types/string, (@pat@4@4: std/core/types/float64) : std/core/types/float64, (@x@5: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@10: managed-process)
+                         -> @x@5;
+                    }));
+                ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0@6: std/core/types/bool)
+                   -> p;
+              });
+            }));
+    src/orchestrator/Orchestrator-state(new-processes, (match (state) {
+        ((@skip src/orchestrator/Orchestrator-state((@pat@0@7: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@x@6: std/core/types/int) : std/core/types/int, (@pat@1@6: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat@11: orchestrator-state)
+           -> @x@6;
+      }), (match (state) {
+        ((@skip src/orchestrator/Orchestrator-state((@pat@0@8: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@pat@1@7: std/core/types/int) : std/core/types/int, (@x@7: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat@12: orchestrator-state)
+           -> @x@7;
+      }));
+  };
+inline borrow "^" fun managed-process/name // inline size: 0
+  = fn(@this: managed-process){
+    match (@this) {
+      ((@skip src/orchestrator/Managed-process((@x: std/core/types/string) : std/core/types/string, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat: managed-process)
+         -> @x;
+    };
+  };
+inline borrow "^" fun managed-process/pid // inline size: 0
+  = fn(@this: managed-process){
+    match (@this) {
+      ((@skip src/orchestrator/Managed-process((@pat@0: std/core/types/string) : std/core/types/string, (@x: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat: managed-process)
+         -> @x;
+    };
+  };
+inline borrow "^" fun managed-process/binary-path // inline size: 0
+  = fn(@this: managed-process){
+    match (@this) {
+      ((@skip src/orchestrator/Managed-process((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat: managed-process)
+         -> @x;
+    };
+  };
+inline borrow "^" fun managed-process/status // inline size: 0
+  = fn(@this: managed-process){
+    match (@this) {
+      ((@skip src/orchestrator/Managed-process((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat: managed-process)
+         -> @x;
+    };
+  };
+inline borrow "^" fun managed-process/start-time // inline size: 0
+  = fn(@this: managed-process){
+    match (@this) {
+      ((@skip src/orchestrator/Managed-process((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@x: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat: managed-process)
+         -> @x;
+    };
+  };
+inline borrow "^" fun managed-process/restart-count // inline size: 0
+  = fn(@this: managed-process){
+    match (@this) {
+      ((@skip src/orchestrator/Managed-process((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/string) : std/core/types/string, (@pat@4: std/core/types/float64) : std/core/types/float64, (@x: std/core/types/int) : std/core/types/int) : managed-process ) as @pat: managed-process)
+         -> @x;
+    };
+  };
+fun managed-process/@copy // inline size: 7
+  = fn(@this: managed-process, name: (std/core/types/@optional :: V -> V)<std/core/types/string>, pid: (std/core/types/@optional :: V -> V)<std/core/types/int>, binary-path: (std/core/types/@optional :: V -> V)<std/core/types/string>, status: (std/core/types/@optional :: V -> V)<std/core/types/string>, start-time: (std/core/types/@optional :: V -> V)<std/core/types/float64>, restart-count: (std/core/types/@optional :: V -> V)<std/core/types/int>){
+    src/orchestrator/Managed-process((match (name) {
+        ((std/core/types/@Optional((@uniq-name@83: std/core/types/string) : std/core/types/string) : (std/core/types/@optional :: V -> V)<std/core/types/string> ) as @pat: ((std/core/types/@optional :: V -> V)<std/core/types/string>))
+           -> @uniq-name@83;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/string> ) as @pat@0: ((std/core/types/@optional :: V -> V)<std/core/types/string>))
+           -> (match (@this) {
+            ((@skip src/orchestrator/Managed-process((@x: std/core/types/string) : std/core/types/string, (@pat@0@0: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/string) : std/core/types/string, (@pat@2: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@1: managed-process)
+               -> @x;
+          });
+      }), (match (pid) {
+        ((std/core/types/@Optional((@uniq-pid@91: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@1@1: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-pid@91;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@2@0: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/orchestrator/Managed-process((@pat@0@1: std/core/types/string) : std/core/types/string, (@x@0: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/string) : std/core/types/string, (@pat@2@1: std/core/types/string) : std/core/types/string, (@pat@3@0: std/core/types/float64) : std/core/types/float64, (@pat@4@0: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@5: managed-process)
+               -> @x@0;
+          });
+      }), (match (binary-path) {
+        ((std/core/types/@Optional((@uniq-binary-path@99: std/core/types/string) : std/core/types/string) : (std/core/types/@optional :: V -> V)<std/core/types/string> ) as @pat@3@1: ((std/core/types/@optional :: V -> V)<std/core/types/string>))
+           -> @uniq-binary-path@99;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/string> ) as @pat@4@1: ((std/core/types/@optional :: V -> V)<std/core/types/string>))
+           -> (match (@this) {
+            ((@skip src/orchestrator/Managed-process((@pat@0@2: std/core/types/string) : std/core/types/string, (@pat@1@3: std/core/types/int) : std/core/types/int, (@x@1: std/core/types/string) : std/core/types/string, (@pat@2@2: std/core/types/string) : std/core/types/string, (@pat@3@2: std/core/types/float64) : std/core/types/float64, (@pat@4@2: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@6: managed-process)
+               -> @x@1;
+          });
+      }), (match (status) {
+        ((std/core/types/@Optional((@uniq-status@107: std/core/types/string) : std/core/types/string) : (std/core/types/@optional :: V -> V)<std/core/types/string> ) as @pat@5@0: ((std/core/types/@optional :: V -> V)<std/core/types/string>))
+           -> @uniq-status@107;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/string> ) as @pat@6@0: ((std/core/types/@optional :: V -> V)<std/core/types/string>))
+           -> (match (@this) {
+            ((@skip src/orchestrator/Managed-process((@pat@0@3: std/core/types/string) : std/core/types/string, (@pat@1@4: std/core/types/int) : std/core/types/int, (@pat@2@3: std/core/types/string) : std/core/types/string, (@x@2: std/core/types/string) : std/core/types/string, (@pat@3@3: std/core/types/float64) : std/core/types/float64, (@pat@4@3: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@7: managed-process)
+               -> @x@2;
+          });
+      }), (match (start-time) {
+        ((std/core/types/@Optional((@uniq-start-time@115: std/core/types/float64) : std/core/types/float64) : (std/core/types/@optional :: V -> V)<std/core/types/float64> ) as @pat@7@0: ((std/core/types/@optional :: V -> V)<std/core/types/float64>))
+           -> @uniq-start-time@115;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/float64> ) as @pat@8: ((std/core/types/@optional :: V -> V)<std/core/types/float64>))
+           -> (match (@this) {
+            ((@skip src/orchestrator/Managed-process((@pat@0@4: std/core/types/string) : std/core/types/string, (@pat@1@5: std/core/types/int) : std/core/types/int, (@pat@2@4: std/core/types/string) : std/core/types/string, (@pat@3@4: std/core/types/string) : std/core/types/string, (@x@3: std/core/types/float64) : std/core/types/float64, (@pat@4@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@9: managed-process)
+               -> @x@3;
+          });
+      }), (match (restart-count) {
+        ((std/core/types/@Optional((@uniq-restart-count@123: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@9@0: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-restart-count@123;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@10: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/orchestrator/Managed-process((@pat@0@5: std/core/types/string) : std/core/types/string, (@pat@1@6: std/core/types/int) : std/core/types/int, (@pat@2@5: std/core/types/string) : std/core/types/string, (@pat@3@5: std/core/types/string) : std/core/types/string, (@pat@4@5: std/core/types/float64) : std/core/types/float64, (@x@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@11: managed-process)
+               -> @x@4;
+          });
+      }));
+  };
+inline borrow "^" fun orchestrator-state/processes // inline size: 0
+  = fn(@this: orchestrator-state){
+    match (@this) {
+      ((@skip src/orchestrator/Orchestrator-state((@x: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat: orchestrator-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun orchestrator-state/total-restarts // inline size: 0
+  = fn(@this: orchestrator-state){
+    match (@this) {
+      ((@skip src/orchestrator/Orchestrator-state((@pat@0: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@x: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat: orchestrator-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun orchestrator-state/last-health-check // inline size: 0
+  = fn(@this: orchestrator-state){
+    match (@this) {
+      ((@skip src/orchestrator/Orchestrator-state((@pat@0: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat: orchestrator-state)
+         -> @x;
+    };
+  };
+fun orchestrator-state/@copy // inline size: 4
+  = fn(@this: orchestrator-state, processes: (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<managed-process>>, total-restarts: (std/core/types/@optional :: V -> V)<std/core/types/int>, last-health-check: (std/core/types/@optional :: V -> V)<std/core/types/float64>){
+    src/orchestrator/Orchestrator-state((match (processes) {
+        ((std/core/types/@Optional((@uniq-processes@168: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<managed-process>> ) as @pat: ((std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<managed-process>>))
+           -> @uniq-processes@168;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<managed-process>> ) as @pat@0: ((std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<managed-process>>))
+           -> (match (@this) {
+            ((@skip src/orchestrator/Orchestrator-state((@x: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@pat@0@0: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat@1: orchestrator-state)
+               -> @x;
+          });
+      }), (match (total-restarts) {
+        ((std/core/types/@Optional((@uniq-total-restarts@176: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@1@1: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-total-restarts@176;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@2: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/orchestrator/Orchestrator-state((@pat@0@1: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@x@0: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat@3: orchestrator-state)
+               -> @x@0;
+          });
+      }), (match (last-health-check) {
+        ((std/core/types/@Optional((@uniq-last-health-check@184: std/core/types/float64) : std/core/types/float64) : (std/core/types/@optional :: V -> V)<std/core/types/float64> ) as @pat@3@0: ((std/core/types/@optional :: V -> V)<std/core/types/float64>))
+           -> @uniq-last-health-check@184;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/float64> ) as @pat@4: ((std/core/types/@optional :: V -> V)<std/core/types/float64>))
+           -> (match (@this) {
+            ((@skip src/orchestrator/Orchestrator-state((@pat@0@2: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@pat@1@3: std/core/types/int) : std/core/types/int, (@x@1: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat@5: orchestrator-state)
+               -> @x@1;
+          });
+      }));
+  };
+fun @lift-find-process@10241 // inline size: 2
+  = fn(proc-name: std/core/types/string, @uniq-xs@10130: (std/core/types/list :: V -> V)<managed-process>){
+    match (@uniq-xs@10130) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<managed-process> ) as @uniq-pat@10132: ((std/core/types/list :: V -> V)<managed-process>))
+         -> std/core/types/Nothing<managed-process>;
+      (@uniq-pat@0@10133: ((std/core/types/list :: V -> V)<managed-process>))
+         -> src/orchestrator/@lift-find-process@10242(proc-name, @uniq-xs@10130);
+    };
+  };
+fun find-process // inline size: 1
+  = fn(proc-name: std/core/types/string, processes: (std/core/types/list :: V -> V)<managed-process>){
+    src/orchestrator/@lift-find-process@10241(proc-name, processes);
+  };
+borrow "___^" fun @lift-update-process@10243 // inline size: 2
+  = fn(new-status: std/core/types/string, proc-name: std/core/types/string, @uniq-xs@10149: (std/core/types/list :: V -> V)<managed-process>){
+    match (@uniq-xs@10149) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<managed-process> ) as @uniq-pat@0@10151: ((std/core/types/list :: V -> V)<managed-process>))
+         -> std/core/types/Nil<managed-process>;
+      (@uniq-pat@10152: ((std/core/types/list :: V -> V)<managed-process>))
+         -> src/orchestrator/@lift-update-process@10244(new-status, proc-name, @uniq-xs@10149);
+    };
+  };
+fun update-process // inline size: 2
+  = fn(state: orchestrator-state, proc-name: std/core/types/string, new-status: std/core/types/string){
+    val new-processes[47,7,47,19] : (std/core/types/list :: V -> V)<managed-process>
+          = src/orchestrator/@lift-update-process@10243(new-status, proc-name, (match (state) {
+              ((@skip src/orchestrator/Orchestrator-state((@x: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat: orchestrator-state)
+                 -> @x;
+            }));
+    src/orchestrator/Orchestrator-state(new-processes, (match (state) {
+        ((@skip src/orchestrator/Orchestrator-state((@pat@0@7: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@x@6: std/core/types/int) : std/core/types/int, (@pat@1@6: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat@11: orchestrator-state)
+           -> @x@6;
+      }), (match (state) {
+        ((@skip src/orchestrator/Orchestrator-state((@pat@0@8: (std/core/types/list :: V -> V)<managed-process>) : (std/core/types/list :: V -> V)<managed-process>, (@pat@1@7: std/core/types/int) : std/core/types/int, (@x@7: std/core/types/float64) : std/core/types/float64) : orchestrator-state ) as @pat@12: orchestrator-state)
+           -> @x@7;
+      }));
+  };
+fun check-health // inline size: 4
+  = fn(process: managed-process){
+    match ((std/core/string/(==)((match (process) {
+        ((@skip src/orchestrator/Managed-process((@pat@0: std/core/types/string) : std/core/types/string, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/string) : std/core/types/string, (@x: std/core/types/string) : std/core/types/string, (@pat@3: std/core/types/float64) : std/core/types/float64, (@pat@4: std/core/types/int) : std/core/types/int) : managed-process ) as @pat: managed-process)
+           -> @x;
+      }), "running"))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat@5: std/core/types/bool)
+         -> "healthy";
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0@0: std/core/types/bool)
+         -> (match ((std/core/string/(==)((match (process) {
+            ((@skip src/orchestrator/Managed-process((@pat@0@1: std/core/types/string) : std/core/types/string, (@pat@1@0: std/core/types/int) : std/core/types/int, (@pat@2@0: std/core/types/string) : std/core/types/string, (@x@0: std/core/types/string) : std/core/types/string, (@pat@3@0: std/core/types/float64) : std/core/types/float64, (@pat@4@0: std/core/types/int) : std/core/types/int) : managed-process ) as @pat@6: managed-process)
+               -> @x@0;
+          }), "crashed"))) {
+          ((std/core/types/True() : std/core/types/bool ) as @pat@1@1: std/core/types/bool)
+             -> "unhealthy";
+          ((@skip std/core/types/False() : std/core/types/bool ) as @pat@2@1: std/core/types/bool)
+             -> "unknown";
+        });
+    };
+  };
+fun @lift-health-summary@10245 // inline size: 2
+  = fn(@uniq-xs@10162: (std/core/types/list :: V -> V)<managed-process>){
+    match (@uniq-xs@10162) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<managed-process> ) as @uniq-pat@2@10164: ((std/core/types/list :: V -> V)<managed-process>))
+         -> std/core/types/Nil<managed-process>;
+      (@uniq-pat@10165: ((std/core/types/list :: V -> V)<managed-process>))
+         -> src/orchestrator/@lift-health-summary@10246(@uniq-xs@10162);
+    };
+  };
+fun @lift-health-summary@10247 // inline size: 2
+  = fn(@uniq-xs@10177: (std/core/types/list :: V -> V)<managed-process>){
+    match (@uniq-xs@10177) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<managed-process> ) as @uniq-pat@2@10179: ((std/core/types/list :: V -> V)<managed-process>))
+         -> std/core/types/Nil<managed-process>;
+      (@uniq-pat@10180: ((std/core/types/list :: V -> V)<managed-process>))
+         -> src/orchestrator/@lift-health-summary@10248(@uniq-xs@10177);
+    };
+  };
+fun extract-binary // inline size: 12
+  = fn(cmd-line: std/core/types/string){
+    match ((std/core/string/contains(cmd-line, "unified_runtime_v3"))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> "unified_runtime_v3";
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+         -> (match ((std/core/string/contains(cmd-line, "effect_runtime"))) {
+          ((std/core/types/True() : std/core/types/bool ) as @pat@1: std/core/types/bool)
+             -> "effect_runtime";
+          ((@skip std/core/types/False() : std/core/types/bool ) as @pat@2: std/core/types/bool)
+             -> (match ((std/core/string/contains(cmd-line, "ring_buffer"))) {
+              ((std/core/types/True() : std/core/types/bool ) as @pat@3: std/core/types/bool)
+                 -> "ring_buffer";
+              ((@skip std/core/types/False() : std/core/types/bool ) as @pat@4: std/core/types/bool)
+                 -> (match ((std/core/string/contains(cmd-line, "rust_bridge"))) {
+                  ((std/core/types/True() : std/core/types/bool ) as @pat@5: std/core/types/bool)
+                     -> "rust_bridge";
+                  ((@skip std/core/types/False() : std/core/types/bool ) as @pat@6: std/core/types/bool)
+                     -> (match ((std/core/string/contains(cmd-line, "prat"))) {
+                      ((std/core/types/True() : std/core/types/bool ) as @pat@7: std/core/types/bool)
+                         -> "prat";
+                      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@8: std/core/types/bool)
+                         -> (match ((std/core/string/contains(cmd-line, "gan_ying"))) {
+                          ((std/core/types/True() : std/core/types/bool ) as @pat@9: std/core/types/bool)
+                             -> "gan_ying";
+                          ((@skip std/core/types/False() : std/core/types/bool ) as @pat@10: std/core/types/bool)
+                             -> "unknown";
+                        });
+                    });
+                });
+            });
+        });
+    };
+  };
+fun @lift-server-loop@10249 // inline size: 2
+  = fn(proc-name: std/core/types/string, @uniq-xs@10192: (std/core/types/list :: V -> V)<managed-process>){
+    match (@uniq-xs@10192) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<managed-process> ) as @uniq-pat@10194: ((std/core/types/list :: V -> V)<managed-process>))
+         -> std/core/types/Nothing<managed-process>;
+      (@uniq-pat@0@10195: ((std/core/types/list :: V -> V)<managed-process>))
+         -> src/orchestrator/@lift-server-loop@10250(proc-name, @uniq-xs@10192);
+    };
+  };
+borrow "_^" fun @lift-server-loop@10251 // inline size: 2
+  = fn<<(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>>(@uniq-xs@10211: (std/core/types/list :: V -> V)<managed-process>){
+    match (@uniq-xs@10211) {
+      ((std/core/types/Nil() : (std/core/types/list :: V -> V)<managed-process> ) as @uniq-pat@0@10213: ((std/core/types/list :: V -> V)<managed-process>))
+         -> std/core/types/Nil<std/core/types/string>;
+      (@uniq-pat@10214: ((std/core/types/list :: V -> V)<managed-process>))
+         -> src/orchestrator/@lift-server-loop@10252(@uniq-xs@10211);
+    };
+  };

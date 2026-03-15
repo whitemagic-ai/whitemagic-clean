@@ -119,18 +119,32 @@ defmodule WhitemagicCore.GanYing.FastLaneWorker do
   end
   
   defp process_event(event_type, data) do
+    # 1. Ensure the SHM ring is initialized on first use, or at least attempt it safely.
+    # We will just try to push to it. If it fails, it might not be initialized, but we can't crash the worker.
+    
+    event_id = :erlang.phash2(event_type) |> rem(1000)
+    sender_hash = :erlang.phash2(self()) |> rem(100000)
+    timestamp = System.system_time(:millisecond) / 1000.0
+    
+    payload = case Jason.encode(data) do
+      {:ok, json} -> json
+      _ -> "{}"
+    end
+    
+    # Fire and forget into the zero-copy Koka Ring Buffer
+    try do
+      WhiteMagic.EventRing.Nif.push_event(event_id, sender_hash, timestamp, payload)
+    rescue
+      _ -> :error
+    end
+
     # Route to Python bridge or handle internally
     case event_type do
       "system_health_changed" ->
-        # Update health metrics
         :ok
-        
       "mesh_signal" ->
-        # Forward to mesh consumer
         :ok
-        
       _ ->
-        # Default processing
         :ok
     end
   end

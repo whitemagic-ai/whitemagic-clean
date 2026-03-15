@@ -1,57 +1,55 @@
-"""Metal Garden - Structure, precision, and resilience.
+"""Metal Garden - DEPRECATED: Folded into Practice Garden (S023).
 
-Holographic Integration:
-- X-axis: Logical (clarity, structure)
-- Y-axis: Macro (systems and frameworks)
-- Z-axis: Slightly future (planning, durability)
-- W-axis: Higher gravity (stability, persistence)
+This garden has been consolidated into practice as part of the 28-fold symmetry restoration.
+Metal tools enable disciplined practice and mastery.
+
+Migration:
+- `get_metal_garden()` → `get_practice_garden()`
+- `metal.consult_zodiac()` → `practice.consult_zodiac()`
+- `metal.zodiac.*` → `practice.zodiac.*`
+
+Last Updated: 2026-02-21 (S023 Garden Consolidation)
 """
 
 from __future__ import annotations
 
-from typing import Any
+import warnings
 
-from whitemagic.core.resonance.gan_ying_enhanced import EventType
-from whitemagic.core.resonance.integration_helpers import GanYingMixin, init_listeners
-from whitemagic.gardens.base_garden import BaseGarden, CoordinateBias
-from whitemagic.gardens.metal.zodiac import get_zodiac_council
+# Redirect all metal imports to practice
+from whitemagic.gardens.practice import PracticeGarden, get_practice_garden
+from whitemagic.gardens.practice.zodiac import (  # noqa: F401
+    ZodiacCore,
+    ZodiacCouncil,
+    consult_council,
+    consult_core,
+    get_zodiac_council,
+)
 
-
-class MetalGarden(BaseGarden, GanYingMixin):
-    """Cultivates structure, precision, and resilient focus."""
-
-    def __init__(self) -> None:
-        BaseGarden.__init__(self)
-        init_listeners(self)
-        self.emit(EventType.SYSTEM_STARTED, {"garden": "Metal"})
-
-    def get_name(self) -> str:
-        return "metal"
-
-    def get_coordinate_bias(self) -> CoordinateBias:
-        return CoordinateBias(
-            x=-0.4,  # Logical and precise
-            y=0.2,   # Macro/systemic framing
-            z=0.1,   # Future-oriented planning
-            w=0.35,  # Stability and gravity
-        )
-
-    def consult_zodiac(self, sign: str, context: dict[str, Any] | None = None) -> Any:
-        """Consult the Zodiac Council for a specialized perspective."""
-        council = get_zodiac_council()
-        result = council.activate_core(sign, context or {})  # type: ignore[call-arg,func-returns-value,arg-type]
-        self.emit(EventType.GARDEN_RESONANCE, {"sign": sign})
-        return result
+# Backward compatibility - MetalGarden now returns PracticeGarden
+MetalGarden = PracticeGarden
 
 
-_instance = None
+def get_metal_garden() -> PracticeGarden:
+    """DEPRECATED: Use get_practice_garden() instead.
+
+    Metal garden functionality has been folded into practice (S023).
+    Metal tools enable disciplined practice.
+    """
+    warnings.warn(
+        "metal garden folded into practice (S023). Use get_practice_garden() instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return get_practice_garden()
 
 
-def get_metal_garden() -> MetalGarden:
-    global _instance
-    if _instance is None:
-        _instance = MetalGarden()
-    return _instance
-
-
-__all__ = ["MetalGarden", "get_metal_garden"]
+__all__ = [
+    "MetalGarden",
+    "get_metal_garden",
+    "PracticeGarden",
+    "ZodiacCore",
+    "ZodiacCouncil",
+    "consult_council",
+    "consult_core",
+    "get_zodiac_council",
+]

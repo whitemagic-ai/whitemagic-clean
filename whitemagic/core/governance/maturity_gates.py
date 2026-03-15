@@ -133,13 +133,14 @@ def _check_seed() -> list[GateResult]:
     except Exception as exc:
         results.append(GateResult("memory_system", False, f"UnifiedMemory failed: {exc}"))
 
-    # Tool registry
+    # Tool surfaces
     try:
-        from whitemagic.tools.registry import TOOL_REGISTRY
-        count = len(TOOL_REGISTRY)
-        results.append(GateResult("tool_registry", count > 0, f"{count} tools registered"))
+        from whitemagic.tools.tool_surface import get_surface_counts
+        counts = get_surface_counts()
+        count = counts.get("dispatch_tools", 0)
+        results.append(GateResult("tool_surface", count > 0, f"{count} dispatch tools available", details=counts))
     except Exception as exc:
-        results.append(GateResult("tool_registry", False, f"Registry failed: {exc}"))
+        results.append(GateResult("tool_surface", False, f"Tool surface failed: {exc}"))
 
     return results
 

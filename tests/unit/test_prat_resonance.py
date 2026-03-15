@@ -374,9 +374,10 @@ class TestPRATRouterResonanceIntegration(unittest.TestCase):
         }
         from whitemagic.tools.prat_router import route_prat_call
         result = route_prat_call("gana_ghost", operation="search")
-        self.assertIn("_resonance", result)
-        self.assertEqual(result["_resonance"]["gana"], "gana_ghost")
-        self.assertIn("successor_hint", result["_resonance"])
+        self.assertIn("details", result)
+        self.assertIn("_resonance", result["details"])
+        self.assertEqual(result["details"]["_resonance"]["gana"], "gana_ghost")
+        self.assertIn("successor_hint", result["details"]["_resonance"])
 
     @patch("whitemagic.tools.prat_resonance._get_harmony_snapshot")
     @patch("whitemagic.tools.prat_resonance._get_lunar_phase")
@@ -390,7 +391,7 @@ class TestPRATRouterResonanceIntegration(unittest.TestCase):
 
         # First call — no predecessor
         r1 = route_prat_call("gana_horn", operation="search")
-        self.assertNotIn("predecessor_context", r1)
+        self.assertNotIn("predecessor_context", r1["details"])
 
         # Second call — should have predecessor from first
         from whitemagic.tools.prat_resonance import build_resonance_context
@@ -408,7 +409,7 @@ class TestPRATRouterResonanceIntegration(unittest.TestCase):
         }
         from whitemagic.tools.prat_router import route_prat_call
         result = route_prat_call("gana_horn", operation="analyze")
-        self.assertIn("lunar_amplification", result)
+        self.assertIn("lunar_amplification", result["details"])
 
 
 if __name__ == "__main__":
