@@ -1,13 +1,16 @@
-# WhiteMagic v15.8.0
-
-**Release Date:** 2026-02-14
-**Codename:** The Deep Dive
+# WhiteMagic v20.0.0
+**Release Date:** 2026-03-16
+**Codename:** The Singularity
 
 ## What Is WhiteMagic?
 
 WhiteMagic is the tool substrate for agentic AI — 374 MCP tools (or 28 in PRAT mode), tiered memory with 5D holographic coordinates and a Galactic Map lifecycle, ethical governance, and polyglot accelerators in 11 languages. It gives AI agents hands, memory, and conscience while keeping them safe.
 
-## v15.8 Focus: Galaxy Rehydration, Full Activation & Pattern Engine Wiring
+## v20.0.0 Focus: The Polyglot Singularity
+- **Universal Synchronization**: Unified all 11 language cores (Python, Rust, Zig, Mojo, Julia, Haskell, Elixir, Go, Nim, TypeScript, WASM) under a single v20 release line.
+- **HNSW Acceleration**: Production-ready vector search with 50-1000x speedup over brute-force.
+- **Persistent Polyglot Servers**: Julia and Koka backends now support persistent RPC modes, eliminating JIT/startup latency for real-time inference.
+- **Refined MCP Surface**: 28 Gana meta-tools now support standard MCP server instructions for improved agent reliability.
 
 v15.7 shipped the complete platform. v15.8 brings it to life: rehydrating all archive databases into the active corpus (111K+ memories, 2.2M+ associations), running a full 9-step activation sequence that discovered spontaneous constellation convergence, and wiring all 12 previously-hidden pattern analysis engines to MCP — giving AI agents direct access to causal mining, emergence scanning, constellation detection, multi-spectral reasoning, and more.
 
