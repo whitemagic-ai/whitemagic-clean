@@ -189,7 +189,11 @@ class DriveCore:
             if len(self._history) > self._max_history:
                 self._history = self._history[-self._max_history:]
 
-            return self._build_snapshot()
+            snap = self._build_snapshot()
+
+        # Emit event OUTSIDE the lock to prevent deadlocks with listeners
+        self._emit_event(snap)
+        return snap
 
     # ------------------------------------------------------------------
     # Introspection
@@ -289,8 +293,14 @@ class DriveCore:
     def _emit_event(self, snapshot: DriveSnapshot) -> None:
         """Emit drive state to Gan Ying bus."""
         try:
-            from whitemagic.core.resonance import emit_event
-            emit_event("DRIVE_STATE_CHANGED", snapshot.to_dict(), source="emotion_drive")
+            from whitemagic.core.resonance.gan_ying_enhanced import get_bus
+            # v20: Use async_dispatch=True to prevent blocking the drive core
+            get_bus().emit(
+                source="emotion_drive",
+                event_type="DRIVE_STATE_CHANGED",
+                data=snapshot.to_dict(),
+                async_dispatch=True
+            )
         except Exception:
             pass
 

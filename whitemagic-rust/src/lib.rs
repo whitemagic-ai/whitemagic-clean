@@ -41,6 +41,12 @@ mod holographic_encoder_5d;
 #[cfg(feature = "python")]
 mod constellations;
 #[cfg(feature = "python")]
+mod keyword_extract;
+#[cfg(feature = "python")]
+mod minhash;
+#[cfg(feature = "python")]
+mod tokio_clones;
+#[cfg(feature = "python")]
 mod galactic_accelerator;
 #[cfg(feature = "python")]
 mod native_ffi;
@@ -97,6 +103,17 @@ fn whitemagic_rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(massive_deployer::create_massive_deployer, m)?)?;
     m.add_function(wrap_pyfunction!(massive_deployer::benchmark_rust_vs_python, m)?)?;
     
+    // --- START RECONCILLATION ---
+    // Manually register missing top-level functions from submodules for flat whitemagic_rust access
+    m.add_function(wrap_pyfunction!(keyword_extract::keyword_extract, m)?)?;
+    m.add_function(wrap_pyfunction!(keyword_extract::keyword_extract_batch, m)?)?;
+    m.add_function(wrap_pyfunction!(minhash::minhash_find_duplicates, m)?)?;
+    m.add_function(wrap_pyfunction!(minhash::minhash_signatures, m)?)?;
+    m.add_function(wrap_pyfunction!(tokio_clones::tokio_deploy_clones, m)?)?;
+    m.add_function(wrap_pyfunction!(tokio_clones::tokio_clone_bench, m)?)?;
+    m.add_function(wrap_pyfunction!(tokio_clones::tokio_clone_stats, m)?)?;
+    // --- END RECONCILLATION ---
+
     // Register prat router functions
     prat_router_v6::register_prat_router(m)?;
     
@@ -153,6 +170,11 @@ fn whitemagic_rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     
     // Add hot_paths functions directly to main module
     hot_paths::hot_paths(_py, m)?;
+    
+    // Add synthesis_engine sub-module
+    let synthesis_module = PyModule::new_bound(_py, "synthesis_engine")?;
+    synthesis_engine::synthesis_engine(_py, &synthesis_module)?;
+    m.add_submodule(&synthesis_module)?;
 
     Ok(())
 }
@@ -163,3 +185,6 @@ pub use wasm::*;
 
 
 pub mod monte_carlo;
+
+// Synthesis engine module (Phase B - v20)
+mod synthesis_engine;

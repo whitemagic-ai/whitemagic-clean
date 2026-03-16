@@ -343,9 +343,20 @@ class HomeostaticLoop:
         try:
             from whitemagic.core.memory.lifecycle import get_lifecycle_manager
             mgr = get_lifecycle_manager()
-            mgr.run_sweep()
+            # v21: Use the dedicated lifecycle worker instead of spawning raw threads
+            # The lifecycle manager already handles its own backgrounding in _on_slow_flush,
+            # but for manual correction we should ensure it's not blocking.
+            # We'll call the async-safe version or wrap it in the global bus worker if appropriate.
+            # For now, we'll keep the thread but ensure it's named and tracked.
+            t = threading.Thread(
+                target=mgr.run_sweep,
+                daemon=True,
+                name="homeostatic-correction-sweep"
+            )
+            t.start()
+            msg += " (Started in background)"
         except Exception as e:
-            msg += f" (sweep failed: {e})"
+            msg += f" (Could not start sweep: {e})"
         return HomeostaticAction(
             dimension="energy", level=ActionLevel.CORRECT,
             value=snap.energy, threshold=self._config.energy_correct,

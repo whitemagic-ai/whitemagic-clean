@@ -218,9 +218,20 @@ def handle_token_report(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.token_economy import get_token_economy
         economy = get_token_economy()
-        budget_status = economy.get_budget_status()
-        return {"status": "success", **budget_status}
+        try:
+            budget_status = economy.get_budget_status()
+            return {"status": "success", **budget_status}
+        except Exception as budget_err:
+            logger.error(f"Error getting budget status: {budget_err}")
+            return {
+                "status": "success",
+                "total_budget": getattr(economy, "total_budget", 200000),
+                "tokens_used": getattr(economy, "tokens_used", 0),
+                "error": str(budget_err),
+                "note": "Budget status retrieval partially failed"
+            }
     except Exception as e:
+        logger.error(f"Token economy initialization failed: {e}")
         return {"status": "error", "error": str(e)}
 
 

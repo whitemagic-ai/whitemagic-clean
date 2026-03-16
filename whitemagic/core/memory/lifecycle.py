@@ -27,6 +27,7 @@ import asyncio
 import logging
 import threading
 import time
+import queue
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
@@ -85,6 +86,31 @@ class MemoryLifecycleManager:
         self._stats = LifecycleStats()
         self._flush_count = 0
         self._attached = False
+        self._sweep_thread: threading.Thread | None = None
+        self._sweep_queue: queue.Queue = queue.Queue(maxsize=1) # Only one sweep queued at a time
+        self._running = True
+        self._start_worker()
+
+    def _start_worker(self) -> None:
+        """Start the background sweep worker thread."""
+        def worker_loop():
+            while self._running:
+                try:
+                    # Bounded wait
+                    persist = self._sweep_queue.get(timeout=1.0)
+                    self.run_sweep(persist=persist)
+                    self._sweep_queue.task_done()
+                except queue.Empty:
+                    continue
+                except Exception as e:
+                    logger.error(f"Error in memory lifecycle worker: {e}")
+
+        self._sweep_thread = threading.Thread(
+            target=worker_loop,
+            daemon=True,
+            name="memory-lifecycle-worker"
+        )
+        self._sweep_thread.start()
 
     # ------------------------------------------------------------------
     # Temporal Scheduler integration
@@ -115,13 +141,12 @@ class MemoryLifecycleManager:
         """Called after every SLOW lane flush. Conditionally triggers a sweep."""
         self._flush_count += 1
         if self._flush_count % self._config.sweep_interval_sweeps == 0:
-            # Run sweep in a background thread to avoid blocking the flush
-            t = threading.Thread(
-                target=self.run_sweep,
-                daemon=True,
-                name="memory-lifecycle-sweep",
-            )
-            t.start()
+            # v21: Use queue instead of spawning raw threads
+            try:
+                self._sweep_queue.put_nowait(self._config.persist_scores)
+            except queue.Full:
+                # Sweep already in progress or queued, skip this one
+                pass
 
     # ------------------------------------------------------------------
     # Core sweep

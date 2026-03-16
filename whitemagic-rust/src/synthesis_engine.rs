@@ -1,286 +1,113 @@
-//! Synthesis Engine - Multi-Source Synthesis (PSR-004)
-//! Target: 30× speedup for synthesis operations
-
 use pyo3::prelude::*;
+use pyo3::types::{PyDict, PyList, PyTuple};
+use numpy::{PyArray1, PyArrayMethods};
 use std::collections::HashMap;
-use rayon::prelude::*;
 
-#[derive(Clone, Debug)]
-#[pyclass]
-pub struct Source {
-    #[pyo3(get)]
-    pub id: String,
-    #[pyo3(get)]
-    pub content: String,
-    #[pyo3(get)]
-    pub weight: f64,
-    #[pyo3(get)]
-    pub metadata: HashMap<String, String>,
-}
-
-#[pymethods]
-impl Source {
-    #[new]
-    fn new(id: String, content: String, weight: f64) -> Self {
-        Self {
-            id,
-            content,
-            weight,
-            metadata: HashMap::new(),
+/// Infer DAG dependencies from 4D holographic coordinates
+/// Fast-path for causal_net.py::infer_dependencies()
+#[pyfunction]
+fn infer_dag_from_coords<'py>(
+    py: Python<'py>,
+    cluster_data: &Bound<'py, PyDict>,
+    dist_threshold: f64,
+    w_threshold: f64,
+) -> PyResult<Bound<'py, PyList>> {
+    let edges = PyList::empty_bound(py);
+    let keys: Vec<String> = cluster_data.keys().extract()?;
+    
+    // Extract centroids into a vec
+    let mut centroids: Vec<(String, [f64; 4])> = Vec::new();
+    for key in &keys {
+        let cluster: Bound<'_, PyDict> = cluster_data.get_item(key)?.unwrap().downcast_into()?;
+        let centroid: Bound<'_, PyArray1<f64>> = cluster.get_item("centroid")?.unwrap().downcast_into()?;
+        let arr = centroid.readonly();
+        let slice = arr.as_slice()?;
+        if slice.len() >= 4 {
+            centroids.push((key.clone(), [slice[0], slice[1], slice[2], slice[3]]));
         }
     }
-
-    fn add_metadata(&mut self, key: String, value: String) {
-        self.metadata.insert(key, value);
-    }
-}
-
-#[derive(Clone, Debug)]
-#[pyclass]
-pub struct SynthesisResult {
-    #[pyo3(get)]
-    pub synthesized_content: String,
-    #[pyo3(get)]
-    pub source_ids: Vec<String>,
-    #[pyo3(get)]
-    pub confidence: f64,
-    #[pyo3(get)]
-    pub common_themes: Vec<String>,
-}
-
-#[pymethods]
-impl SynthesisResult {
-    #[new]
-    fn new(synthesized_content: String, source_ids: Vec<String>, confidence: f64, common_themes: Vec<String>) -> Self {
-        Self {
-            synthesized_content,
-            source_ids,
-            confidence,
-            common_themes,
-        }
-    }
-}
-
-#[pyclass]
-pub struct PySynthesisEngine {
-    sources: HashMap<String, Source>,
-    min_sources: usize,
-    min_confidence: f64,
-}
-
-#[pymethods]
-impl PySynthesisEngine {
-    #[new]
-    fn new(min_sources: Option<usize>, min_confidence: Option<f64>) -> Self {
-        Self {
-            sources: HashMap::new(),
-            min_sources: min_sources.unwrap_or(2),
-            min_confidence: min_confidence.unwrap_or(0.5),
-        }
-    }
-
-    fn add_source(&mut self, source: Source) {
-        self.sources.insert(source.id.clone(), source);
-    }
-
-    fn synthesize(&self, source_ids: Vec<String>) -> Option<SynthesisResult> {
-        if source_ids.len() < self.min_sources {
-            return None;
-        }
-        
-        let sources: Vec<&Source> = source_ids
-            .iter()
-            .filter_map(|id| self.sources.get(id))
-            .collect();
-        
-        if sources.len() < self.min_sources {
-            return None;
-        }
-        
-        let common_themes = self.extract_common_themes(&sources);
-        let confidence = self.calculate_confidence(&sources);
-        
-        if confidence < self.min_confidence {
-            return None;
-        }
-        
-        let synthesized = self.merge_content(&sources);
-        
-        Some(SynthesisResult {
-            synthesized_content: synthesized,
-            source_ids,
-            confidence,
-            common_themes,
-        })
-    }
-
-    fn synthesize_all(&self) -> Vec<SynthesisResult> {
-        let source_ids: Vec<String> = self.sources.keys().cloned().collect();
-        
-        if let Some(result) = self.synthesize(source_ids) {
-            vec![result]
-        } else {
-            Vec::new()
-        }
-    }
-
-    fn parallel_synthesize(&self, source_groups: Vec<Vec<String>>) -> Vec<SynthesisResult> {
-        source_groups
-            .par_iter()
-            .filter_map(|group| self.synthesize(group.clone()))
-            .collect()
-    }
-
-    fn find_contradictions(&self, source_ids: Vec<String>) -> Vec<(String, String)> {
-        let mut contradictions = Vec::new();
-        
-        for i in 0..source_ids.len() {
-            for j in (i + 1)..source_ids.len() {
-                if let (Some(s1), Some(s2)) = (self.sources.get(&source_ids[i]), self.sources.get(&source_ids[j])) {
-                    if self.are_contradictory(s1, s2) {
-                        contradictions.push((s1.id.clone(), s2.id.clone()));
-                    }
-                }
-            }
-        }
-        
-        contradictions
-    }
-
-    fn source_count(&self) -> usize {
-        self.sources.len()
-    }
-}
-
-impl PySynthesisEngine {
-    fn extract_common_themes(&self, sources: &[&Source]) -> Vec<String> {
-        let mut theme_counts: HashMap<String, usize> = HashMap::new();
-        
-        for source in sources {
-            let words: Vec<String> = source.content
-                .split_whitespace()
-                .map(|s| s.to_lowercase())
-                .collect();
+    
+    // Build edges based on proximity and w-coordinate flow
+    for i in 0..centroids.len() {
+        for j in (i + 1)..centroids.len() {
+            let (k1, c1) = &centroids[i];
+            let (k2, c2) = &centroids[j];
             
-            for word in words {
-                if word.len() > 3 {
-                    *theme_counts.entry(word).or_insert(0) += 1;
-                }
+            // XYZ distance
+            let dist_xyz = ((c1[0] - c2[0]).powi(2) + 
+                          (c1[1] - c2[1]).powi(2) + 
+                          (c1[2] - c2[2]).powi(2)).sqrt();
+            let w_diff = c2[3] - c1[3];
+            
+            if dist_xyz < dist_threshold && w_diff.abs() > w_threshold {
+                let edge = if w_diff > 0.0 {
+                    PyTuple::new_bound(py, &[k1.as_str(), k2.as_str()])
+                } else {
+                    PyTuple::new_bound(py, &[k2.as_str(), k1.as_str()])
+                };
+                edges.append(edge)?;
             }
         }
-        
-        let threshold = sources.len() / 2;
-        theme_counts
-            .into_iter()
-            .filter(|(_, count)| *count >= threshold)
-            .map(|(theme, _)| theme)
-            .collect()
     }
-
-    fn calculate_confidence(&self, sources: &[&Source]) -> f64 {
-        if sources.is_empty() {
-            return 0.0;
-        }
-        
-        let total_weight: f64 = sources.iter().map(|s| s.weight).sum();
-        let avg_weight = total_weight / sources.len() as f64;
-        
-        let agreement = self.calculate_agreement(sources);
-        
-        (avg_weight + agreement) / 2.0
-    }
-
-    fn calculate_agreement(&self, sources: &[&Source]) -> f64 {
-        if sources.len() < 2 {
-            return 1.0;
-        }
-        
-        let mut agreement_sum = 0.0;
-        let mut comparisons = 0;
-        
-        for i in 0..sources.len() {
-            for j in (i + 1)..sources.len() {
-                let similarity = self.content_similarity(&sources[i].content, &sources[j].content);
-                agreement_sum += similarity;
-                comparisons += 1;
-            }
-        }
-        
-        if comparisons == 0 {
-            return 0.0;
-        }
-        
-        agreement_sum / comparisons as f64
-    }
-
-    fn content_similarity(&self, a: &str, b: &str) -> f64 {
-        let words_a: HashSet<String> = a.split_whitespace().map(|s| s.to_lowercase()).collect();
-        let words_b: HashSet<String> = b.split_whitespace().map(|s| s.to_lowercase()).collect();
-        
-        let intersection = words_a.intersection(&words_b).count();
-        let union = words_a.union(&words_b).count();
-        
-        if union == 0 {
-            return 0.0;
-        }
-        
-        intersection as f64 / union as f64
-    }
-
-    fn merge_content(&self, sources: &[&Source]) -> String {
-        sources
-            .iter()
-            .map(|s| s.content.as_str())
-            .collect::<Vec<&str>>()
-            .join(" ")
-    }
-
-    fn are_contradictory(&self, s1: &Source, s2: &Source) -> bool {
-        let similarity = self.content_similarity(&s1.content, &s2.content);
-        similarity < 0.2
-    }
+    
+    Ok(edges)
 }
 
-use std::collections::HashSet;
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_engine_creation() {
-        let engine = PySynthesisEngine::new(Some(2), Some(0.5));
-        assert_eq!(engine.source_count(), 0);
+/// Fast kaizen metrics gathering
+/// Batch SQL-like aggregations in Rust
+#[pyfunction]
+fn fast_kaizen_metrics<'py>(
+    py: Python<'py>,
+    memory_titles: Vec<String>,
+    holographic_coords: Vec<Vec<f64>>, // [x, y, z, w] for each memory
+) -> PyResult<Bound<'py, PyDict>> {
+    let result = PyDict::new_bound(py);
+    
+    // Count untitled (empty or starts with "Untitled")
+    let untitled_count = memory_titles.iter()
+        .filter(|t| t.is_empty() || t.starts_with("Untitled"))
+        .count();
+    result.set_item("untitled_count", untitled_count)?;
+    
+    // Quadrant analysis
+    let mut quadrants: HashMap<String, usize> = HashMap::new();
+    for coords in &holographic_coords {
+        if coords.len() >= 2 {
+            let x_reg = if coords[0] < 0.0 { "logical" } else { "emotional" };
+            let y_reg = if coords[1] < 0.0 { "detail" } else { "strategic" };
+            let key = format!("{}_{}", x_reg, y_reg);
+            *quadrants.entry(key).or_insert(0) += 1;
+        }
     }
-
-    #[test]
-    fn test_add_source() {
-        let mut engine = PySynthesisEngine::new(None, None);
-        let source = Source::new("s1".to_string(), "content".to_string(), 1.0);
-        
-        engine.add_source(source);
-        assert_eq!(engine.source_count(), 1);
+    
+    let quad_dict = PyDict::new_bound(py);
+    for (k, v) in quadrants {
+        quad_dict.set_item(k, v)?;
     }
-
-    #[test]
-    fn test_synthesize() {
-        let mut engine = PySynthesisEngine::new(Some(2), Some(0.0));
+    result.set_item("quadrant_counts", quad_dict)?;
+    
+    // W-coordinate (gravity) stats
+    let w_values: Vec<f64> = holographic_coords.iter()
+        .filter_map(|c| c.get(3).copied())
+        .collect();
+    
+    if !w_values.is_empty() {
+        let sum_w: f64 = w_values.iter().sum();
+        let avg_w = sum_w / w_values.len() as f64;
+        let max_w = w_values.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b));
+        let min_w = w_values.iter().fold(f64::INFINITY, |a, &b| a.min(b));
         
-        engine.add_source(Source::new("s1".to_string(), "hello world".to_string(), 1.0));
-        engine.add_source(Source::new("s2".to_string(), "hello there".to_string(), 1.0));
-        
-        let result = engine.synthesize(vec!["s1".to_string(), "s2".to_string()]);
-        assert!(result.is_some());
+        result.set_item("avg_gravity", avg_w)?;
+        result.set_item("max_gravity", max_w)?;
+        result.set_item("min_gravity", min_w)?;
+        result.set_item("high_gravity_count", w_values.iter().filter(|&&w| w > 0.6).count())?;
     }
+    
+    Ok(result)
+}
 
-    #[test]
-    fn test_find_contradictions() {
-        let mut engine = PySynthesisEngine::new(None, None);
-        
-        engine.add_source(Source::new("s1".to_string(), "the sky is blue".to_string(), 1.0));
-        engine.add_source(Source::new("s2".to_string(), "completely different content".to_string(), 1.0));
-        
-        let contradictions = engine.find_contradictions(vec!["s1".to_string(), "s2".to_string()]);
-        assert!(!contradictions.is_empty());
-    }
+pub fn synthesis_engine(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(infer_dag_from_coords, m)?)?;
+    m.add_function(wrap_pyfunction!(fast_kaizen_metrics, m)?)?;
+    Ok(())
 }

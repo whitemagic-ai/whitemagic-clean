@@ -2,7 +2,9 @@
 
 Monitors context and automatically casts appropriate spells.
 """
-
+import logging
+import time
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -10,6 +12,11 @@ from typing import Any
 
 from .core import get_grimoire
 from .spells import Spell, SpellOutcome, get_spell_book
+
+logger = logging.getLogger(__name__)
+
+# v21: Centralized executor for spell casting to prevent thread-bombing
+_SPELL_EXECUTOR = ThreadPoolExecutor(max_workers=4, thread_name_prefix="spell-caster")
 
 
 class CastMode(Enum):
@@ -107,8 +114,19 @@ class AutoCaster:
             should_cast = self._should_auto_cast(confidence)
 
             if should_cast:
-                outcome = spell.cast(context.to_dict())
-                auto_cast = True
+                # v21: Use the centralized executor instead of creating a new one every time
+                future = _SPELL_EXECUTOR.submit(spell.cast, context.to_dict())
+                try:
+                    outcome = future.result(timeout=10.0)  # 10s max per spell
+                    auto_cast = True
+                except TimeoutError:
+                    logger.warning(f"Spell {spell.name} timed out during auto-cast")
+                    outcome = SpellOutcome.FAILED
+                    auto_cast = False
+                except Exception as e:
+                    logger.error(f"Spell {spell.name} failed: {e}")
+                    outcome = SpellOutcome.FAILED
+                    auto_cast = False
             else:
                 outcome = SpellOutcome.DEFERRED
                 auto_cast = False

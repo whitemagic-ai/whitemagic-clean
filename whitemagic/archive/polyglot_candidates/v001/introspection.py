@@ -167,6 +167,14 @@ def state_summary(*, include_sizes: bool = True) -> dict[str, Any]:
 
 
 def manifest(*, format: str = "summary", include_schemas: bool = False) -> dict[str, Any]:
+    from whitemagic.tools.errors import ToolExecutionError, ErrorCode
+    
+    if format not in ["summary", "whitemagic", "mcp"]:
+        raise ToolExecutionError(
+            f"unknown format: {format}",
+            error_code=ErrorCode.INVALID_PARAMS,
+        )
+        
     callable_tools = get_callable_tool_definitions()
     surface_counts = get_surface_counts()
     if format == "summary":

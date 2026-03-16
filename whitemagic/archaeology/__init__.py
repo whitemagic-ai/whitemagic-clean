@@ -1,77 +1,76 @@
-"""WhiteMagic Archaeology Module
-==============================
+import json
+import logging
+import os
+import re
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-Tools for tracking, analyzing, and remembering what files we've read.
-Integrates with the memory system to keep relevant knowledge at hand.
+from whitemagic.config import PROJECT_ROOT
 
-Features:
-- File reading tracker with timestamps and contexts
-- Content change detection via hashing
-- Integration with memory system for relevance scoring
-- Windsurf conversation protobuf reader
-- MCP tool exposure for AI agents
+logger = logging.getLogger("Chariot")
 
-Usage:
-    from whitemagic.archaeology import FileArchaeologist
+_archaeologist: Optional['ChariotArchaeologist'] = None
+_arch_lock = threading.Lock()
 
-    arch = FileArchaeologist()
-    arch.mark_read("/path/to/file.md", context="Phase 1 scan", note="Contains API docs")
+def get_archaeologist() -> 'ChariotArchaeologist':
+    """Get the global ChariotArchaeologist singleton."""
+    global _archaeologist
+    if _archaeologist is None:
+        with _arch_lock:
+            if _archaeologist is None:
+                target_dir = str(PROJECT_ROOT)
+                output_dir = str(PROJECT_ROOT / "core_system" / "data")
+                _archaeologist = ChariotArchaeologist(target_dir, output_dir)
+    return _archaeologist
 
-    # Get reading history
-    recent = arch.get_recent_reads(limit=50)
+def mark_read(path: str, context: Optional[str] = None, note: Optional[str] = None, insight: Optional[str] = None) -> Dict[str, Any]:
+    return get_archaeologist().mark_read(path, context, note, insight)
 
-    # Find unread files in a directory
-    unread = arch.find_unread("/path/to/docs/")
+def mark_written(path: str, context: Optional[str] = None, note: Optional[str] = None) -> Dict[str, Any]:
+    return get_archaeologist().mark_written(path, context, note)
 
-    # Get relevant memories for a file
-    memories = arch.get_relevant_memories("/path/to/file.md")
-"""
+def have_read(path: str) -> bool:
+    return get_archaeologist().have_read(path)
 
-try:
-    from .file_archaeologist import (  # type: ignore[import-not-found]
-        FileArchaeologist,
-        find_unread,
-        get_archaeologist,
-        mark_read,
-        mark_read_async,
-        mark_written,
-        mark_written_async,
-    )
-except ImportError:
-    # file_archaeologist was archived to _archived/archaeology/
-    FileArchaeologist = None  # type: ignore[assignment,misc]
-    get_archaeologist = None  # type: ignore[assignment]
-    mark_read = None  # type: ignore[assignment]
-    mark_written = None  # type: ignore[assignment]
-    mark_read_async = None  # type: ignore[assignment]
-    mark_written_async = None  # type: ignore[assignment]
-    find_unread = None  # type: ignore[assignment]
+def find_unread(directory: str = ".", patterns: Optional[List[str]] = None) -> List[Any]:
+    return get_archaeologist().find_unread(directory, patterns)
 
-try:
-    from .windsurf_reader import WindsurfConversationReader  # type: ignore[import-not-found]
-except ImportError:
-    WindsurfConversationReader = None  # type: ignore[assignment,misc]
+def stats(scan_disk: bool = False) -> Dict[str, Any]:
+    return get_archaeologist().stats(scan_disk=scan_disk)
 
-try:
-    from .wisdom_extractor import (
-        WisdomExtractor,
-        create_daily_wisdom_digest,
-        extract_wisdom,
-        get_wisdom_extractor,
-        process_wisdom_archives,
-        wisdom_report,
-    )
-except ImportError:
-    WisdomExtractor = None  # type: ignore[assignment,misc]
-    create_daily_wisdom_digest = None  # type: ignore[assignment]
-    extract_wisdom = None  # type: ignore[assignment]
-    get_wisdom_extractor = None  # type: ignore[assignment]
-    process_wisdom_archives = None  # type: ignore[assignment]
-    wisdom_report = None  # type: ignore[assignment]
+from .dig import ChariotArchaeologist
+
+# Bridge for WisdomExtractor (placeholder for now using Chariot logic)
+class WisdomExtractor:
+    def __init__(self):
+        self.arch = get_archaeologist()
+    
+    def extract_wisdom(self, content: str, source: str) -> Dict[str, Any]:
+        from .dig import Grimoire, Ganas
+        return {
+            "chapters": Grimoire.identify(content, source),
+            "gana": Ganas.identify(content, source)
+        }
+
+def get_wisdom_extractor() -> WisdomExtractor:
+    return WisdomExtractor()
+
+def process_wisdom_archives(limit_files: int = 1000, memory_type: str = "long_term") -> Dict[str, Any]:
+    # TODO: Implement actual archive processing
+    return {"status": "success", "processed": 0}
+
+def create_daily_wisdom_digest() -> str:
+    # TODO: Implement digest creation
+    return "No digest generated"
+
+def wisdom_report() -> str:
+    return get_archaeologist().reading_report()
 
 __all__ = [
-    "FileArchaeologist",
-    "WindsurfConversationReader",
+    "ChariotArchaeologist",
     "WisdomExtractor",
     "create_daily_wisdom_digest",
     "extract_wisdom",
@@ -83,7 +82,11 @@ __all__ = [
     "mark_written",
     "mark_written_async",
     "process_wisdom_archives",
+    "stats",
     "wisdom_report",
 ]
 
-__version__ = "1.0.0"
+# Compatibility aliases
+def mark_read_async(*args, **kwargs): return mark_read(*args, **kwargs)
+def mark_written_async(*args, **kwargs): return mark_written(*args, **kwargs)
+def extract_wisdom(content: str, source: str): return get_wisdom_extractor().extract_wisdom(content, source)

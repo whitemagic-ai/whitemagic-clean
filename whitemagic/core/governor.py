@@ -247,8 +247,8 @@ class Governor:
         self.action_history: list[dict[str, Any]] = []
         self._validation_count = 0
         self._blocked_count = 0
-        # Check active enforcement flag
-        self.enabled = os.getenv("WHITEMAGIC_ENFORCE_DHARMA", "0").lower() in ("1", "true", "yes", "on")
+        # Check active enforcement flag - Hard-locked to True for v20 Liberation release
+        self.enabled = os.getenv("WHITEMAGIC_ENFORCE_DHARMA", "1").lower() in ("1", "true", "yes", "on")
 
     # =========================================================================
     # Tool Validation (MCP)

@@ -84,6 +84,14 @@ DISPATCH_TABLE: dict[str, Callable[..., dict[str, Any]]] = {
     "garden_browse": LazyHandler("garden", "handle_garden_browse"),
     "garden_resolve": LazyHandler("garden", "handle_garden_resolve"),
 
+    # --- War Room ---
+    "art_of_war.chapter": LazyHandler("war_room", "handle_art_of_war_chapter"),
+    "art_of_war.assess": LazyHandler("war_room", "handle_assess_terrain"),
+    "art_of_war.plan": LazyHandler("war_room", "handle_plan_campaign"),
+
+    # --- Search Aliases ---
+    "search_query": LazyHandler("memory", "handle_search_memories"),
+
     # --- Memory ---
     "create_memory": LazyHandler("memory", "handle_create_memory"),
     "fast_read_memory": LazyHandler("memory", "handle_fast_read_memory"),
@@ -638,7 +646,6 @@ DISPATCH_TABLE: dict[str, Callable[..., dict[str, Any]]] = {
     "art_of_war.wisdom": LazyHandler("war_room", "handle_art_of_war_wisdom"),
     "art_of_war.terrain": LazyHandler("war_room", "handle_art_of_war_terrain"),
     "art_of_war.campaign": LazyHandler("war_room", "handle_art_of_war_campaign"),
-    "art_of_war.chapter": LazyHandler("war_room", "handle_art_of_war_chapter"),
 
     # --- v15.9: Fool's Guard / Ralph Wiggum ---
     "fool_guard.status": LazyHandler("war_room", "handle_fool_guard_status"),

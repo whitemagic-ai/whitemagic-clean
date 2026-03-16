@@ -148,7 +148,16 @@ class SQLiteBackend:
                         self._needs_backup = False
                     logger.debug(f"Adding column {col_name} to memories table")
                     try:
-                        stmt = 'ALTER TABLE memories ADD COLUMN "' + col_name + '" ' + col_type
+                        # SECURITY FIX: Use proper identifier quoting to prevent SQL injection
+                        def _quote_identifier(ident: str) -> str:
+                            """Safely quote SQL identifier, rejecting suspicious characters."""
+                            # Double any double quotes in the identifier
+                            safe_ident = ident.replace('"', '""')
+                            return f'"{safe_ident}"'
+                        
+                        safe_col = _quote_identifier(col_name)
+                        safe_type = _quote_identifier(col_type.split()[0])
+                        stmt = f'ALTER TABLE memories ADD COLUMN {safe_col} {safe_type}'
                         conn.execute(stmt)
                     except sqlite3.OperationalError as e:
                         logger.warning(f"Could not add column {col_name}: {e}")
@@ -221,7 +230,13 @@ class SQLiteBackend:
                         self._auto_backup()
                         self._needs_backup = False
                     try:
-                        stmt = 'ALTER TABLE associations ADD COLUMN "' + col_name + '" ' + col_def
+                        # SECURITY FIX: Use proper identifier quoting
+                        def _quote_id(ident):
+                            safe = ident.replace('"', '""')
+                            return f'"{safe}"'
+                        safe_col = _quote_id(col_name)
+                        safe_type = col_def.split()[0] if col_def else 'TEXT'
+                        stmt = f'ALTER TABLE associations ADD COLUMN {safe_col} {safe_type}'
                         conn.execute(stmt)
                         logger.info(f"Added {col_name} column to associations table")
                     except sqlite3.OperationalError:

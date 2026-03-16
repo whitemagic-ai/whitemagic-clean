@@ -115,13 +115,21 @@ def handle_fast_read_memory(**kwargs: Any) -> dict[str, Any]:
         return {"status": "error", "message": f"File not found: {filename}"}
 
     if rust is not None:
-        content = rust.read_file_fast(str(path))
-        _emit("MEMORY_ACCESSED", {"filename": filename, "fast": True})
-        try:
-            get_archaeologist().mark_read(str(path), context="MCP:fast_read", note=purpose)
-        except Exception:
-            pass
-        return {"status": "success", "content": content}
+        if hasattr(rust, "read_file_fast"):
+            content = rust.read_file_fast(str(path))
+        elif hasattr(rust, "read_file"):
+            content = rust.read_file(str(path))
+        else:
+            rust_error = "Rust bridge missing read_file functions"
+            rust = None
+        
+        if rust is not None:
+            _emit("MEMORY_ACCESSED", {"filename": filename, "fast": True})
+            try:
+                get_archaeologist().mark_read(str(path), context="MCP:fast_read", note=purpose)
+            except Exception:
+                pass
+            return {"status": "success", "content": content}
 
     content = path.read_text(encoding="utf-8")
     _emit("MEMORY_ACCESSED", {"filename": filename, "fast": False})

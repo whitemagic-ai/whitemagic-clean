@@ -1,5 +1,6 @@
 import logging
 import threading
+import queue
 from collections import defaultdict, deque
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -8,6 +9,37 @@ from enum import Enum
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+# v21: Global async worker for all bus instances to minimize thread count
+_GLOBAL_ASYNC_QUEUE: queue.Queue = queue.Queue(maxsize=2000)
+_GLOBAL_WORKER_THREAD: threading.Thread | None = None
+_GLOBAL_WORKER_LOCK = threading.Lock()
+
+def _global_worker_loop() -> None:
+    """Background worker for processing async event emissions across all bus instances."""
+    while True:
+        try:
+            # item is (bus_instance, event, cascade)
+            bus, event, cascade = _GLOBAL_ASYNC_QUEUE.get(timeout=1.0)
+            bus._emit_internal(event, cascade)
+            _GLOBAL_ASYNC_QUEUE.task_done()
+        except queue.Empty:
+            continue
+        except Exception as e:
+            logger.error(f"Error in GanYingBus global async worker: {e}")
+
+def _ensure_global_worker() -> None:
+    """Ensure the global async worker thread is running."""
+    global _GLOBAL_WORKER_THREAD
+    if _GLOBAL_WORKER_THREAD is None:
+        with _GLOBAL_WORKER_LOCK:
+            if _GLOBAL_WORKER_THREAD is None:
+                _GLOBAL_WORKER_THREAD = threading.Thread(
+                    target=_global_worker_loop,
+                    daemon=True,
+                    name="gan-ying-global-worker"
+                )
+                _GLOBAL_WORKER_THREAD.start()
 
 # v14: Lock-free event bus primitives from Rust
 _RUST_EVENT_BUS = False
@@ -407,6 +439,9 @@ class GanYingBus:
         self._last_emit_time: dict[EventType, datetime] = {}
         self._active = True
 
+        # v21: Ensure global async worker is running
+        _ensure_global_worker()
+
         # Metrics
         self.total_emissions = 0
         self.total_cascades = 0
@@ -416,6 +451,18 @@ class GanYingBus:
         """Emit an event to all listeners.
         Optionally trigger cascades.
         """
+        # Leap 10: Use global worker queue for async dispatch (stabilization v21)
+        if async_dispatch:
+            try:
+                _GLOBAL_ASYNC_QUEUE.put_nowait((self, event, cascade))
+            except queue.Full:
+                logger.warning(f"GanYingBus global async queue full, dropping event: {event.event_type.value}")
+            return
+
+        self._emit_internal(event, cascade)
+
+    def _emit_internal(self, event: ResonanceEvent, cascade: bool = True) -> None:
+        """Internal emission logic."""
         # v14: Rust lock-free fast path for dampening + stillness check
         if _RUST_EVENT_BUS:
             allowed = _rs_bus.event_bus_try_emit(

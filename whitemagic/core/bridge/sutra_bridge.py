@@ -1,6 +1,4 @@
 import logging
-from typing import Optional
-from whitemagic.security.zodiac.ledger import ZodiacLedger, get_ledger
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +21,23 @@ class SutraKernelBridge:
         self._rust_engine = _RustDharmaEngine(maturity_level, strict_mode) if _RustDharmaEngine else None
         
     def evaluate_action(self, action_type: str, intent_score: float = 1.0, karma_debt: float = 0.0) -> str:
-        """Evaluates an action using the Rust Dharma Kernel. Returns the string verdict."""
+        """Evaluates an action using the Rust Dharma Kernel or Python fallback."""
         if self._rust_engine:
             return self._rust_engine.evaluate_action(action_type, intent_score, karma_debt)
         
-        # Python Fallback if Rust not available
-        logger.warning("Rust Sutra Kernel unavailable. Falling back to Python observation mode.")
-        return "Observe"
+        # v20 Hardened Fallback: Use Dharma System instead of passive string
+        try:
+            from whitemagic.dharma import evaluate_ethics
+            score, concerns = evaluate_ethics({"tool": action_type, "description": "Sutra Fallback Evaluation"})
+            
+            if score < 0.4:
+                return "Panic: Ethical misalignment detected in fallback mode."
+            if score < 0.7:
+                return "Intervene: Cautionary threshold reached."
+            return "Observe" if score > 0.9 else " Rajasic: Proceed with logging"
+        except Exception:
+            # Absolute last resort: Fail-Safe (Restrictive)
+            return "Intervene: Safety system failure."
 
 _sutra_kernel_instance = None
 

@@ -6,13 +6,15 @@ v4.3.0 Enhancement: Iteration Tracking for Continuous Execution
 - Integrates with circuit breaker
 - Persists execution state across IDE restarts
 """
-from typing import Any
 import json
+import logging
 from datetime import datetime
+from typing import Any
 
 from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
-
 from whitemagic.utils.fileio import atomic_write, file_lock
+
+logger = logging.getLogger(__name__)
 
 
 class CoherencePersistence:
@@ -32,10 +34,13 @@ class CoherencePersistence:
     def _load(self) -> dict:
         if self.state_file.exists():
             try:
-                with file_lock(self.state_file):
+                # v20: Use shorter timeout for file lock to prevent system-wide hangs
+                with file_lock(self.state_file, timeout=2.0):
                     return _json_loads(self.state_file.read_text()) or {}
             except (json.JSONDecodeError, ValueError):
                 pass
+            except TimeoutError:
+                logger.warning(f"Coherence state file {self.state_file} is locked, using stale/default state")
         return {
             "level": 100,
             "factors": {},

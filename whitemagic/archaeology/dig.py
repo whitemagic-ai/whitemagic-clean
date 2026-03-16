@@ -6,7 +6,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, List, Optional
 
 # Configure logging
 logging.basicConfig(
@@ -45,8 +45,8 @@ class Grimoire:
     }
 
     @staticmethod
-    def identify(content: str, filename: str) -> list[dict]:
-        matches: list[dict[str, Any]] = []
+    def identify(content: str, filename: str) -> List[Dict[str, Any]]:
+        matches: List[Dict[str, Any]] = []
         text = (content + " " + filename).lower()
         for num, info in Grimoire.CHAPTERS.items():
             score = sum(1 for k in info["keywords"] if k in text)
@@ -81,7 +81,7 @@ class Ganas:
     }
 
     @staticmethod
-    def identify(content: str, filename: str) -> str | None:
+    def identify(content: str, filename: str) -> Optional[str]:
         text = (content + " " + filename).lower()
         best_gana = None
         best_score = 0
@@ -100,12 +100,19 @@ class ChariotArchaeologist:
         self.output_path = Path(output_path)
         self.output_path.mkdir(parents=True, exist_ok=True)
         self.report_file = self.output_path / "recovered_memories.jsonl"
+        self.state_file = self.output_path / "archaeology_state.json"
+
+        # Initialize state
+        self._state = self._load_state()
+        self._history = self._state.get("history", [])
+        self._read_files = set(self._state.get("read_files", []))
 
         # Initialize output file (clear old run)
-        with open(self.report_file, "w"):
-            pass # just clear it
+        if not self.report_file.exists():
+            with open(self.report_file, "w") as f:
+                pass
 
-        self.stats = {"scanned": 0, "found": 0, "errors": 0, "skipped": 0}
+        self.stats_data = {"scanned": 0, "found": 0, "errors": 0, "skipped": 0}
         self.lock = threading.Lock()
 
         # Patterns to hunt for - REFINED
@@ -130,14 +137,100 @@ class ChariotArchaeologist:
             ".mp3", ".mp4", ".wav", ".pdf",
         }
 
-    def write_finding(self, finding: dict[str, Any]) -> None:
+    def _load_state(self) -> Dict[str, Any]:
+        if self.state_file.exists():
+            try:
+                return json.loads(self.state_file.read_text())
+            except Exception:
+                pass
+        return {"history": [], "read_files": []}
+
+    def _save_state(self) -> None:
+        with self.lock:
+            state = {
+                "history": self._history[-1000:], # Bounded history
+                "read_files": list(self._read_files)
+            }
+            self.state_file.write_text(json.dumps(state, indent=2))
+
+    def mark_read(self, path: str, context: Optional[str] = None, note: Optional[str] = None, insight: Optional[str] = None) -> Dict[str, Any]:
+        entry = {
+            "path": path,
+            "type": "read",
+            "timestamp": datetime.now().isoformat(),
+            "context": context,
+            "note": note,
+            "insight": insight
+        }
+        with self.lock:
+            self._history.append(entry)
+            self._read_files.add(path)
+        self._save_state()
+        return entry
+
+    def mark_written(self, path: str, context: Optional[str] = None, note: Optional[str] = None) -> Dict[str, Any]:
+        entry = {
+            "path": path,
+            "type": "written",
+            "timestamp": datetime.now().isoformat(),
+            "context": context,
+            "note": note
+        }
+        with self.lock:
+            self._history.append(entry)
+        self._save_state()
+        return entry
+
+    def have_read(self, path: str) -> bool:
+        return path in self._read_files
+
+    def find_unread(self, directory: str = ".", patterns: Optional[List[str]] = None) -> List[Any]:
+        dir_path = Path(directory)
+        unread = []
+        for root, _, files in os.walk(dir_path):
+            if any(ex in root for e in self.exclude_dirs for ex in (e,)): continue
+            for file in files:
+                fpath = str(Path(root) / file)
+                if fpath not in self._read_files:
+                    # Simple pattern check
+                    if patterns:
+                        if not any(p in file for p in patterns):
+                            continue
+                    unread.append(fpath)
+        return unread
+
+    def stats(self, scan_disk: bool = False) -> Dict[str, Any]:
+        return {
+            "total_files_tracked": len(self._read_files),
+            "history_size": len(self._history),
+            **self.stats_data
+        }
+
+    def get_recent_reads(self, limit: int = 50) -> List[Dict[str, Any]]:
+        reads = [h for h in self._history if h["type"] == "read"]
+        return reads[-limit:]
+
+    def reading_report(self) -> str:
+        return f"Archaeologist report: {len(self._read_files)} files read, {len(self._history)} actions recorded."
+
+    def search(self, query: str) -> List[Dict[str, Any]]:
+        results = []
+        query_lower = query.lower()
+        for entry in self._history:
+            if query_lower in entry.get("path", "").lower() or \
+               query_lower in entry.get("note", "").lower() or \
+               query_lower in entry.get("insight", "").lower():
+                results.append(entry)
+        return results
+
+    def write_finding(self, finding: Dict[str, Any]) -> None:
         """Thread-safe write to JSONL file"""
         with self.lock:
             with open(self.report_file, "a") as f:
                 f.write(json.dumps(finding) + "\n")
-            self.stats["found"] += 1
-            if self.stats["found"] % 100 == 0:
-                logger.info(f"Artifacts found so far: {self.stats['found']}")
+            self.stats_data["found"] += 1
+            if self.stats_data["found"] % 100 == 0:
+                logger.info(f"Artifacts found so far: {self.stats_data['found']}")
 
     def scan_file(self, file_path: Path) -> None:
         try:
@@ -156,9 +249,9 @@ class ChariotArchaeologist:
                 return # Skip unreadable
 
             with self.lock:
-                self.stats["scanned"] += 1
-                if self.stats["scanned"] % 1000 == 0:
-                    print(f"Scanned {self.stats['scanned']} files...")
+                self.stats_data["scanned"] += 1
+                if self.stats_data["scanned"] % 1000 == 0:
+                    print(f"Scanned {self.stats_data['scanned']} files...")
 
             matches = []
 
@@ -177,22 +270,11 @@ class ChariotArchaeologist:
             if self.patterns["crystal"].search(content):
                 matches.append("content_crystal")
 
-            # --- ANTHROPOLOGICAL ANALYSIS ---
-            # Even if no regex matches, we might classify it by Chapter/Gana
-            # But to keep noise low, let's only classify if we matched SOMETHING or if it's a python/md file
-            # Actually, let's allow classification for all text files, but only save if interesting.
-
-            is_interesting = len(matches) > 0
-
             # Identify Context
             chapters = Grimoire.identify(content, file_path.name)
             gana = Ganas.identify(content, file_path.name)
 
-            # If we strongly identified a Chapter or Gana, it's interesting too!
-            if chapters and chapters[0]["score"] >= 2:
-                is_interesting = True
-            if gana:
-                is_interesting = True
+            is_interesting = len(matches) > 0 or (chapters and chapters[0]["score"] >= 2) or gana is not None
 
             if is_interesting:
                 finding = {
@@ -208,8 +290,7 @@ class ChariotArchaeologist:
 
         except Exception:
             with self.lock:
-                self.stats["errors"] += 1
-            # logger.error(f"Error scanning {file_path}: {e}")
+                self.stats_data["errors"] += 1
 
     def dig(self) -> None:
         logger.info(f"Chariot started execution in {self.root_path}")
@@ -234,11 +315,11 @@ class ChariotArchaeologist:
 
     def conclusion(self) -> None:
         logger.info(f"Excavation complete. Findings saved to {self.report_file}")
-        print(f"\n--- CHARIOT RUN COMPLETE ---\nScanned: {self.stats['scanned']}\nFound: {self.stats['found']}\nErrors: {self.stats['errors']}")
+        print(f"\n--- CHARIOT RUN COMPLETE ---\nScanned: {self.stats_data['scanned']}\nFound: {self.stats_data['found']}\nErrors: {self.stats_data['errors']}")
 
         # Append summary stats
         with open(self.report_file, "a") as f:
-            f.write(json.dumps({"meta": "summary", "stats": self.stats, "timestamp": str(datetime.now())}) + "\n")
+            f.write(json.dumps({"meta": "summary", "stats": self.stats_data, "timestamp": str(datetime.now())}) + "\n")
 
 if __name__ == "__main__":
     # Target: The massive project_memory folder
@@ -251,3 +332,4 @@ if __name__ == "__main__":
 
     agent = ChariotArchaeologist(target_dir, output_dir)
     agent.dig()
+

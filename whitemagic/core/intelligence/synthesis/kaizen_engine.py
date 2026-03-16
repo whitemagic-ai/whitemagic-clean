@@ -85,9 +85,15 @@ class KaizenEngine:
         return self._conn
 
     def analyze(self) -> KaizenReport:
-        """Run full kaizen analysis."""
+        """Run full kaizen analysis with Rust acceleration for metrics."""
         proposals = []
         metrics = {}
+        
+        # Phase B: Rust accelerated metrics gathering for v20
+        rust_metrics = self._gather_rust_metrics()
+        if rust_metrics:
+            metrics.update(rust_metrics)
+            logger.info(f"Rust metrics: {len(rust_metrics)} fields gathered")
 
         # Quality checks
         proposals.extend(self._check_untitled())
@@ -106,27 +112,65 @@ class KaizenEngine:
         # Performance
         proposals.extend(self._find_duplicates())
 
-        # Core-connected analysis (constellation anomalies, broken associations, cross-gaps)
+        # Core-connected analysis
         proposals.extend(self._find_constellation_anomalies())
         proposals.extend(self._find_broken_associations())
         proposals.extend(self._find_cross_constellation_gaps())
 
-        # Solution Library Applications (Phase 26)
+        # Solution Library Applications
         proposals.extend(self._find_solution_applications(proposals))
 
-        # Collect metrics
-        conn = self._get_conn()
-        cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM memories")
-        metrics["total_memories"] = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(DISTINCT tag) FROM tags")
-        metrics["unique_tags"] = cur.fetchone()[0]
+        # Collect remaining metrics from SQLite if not from Rust
+        if "total_memories" not in metrics:
+            conn = self._get_conn()
+            cur = conn.cursor()
+            cur.execute("SELECT COUNT(*) FROM memories")
+            metrics["total_memories"] = cur.fetchone()[0]
+            cur.execute("SELECT COUNT(DISTINCT tag) FROM tags")
+            metrics["unique_tags"] = cur.fetchone()[0]
 
         return KaizenReport(
             timestamp=datetime.now(),
             proposals=proposals,
             metrics=metrics,
         )
+    
+    def _gather_rust_metrics(self) -> dict[str, Any]:
+        """Gather metrics using Rust fast-path acceleration."""
+        try:
+            import whitemagic_rust as rs
+            if not hasattr(rs, 'synthesis_engine') or not hasattr(rs.synthesis_engine, 'fast_kaizen_metrics'):
+                return {}
+            
+            conn = self._get_conn()
+            cur = conn.cursor()
+            
+            # Gather memory titles
+            cur.execute("SELECT title FROM memories")
+            titles = [row[0] or "" for row in cur.fetchall()]
+            
+            # Gather holographic coordinates
+            cur.execute("SELECT x, y, z, w FROM holographic_coords")
+            coords = [[row[0], row[1], row[2], row[3]] for row in cur.fetchall()]
+            
+            # Call Rust fast-path
+            rust_result = rs.synthesis_engine.fast_kaizen_metrics(titles, coords)
+            
+            # Convert to Python dict
+            metrics = {
+                "untitled_count": rust_result.get("untitled_count", 0),
+                "total_memories": len(titles),
+                "quadrant_counts": dict(rust_result.get("quadrant_counts", {})),
+                "avg_gravity": rust_result.get("avg_gravity", 0.0),
+                "max_gravity": rust_result.get("max_gravity", 0.0),
+                "min_gravity": rust_result.get("min_gravity", 0.0),
+                "high_gravity_count": rust_result.get("high_gravity_count", 0),
+            }
+            
+            return metrics
+        except Exception as e:
+            logger.debug(f"Rust metrics gathering failed, using Python fallback: {e}")
+            return {}
 
     def _check_untitled(self) -> list[ImprovementProposal]:
         """Find memories without meaningful titles."""
@@ -208,7 +252,6 @@ class KaizenEngine:
         conn = self._get_conn()
         cur = conn.cursor()
 
-        # Check for gaps in each quadrant
         gaps = []
         cur.execute("""
             SELECT
@@ -241,7 +284,6 @@ class KaizenEngine:
         conn = self._get_conn()
         cur = conn.cursor()
 
-        # Simple clustering by rounding coordinates
         cur.execute("""
             SELECT
                 ROUND(x, 1) as rx, ROUND(y, 1) as ry,
@@ -276,7 +318,6 @@ class KaizenEngine:
         conn = self._get_conn()
         cur = conn.cursor()
 
-        # Find high-gravity tag clusters
         cur.execute("""
             SELECT t.tag, COUNT(*) as cnt, AVG(h.w) as avg_gravity
             FROM tags t
@@ -310,7 +351,6 @@ class KaizenEngine:
         conn = self._get_conn()
         cur = conn.cursor()
 
-        # Find memories with identical titles (exact match)
         cur.execute("""
             SELECT title, COUNT(*) as cnt FROM memories
             WHERE title IS NOT NULL AND title != ''
@@ -318,7 +358,6 @@ class KaizenEngine:
         """)
         exact_dupes = cur.fetchall()
 
-        # Find semantically similar titles using MansionBridge (v5.2.0)
         similar_pairs = []
         try:
             mansion_mod = importlib.import_module("whitemagic.core.mansion_bridge")
@@ -334,7 +373,7 @@ class KaizenEngine:
                 for j, m2 in enumerate(memories):
                     if i < j:
                         sim = bridge.similarity(m1["title"], m2["title"])
-                        if sim > 0.7:  # High similarity threshold
+                        if sim > 0.7:
                             similar_pairs.append({
                                 "id1": m1["id"], "id2": m2["id"],
                                 "title1": m1["title"], "title2": m2["title"],
@@ -384,7 +423,6 @@ class KaizenEngine:
         if not constellations:
             return proposals
 
-        # 1. Overloaded constellations (too many members — may need subdivision)
         for c in constellations:
             if c.size > 200:
                 proposals.append(ImprovementProposal(
@@ -402,7 +440,6 @@ class KaizenEngine:
                     metadata={"constellation": c.name, "size": c.size, "zone": c.zone},
                 ))
 
-        # 2. CORE/INNER_RIM constellations with low importance — potential misclassification
         for c in constellations:
             if c.zone in ("core", "inner_rim") and c.size < 5:
                 proposals.append(ImprovementProposal(
@@ -457,14 +494,12 @@ class KaizenEngine:
         if len(constellations) < 2:
             return []
 
-        # Check if any bridges exist between constellation pairs
         bridges = cal.find_constellation_bridges(limit=50)
         bridged_pairs = set()
         for b in bridges:
             pair = tuple(sorted([b["constellation_1"], b["constellation_2"]]))
             bridged_pairs.add(pair)
 
-        # Find pairs with overlapping tags but no bridges
         proposals = []
         unbridged = []
         for i in range(len(constellations)):
@@ -474,7 +509,6 @@ class KaizenEngine:
                 if pair in bridged_pairs:
                     continue
 
-                # Check tag overlap
                 overlap = set(c1.dominant_tags) & set(c2.dominant_tags)
                 if overlap:
                     unbridged.append({
@@ -506,7 +540,6 @@ class KaizenEngine:
         apps = []
         for prop in existing_proposals:
             if prop.category in ["gap", "integration", "theme"]:
-                # Query nearest solutions for this proposal's context
                 context = {
                     "content": f"{prop.title} {prop.description}",
                     "tags": [prop.category, "kaizen"],
@@ -536,7 +569,6 @@ class KaizenEngine:
         for proposal in report.proposals:
             if proposal.auto_fixable and proposal.fix_action:
                 try:
-                    # Execute the fix action
                     if "title_generator" in proposal.fix_action:
                         from .title_generator import get_title_generator
                         get_title_generator().fix_all()
@@ -554,7 +586,6 @@ class KaizenEngine:
 
         return results
 
-# Global instance
 _kaizen_engine = None
 
 def get_kaizen_engine() -> KaizenEngine:

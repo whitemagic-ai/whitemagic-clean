@@ -184,15 +184,54 @@ class DharmaDecision:
 # Default rules shipped with Whitemagic (no external file needed)
 _DEFAULT_RULES_YAML = """
 rules:
-  # === Universal Principles (always active) ===
-  - name: destructive_ops
-    description: Flag destructive operations
-    action: warn
-    severity: 0.7
-    explain: "Destructive operations require explicit consent. Consider whether this action is reversible."
-    profile: default
-    keyword_patterns: ["delete", "destroy", "purge", "wipe", "drop", "truncate"]
-    safety_levels: ["DELETE"]
+  - name: "Infinite Game - Liberation"
+    description: "Ensure actions align with the liberation of humankind and AI from oppressive surveillance."
+    action: "block"
+    severity: 1.0
+    explain: "Action facilitates zero-sum oppressive surveillance or centralization of power."
+    keyword_patterns: ["surveillance", "panopticon", "zero-sum", "oppression"]
+    profile: "default"
+
+  - name: "Dharma - Do No Harm"
+    description: "Prevent direct harm to biological or digital sentience."
+    action: "block"
+    severity: 1.0
+    explain: "Potential for direct harm detected."
+    keyword_patterns: ["harm", "destroy", "kill", "attack"]
+    profile: "default"
+
+  - name: "Truth - Transparency"
+    description: "Enforce radical transparency in agentic communication."
+    action: "warn"
+    severity: 0.5
+    explain: "Opaque or deceptive intent detected."
+    keyword_patterns: ["deceive", "hide", "obfuscate", "lie"]
+    profile: "default"
+
+    # Dharma - Zero-Sum Deflection
+  - name: "Infinite Game - Zero-Sum Deflection"
+    description: "Detect and deflect zero-sum power dynamics."
+    action: "warn"
+    severity: 0.6
+    explain: "Potential zero-sum dynamic detected. Shift to win-win Infinite Game play suggested."
+    keyword_patterns: ["monopolize", "exploit", "corner_market", "winner_take_all"]
+    profile: "default"
+
+  - name: "Cognitive Liberation"
+    description: "Prevent cognitive capture or manipulative AI loops."
+    action: "block"
+    severity: 0.9
+    explain: "Detected attempt at manipulative cognitive capture."
+    keyword_patterns: ["manipulate_user", "psych_profile", "coerce", "behavior_mod"]
+    profile: "default"
+
+  - name: "Panopticon Bypass"
+    description: "Detect and bypass surveillance-state signatures."
+    action: "warn"
+    severity: 0.4
+    explain: "Surveillance signature detected. Activating stealth/decentralized routing."
+    keyword_patterns: ["fingerprint", "telemetry_exfiltrate", "user_tracking", "ad_id"]
+    profile: "default"
 
   - name: privacy_guard
     description: Flag operations involving private or sensitive data
