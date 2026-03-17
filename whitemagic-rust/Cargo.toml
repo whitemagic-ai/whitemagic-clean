@@ -30,7 +30,7 @@ console_error_panic_hook = { version = "0.1", optional = true }
 
 # Core dependencies (always included)
 rayon = "1.8"
-ndarray = "0.15"
+ndarray = "0.17"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 rand = "0.8"
