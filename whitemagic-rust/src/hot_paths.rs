@@ -2,11 +2,13 @@
 // ============================================================================
 // Phase A: 25 functions translated to Rust
 
+#[cfg(feature = "python")]
 use pyo3::prelude::*;
 use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 
 /// Batch Jaccard similarity computation (parallelized)
+#[cfg(feature = "python")]
 #[pyfunction]
 fn batch_jaccard_py(
     query: Vec<String>,
@@ -22,6 +24,7 @@ fn batch_jaccard_py(
         .collect()
 }
 
+#[cfg(feature = "python")]
 fn jaccard_similarity(a: &HashSet<String>, b: &HashSet<String>) -> f64 {
     if a.is_empty() && b.is_empty() {
         return 1.0;
@@ -35,6 +38,7 @@ fn jaccard_similarity(a: &HashSet<String>, b: &HashSet<String>) -> f64 {
 }
 
 /// Compute retention score with multi-factor weighting
+#[cfg(feature = "python")]
 #[pyfunction]
 fn compute_retention(
     access_count: i32,
@@ -62,6 +66,7 @@ fn compute_retention(
 }
 
 /// Batch retention computation (parallel)
+#[cfg(feature = "python")]
 #[pyfunction]
 fn batch_retention_to_distance(
     retention_scores: Vec<f64>,
@@ -81,6 +86,7 @@ fn batch_retention_to_distance(
 }
 
 /// Compute SHA-256 content hash
+#[cfg(feature = "python")]
 #[pyfunction]
 fn compute_sha256(content: String) -> String {
     use sha2::{Sha256, Digest};
@@ -90,6 +96,7 @@ fn compute_sha256(content: String) -> String {
 }
 
 /// Batch SHA-256 computation (parallel)
+#[cfg(feature = "python")]
 #[pyfunction]
 fn batch_sha256(contents: Vec<String>) -> Vec<String> {
     contents.par_iter()
@@ -98,6 +105,7 @@ fn batch_sha256(contents: Vec<String>) -> Vec<String> {
 }
 
 /// Parallel sort for large collections
+#[cfg(feature = "python")]
 #[pyfunction]
 fn parallel_sort(data: Vec<f64>, reverse: bool) -> Vec<f64> {
     let mut sorted = data;
@@ -110,6 +118,7 @@ fn parallel_sort(data: Vec<f64>, reverse: bool) -> Vec<f64> {
 }
 
 /// Top-k selection without full sort
+#[cfg(feature = "python")]
 #[pyfunction]
 fn top_k(data: Vec<f64>, k: usize) -> Vec<(usize, f64)> {
     use std::collections::BinaryHeap;
@@ -157,6 +166,7 @@ fn top_k(data: Vec<f64>, k: usize) -> Vec<(usize, f64)> {
 }
 
 /// Compute decay factor with half-life
+#[cfg(feature = "python")]
 #[pyfunction]
 fn compute_decay(days_since_access: f64, half_life_days: f64, importance: f64) -> f64 {
     let effective_half_life = half_life_days * (1.0 + importance);
@@ -164,6 +174,7 @@ fn compute_decay(days_since_access: f64, half_life_days: f64, importance: f64) -
 }
 
 /// Grid-based clustering (HDBSCAN fallback)
+#[cfg(feature = "python")]
 #[pyfunction]
 fn grid_cluster(points: Vec<Vec<f64>>, min_cluster_size: usize) -> Vec<i32> {
     if points.is_empty() {
@@ -216,6 +227,7 @@ fn grid_cluster(points: Vec<Vec<f64>>, min_cluster_size: usize) -> Vec<i32> {
 }
 
 /// Compute centroid of points
+#[cfg(feature = "python")]
 #[pyfunction]
 fn compute_centroid(points: Vec<Vec<f64>>) -> Vec<f64> {
     if points.is_empty() {
@@ -231,6 +243,7 @@ fn compute_centroid(points: Vec<Vec<f64>>) -> Vec<f64> {
 }
 
 /// Hungarian algorithm for optimal assignment
+#[cfg(feature = "python")]
 #[pyfunction]
 fn hungarian_solve(cost_matrix: Vec<Vec<f64>>) -> (Vec<(usize, usize)>, f64) {
     // Greedy fallback (full implementation would be complex)
@@ -262,6 +275,7 @@ fn hungarian_solve(cost_matrix: Vec<Vec<f64>>) -> (Vec<(usize, usize)>, f64) {
 }
 
 /// Predict next event from sequence
+#[cfg(feature = "python")]
 #[pyfunction]
 fn predict_next(
     event_sequence: Vec<String>,
@@ -299,6 +313,7 @@ fn predict_next(
 }
 
 /// Mine causal links between events
+#[cfg(feature = "python")]
 #[pyfunction]
 fn mine_causal(
     events: Vec<(String, f64, Vec<String>)>, // (id, timestamp, tags)
@@ -335,6 +350,7 @@ fn mine_causal(
 }
 
 /// Compute clone ID deterministically
+#[cfg(feature = "python")]
 #[pyfunction]
 fn compute_clone_id(seed: String, objective: String, index: i32) -> String {
     use sha2::{Sha256, Digest};
@@ -346,6 +362,7 @@ fn compute_clone_id(seed: String, objective: String, index: i32) -> String {
 }
 
 /// Batch clone ID generation
+#[cfg(feature = "python")]
 #[pyfunction]
 fn batch_clone_ids(seed: String, objective: String, count: i32) -> Vec<String> {
     (0..count)
@@ -355,6 +372,7 @@ fn batch_clone_ids(seed: String, objective: String, count: i32) -> Vec<String> {
 }
 
 /// Aggregate findings (consensus voting)
+#[cfg(feature = "python")]
 #[pyfunction]
 fn aggregate_findings(findings: Vec<String>, strategy: String) -> (String, f64) {
     if strategy == "consensus" {
@@ -373,6 +391,7 @@ fn aggregate_findings(findings: Vec<String>, strategy: String) -> (String, f64) 
 }
 
 /// Compute priority score
+#[cfg(feature = "python")]
 #[pyfunction]
 fn compute_priority(
     urgency: f64,
@@ -386,6 +405,7 @@ fn compute_priority(
 }
 
 /// Euclidean distance in N dimensions
+#[cfg(feature = "python")]
 #[pyfunction]
 fn euclidean_distance(a: Vec<f64>, b: Vec<f64>) -> f64 {
     a.iter().zip(b.iter())
@@ -395,6 +415,7 @@ fn euclidean_distance(a: Vec<f64>, b: Vec<f64>) -> f64 {
 }
 
 /// Weighted centroid computation
+#[cfg(feature = "python")]
 #[pyfunction]
 fn weighted_centroid(vectors: Vec<Vec<f64>>, weights: Vec<f64>) -> Vec<f64> {
     if vectors.is_empty() {
@@ -445,6 +466,7 @@ pub fn hot_paths(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
 }
 
 /// Fast cosine similarity using iterators
+#[cfg(feature = "python")]
 #[pyfunction]
 fn rust_cosine_similarity(a: Vec<f64>, b: Vec<f64>) -> f64 {
     if a.len() != b.len() || a.is_empty() {

@@ -1,10 +1,14 @@
+#[cfg(feature = "python")]
 use pyo3::prelude::*;
+#[cfg(feature = "python")]
 use pyo3::types::{PyDict, PyList, PyTuple};
+#[cfg(feature = "python")]
 use numpy::{PyArray1, PyArrayMethods};
 use std::collections::HashMap;
 
 /// Infer DAG dependencies from 4D holographic coordinates
 /// Fast-path for causal_net.py::infer_dependencies()
+#[cfg(feature = "python")]
 #[pyfunction]
 fn infer_dag_from_coords<'py>(
     py: Python<'py>,
@@ -55,6 +59,7 @@ fn infer_dag_from_coords<'py>(
 
 /// Fast kaizen metrics gathering
 /// Batch SQL-like aggregations in Rust
+#[cfg(feature = "python")]
 #[pyfunction]
 fn fast_kaizen_metrics<'py>(
     py: Python<'py>,
