@@ -1,0 +1,2 @@
+include whitemagic_wasm/wasm/whitemagic_rust_bg.wasm
+include whitemagic_wasm/wasm/whitemagic_rust.js
