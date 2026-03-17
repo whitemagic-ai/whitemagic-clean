@@ -106,6 +106,7 @@ fn fast_kaizen_metrics<'py>(
     Ok(result)
 }
 
+#[cfg(feature = "python")]
 pub fn synthesis_engine(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(infer_dag_from_coords, m)?)?;
     m.add_function(wrap_pyfunction!(fast_kaizen_metrics, m)?)?;

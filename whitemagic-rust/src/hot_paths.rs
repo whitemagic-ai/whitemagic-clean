@@ -418,6 +418,7 @@ fn weighted_centroid(vectors: Vec<Vec<f64>>, weights: Vec<f64>) -> Vec<f64> {
 }
 
 /// Register module
+#[cfg(feature = "python")]
 #[pymodule]
 pub fn hot_paths(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(batch_jaccard_py, m)?)?;

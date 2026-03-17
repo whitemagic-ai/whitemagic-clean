@@ -37,6 +37,7 @@ pub mod search;
 pub mod hot_paths;
 pub mod arrow_bridge;
 #[cfg(feature = "python")]
+#[cfg(feature = "python")]
 mod holographic_encoder_5d;
 #[cfg(feature = "python")]
 mod constellations;
