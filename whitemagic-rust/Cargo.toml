@@ -20,7 +20,7 @@ iceoryx2 = { version = "0.8.1", optional = true }
 # Python bindings (optional)
 pyo3 = { version = "0.21", features = ["extension-module"], optional = true }
 numpy = { version = "0.21", optional = true }
-arrow = { version = "53.0", optional = true }
+arrow = { version = "58.0", optional = true }
 
 # WASM bindings (optional)
 wasm-bindgen = { version = "0.2", optional = true }
