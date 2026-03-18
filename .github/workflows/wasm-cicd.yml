@@ -95,8 +95,8 @@ jobs:
           file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            whitemagic/wasm:latest
-            whitemagic/wasm:${{ github.ref_name }}
+            lbailey94/whitemagic-wasm:latest
+            lbailey94/whitemagic-wasm:${{ github.ref_name }}
 
   # Build Python package
   build-python:
