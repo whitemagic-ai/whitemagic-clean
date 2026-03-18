@@ -92,7 +92,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.wasm
+          file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             whitemagic/wasm:latest
