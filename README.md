@@ -181,3 +181,4 @@ See `docs/CONTRIBUTING.md`.
 - **GitHub**: [whitemagic-ai/whitemagic](https://github.com/whitemagic-ai/whitemagic)
 - **XRP Tips**: `raakfKn96zVmXqKwRTDTH5K3j5eTBp1hPy` (gratitude-driven, always free)
 - **License**: MIT
+# Small test change for Docker CI/CD
