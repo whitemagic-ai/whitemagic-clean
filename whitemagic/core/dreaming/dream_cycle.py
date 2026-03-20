@@ -117,6 +117,14 @@ class DreamCycle:
         with self._lock:
             if self._running:
                 return
+            
+            # Polyglot check: If Elixir is the master, delegate dreaming
+            import os
+            if os.environ.get("WHITEMAGIC_ELIXIR_MASTER") == "1":
+                self._running = True
+                logger.info("🌙 Dream Cycle delegating to Elixir Master (OTP Concurrency)")
+                return
+
             self._running = True
             self._thread = threading.Thread(
                 target=self._run_loop, daemon=True, name="dream-cycle",
@@ -129,6 +137,12 @@ class DreamCycle:
         with self._lock:
             self._running = False
             self._dreaming = False
+        
+        import os
+        if os.environ.get("WHITEMAGIC_ELIXIR_MASTER") == "1":
+            logger.info("☀️ Elixir delegation stopped")
+            return
+
         if self._thread:
             self._thread.join(timeout=5)
         logger.info("☀️ Dream Cycle stopped")
@@ -136,6 +150,18 @@ class DreamCycle:
     def touch(self) -> None:
         """Record activity — resets idle timer. Call on every tool dispatch."""
         self._last_activity = time.time()
+        
+        # Notify Elixir Master if active
+        import os
+        if os.environ.get("WHITEMAGIC_ELIXIR_MASTER") == "1":
+            try:
+                # Use Redis or a shared state check to notify Elixir
+                # For now, we assume Elixir is monitoring activity via its own hooks
+                # or the bridge will handle the signal.
+                pass
+            except Exception:
+                pass
+
         if self._dreaming:
             self._dreaming = False
             logger.debug("Dream interrupted by activity")
@@ -146,6 +172,10 @@ class DreamCycle:
 
     def _run_loop(self) -> None:
         """Background thread: watch for idle → dream."""
+        import asyncio
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
         while self._running:
             try:
                 idle_seconds = time.time() - self._last_activity
@@ -156,14 +186,15 @@ class DreamCycle:
                     self._emit_event("DREAM_STARTED", {"idle_seconds": idle_seconds})
 
                 if self._dreaming and self._running:
-                    self._run_phase()
+                    loop.run_until_complete(self._run_phase())
 
             except Exception as e:
                 logger.debug(f"Dream cycle error: {e}")
 
             time.sleep(self._cycle_interval)
+        loop.close()
 
-    def _run_phase(self) -> None:
+    async def _run_phase(self) -> None:
         """Execute the next dream phase in rotation."""
         phase = self._phases[self._current_phase_index % len(self._phases)]
         self._current_phase_index += 1
@@ -191,6 +222,14 @@ class DreamCycle:
                 report.details = self._dream_oracle()
             elif phase == DreamPhase.DECAY:
                 report.details = self._dream_decay()
+            elif phase == DreamPhase.CONSTELLATION:
+                report.details = self._dream_constellation()
+            elif phase == DreamPhase.PREDICTION:
+                report.details = self._dream_prediction()
+            elif phase == DreamPhase.ENRICHMENT:
+                report.details = self._dream_enrichment()
+            elif phase == DreamPhase.HARMONIZE:
+                report.details = self._dream_harmonize()
         except Exception as e:
             report.success = False
             report.error = str(e)
@@ -737,7 +776,7 @@ class DreamCycle:
 
     def _dream_constellation(self) -> dict[str, Any]:
         """Phase 8 (v17.0): Auto-merge related constellations.
-        
+
         Scans for constellations with overlapping memberships
         and merges them when similarity exceeds threshold.
         """
@@ -745,11 +784,11 @@ class DreamCycle:
         try:
             from whitemagic.core.memory.constellations import get_constellation_detector
             detector = get_constellation_detector()
-            
+
             # Detect current constellations
             constellations = detector.detect(sample_limit=5000)
             result["inspected"] = len(constellations)
-            
+
             # Look for merge candidates (simplified logic)
             merge_count = 0
             for i, c1 in enumerate(constellations):
@@ -757,7 +796,7 @@ class DreamCycle:
                     overlap = len(set(c1.members) & set(c2.members))
                     if overlap > len(c1.members) * 0.5:  # 50% overlap threshold
                         merge_count += 1
-            
+
             result["merges"] = merge_count
             result["suggested_merges"] = merge_count
             return result
@@ -766,7 +805,7 @@ class DreamCycle:
 
     def _dream_prediction(self) -> dict[str, Any]:
         """Phase 9 (v17.0): Predictive drift detection.
-        
+
         Analyzes holographic coordinate trajectories to predict
         which memories will drift before they actually do.
         """
@@ -782,7 +821,7 @@ class DreamCycle:
 
     def _dream_enrichment(self) -> dict[str, Any]:
         """Phase 10 (v17.0): Entity extraction & semantic enrichment.
-        
+
         Runs entity extraction on memories without entities,
         creating typed associations automatically.
         """
@@ -799,17 +838,17 @@ class DreamCycle:
 
     def _dream_harmonize(self) -> dict[str, Any]:
         """Phase 11 (v17.0): Wu Xing balance & harmony tuning.
-        
+
         Adjusts holographic coordinates to maintain
         elemental balance across the memory ecosystem.
         """
         result: dict[str, Any] = {"harmony_score": 0.0, "adjustments": 0}
         try:
             from whitemagic.core.resonance.harmony_vector import get_harmony_vector
-            
+
             hv = get_harmony_vector()
             current_balance = hv.get_balance() if hasattr(hv, 'get_balance') else 0.5
-            
+
             result["harmony_score"] = current_balance
             result["element_balance"] = {
                 "water": 0.2, "wood": 0.2, "fire": 0.2,

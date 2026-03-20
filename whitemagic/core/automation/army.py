@@ -6,9 +6,6 @@ and Codebase Census bottlenecks.
 
 import logging
 import asyncio
-import subprocess
-import json
-from typing import Any, List, Dict, Optional
 from pathlib import Path
 from whitemagic.core.intelligence.self_model import get_self_model
 from whitemagic.core.acceleration.polyglot_accelerator import get_accelerator
@@ -19,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 class AutonomousArmyManager:
     """Manages autonomous deployments of shadow clones for system optimization."""
-    
+
     def __init__(self):
         self.self_model = get_self_model()
         self.accelerator = get_accelerator()
@@ -63,7 +60,7 @@ class AutonomousArmyManager:
         """Evaluate system state and decide if a deployment is needed."""
         alerts = self.self_model.get_alerts()
         stats = self.accelerator.get_stats()
-        
+
         # 1. Check for performance bottlenecks (Low native usage)
         if stats["native_usage_pct"] < 50 and stats["calls"]["total"] > 100:
             logger.warning("🚀 Low native usage detected. Triggering Tier 2 Rust Hot-Path Scout.")
@@ -74,7 +71,7 @@ class AutonomousArmyManager:
             if "error_rate" in alert.metric and alert.current > 0.1:
                 logger.error(f"⚠️ High error rate detected ({alert.current}). Deploying Tier 1 Security Audit.")
                 await self.deploy_army("alpha", "security_classification")
-            
+
             if "energy" in alert.metric and alert.current < 0.3:
                 logger.warning(f"📉 Low system energy ({alert.current}). Deploying Tier 1 Quality Assessment.")
                 await self.deploy_army("alpha", "quality_assessment")
@@ -82,18 +79,18 @@ class AutonomousArmyManager:
     async def deploy_army(self, army_type: str, objective: str):
         """Deploy a specialized army to address a specific objective using deploy_grand_army.py."""
         logger.info(f"🎖️ Deploying Army {army_type.upper()} for objective: {objective}")
-        
+
         try:
             # Objective map for deploy_grand_army.py
             # Note: deploy_grand_army.py uses --army and --objective flags
             cmd = ["python3", str(self._deploy_script), "--army", army_type, "--objective", objective]
-            
+
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
-            
+
             # Non-blocking: we don't necessarily wait for full completion if it's a large army
             # but we track the PID
             deployment_id = f"{army_type}_{objective}_{process.pid}"
@@ -104,10 +101,10 @@ class AutonomousArmyManager:
                 "objective": objective,
                 "start_time": asyncio.get_event_loop().time()
             })
-            
+
             logger.info(f"✅ Deployment {deployment_id} launched.")
             return deployment_id
-            
+
         except Exception as e:
             logger.error(f"Failed to deploy army: {e}")
             return None

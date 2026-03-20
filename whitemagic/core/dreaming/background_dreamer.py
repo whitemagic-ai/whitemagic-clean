@@ -1,5 +1,4 @@
 import logging
-import asyncio
 import threading
 from typing import Dict, Any
 from datetime import datetime
@@ -8,19 +7,19 @@ logger = logging.getLogger(__name__)
 
 class BackgroundDreamer:
     """Phase 6.4: Continuous Background Dreaming.
-    
+
     Wires into the Unified Nervous System's 'dream.trigger' event.
     When the system goes idle, this spawns low-priority agents to:
     1. Perform memory garbage collection (forgetting/consolidation).
     2. Traverse codebase via Zig graph for missing tests.
     3. Generate a 'Dream Report' to be presented to the user.
     """
-    
+
     def __init__(self):
         self._dreaming = False
         self._last_dream_report = None
         self._thread = None
-        
+
         # Subscribe to IPC if available to listen for system idle events
         try:
             from whitemagic.core.ipc_bridge import init_ipc
@@ -32,19 +31,19 @@ class BackgroundDreamer:
         """Start a background dream cycle."""
         if self._dreaming:
             return
-            
+
         self._dreaming = True
         logger.info("💤 Triggering Background Dream Cycle...")
-        
+
         self._thread = threading.Thread(target=self._dream_loop, daemon=True)
         self._thread.start()
-        
+
     def _dream_loop(self):
         try:
             import time
             # Simulate heavy background processing via Zig/WASM
             time.sleep(2) # Placeholder for real work
-            
+
             self._last_dream_report = {
                 "timestamp": datetime.now().isoformat(),
                 "memories_consolidated": 14,
@@ -55,9 +54,9 @@ class BackgroundDreamer:
                 ],
                 "holographic_drift": 0.02
             }
-            
+
             logger.info("✨ Dream Cycle Complete. Report ready.")
-            
+
             # Publish dream report via IPC to Nexus UI
             try:
                 from whitemagic.core.ipc_bridge import publish_json
@@ -67,7 +66,7 @@ class BackgroundDreamer:
                 })
             except Exception:
                 pass
-                
+
         finally:
             self._dreaming = False
 

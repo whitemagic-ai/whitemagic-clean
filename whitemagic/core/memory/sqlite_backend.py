@@ -17,7 +17,7 @@ from whitemagic.utils.core import parse_datetime
 from whitemagic.utils.fast_json import dumps_str as _fast_dumps
 from whitemagic.security.zodiac.ledger import get_ledger
 from whitemagic.core.bridge.sutra_bridge import get_sutra_kernel
-from whitemagic.core.autonomous.unified_nervous_system import get_nervous_system, BiologicalEvent, BiologicalSubsystem
+from whitemagic.core.autonomous.unified_nervous_system import get_nervous_system, BiologicalSubsystem
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +154,7 @@ class SQLiteBackend:
                             # Double any double quotes in the identifier
                             safe_ident = ident.replace('"', '""')
                             return f'"{safe_ident}"'
-                        
+
                         safe_col = _quote_identifier(col_name)
                         safe_type = _quote_identifier(col_type.split()[0])
                         stmt = f'ALTER TABLE memories ADD COLUMN {safe_col} {safe_type}'
@@ -331,12 +331,12 @@ class SQLiteBackend:
 
     def store(self, memory: Memory, content_hash: str | None = None) -> str:
         """Store or update a memory."""
-        
+
         # 0. Rust Sutra Kernel Check (Ahimsa/Satya/Harmony)
         sutra = get_sutra_kernel()
         verdict = sutra.evaluate_action(
-            action_type="memory_store", 
-            intent_score=1.0, 
+            action_type="memory_store",
+            intent_score=1.0,
             karma_debt=0.0
         )
         if verdict.startswith("Panic"):
@@ -352,7 +352,7 @@ class SQLiteBackend:
             payload={"memory_id": memory.id, "type": str(memory.memory_type)},
             context_id=memory.id
         )
-        
+
         # 2. Nervous System Broadcast
         ns = get_nervous_system()
         ns.emit(
@@ -361,24 +361,30 @@ class SQLiteBackend:
             target=BiologicalSubsystem.APOTHEOSIS,
             payload={"memory_id": memory.id, "importance": memory.importance}
         )
-        
-        with self.pool.connection() as conn:
-            with conn: # Standard transaction context manager
-                # Upsert Memory
-                conn.execute("""
-                    INSERT OR REPLACE INTO memories (
-                        id, content, memory_type, created_at, updated_at, accessed_at,
-                        access_count, emotional_valence, importance,
-                        neuro_score, novelty_score, recall_count, half_life_days, is_protected,
-                        metadata, title,
-                        galactic_distance, retention_score, last_retention_sweep,
-                        content_hash, event_time, ingestion_time,
-                        is_private, model_exclude
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
+
+        # 3. Koka Effect-Safe Transaction (VC14)
+        from whitemagic.core.acceleration.koka_bridge import get_koka_runtime
+        koka = get_koka_runtime()
+        tx_id = ""
+        try:
+            tx_id = koka.begin_transaction()
+        except Exception as e:
+            logger.debug(f"Koka transaction failed to start: {e}")
+
+        try:
+            # OPTIMIZATION: Try Rust-native store first (VC15)
+            rust_stored = False
+            try:
+                from whitemagic_rust.sqlite_backend import PySQLiteBackend
+                # Lazy-init Rust backend if needed
+                if not hasattr(self, "_rust_backend"):
+                    self._rust_backend = PySQLiteBackend(str(self.db_path))
+                
+                # Execute store in Rust (bypassing Python GIL)
+                rust_stored = self._rust_backend.store_memory(
                     memory.id,
                     _fast_dumps(memory.content) if not isinstance(memory.content, str) else memory.content,
-                    memory.memory_type.name if hasattr(memory.memory_type, 'name') else str(memory.memory_type),
+                    memory.memory_type.name if hasattr(memory.memory_type, "name") else str(memory.memory_type),
                     memory.created_at.isoformat(),
                     (memory.last_modified or memory.created_at).isoformat(),
                     memory.accessed_at.isoformat(),
@@ -391,39 +397,95 @@ class SQLiteBackend:
                     memory.half_life_days,
                     1 if memory.is_protected else 0,
                     _fast_dumps(memory.metadata),
-                    memory.title,
+                    memory.title or "",
                     memory.galactic_distance,
                     memory.retention_score,
                     memory.last_retention_sweep.isoformat() if memory.last_retention_sweep else None,
                     content_hash,
-                    memory.metadata.get("event_time"),  # caller-provided or None
-                    datetime.now().isoformat(),          # always set at ingestion
+                    memory.metadata.get("event_time"),
+                    datetime.now().isoformat(),
                     1 if memory.is_private else 0,
                     1 if memory.model_exclude else 0,
-                ))
+                )
+            except (ImportError, Exception) as e:
+                logger.debug(f"Rust store fallback to Python: {e}")
 
-                # Update Tags
-                conn.execute("DELETE FROM tags WHERE memory_id = ?", (memory.id,))
-                if memory.tags:
-                    conn.executemany(
-                        "INSERT INTO tags (memory_id, tag) VALUES (?, ?)",
-                        [(memory.id, tag) for tag in memory.tags],
-                    )
+            if not rust_stored:
+                with self.pool.connection() as conn:
+                    with conn: # Standard transaction context manager
+                        # Upsert Memory
+                        conn.execute("""
+                            INSERT OR REPLACE INTO memories (
+                                id, content, memory_type, created_at, updated_at, accessed_at,
+                                access_count, emotional_valence, importance,
+                                neuro_score, novelty_score, recall_count, half_life_days, is_protected,
+                                metadata, title,
+                                galactic_distance, retention_score, last_retention_sweep,
+                                content_hash, event_time, ingestion_time,
+                                is_private, model_exclude
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """, (
+                            memory.id,
+                            _fast_dumps(memory.content) if not isinstance(memory.content, str) else memory.content,
+                            memory.memory_type.name if hasattr(memory.memory_type, 'name') else str(memory.memory_type),
+                            memory.created_at.isoformat(),
+                            (memory.last_modified or memory.created_at).isoformat(),
+                            memory.accessed_at.isoformat(),
+                            memory.access_count,
+                            memory.emotional_valence,
+                            memory.importance,
+                            memory.neuro_score,
+                            memory.novelty_score,
+                            memory.recall_count,
+                            memory.half_life_days,
+                            1 if memory.is_protected else 0,
+                            _fast_dumps(memory.metadata),
+                            memory.title,
+                            memory.galactic_distance,
+                            memory.retention_score,
+                            memory.last_retention_sweep.isoformat() if memory.last_retention_sweep else None,
+                            content_hash,
+                            memory.metadata.get("event_time"),  # caller-provided or None
+                            datetime.now().isoformat(),          # always set at ingestion
+                            1 if memory.is_private else 0,
+                            1 if memory.model_exclude else 0,
+                        ))
 
-                # Update Associations
-                conn.execute("DELETE FROM associations WHERE source_id = ?", (memory.id,))
-                if memory.associations:
-                    conn.executemany(
-                        "INSERT INTO associations (source_id, target_id, strength) VALUES (?, ?, ?)",
-                        [(memory.id, target, strength) for target, strength in memory.associations.items()],
-                    )
+            # Update Tags & Associations always in Python for now (complex relations)
+            with self.pool.connection() as conn:
+                with conn:
+                    # Update Tags
+                    conn.execute("DELETE FROM tags WHERE memory_id = ?", (memory.id,))
+                    if memory.tags:
+                        conn.executemany(
+                            "INSERT INTO tags (memory_id, tag) VALUES (?, ?)",
+                            [(memory.id, tag) for tag in memory.tags],
+                        )
 
-                # Update FTS (Internal content)
-                conn.execute("DELETE FROM memories_fts WHERE id = ?", (memory.id,))
-                tags_text = " ".join(memory.tags) if memory.tags else ""
-                conn.execute("""
-                    INSERT INTO memories_fts (id, title, content, tags_text) VALUES (?, ?, ?, ?)
-                """, (memory.id, memory.title or "", str(memory.content), tags_text))
+                    # Update Associations
+                    conn.execute("DELETE FROM associations WHERE source_id = ?", (memory.id,))
+                    if memory.associations:
+                        conn.executemany(
+                            "INSERT INTO associations (source_id, target_id, strength) VALUES (?, ?, ?)",
+                            [(memory.id, target, strength) for target, strength in memory.associations.items()],
+                        )
+
+                    # Update FTS (Internal content)
+                    conn.execute("DELETE FROM memories_fts WHERE id = ?", (memory.id,))
+                    tags_text = " ".join(memory.tags) if memory.tags else ""
+                    conn.execute("""
+                        INSERT INTO memories_fts (id, title, content, tags_text) VALUES (?, ?, ?, ?)
+                    """, (memory.id, memory.title or "", str(memory.content), tags_text))
+            
+            # Commit Koka transaction
+            if tx_id:
+                koka.commit_transaction(tx_id)
+
+        except Exception as e:
+            # Rollback Koka transaction on failure
+            if tx_id:
+                koka.rollback_transaction(tx_id)
+            raise e
 
         # Invalidate cache for this memory
         try:
@@ -447,7 +509,7 @@ class SQLiteBackend:
                 return cached
         except Exception:
             pass
-        
+
         # Cache miss - query database
         mem = self._get_memory_from_pool(memory_id, self.pool)
         if mem:
@@ -457,7 +519,7 @@ class SQLiteBackend:
             except Exception:
                 pass
             return mem
-        
+
         # Fallback to cold storage if available
         cold_pool = self._get_cold_pool()
         if cold_pool:

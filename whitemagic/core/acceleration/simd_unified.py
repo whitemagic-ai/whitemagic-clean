@@ -26,7 +26,7 @@ def _init_rust() -> Any:
     global _rust_available, _rust_module
     if _rust_module is not None:
         return _rust_module
-    
+
     try:
         from whitemagic.optimization import rust_accelerators
         _rust_module = rust_accelerators
@@ -45,14 +45,14 @@ def _init_rust() -> Any:
 
 def cosine_similarity(vec_a: list[float], vec_b: list[float]) -> float:
     """Compute cosine similarity between two vectors.
-    
+
     Rust: O(n) SIMD dot product + magnitude
     Python fallback: O(n) standard implementation
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'cosine_similarity'):
         return rust.cosine_similarity(vec_a, vec_b)
-    
+
     # Python fallback
     import math
     dot = sum(a * b for a, b in zip(vec_a, vec_b))
@@ -63,14 +63,14 @@ def cosine_similarity(vec_a: list[float], vec_b: list[float]) -> float:
 
 def batch_cosine(query: list[float], vectors: list[list[float]]) -> list[float]:
     """Compute cosine similarity between query and multiple vectors.
-    
+
     Rust: Parallel SIMD batch processing
     Python fallback: Sequential computation
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'batch_cosine'):
         return rust.batch_cosine(query, vectors)
-    
+
     return [cosine_similarity(query, vec) for vec in vectors]
 
 
@@ -80,14 +80,14 @@ def batch_cosine(query: list[float], vectors: list[list[float]]) -> list[float]:
 
 def pairwise_distance_matrix(vectors: list[list[float]]) -> list[list[float]]:
     """Compute pairwise distance matrix for all vectors.
-    
+
     Rust: O(n²) SIMD with cache optimization
     Python fallback: O(n²) standard implementation
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'pairwise_distance_matrix'):
         return rust.pairwise_distance_matrix(vectors)
-    
+
     # Python fallback
     n = len(vectors)
     matrix = [[0.0] * n for _ in range(n)]
@@ -100,14 +100,14 @@ def pairwise_distance_matrix(vectors: list[list[float]]) -> list[list[float]]:
 
 def top_k_nearest(query: list[float], vectors: list[list[float]], k: int = 10) -> list[tuple[int, float]]:
     """Find k nearest vectors to query by cosine similarity.
-    
+
     Rust: Heap-based top-k with SIMD
     Python fallback: Sort-based approach
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'top_k_nearest'):
         return rust.top_k_nearest(query, vectors, k)
-    
+
     # Python fallback
     similarities = [(i, cosine_similarity(query, vec)) for i, vec in enumerate(vectors)]
     similarities.sort(key=lambda x: x[1], reverse=True)
@@ -116,7 +116,7 @@ def top_k_nearest(query: list[float], vectors: list[list[float]], k: int = 10) -
 
 def cosine_similarity_zig(vec_a: list[float], vec_b: list[float]) -> float:
     """Zig-accelerated cosine similarity (if available).
-    
+
     Falls back to Rust or Python implementation.
     """
     # Try Zig first, then Rust, then Python
@@ -126,7 +126,7 @@ def cosine_similarity_zig(vec_a: list[float], vec_b: list[float]) -> float:
             return zig_accelerators.cosine_similarity(vec_a, vec_b)
     except ImportError:
         pass
-    
+
     return cosine_similarity(vec_a, vec_b)
 
 
@@ -136,14 +136,14 @@ def cosine_similarity_zig(vec_a: list[float], vec_b: list[float]) -> float:
 
 def holographic_5d_distance(coord_a: tuple[float, ...], coord_b: tuple[float, ...]) -> float:
     """Compute 5D holographic distance between coordinates.
-    
+
     Rust: SIMD 5D Euclidean distance
     Python fallback: Standard computation
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'holographic_5d_distance'):
         return rust.holographic_5d_distance(list(coord_a), list(coord_b))
-    
+
     # Python fallback
     import math
     return math.sqrt(sum((a - b) ** 2 for a, b in zip(coord_a, coord_b)))
@@ -151,14 +151,14 @@ def holographic_5d_distance(coord_a: tuple[float, ...], coord_b: tuple[float, ..
 
 def holographic_5d_knn(query: tuple[float, ...], coords: list[tuple[float, ...]], k: int = 10) -> list[int]:
     """Find k nearest neighbors in 5D holographic space.
-    
+
     Rust: Optimized k-NN with SIMD distance
     Python fallback: Brute force search
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'holographic_5d_knn'):
         return rust.holographic_5d_knn(list(query), [list(c) for c in coords], k)
-    
+
     # Python fallback
     distances = [(i, holographic_5d_distance(query, coord)) for i, coord in enumerate(coords)]
     distances.sort(key=lambda x: x[1])
@@ -167,7 +167,7 @@ def holographic_5d_knn(query: tuple[float, ...], coords: list[tuple[float, ...]]
 
 def holographic_5d_centroid(coords: list[tuple[float, ...]]) -> tuple[float, ...]:
     """Compute centroid of 5D holographic coordinates.
-    
+
     Rust: SIMD parallel reduction
     Python fallback: Standard mean computation
     """
@@ -175,11 +175,11 @@ def holographic_5d_centroid(coords: list[tuple[float, ...]]) -> tuple[float, ...
     if rust and hasattr(rust, 'holographic_5d_centroid'):
         result = rust.holographic_5d_centroid([list(c) for c in coords])
         return tuple(result)
-    
+
     # Python fallback
     if not coords:
         return (0.0, 0.0, 0.0, 0.0, 0.0)
-    
+
     n = len(coords)
     sums = [0.0] * 5
     for coord in coords:
@@ -194,32 +194,32 @@ def holographic_5d_centroid(coords: list[tuple[float, ...]]) -> tuple[float, ...
 
 def grid_density_scan(points: list[tuple[float, float]], grid_size: int = 50) -> list[list[int]]:
     """Scan 2D point cloud for density grid.
-    
+
     Rust: Parallel grid binning with SIMD
     Python fallback: Standard grid counting
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'grid_density_scan'):
         return rust.grid_density_scan(points, grid_size)
-    
+
     # Python fallback
     grid = [[0] * grid_size for _ in range(grid_size)]
     if not points:
         return grid
-    
+
     # Find bounds
     xs = [p[0] for p in points]
     ys = [p[1] for p in points]
     min_x, max_x = min(xs), max(xs)
     min_y, max_y = min(ys), max(ys)
-    
+
     # Bin points
     for x, y in points:
         if max_x > min_x and max_y > min_y:
             i = int((x - min_x) / (max_x - min_x) * (grid_size - 1))
             j = int((y - min_y) / (max_y - min_y) * (grid_size - 1))
             grid[i][j] += 1
-    
+
     return grid
 
 
@@ -229,23 +229,23 @@ def grid_density_scan(points: list[tuple[float, float]], grid_size: int = 50) ->
 
 def extract_keywords(text: str, top_k: int = 10) -> list[tuple[str, float]]:
     """Extract top-k keywords from text using TF-IDF.
-    
+
     Rust: Optimized tokenization + TF-IDF with SIMD
     Python fallback: Basic frequency counting
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'extract_keywords'):
         return rust.extract_keywords(text, top_k)
-    
+
     # Python fallback - simple word frequency
     import re
     from collections import Counter
-    
+
     words = re.findall(r'\b\w+\b', text.lower())
     # Filter stopwords
     stopwords = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'}
     words = [w for w in words if w not in stopwords and len(w) > 2]
-    
+
     counter = Counter(words)
     return counter.most_common(top_k)
 
@@ -256,14 +256,14 @@ def extract_keywords(text: str, top_k: int = 10) -> list[tuple[str, float]]:
 
 def batch_normalize(vectors: list[list[float]]) -> list[list[float]]:
     """Normalize vectors to unit length.
-    
+
     Rust: Parallel SIMD normalization
     Python fallback: Sequential normalization
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'batch_normalize'):
         return rust.batch_normalize(vectors)
-    
+
     # Python fallback
     import math
     normalized = []
@@ -278,18 +278,18 @@ def batch_normalize(vectors: list[list[float]]) -> list[list[float]]:
 
 def batch_centroid(vectors: list[list[float]]) -> list[float]:
     """Compute centroid of vector batch.
-    
+
     Rust: SIMD parallel reduction
     Python fallback: Standard mean
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'batch_centroid'):
         return rust.batch_centroid(vectors)
-    
+
     # Python fallback
     if not vectors:
         return []
-    
+
     dim = len(vectors[0])
     centroid = [0.0] * dim
     for vec in vectors:
@@ -300,14 +300,14 @@ def batch_centroid(vectors: list[list[float]]) -> list[float]:
 
 def batch_topk_cosine(query: list[float], vectors: list[list[float]], k: int = 10) -> list[tuple[int, float]]:
     """Find top-k most similar vectors by cosine similarity.
-    
+
     Rust: Heap-based top-k with parallel SIMD
     Python fallback: Sort-based approach
     """
     rust = _init_rust()
     if rust and hasattr(rust, 'batch_topk_cosine'):
         return rust.batch_topk_cosine(query, vectors, k)
-    
+
     return top_k_nearest(query, vectors, k)
 
 
@@ -317,7 +317,7 @@ def batch_topk_cosine(query: list[float], vectors: list[list[float]], k: int = 1
 
 def simd_status() -> dict[str, Any]:
     """Get unified SIMD status."""
-    rust = _init_rust()
+    _init_rust()
     return {
         "rust_available": _rust_available,
         "operations": [

@@ -13,23 +13,23 @@ class PromptClassifier:
 
     PATTERNS = {
         "review": [
-            r"review", r"check", r"audit", r"verify", r"look over", r"sanity check", 
+            r"review", r"check", r"audit", r"verify", r"look over", r"sanity check",
             r"find bugs", r"security scan"
         ],
         "handoff": [
-            r"handoff", r"summary", r"summarize", r"wrap up", r"session end", 
+            r"handoff", r"summary", r"summarize", r"wrap up", r"session end",
             r"checkpoint", r"save state", r"what did we do"
         ],
         "synthesize": [
-            r"synthesize", r"consolidate", r"merge", r"combine", r"refactor", 
+            r"synthesize", r"consolidate", r"merge", r"combine", r"refactor",
             r"clean up", r"organize", r"structure"
         ],
         "plan": [
-            r"plan", r"roadmap", r"strategy", r"next steps", r"what's next", 
+            r"plan", r"roadmap", r"strategy", r"next steps", r"what's next",
             r"create a plan", r"break down"
         ],
         "implementation": [
-            r"implement", r"code", r"write", r"create file", r"build", r"make a", 
+            r"implement", r"code", r"write", r"create file", r"build", r"make a",
             r"generate"
         ]
     }
@@ -41,23 +41,23 @@ class PromptClassifier:
         Category is 'novel_idea' if no standard pattern matches strongly.
         """
         prompt_lower = prompt.lower()
-        
+
         best_cat = "novel_idea"
         best_score = 0.0
-        
+
         for cat, keywords in self.PATTERNS.items():
             score = 0
             for kw in keywords:
                 if kw in prompt_lower:
                     score += 1
-            
+
             # Simple heuristic scoring
             if score > 0:
                 confidence = min(0.9, 0.4 + (score * 0.1))
                 if confidence > best_score:
                     best_score = confidence
                     best_cat = cat
-                    
+
         return best_cat, best_score
 
     def is_routine(self, prompt: str) -> bool:

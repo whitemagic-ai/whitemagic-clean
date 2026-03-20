@@ -26,7 +26,7 @@ class NervousSystem:
     """
     Central event bus and coordinator for biological subsystems.
     """
-    
+
     _instance = None
     _lock = threading.Lock()
 
@@ -40,7 +40,7 @@ class NervousSystem:
     def __init__(self):
         if self._initialized:
             return
-            
+
         self.organs: Dict[str, Any] = {}
         self.signals: Dict[str, List[Callable]] = {}
         self._initialized = True
@@ -92,7 +92,7 @@ class NervousSystem:
     def signal_threat_detected(self, threat_level: float, details: Dict[str, Any]):
         """Immune -> Dream: Threat triggers defensive dream cycle."""
         self.dispatch_signal("threat_detected", {"level": threat_level, "details": details})
-        
+
         # Direct wiring if dream organ exists
         dream = self.get_organ(OrganType.DREAM)
         if dream and hasattr(dream, "trigger_defense_cycle"):
@@ -101,7 +101,7 @@ class NervousSystem:
     def signal_homeostasis_update(self, equilibrium_score: float):
         """Homeostasis -> Phylogenetics: Equilibrium modulates mutation rate."""
         self.dispatch_signal("homeostasis_update", {"score": equilibrium_score})
-        
+
         genetics = self.get_organ(OrganType.GENETICS)
         if genetics and hasattr(genetics, "set_mutation_rate"):
             # Lower equilibrium = higher mutation (adapt faster)
@@ -111,7 +111,7 @@ class NervousSystem:
     def signal_dream_consolidation(self, insights: List[Dict[str, Any]]):
         """Dream -> Genetics: Consolidation feeds fitness scores."""
         self.dispatch_signal("dream_consolidated", {"insights": insights})
-        
+
         genetics = self.get_organ(OrganType.GENETICS)
         if genetics and hasattr(genetics, "update_fitness"):
             genetics.update_fitness(insights)

@@ -9,13 +9,13 @@ try:
     )
 except ImportError:
     has_elixir = False
-    
+
     def elixir_bridge_status() -> dict:
         return {"status": "error", "message": "Elixir bridge not available or archived."}
-        
+
     def elixir_cascade_execute(*args, **kwargs):
         raise NotImplementedError("Elixir bridge not available or archived.")
-        
+
     def elixir_cascade_pipeline(*args, **kwargs):
         raise NotImplementedError("Elixir bridge not available or archived.")
 
@@ -29,13 +29,13 @@ try:
 except ImportError:
     def go_mesh_status() -> dict:
         return {"status": "error", "message": "Go mesh bridge not available."}
-        
+
     def mesh_agent_status(*args, **kwargs):
         raise NotImplementedError("Go mesh bridge not available.")
-        
+
     def mesh_distribute_task(*args, **kwargs):
         raise NotImplementedError("Go mesh bridge not available.")
-        
+
     def mesh_sync_memory(*args, **kwargs):
         raise NotImplementedError("Go mesh bridge not available.")
 
@@ -49,13 +49,13 @@ try:
 except ImportError:
     def haskell_bridge_status() -> dict:
         return {"status": "error", "message": "Haskell bridge not available."}
-        
+
     def haskell_check_boundaries(*args, **kwargs):
         raise NotImplementedError("Haskell bridge not available.")
-        
+
     def haskell_evaluate_rules(*args, **kwargs):
         raise NotImplementedError("Haskell bridge not available.")
-        
+
     def haskell_maturity_assess(*args, **kwargs):
         raise NotImplementedError("Haskell bridge not available.")
 
@@ -69,13 +69,13 @@ try:
 except ImportError:
     def julia_batch_forecast(*args, **kwargs):
         raise NotImplementedError("Julia bridge not available.")
-        
+
     def julia_bridge_status() -> dict:
         return {"status": "error", "message": "Julia bridge not available."}
-        
+
     def julia_forecast_metric(*args, **kwargs):
         raise NotImplementedError("Julia bridge not available.")
-        
+
     def julia_importance_distribution(*args, **kwargs):
         raise NotImplementedError("Julia bridge not available.")
 
@@ -89,13 +89,13 @@ try:
 except ImportError:
     def mojo_batch_encode(*args, **kwargs):
         raise NotImplementedError("Mojo bridge not available.")
-        
+
     def mojo_neuro_score(*args, **kwargs):
         raise NotImplementedError("Mojo bridge not available.")
-        
+
     def mojo_quantize(*args, **kwargs):
         raise NotImplementedError("Mojo bridge not available.")
-        
+
     def mojo_status() -> dict:
         return {"status": "error", "message": "Mojo bridge not available."}
 

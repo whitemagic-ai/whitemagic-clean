@@ -48,11 +48,11 @@ class ThoughtGalaxy:
         """Save a cognitive episode to the galaxy."""
         if not episode.id:
             episode.id = str(uuid.uuid4())
-            
+
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("""
-                INSERT OR REPLACE INTO cognitive_episodes 
-                (id, timestamp, task_type, strategy, thought_trace, context_summary, 
+                INSERT OR REPLACE INTO cognitive_episodes
+                (id, timestamp, task_type, strategy, thought_trace, context_summary,
                  outcome_score, outcome_metrics, tags)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
@@ -71,7 +71,7 @@ class ThoughtGalaxy:
     def recall_best_strategies(self, task_type: str, min_score: float = 0.5, limit: int = 5) -> List[CognitiveEpisode]:
         """Retrieve high-scoring episodes for a similar task, including Golden Rules."""
         episodes = []
-        
+
         # 1. Fetch from Holocron (The Golden Rules)
         try:
             from whitemagic.alchemy.holocron import Holocron
@@ -79,7 +79,7 @@ class ThoughtGalaxy:
             holocron.load()
             # Use task_type as context for relevance
             rules = holocron.get_relevant_rules(task_type, limit=3)
-            
+
             for rule in rules:
                 # Convert Rule -> Pseudo-Episode
                 episodes.append(CognitiveEpisode(
@@ -105,9 +105,9 @@ class ThoughtGalaxy:
                 ORDER BY outcome_score DESC
                 LIMIT ?
             """, (task_type, min_score, limit)).fetchall()
-            
+
             episodes.extend([self._row_to_episode(row) for row in rows])
-            
+
         # Sort combined list by score desc
         episodes.sort(key=lambda x: x.outcome_score, reverse=True)
         return episodes[:limit]
@@ -119,10 +119,10 @@ class ThoughtGalaxy:
         if task_type:
             query += " AND task_type = ?"
             params.append(task_type)
-        
+
         query += " ORDER BY outcome_score ASC LIMIT ?"
         params.append(limit)
-        
+
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(query, tuple(params)).fetchall()
@@ -147,15 +147,15 @@ class ThoughtGalaxy:
         with sqlite3.connect(self.db_path) as conn:
             count = conn.execute("SELECT COUNT(*) FROM cognitive_episodes").fetchone()[0]
             avg_score = conn.execute("SELECT AVG(outcome_score) FROM cognitive_episodes").fetchone()[0] or 0.0
-            
+
             # Top strategies
             top_strats = conn.execute("""
-                SELECT strategy, AVG(outcome_score) as avg_s, COUNT(*) as c 
-                FROM cognitive_episodes 
-                GROUP BY strategy 
+                SELECT strategy, AVG(outcome_score) as avg_s, COUNT(*) as c
+                FROM cognitive_episodes
+                GROUP BY strategy
                 ORDER BY avg_s DESC LIMIT 5
             """).fetchall()
-            
+
             return {
                 "total_episodes": count,
                 "average_score": avg_score,

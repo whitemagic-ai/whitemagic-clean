@@ -25,7 +25,7 @@ def status_cmd() -> None:
     """Show Thought Galaxy statistics."""
     galaxy = _get_galaxy()
     stats = galaxy.stats()
-    
+
     click.echo("🌌 Thought Galaxy Status")
     click.echo(f"Total Episodes: {stats['total_episodes']}")
     click.echo(f"Average Score:  {stats['average_score']:.2f}")
@@ -39,11 +39,11 @@ def recall_cmd(task_type: str) -> None:
     """Recall best strategies for a task type."""
     galaxy = _get_galaxy()
     episodes = galaxy.recall_best_strategies(task_type)
-    
+
     if not episodes:
         click.echo(f"No strategies found for '{task_type}'")
         return
-        
+
     click.echo(f"🧠 Best strategies for '{task_type}':")
     for i, ep in enumerate(episodes, 1):
         click.echo(f"\n{i}. Strategy: {ep.strategy} (Score: {ep.outcome_score})")

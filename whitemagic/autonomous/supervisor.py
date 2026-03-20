@@ -20,14 +20,14 @@ class Supervisor:
     """
     Auto-prompting supervisor that triggers SOPs based on context.
     """
-    
+
     def __init__(self, sop_dir: str | Path, thought_galaxy: Optional[ThoughtGalaxy] = None):
         self.sop_dir = Path(sop_dir)
         self.classifier = PromptClassifier()
         self.thought_galaxy = thought_galaxy
         self.enabled_sops: Dict[str, bool] = {}
         self.sop_cache: Dict[str, Dict] = {}
-        
+
         self._load_sops()
 
     def _load_sops(self):
@@ -35,7 +35,7 @@ class Supervisor:
         if not self.sop_dir.exists():
             self.sop_dir.mkdir(parents=True, exist_ok=True)
             self._create_default_sops()
-            
+
         for f in self.sop_dir.glob("*.json"):
             try:
                 data = json.loads(f.read_text())
@@ -76,16 +76,16 @@ class Supervisor:
         """
         suggestions = []
         trigger = context.get("trigger")
-        
+
         for name, sop in self.sop_cache.items():
             if not self.enabled_sops.get(name, False):
                 continue
-                
+
             if sop.get("trigger") == trigger:
                 # Evaluate condition (simple implementation for now)
                 # In a real system, this would be a safer eval or rule engine
                 suggestions.append(name)
-                
+
         return suggestions
 
     def get_sop_prompt(self, sop_name: str, context: Dict[str, Any]) -> Optional[str]:
@@ -93,7 +93,7 @@ class Supervisor:
         sop = self.sop_cache.get(sop_name)
         if not sop:
             return None
-            
+
         template = sop.get("prompt_template", "")
         try:
             return template.format(**context)

@@ -36,7 +36,7 @@ class LieutenantDomain(Enum):
 @dataclass
 class Lieutenant:
     """A specialized sub-agent coordinating specific campaign types."""
-    
+
     domain: LieutenantDomain
     name: str
     expertise: list[str] = field(default_factory=list)
@@ -45,20 +45,20 @@ class Lieutenant:
     clones_deployed: int = 0
     victories_achieved: int = 0
     findings_generated: int = 0
-    
+
     def assign_campaign(self, campaign_code: str, clone_count: int) -> None:
         """Assign a campaign to this lieutenant."""
         self.campaigns_assigned.append(campaign_code)
         self.clone_budget += clone_count
         logger.info(f"Lieutenant {self.name} assigned {campaign_code} ({clone_count:,} clones)")
-    
+
     def record_deployment(self, clones: int, findings: int = 0, victory: bool = False) -> None:
         """Record deployment results."""
         self.clones_deployed += clones
         self.findings_generated += findings
         if victory:
             self.victories_achieved += 1
-    
+
     def status_report(self) -> dict[str, Any]:
         """Generate status report."""
         return {
@@ -76,14 +76,14 @@ class Lieutenant:
 
 class LieutenantCorps:
     """Central coordination for all lieutenant sub-agents."""
-    
+
     def __init__(self):
         self.lieutenants: dict[LieutenantDomain, Lieutenant] = {}
         self._initialize_lieutenants()
-    
+
     def _initialize_lieutenants(self) -> None:
         """Initialize the standard lieutenant corps."""
-        
+
         # Security Lieutenant — Red Team Operations
         self.lieutenants[LieutenantDomain.SECURITY] = Lieutenant(
             domain=LieutenantDomain.SECURITY,
@@ -96,7 +96,7 @@ class LieutenantCorps:
                 "Threat modeling and risk assessment",
             ]
         )
-        
+
         # Performance Lieutenant — Acceleration & Optimization
         self.lieutenants[LieutenantDomain.PERFORMANCE] = Lieutenant(
             domain=LieutenantDomain.PERFORMANCE,
@@ -109,7 +109,7 @@ class LieutenantCorps:
                 "Benchmark design and execution",
             ]
         )
-        
+
         # Intelligence Lieutenant — Graph & Patterns
         self.lieutenants[LieutenantDomain.INTELLIGENCE] = Lieutenant(
             domain=LieutenantDomain.INTELLIGENCE,
@@ -122,7 +122,7 @@ class LieutenantCorps:
                 "Knowledge graph construction",
             ]
         )
-        
+
         # Synthesis Lieutenant — Code Merging & Refactoring
         self.lieutenants[LieutenantDomain.SYNTHESIS] = Lieutenant(
             domain=LieutenantDomain.SYNTHESIS,
@@ -135,7 +135,7 @@ class LieutenantCorps:
                 "Import chain analysis and optimization",
             ]
         )
-        
+
         # Discovery Lieutenant — Archaeological & Analysis
         self.lieutenants[LieutenantDomain.DISCOVERY] = Lieutenant(
             domain=LieutenantDomain.DISCOVERY,
@@ -148,7 +148,7 @@ class LieutenantCorps:
                 "Lost functionality recovery",
             ]
         )
-        
+
         # Infrastructure Lieutenant — System Health & Deployment
         self.lieutenants[LieutenantDomain.INFRASTRUCTURE] = Lieutenant(
             domain=LieutenantDomain.INFRASTRUCTURE,
@@ -161,12 +161,12 @@ class LieutenantCorps:
                 "Build system optimization",
             ]
         )
-        
+
         logger.info(f"Lieutenant Corps initialized: {len(self.lieutenants)} lieutenants")
-    
+
     def assign_campaign(self, campaign_code: str, campaign_type: str, clone_count: int) -> Lieutenant | None:
         """Assign a campaign to the appropriate lieutenant based on type."""
-        
+
         # Campaign type to domain mapping
         domain_map = {
             "security_scan": LieutenantDomain.SECURITY,
@@ -177,7 +177,7 @@ class LieutenantCorps:
             "consensus_vote": LieutenantDomain.INTELLIGENCE,
             "stress_test": LieutenantDomain.INFRASTRUCTURE,
         }
-        
+
         # Campaign code prefix to domain mapping
         prefix_map = {
             "IL": LieutenantDomain.SECURITY,      # Iron Lotus (security)
@@ -188,27 +188,27 @@ class LieutenantCorps:
             "G": LieutenantDomain.INTELLIGENCE,   # Gemini (intelligence)
             "C": LieutenantDomain.SYNTHESIS,      # Cleanup (synthesis)
         }
-        
+
         # Determine domain from campaign type or code prefix
         domain = domain_map.get(campaign_type)
         if not domain and campaign_code:
             prefix = campaign_code.split("0")[0]  # Extract prefix (e.g., "IL" from "IL001")
             domain = prefix_map.get(prefix)
-        
+
         if not domain:
             logger.warning(f"No lieutenant found for campaign {campaign_code} (type: {campaign_type})")
             return None
-        
+
         lieutenant = self.lieutenants.get(domain)
         if lieutenant:
             lieutenant.assign_campaign(campaign_code, clone_count)
-        
+
         return lieutenant
-    
+
     def get_lieutenant(self, domain: LieutenantDomain) -> Lieutenant | None:
         """Get lieutenant by domain."""
         return self.lieutenants.get(domain)
-    
+
     def corps_status(self) -> dict[str, Any]:
         """Get status of entire lieutenant corps."""
         return {
@@ -223,11 +223,11 @@ class LieutenantCorps:
                 for domain, lt in self.lieutenants.items()
             }
         }
-    
+
     def generate_report(self) -> str:
         """Generate formatted lieutenant corps report."""
         status = self.corps_status()
-        
+
         report = ["# Lieutenant Corps Status Report\n"]
         report.append(f"**Total Lieutenants**: {status['total_lieutenants']}")
         report.append(f"**Total Campaigns**: {status['total_campaigns']}")
@@ -235,7 +235,7 @@ class LieutenantCorps:
         report.append(f"**Clones Deployed**: {status['total_clones_deployed']:,}")
         report.append(f"**Victories**: {status['total_victories']}")
         report.append(f"**Findings**: {status['total_findings']}\n")
-        
+
         report.append("## Lieutenant Details\n")
         for domain_name, lt_status in status['lieutenants'].items():
             report.append(f"### {lt_status['name']}")
@@ -244,11 +244,11 @@ class LieutenantCorps:
             report.append(f"- **Clone Efficiency**: {lt_status['efficiency']}")
             report.append(f"- **Victories**: {lt_status['victories']}")
             report.append(f"- **Findings**: {lt_status['findings']}")
-            report.append(f"- **Expertise**:")
+            report.append("- **Expertise**:")
             for expertise in lt_status['expertise']:
                 report.append(f"  - {expertise}")
             report.append("")
-        
+
         return "\n".join(report)
 
 

@@ -178,10 +178,10 @@ class CoordinateEncoder:
                         "garden": m.get("metadata", {}).get("garden", "") if isinstance(m.get("metadata"), dict) else "",
                         "tags": list(m.get("tags", [])) if isinstance(m.get("tags"), (list, set)) else [],
                     })
-                
+
                 result_json = _rust_holographic.holographic_encode_batch(json.dumps(rust_memories))
                 results = json.loads(result_json)
-                
+
                 return [
                     HolographicCoordinate(
                         r.get("x", 0.0),
@@ -194,10 +194,10 @@ class CoordinateEncoder:
                 ]
             except Exception as e:
                 logger.warning(f"Rust batch encoding failed: {e}, falling back to Python")
-        
+
         # Python fallback: encode one at a time
         return [self.encode(m) for m in memories]
-    
+
     def _get_age_days(self, memory: dict[str, Any]) -> float:
         """Calculate age in days from timestamp."""
         timestamp_str = memory.get("created_at") or memory.get("timestamp")

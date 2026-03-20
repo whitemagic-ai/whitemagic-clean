@@ -9,10 +9,10 @@ def detect_patterns(query: str = "", **kwargs: Any) -> dict[str, Any]:
     """Detect patterns in memory or data."""
     try:
         from whitemagic.core.intelligence.synthesis.pattern_engine import PatternEngine
-        
+
         engine = PatternEngine()
         patterns = engine.detect(query=query, **kwargs)
-        
+
         return {
             "status": "success",
             "patterns": patterns,
@@ -27,10 +27,10 @@ def analyze_pattern(pattern_id: str, **kwargs: Any) -> dict[str, Any]:
     """Analyze a specific pattern."""
     try:
         from whitemagic.core.intelligence.synthesis.pattern_engine import PatternEngine
-        
+
         engine = PatternEngine()
         analysis = engine.analyze(pattern_id, **kwargs)
-        
+
         return {"status": "success", "analysis": analysis}
     except Exception as e:
         logger.error(f"Pattern analysis failed: {e}")

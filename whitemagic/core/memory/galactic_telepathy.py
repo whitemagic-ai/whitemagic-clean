@@ -85,7 +85,7 @@ class SyncWatermark:
 class GalacticTelepathyEngine:
     """
     Advanced cross-galaxy synchronization with full fidelity preservation.
-    
+
     Implements:
     - Bidirectional typed association transfer
     - Incremental sync with watermark tracking
@@ -93,13 +93,13 @@ class GalacticTelepathyEngine:
     - Conflict detection with resolution strategies
     - Multi-hop federation (galaxy chains)
     """
-    
+
     def __init__(self, galaxy_manager: Any):
         self.gm = galaxy_manager
         self._sync_registry_path = Path.home() / ".whitemagic" / "sync_registry.json"
         self._watermarks: Dict[str, SyncWatermark] = {}
         self._load_watermarks()
-    
+
     def _load_watermarks(self) -> None:
         """Load sync watermarks from disk."""
         if self._sync_registry_path.exists():
@@ -111,7 +111,7 @@ class GalacticTelepathyEngine:
                         self._watermarks[pair] = SyncWatermark(**wm)
             except Exception as e:
                 logger.warning(f"Failed to load sync watermarks: {e}")
-    
+
     def _save_watermarks(self) -> None:
         """Persist sync watermarks to disk."""
         try:
@@ -126,17 +126,17 @@ class GalacticTelepathyEngine:
                         "memories_synced_count": v.memories_synced_count,
                         "associations_synced_count": v.associations_synced_count,
                         "embeddings_synced_count": v.embeddings_synced_count,
-                    } for k, v in self._watermarks.items()}, 
-                    f, 
+                    } for k, v in self._watermarks.items()},
+                    f,
                     indent=2
                 )
         except Exception as e:
             logger.warning(f"Failed to save sync watermarks: {e}")
-    
+
     def _get_watermark_key(self, source: str, target: str) -> str:
         """Canonical ordering for watermark keys."""
         return f"{min(source, target)}:{max(source, target)}"
-    
+
     def incremental_sync(
         self,
         source_galaxy: str,
@@ -148,22 +148,22 @@ class GalacticTelepathyEngine:
     ) -> Dict[str, Any]:
         """
         Sync only memories changed since last sync (or given timestamp).
-        
+
         This is the foundation for efficient, frequent synchronization
         without re-transferring unchanged memories.
         """
         wm_key = self._get_watermark_key(source_galaxy, target_galaxy)
         watermark = self._watermarks.get(wm_key)
-        
+
         if since_timestamp is None:
             since_timestamp = watermark.last_sync_timestamp if watermark else 0
-        
+
         src_um = self.gm._get_memory(source_galaxy)
         tgt_um = self.gm._get_memory(target_galaxy)
-        
+
         # Query memories modified since watermark
         candidates = self._get_modified_memories(src_um, since_timestamp)
-        
+
         results = {
             "source": source_galaxy,
             "target": target_galaxy,
@@ -175,7 +175,7 @@ class GalacticTelepathyEngine:
             "embeddings_transferred": 0,
             "associations_transferred": 0,
         }
-        
+
         for mem in candidates:
             transfer_result = self._transfer_memory_with_fidelity(
                 mem, src_um, tgt_um,
@@ -183,7 +183,7 @@ class GalacticTelepathyEngine:
                 include_associations=include_associations,
                 conflict_resolution=conflict_resolution,
             )
-            
+
             if transfer_result["status"] == "transferred":
                 results["transferred"] += 1
                 results["embeddings_transferred"] += transfer_result.get("embeddings", 0)
@@ -192,7 +192,7 @@ class GalacticTelepathyEngine:
                 results["conflicts"].append(transfer_result["conflict"])
             else:
                 results["skipped"] += 1
-        
+
         # Update watermark
         self._watermarks[wm_key] = SyncWatermark(
             galaxy_pair=wm_key,
@@ -203,22 +203,22 @@ class GalacticTelepathyEngine:
             embeddings_synced_count=results["embeddings_transferred"],
         )
         self._save_watermarks()
-        
+
         return results
-    
+
     def _get_modified_memories(self, um: Any, since_timestamp: float) -> List[Any]:
         """Get memories modified since given timestamp."""
         try:
             with um.backend.pool.connection() as conn:
                 cursor = conn.execute(
-                    """SELECT id FROM memories 
+                    """SELECT id FROM memories
                        WHERE (modified_at > ? OR created_at > ?)
                        AND memory_type != 'quarantined'
                        ORDER BY modified_at""",
                     (since_timestamp, since_timestamp)
                 )
                 memory_ids = [row[0] for row in cursor.fetchall()]
-                
+
                 # Fetch full memory objects
                 memories = []
                 for mid in memory_ids:
@@ -232,7 +232,7 @@ class GalacticTelepathyEngine:
         except Exception as e:
             logger.error(f"Failed to get modified memories: {e}")
             return []
-    
+
     def _transfer_memory_with_fidelity(
         self,
         mem: Any,
@@ -244,7 +244,7 @@ class GalacticTelepathyEngine:
     ) -> Dict[str, Any]:
         """
         Transfer single memory with full fidelity including associations and embeddings.
-        
+
         This is "telepathy" — transferring not just the memory but its
         full context (associations = "neural connections", embeddings = "encoded meaning").
         """
@@ -252,21 +252,21 @@ class GalacticTelepathyEngine:
         conflict = self._detect_conflict(mem, src_um, tgt_um)
         if conflict and conflict_resolution == "manual":
             return {"status": "conflict", "conflict": conflict}
-        
+
         # Resolve conflict if auto-resolvable
         if conflict and conflict.auto_resolvable:
             self._resolve_conflict(conflict, conflict_resolution, tgt_um)
-        
+
         # Get embeddings before transfer
         embeddings: List[EmbeddingBundle] = []
         if include_embeddings:
             embeddings = self._extract_embeddings(mem.id, src_um)
-        
+
         # Get bidirectional associations
         associations: List[AssociationBundle] = []
         if include_associations:
             associations = self._extract_associations(mem.id, src_um)
-        
+
         # Store memory in target
         try:
             new_mem = tgt_um.store(
@@ -284,33 +284,33 @@ class GalacticTelepathyEngine:
                 },
                 title=mem.title,
             )
-            
+
             # Restore embeddings
             embedding_count = 0
             for emb in embeddings:
                 if self._restore_embedding(new_mem.id, emb, tgt_um):
                     embedding_count += 1
-            
+
             # Restore associations (with ID remapping)
             association_count = 0
             for assoc in associations:
                 if self._restore_association(new_mem.id, assoc, mem.id, tgt_um, src_um):
                     association_count += 1
-            
+
             # Record phylogenetic HGT event
             self._record_hgt_event(mem, new_mem, src_um, tgt_um, embeddings, associations)
-            
+
             return {
                 "status": "transferred",
                 "new_id": new_mem.id,
                 "embeddings": embedding_count,
                 "associations": association_count,
             }
-            
+
         except Exception as e:
             logger.error(f"Transfer failed for {mem.id}: {e}")
             return {"status": "error", "error": str(e)}
-    
+
     def _extract_embeddings(self, memory_id: str, um: Any) -> List[EmbeddingBundle]:
         """Extract all embeddings for a memory."""
         embeddings = []
@@ -332,7 +332,7 @@ class GalacticTelepathyEngine:
                         vector = json.loads(vector_data)
                     else:
                         vector = list(vector_data)
-                    
+
                     embeddings.append(EmbeddingBundle(
                         memory_id=memory_id,
                         model_name=row[0],
@@ -343,7 +343,7 @@ class GalacticTelepathyEngine:
         except Exception as e:
             logger.debug(f"Failed to extract embeddings for {memory_id}: {e}")
         return embeddings
-    
+
     def _extract_associations(self, memory_id: str, um: Any) -> List[AssociationBundle]:
         """Extract bidirectional associations for a memory."""
         associations = []
@@ -364,7 +364,7 @@ class GalacticTelepathyEngine:
                         direction=row[3] or "bidirectional",
                         edge_type=row[4],
                     ))
-                
+
                 # Incoming associations (for completeness)
                 cursor = conn.execute(
                     """SELECT source_id, relation_type, strength, direction, edge_type
@@ -383,11 +383,11 @@ class GalacticTelepathyEngine:
         except Exception as e:
             logger.debug(f"Failed to extract associations for {memory_id}: {e}")
         return associations
-    
+
     def _restore_embedding(
-        self, 
-        new_memory_id: str, 
-        emb: EmbeddingBundle, 
+        self,
+        new_memory_id: str,
+        emb: EmbeddingBundle,
         tgt_um: Any
     ) -> bool:
         """Restore embedding in target galaxy."""
@@ -396,10 +396,10 @@ class GalacticTelepathyEngine:
                 import json
                 vector_json = json.dumps(emb.vector)
                 conn.execute(
-                    """INSERT OR REPLACE INTO embeddings 
+                    """INSERT OR REPLACE INTO embeddings
                        (memory_id, model_name, vector, dimensions, created_at)
                        VALUES (?, ?, ?, ?, ?)""",
-                    (new_memory_id, emb.model_name, vector_json, 
+                    (new_memory_id, emb.model_name, vector_json,
                      emb.dimensions, emb.created_at)
                 )
                 conn.commit()
@@ -407,7 +407,7 @@ class GalacticTelepathyEngine:
         except Exception as e:
             logger.debug(f"Failed to restore embedding: {e}")
             return False
-    
+
     def _restore_association(
         self,
         new_source_id: str,
@@ -418,7 +418,7 @@ class GalacticTelepathyEngine:
     ) -> bool:
         """
         Restore association in target galaxy with ID remapping.
-        
+
         This is the critical "synaptic connection preservation" step.
         If target memory exists in target galaxy, we link to it.
         Otherwise, we store the association as "pending" for later resolution.
@@ -432,16 +432,16 @@ class GalacticTelepathyEngine:
                 src_um,
                 tgt_um
             )
-            
+
             if not new_target_id:
                 # Target not yet transferred — store as pending
                 return self._store_pending_association(new_source_id, assoc, tgt_um)
-            
+
             with tgt_um.backend.pool.connection() as conn:
                 now = datetime.now().isoformat()
                 conn.execute(
                     """INSERT OR IGNORE INTO associations
-                       (source_id, target_id, relation_type, strength, 
+                       (source_id, target_id, relation_type, strength,
                         direction, edge_type, created_at, ingestion_time)
                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                     (new_source_id, new_target_id, assoc.relation_type,
@@ -453,18 +453,18 @@ class GalacticTelepathyEngine:
         except Exception as e:
             logger.debug(f"Failed to restore association: {e}")
             return False
-    
+
     def _remap_memory_id(
-        self, 
-        old_id: str, 
-        src_um: Any, 
+        self,
+        old_id: str,
+        src_um: Any,
         tgt_um: Any
     ) -> Optional[str]:
         """Find new ID of memory transferred from source to target."""
         try:
             with tgt_um.backend.pool.connection() as conn:
                 cursor = conn.execute(
-                    """SELECT id FROM memories 
+                    """SELECT id FROM memories
                        WHERE json_extract(metadata, '$.telepathy_source_id') = ?
                        AND json_extract(metadata, '$.telepathy_source') = ?""",
                     (old_id, src_um.galaxy_name)
@@ -473,7 +473,7 @@ class GalacticTelepathyEngine:
                 return row[0] if row else None
         except Exception:
             return None
-    
+
     def _store_pending_association(
         self,
         source_id: str,
@@ -499,18 +499,18 @@ class GalacticTelepathyEngine:
         except Exception:
             # Table might not exist — that's okay
             return False
-    
+
     def _detect_conflict(
-        self, 
-        mem: Any, 
-        src_um: Any, 
+        self,
+        mem: Any,
+        src_um: Any,
         tgt_um: Any
     ) -> Optional[SyncConflict]:
         """Detect if memory transfer would create a conflict."""
         try:
             # Check if memory with same content hash exists
             content_hash = hashlib.sha256(str(mem.content).encode()).hexdigest()
-            
+
             with tgt_um.backend.pool.connection() as conn:
                 # Look for existing memory by content hash
                 cursor = conn.execute(
@@ -518,10 +518,10 @@ class GalacticTelepathyEngine:
                     (content_hash,)
                 )
                 row = cursor.fetchone()
-                
+
                 if row:
                     existing_id, existing_content, existing_metadata_raw = row
-                    
+
                     # Check if it's from same source (re-sync)
                     if existing_metadata_raw:
                         import json
@@ -532,7 +532,7 @@ class GalacticTelepathyEngine:
                                 return None
                         except Exception:
                             pass
-                    
+
                     # Divergent content with same hash (rare but possible)
                     if existing_content != mem.content:
                         return SyncConflict(
@@ -547,12 +547,12 @@ class GalacticTelepathyEngine:
                             suggested_resolution="manual_review",
                             auto_resolvable=False,
                         )
-            
+
             return None
         except Exception as e:
             logger.debug(f"Conflict detection failed: {e}")
             return None
-    
+
     def _resolve_conflict(
         self,
         conflict: SyncConflict,
@@ -566,7 +566,7 @@ class GalacticTelepathyEngine:
         elif strategy == "source_wins":
             # Overwrite target
             pass  # Store will create new version
-    
+
     def _record_hgt_event(
         self,
         source_mem: Any,
@@ -594,7 +594,7 @@ class GalacticTelepathyEngine:
             )
         except Exception:
             pass
-    
+
     def federated_sync(
         self,
         galaxy_chain: List[str],
@@ -602,13 +602,13 @@ class GalacticTelepathyEngine:
     ) -> Dict[str, Any]:
         """
         Multi-hop synchronization across galaxy chain.
-        
+
         Example: archive → staging → active
         Each galaxy syncs to the next in chain.
         """
         if len(galaxy_chain) < 2:
             return {"error": "Chain requires at least 2 galaxies"}
-        
+
         results = {
             "chain": galaxy_chain,
             "hops": [],
@@ -616,16 +616,16 @@ class GalacticTelepathyEngine:
             "total_associations": 0,
             "total_embeddings": 0,
         }
-        
+
         for i in range(len(galaxy_chain) - 1):
             source = galaxy_chain[i]
             target = galaxy_chain[i + 1]
-            
+
             hop_result = self.incremental_sync(
                 source, target,
                 **(sync_options or {})
             )
-            
+
             results["hops"].append({
                 "source": source,
                 "target": target,
@@ -634,9 +634,9 @@ class GalacticTelepathyEngine:
             results["total_memories"] += hop_result["transferred"]
             results["total_associations"] += hop_result["associations_transferred"]
             results["total_embeddings"] += hop_result["embeddings_transferred"]
-        
+
         return results
-    
+
     def resolve_pending_associations(
         self,
         galaxy: str,
@@ -649,7 +649,7 @@ class GalacticTelepathyEngine:
         um = self.gm._get_memory(galaxy)
         resolved = 0
         remaining = 0
-        
+
         try:
             with um.backend.pool.connection() as conn:
                 # Get pending associations
@@ -657,19 +657,19 @@ class GalacticTelepathyEngine:
                     "SELECT * FROM pending_associations"
                 )
                 pending = cursor.fetchall()
-                
+
                 for p in pending:
                     source_id = p["source_id"]
                     original_target_id = p["original_target_id"]
-                    
+
                     # Try to find target by telepathy_source_id
                     target_cursor = conn.execute(
-                        """SELECT id FROM memories 
+                        """SELECT id FROM memories
                            WHERE json_extract(metadata, '$.telepathy_source_id') = ?""",
                         (original_target_id,)
                     )
                     target_row = target_cursor.fetchone()
-                    
+
                     if target_row and auto_resolve:
                         # Create the association
                         conn.execute(
@@ -689,11 +689,11 @@ class GalacticTelepathyEngine:
                         resolved += 1
                     else:
                         remaining += 1
-                
+
                 conn.commit()
         except Exception as e:
             logger.debug(f"Failed to resolve pending associations: {e}")
-        
+
         return {
             "galaxy": galaxy,
             "resolved": resolved,

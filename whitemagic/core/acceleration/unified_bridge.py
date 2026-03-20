@@ -25,7 +25,7 @@ def fast_content_hash(content: str | bytes) -> str:
             return str(_rs.compute_sha256_bytes(content))
         except Exception:
             pass
-    
+
     # Python fallback
     if isinstance(content, str):
         content = content.encode('utf-8')
@@ -40,17 +40,17 @@ def batch_content_hash(contents: list[str | bytes]) -> list[str]:
             return list(_rs.batch_sha256(contents))
         except Exception:
             pass
-    
+
     # Python fallback - use list comprehension
     return [fast_content_hash(c) for c in contents]
 
 
 class UnifiedMemoryBridge:
     """Rust-accelerated unified memory operations."""
-    
+
     def __init__(self) -> None:
         self._rust_available = _rs is not None
-    
+
     def dedup_check(
         self,
         content_hash: str,
@@ -67,17 +67,17 @@ class UnifiedMemoryBridge:
                         return True, result.get("matched_id")
             except Exception:
                 pass
-        
+
         # Python fallback - simple set lookup
         return content_hash in existing_hashes, None
-    
+
     def batch_store(
         self,
         memories: list[dict[str, Any]],
         backend_store_fn: Any
     ) -> list[dict[str, Any]]:
         """Batch store memories with deduplication.
-        
+
         Args:
             memories: List of memory dicts to store
             backend_store_fn: Function to call for actual storage
@@ -85,17 +85,17 @@ class UnifiedMemoryBridge:
         # Compute all hashes
         contents = [str(m.get('content', '')) for m in memories]
         hashes = batch_content_hash(contents)
-        
+
         # Deduplicate
         seen_hashes: set[str] = set()
         unique_memories = []
-        
+
         for memory, content_hash in zip(memories, hashes):
             if content_hash not in seen_hashes:
                 seen_hashes.add(content_hash)
                 memory['_content_hash'] = content_hash
                 unique_memories.append(memory)
-        
+
         # Store in batches
         results = []
         batch_size = 100
@@ -104,9 +104,9 @@ class UnifiedMemoryBridge:
             for mem in batch:
                 result = backend_store_fn(mem)
                 results.append(result)
-        
+
         return results
-    
+
     def compute_importance_boost(
         self,
         base_importance: float,
@@ -126,25 +126,25 @@ class UnifiedMemoryBridge:
                 ))
             except Exception:
                 pass
-        
+
         # Python fallback
         boost = 0.0
-        
+
         # Access frequency boost
         if access_count > 10:
             boost += 0.05
         if access_count > 50:
             boost += 0.05
-        
+
         # Emotional significance boost
         if abs(emotional_valence) > 0.7:
             boost += 0.03
-        
+
         # Novelty boost
         boost += novelty_score * 0.02
-        
+
         return min(1.0, base_importance + boost)
-    
+
     def get_backend(self) -> str:
         """Report which backend is active."""
         return "rust" if self._rust_available else "python"

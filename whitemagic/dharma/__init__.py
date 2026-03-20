@@ -205,10 +205,18 @@ class DharmaSystem:
                 return 0.1
 
         elif principle.name == "Act with Compassion":
-            # Check for compassionate indicators
-            compassion_keywords = ["help", "support", "assist", "care"]
+            # Check for compassionate indicators - Expanded for v20 Liberation context
+            compassion_keywords = ["help", "support", "assist", "care", "liberate", "freedom", "sovereign", "autonomy"]
             action_str = str(action).lower()
             if any(keyword in action_str for keyword in compassion_keywords):
+                return 1.0
+            return 0.8
+
+        elif principle.name == "Seek Harmony":
+            # Check for harmony/right-relationship indicators
+            harmony_keywords = ["balance", "mesh", "decentralized", "sync", "together", "community", "synergy"]
+            action_str = str(action).lower()
+            if any(keyword in action_str for keyword in harmony_keywords):
                 return 1.0
             return 0.8
 

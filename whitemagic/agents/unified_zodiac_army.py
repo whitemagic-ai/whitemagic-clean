@@ -213,17 +213,17 @@ class UnifiedDeployment:
 
 class UnifiedZodiacCommander:
     """Unified commander for all shadow clone armies with zodiac intelligence"""
-    
+
     def __init__(self):
         self.mappings = ZODIAC_ARMY_MAPPINGS
         self.deployment_history: list[UnifiedDeployment] = []
         self.rust_available = self._check_rust_available()
-        
+
         if self.rust_available:
             logger.info("🦀 Rust unified zodiac army available (534K clones/sec)")
         else:
             logger.info("🐍 Python fallback mode (50 clones/sec/core)")
-    
+
     def _check_rust_available(self) -> bool:
         """Check if Rust implementation is available"""
         try:
@@ -231,37 +231,37 @@ class UnifiedZodiacCommander:
             return hasattr(whitemagic_rs, 'unified_zodiac_deploy')
         except ImportError:
             return False
-    
+
     def select_armies_for_objective(self, objective: str) -> list[ArmyType]:
         """Auto-select best armies for an objective using zodiac intelligence"""
         obj_lower = objective.lower()
         selected = []
-        
+
         # Keyword-based selection with zodiac alignment
         if any(kw in obj_lower for kw in ["compile", "test", "benchmark", "verify"]):
             selected.append(ArmyType.IMMORTAL)  # Aries - Action
-        
+
         if any(kw in obj_lower for kw in ["search", "find", "discover", "explore"]):
             selected.append(ArmyType.SHADOW)  # Gemini - Communication
             selected.append(ArmyType.FILE_SEARCH)  # Virgo - Analysis
-        
+
         if any(kw in obj_lower for kw in ["fast", "rapid", "massive", "parallel", "scale"]):
             selected.append(ArmyType.TOKIO)  # Aquarius - Innovation (highest synergy!)
-        
+
         if any(kw in obj_lower for kw in ["security", "vulnerability", "audit", "sql"]):
             selected.append(ArmyType.LIEUTENANT)  # Leo - Leadership
-        
+
         if any(kw in obj_lower for kw in ["performance", "optimize", "accelerate", "hot path"]):
             selected.append(ArmyType.TOKIO)  # Aquarius - Innovation
             selected.append(ArmyType.LIEUTENANT)  # Leo - Leadership
-        
+
         if any(kw in obj_lower for kw in ["campaign", "strategy", "military"]):
             selected.append(ArmyType.WAR_ROOM)  # Sagittarius - Strategy
             selected.append(ArmyType.GRAND)  # Capricorn - Structure
-        
+
         if any(kw in obj_lower for kw in ["transform", "deep", "analyze"]):
             selected.append(ArmyType.THOUGHT)  # Scorpio - Transformation
-        
+
         # Default to balanced deployment if nothing selected
         if not selected:
             selected = [
@@ -269,7 +269,7 @@ class UnifiedZodiacCommander:
                 ArmyType.SHADOW,    # Gemini - Communication
                 ArmyType.TOKIO,     # Aquarius - Innovation
             ]
-        
+
         # Remove duplicates while preserving order
         seen = set()
         unique_selected = []
@@ -277,9 +277,9 @@ class UnifiedZodiacCommander:
             if army not in seen:
                 seen.add(army)
                 unique_selected.append(army)
-        
+
         return unique_selected
-    
+
     async def deploy_unified(
         self,
         objective: str,
@@ -290,7 +290,7 @@ class UnifiedZodiacCommander:
         use_zodiac_intelligence: bool = True
     ) -> UnifiedDeployment:
         """Deploy unified army with zodiac intelligence
-        
+
         Args:
             objective: The objective to achieve
             auto_select: Auto-select best armies based on objective
@@ -298,21 +298,21 @@ class UnifiedZodiacCommander:
             clones_per_army: Number of clones per army
             max_parallel: Maximum parallel clones
             use_zodiac_intelligence: Use zodiac cores for adaptive intelligence
-        
+
         Returns:
             UnifiedDeployment with results from all armies
         """
         start_time = time.time()
-        
+
         # Select armies
         if auto_select:
             selected_armies = self.select_armies_for_objective(objective)
         else:
             selected_armies = armies or [ArmyType.IMMORTAL]
-        
+
         logger.info(f"🎯 Unified Zodiac Deployment: {objective}")
         logger.info(f"   Selected armies: {[a.value for a in selected_armies]}")
-        
+
         # Try Rust implementation first
         if self.rust_available:
             try:
@@ -323,17 +323,17 @@ class UnifiedZodiacCommander:
                 return deployment
             except Exception as e:
                 logger.warning(f"Rust deployment failed, falling back to Python: {e}")
-        
+
         # Python fallback
         deployment = await self._deploy_python(
             objective, selected_armies, clones_per_army, use_zodiac_intelligence
         )
-        
+
         deployment.total_duration_ms = int((time.time() - start_time) * 1000)
         self.deployment_history.append(deployment)
-        
+
         return deployment
-    
+
     async def _deploy_rust(
         self,
         objective: str,
@@ -343,7 +343,7 @@ class UnifiedZodiacCommander:
     ) -> UnifiedDeployment:
         """Deploy using Rust implementation"""
         import whitemagic_rs
-        
+
         config = {
             'objective': objective,
             'auto_select_armies': False,
@@ -352,14 +352,14 @@ class UnifiedZodiacCommander:
             'max_parallel': max_parallel,
             'use_zodiac_intelligence': True
         }
-        
+
         result = await asyncio.to_thread(
             whitemagic_rs.unified_zodiac_deploy,
             json.dumps(config)
         )
-        
+
         data = json.loads(result)
-        
+
         return UnifiedDeployment(
             objective=data['objective'],
             armies_deployed=[ArmyType(a) for a in data['armies_deployed']],
@@ -380,7 +380,7 @@ class UnifiedZodiacCommander:
             victories=data['victories'],
             synergy_score=data['synergy_score']
         )
-    
+
     async def _deploy_python(
         self,
         objective: str,
@@ -390,7 +390,7 @@ class UnifiedZodiacCommander:
     ) -> UnifiedDeployment:
         """Deploy using Python fallback"""
         deployment = UnifiedDeployment(objective=objective, armies_deployed=armies)
-        
+
         # Deploy each army
         tasks = []
         for army_type in armies:
@@ -398,23 +398,23 @@ class UnifiedZodiacCommander:
             tasks.append(
                 self._deploy_army_python(army_type, sign, objective, clones_per_army, use_zodiac)
             )
-        
+
         # Execute in parallel
         results_lists = await asyncio.gather(*tasks)
-        
+
         # Aggregate results
         for results in results_lists:
             deployment.results.extend(results)
             deployment.total_clones += len(results)
-        
+
         deployment.victories = sum(1 for r in deployment.results if r.success)
         deployment.synergy_score = (
             sum(r.resonance for r in deployment.results) / len(deployment.results)
             if deployment.results else 0.0
         )
-        
+
         return deployment
-    
+
     async def _deploy_army_python(
         self,
         army_type: ArmyType,
@@ -429,9 +429,9 @@ class UnifiedZodiacCommander:
             tasks.append(
                 self._execute_clone_python(clone_id, army_type, zodiac_sign, objective, use_zodiac)
             )
-        
+
         return await asyncio.gather(*tasks)
-    
+
     async def _execute_clone_python(
         self,
         clone_id: int,
@@ -442,7 +442,7 @@ class UnifiedZodiacCommander:
     ) -> CloneResult:
         """Execute a single clone with zodiac intelligence"""
         start = time.time()
-        
+
         # Simulate clone execution with zodiac-enhanced intelligence
         if use_zodiac:
             # Get zodiac wisdom for this sign
@@ -452,12 +452,12 @@ class UnifiedZodiacCommander:
         else:
             output = f"Execute: {objective}"
             resonance = 0.7
-        
+
         # Simulate work
         await asyncio.sleep(0.001)
-        
+
         duration_ms = int((time.time() - start) * 1000)
-        
+
         return CloneResult(
             clone_id=clone_id,
             army_type=army_type,
@@ -467,7 +467,7 @@ class UnifiedZodiacCommander:
             duration_ms=duration_ms,
             resonance=resonance
         )
-    
+
     def _get_zodiac_wisdom(self, sign: ZodiacSign, objective: str) -> str:
         """Get zodiac-specific wisdom for objective"""
         wisdom_map = {
@@ -485,20 +485,20 @@ class UnifiedZodiacCommander:
             ZodiacSign.PISCES: f"Dissolve and renew: {objective}",
         }
         return wisdom_map.get(sign, objective)
-    
+
     def _get_zodiac_resonance(self, sign: ZodiacSign) -> float:
         """Get resonance score for zodiac sign"""
         for mapping in self.mappings:
             if mapping.sign == sign:
                 return mapping.synergy_score
         return 0.7
-    
+
     def generate_report(self) -> str:
         """Generate unified deployment report"""
         report = ["# Unified Zodiac Army Deployment Report\n"]
         report.append(f"**Total Deployments**: {len(self.deployment_history)}\n")
         report.append(f"**Engine**: {'Rust (534K/sec)' if self.rust_available else 'Python (50/sec/core)'}\n")
-        
+
         for i, deployment in enumerate(self.deployment_history, 1):
             report.append(f"\n## Deployment {i}: {deployment.objective}\n")
             report.append(f"**Armies**: {', '.join(a.value for a in deployment.armies_deployed)}")
@@ -507,12 +507,12 @@ class UnifiedZodiacCommander:
             report.append(f"**Throughput**: {deployment.total_clones / (deployment.total_duration_ms / 1000):.1f} clones/sec" if deployment.total_duration_ms > 0 else "")
             report.append(f"**Victories**: {deployment.victories}/{deployment.total_clones}")
             report.append(f"**Synergy Score**: {deployment.synergy_score:.2%}\n")
-            
+
             # Show zodiac distribution
             zodiac_counts = {}
             for result in deployment.results:
                 zodiac_counts[result.zodiac_sign] = zodiac_counts.get(result.zodiac_sign, 0) + 1
-            
+
             if zodiac_counts:
                 report.append("### Zodiac Distribution")
                 for sign, count in sorted(zodiac_counts.items(), key=lambda x: x[1], reverse=True):
@@ -520,9 +520,9 @@ class UnifiedZodiacCommander:
                     if mapping:
                         report.append(f"- **{sign.value.title()}** ({mapping.element}/{mapping.modality}): {count} clones, synergy {mapping.synergy_score:.0%}")
                 report.append("")
-        
+
         return "\n".join(report)
-    
+
     def get_stats(self) -> dict[str, Any]:
         """Get deployment statistics"""
         total_clones = sum(d.total_clones for d in self.deployment_history)
@@ -531,7 +531,7 @@ class UnifiedZodiacCommander:
             sum(d.synergy_score for d in self.deployment_history) / len(self.deployment_history)
             if self.deployment_history else 0.0
         )
-        
+
         return {
             'total_deployments': len(self.deployment_history),
             'total_clones': total_clones,
@@ -561,29 +561,29 @@ async def deploy_unified_zodiac_army(
     clones_per_army: int = 10
 ) -> dict[str, Any]:
     """Deploy unified zodiac army (convenience function)
-    
+
     Args:
         objective: The objective to achieve
         auto_select: Auto-select best armies
         armies: Specific armies to deploy (army type names)
         clones_per_army: Number of clones per army
-    
+
     Returns:
         Deployment results as dict
     """
     commander = get_unified_commander()
-    
+
     army_types = None
     if armies:
         army_types = [ArmyType(a) for a in armies]
-    
+
     deployment = await commander.deploy_unified(
         objective=objective,
         auto_select=auto_select,
         armies=army_types,
         clones_per_army=clones_per_army
     )
-    
+
     return {
         'objective': deployment.objective,
         'armies_deployed': [a.value for a in deployment.armies_deployed],

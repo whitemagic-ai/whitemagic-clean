@@ -2,7 +2,7 @@
 
 Provides shared memory channels between WhiteMagic processes:
 - wm/events: GanYing event bus
-- wm/memories: Memory sync announcements  
+- wm/memories: Memory sync announcements
 - wm/commands: Agent coordination
 - wm/harmony: Health pulse broadcast
 """
@@ -31,18 +31,18 @@ def _get_rs():
 def init_ipc(node_name: Optional[str] = None) -> Dict[str, Any]:
     """Initialize IPC bridge for this process."""
     global _ipc_initialized
-    
+
     if _ipc_initialized:
         return {"initialized": True, "already": True}
-    
+
     if node_name is None:
         import os
         node_name = f"wm_{os.getpid()}"
-    
+
     rs = _get_rs()
     if not rs or not hasattr(rs, 'ipc_bridge'):
         return {"initialized": False, "error": "Rust bridge unavailable"}
-        
+
     try:
         rs.ipc_bridge.ipc_init(node_name)
         _ipc_initialized = True
@@ -56,11 +56,11 @@ def publish(channel: str, payload: bytes) -> Dict[str, Any]:
     """Publish bytes to an IPC channel."""
     if not _ipc_initialized:
         init_ipc()
-    
+
     rs = _get_rs()
     if not rs or not hasattr(rs, 'ipc_bridge'):
         return {"published": False, "error": "Rust bridge unavailable"}
-        
+
     try:
         rs.ipc_bridge.ipc_publish(channel, payload)
         return {"published": True}
@@ -76,7 +76,7 @@ def get_status() -> Dict[str, Any]:
     rs = _get_rs()
     if not rs or not hasattr(rs, 'ipc_bridge'):
         return {"error": "Rust bridge unavailable"}
-        
+
     try:
         return rs.ipc_bridge.ipc_status()
     except Exception as e:

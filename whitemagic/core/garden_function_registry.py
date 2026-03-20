@@ -95,13 +95,13 @@ class GardenFunctionRegistry:
         """Rebuild indices from function mappings."""
         self._garden_functions = {}
         self._function_index = {}
-        
+
         for key, mapping in self._function_mappings.items():
             # Garden index
             if mapping.primary_garden not in self._garden_functions:
                 self._garden_functions[mapping.primary_garden] = []
             self._garden_functions[mapping.primary_garden].append(key)
-            
+
             # Function name index
             if mapping.function_name not in self._function_index:
                 self._function_index[mapping.function_name] = []
@@ -111,28 +111,28 @@ class GardenFunctionRegistry:
         """Register a function mapping."""
         key = f"{mapping.file_path}:{mapping.function_name}"
         self._function_mappings[key] = mapping
-        
+
         if mapping.primary_garden not in self._garden_functions:
             self._garden_functions[mapping.primary_garden] = []
         self._garden_functions[mapping.primary_garden].append(key)
-        
+
         if mapping.function_name not in self._function_index:
             self._function_index[mapping.function_name] = []
         self._function_index[mapping.function_name].append(key)
-        
+
         self._loaded = True
 
     def get_function(self, function_name: str, file_path: str | None = None) -> FunctionGardenMapping | None:
         """Get a function by name, optionally filtered by file."""
         if function_name not in self._function_index:
             return None
-        
+
         keys = self._function_index[function_name]
         if file_path:
             for key in keys:
                 if key.startswith(f"{file_path}:"):
                     return self._function_mappings.get(key)
-        
+
         # Return first match
         return self._function_mappings.get(keys[0])
 
@@ -145,7 +145,7 @@ class GardenFunctionRegistry:
         """Search for functions by name."""
         results = []
         query_lower = query.lower()
-        
+
         for func_name, keys in self._function_index.items():
             if query_lower in func_name.lower():
                 for key in keys:
@@ -153,7 +153,7 @@ class GardenFunctionRegistry:
                     if mapping:
                         if gardens is None or mapping.primary_garden in gardens:
                             results.append(mapping)
-        
+
         return results
 
     def get_cross_garden_calls(self) -> dict[str, list[str]]:
@@ -163,10 +163,10 @@ class GardenFunctionRegistry:
             Dict mapping "source_garden" -> ["target_garden:count", ...]
         """
         cross_calls: dict[str, dict[str, int]] = {}
-        
+
         for key, mapping in self._function_mappings.items():
             source_garden = mapping.primary_garden
-            
+
             for dep in mapping.dependencies:
                 # Find the garden of the dependency
                 dep_mapping = self.get_function(dep)
@@ -176,12 +176,12 @@ class GardenFunctionRegistry:
                         if source_garden not in cross_calls:
                             cross_calls[source_garden] = {}
                         cross_calls[source_garden][target_garden] = cross_calls[source_garden].get(target_garden, 0) + 1
-        
+
         # Convert to sorted lists
         result = {}
         for source, targets in cross_calls.items():
             result[source] = [f"{t}:{c}" for t, c in sorted(targets.items(), key=lambda x: -x[1])]
-        
+
         return result
 
     def get_stats(self) -> dict[str, Any]:
@@ -193,16 +193,16 @@ class GardenFunctionRegistry:
             "public_functions": 0,
             "private_functions": 0,
         }
-        
+
         for garden, keys in self._garden_functions.items():
             stats["gardens"][garden] = len(keys)
-        
+
         for mapping in self._function_mappings.values():
             if mapping.is_public:
                 stats["public_functions"] += 1
             else:
                 stats["private_functions"] += 1
-        
+
         return stats
 
 
@@ -215,42 +215,42 @@ def analyze_function_for_garden(
     dependencies: list[str] | None = None,
 ) -> FunctionGardenMapping:
     """Analyze a function and determine its garden affinity."""
-    
+
     # Start with file's garden
     primary_garden = file_garden
     garden_from_file = file_garden
     garden_from_content = file_garden
     confidence = 0.7  # Inherited from file
-    
+
     # Analyze docstring/source for more specific garden
     content = f"{function_name} {docstring} {source_code}"
     resonance = calculate_resonance(content[:500])
-    
+
     if resonance:
         # Get top resonating garden
         top_garden = list(resonance.keys())[0]
         top_score = resonance[top_garden].get("score", 0)
-        
+
         if top_score > 2.0:
             garden_from_content = top_garden
             # Only override if significantly different
             if top_score > 5.0:
                 primary_garden = top_garden
                 confidence = min(0.95, 0.5 + top_score / 20.0)
-    
+
     # Get garden metadata
     garden_entry = get_by_garden(primary_garden)
     quadrant = garden_entry.quadrant.value if garden_entry else ""
     element = garden_entry.element.value if garden_entry else ""
     gana = garden_entry.gana if garden_entry else ""
-    
+
     # Determine resonant gardens
     resonant = []
     if garden_from_file != primary_garden:
         resonant.append(garden_from_file)
     if garden_from_content != primary_garden and garden_from_content not in resonant:
         resonant.append(garden_from_content)
-    
+
     return FunctionGardenMapping(
         function_name=function_name,
         file_path=file_path,

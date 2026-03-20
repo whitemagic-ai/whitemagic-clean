@@ -249,8 +249,11 @@ class ConstellationDetector:
             (r["x"], r["y"], r["z"], r["w"], r["v"]) for r in rows
         ]
 
-        # Choose algorithm
-        if _HDBSCAN_AVAILABLE and _NP_AVAILABLE:
+        # Choose algorithm - Rust Supremacy (Phase 1)
+        if _RUST_AVAILABLE and len(coords) > 0:
+            cluster_groups, stabilities = self._detect_grid(coords)
+            report.algorithm = "rust_grid"
+        elif _HDBSCAN_AVAILABLE and _NP_AVAILABLE:
             cluster_groups, stabilities = self._detect_hdbscan(coords)
             report.algorithm = "hdbscan"
         else:

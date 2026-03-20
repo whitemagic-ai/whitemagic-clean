@@ -68,7 +68,7 @@ def _init_backends():
         logger.info("graph_walker_hot_path: Title-boosted vector search available")
     except Exception as e:
         logger.debug("graph_walker_hot_path: Title-boosted search not available: %s", e)
-    
+
     # Zig SIMD graph transitions for batch probability computation
     try:
         from whitemagic.core.acceleration.graph_transitions import (
@@ -79,7 +79,7 @@ def _init_backends():
             logger.info("graph_walker_hot_path: Zig graph transitions active")
     except Exception as e:
         logger.debug("graph_walker_hot_path: Zig graph transitions not available: %s", e)
-    
+
     if _BACKEND == "numpy":
         logger.debug("graph_walker_hot_path: using NumPy fallback")
 
@@ -94,7 +94,7 @@ class WalkPath:
     total_score: float = 0.0
     depth: int = 0
 
-@dataclass 
+@dataclass
 class WalkResult:
     """Optimized WalkResult for hot path operations."""
     seed_ids: List[str]
@@ -103,7 +103,7 @@ class WalkResult:
     unique_nodes_visited: int = 0
     paths: List[WalkPath] = None
     duration_ms: float = 0.0
-    
+
     def __post_init__(self):
         if self.paths is None:
             self.paths = []
@@ -122,7 +122,7 @@ def compute_transition_probability(
     """
     if weights is None:
         weights = {"semantic": 0.4, "gravity": 0.3, "recency": 0.2, "staleness": 0.1}
-    
+
     # Vectorized weighted sum
     prob = (
         weights["semantic"] * semantic_sim +
@@ -130,7 +130,7 @@ def compute_transition_probability(
         weights["recency"] * recency +
         weights["staleness"] * (1.0 - staleness)  # Lower staleness = higher prob
     )
-    
+
     return max(0.0, min(1.0, prob))
 
 # Hot path: Batch transition probability computation
@@ -211,13 +211,13 @@ def parallel_bfs_walk(
     """
     import time
     from concurrent.futures import ThreadPoolExecutor, as_completed
-    
+
     start_time = time.time()
-    
+
     result = WalkResult(seed_ids=seed_ids, hops=hops)
     all_paths: List[WalkPath] = []
     visited: Set[str] = set(seed_ids)
-    
+
     # Small seed set: sequential
     if len(seed_ids) < max_parallel:
         for seed in seed_ids:
@@ -230,7 +230,7 @@ def parallel_bfs_walk(
                 executor.submit(_walk_from_seed, seed, neighbors_fn, hops, top_k, visited): seed
                 for seed in seed_ids
             }
-            
+
             for future in as_completed(futures):
                 seed = futures[future]
                 try:
@@ -238,14 +238,14 @@ def parallel_bfs_walk(
                     all_paths.extend(paths)
                 except Exception as e:
                     print(f"Walk failed for seed {seed}: {e}")
-    
+
     # Sort by score and take top_k
     all_paths.sort(key=lambda p: p.total_score, reverse=True)
     result.paths = all_paths[:top_k]
     result.paths_explored = len(all_paths)
     result.unique_nodes_visited = len(visited) - len(seed_ids)
     result.duration_ms = (time.time() - start_time) * 1000
-    
+
     return result
 
 def _walk_from_seed(
@@ -259,23 +259,23 @@ def _walk_from_seed(
     """Walk from a single seed node with SIMD-accelerated batch transitions."""
     paths = []
     w = weights or {"semantic": 0.4, "gravity": 0.3, "recency": 0.2, "staleness": 0.1}
-    
+
     # BFS with weighted traversal using batch probability computation
     current_level = [(seed, WalkPath(nodes=[seed], edge_weights=[], relation_types=[], total_score=1.0, depth=0))]
-    
+
     for hop in range(hops):
         next_level = []
-        
+
         for node_id, path in current_level:
             # Get neighbors
             neighbors = neighbors_fn(node_id)
             if not neighbors:
                 continue
-            
+
             # Prepare batch data for all unvisited neighbors
             batch_edges = []
             batch_neighbors = []
-            
+
             for neighbor_id, edge_data in neighbors:
                 if neighbor_id in visited:
                     continue
@@ -288,17 +288,17 @@ def _walk_from_seed(
                     "neighbor_id": neighbor_id
                 })
                 batch_neighbors.append((neighbor_id, edge_data))
-            
+
             if not batch_edges:
                 continue
-            
+
             # Hot path: Batch compute transition probabilities using Zig SIMD
             probs = batch_compute_probabilities(batch_edges, w)
-            
+
             # Create paths with computed probabilities
             for i, (neighbor_id, edge_data) in enumerate(batch_neighbors):
                 prob = probs[i]
-                
+
                 new_path = WalkPath(
                     nodes=path.nodes + [neighbor_id],
                     edge_weights=path.edge_weights + [prob],
@@ -306,13 +306,13 @@ def _walk_from_seed(
                     total_score=path.total_score * prob,
                     depth=hop + 1
                 )
-                
+
                 next_level.append((neighbor_id, new_path))
                 visited.add(neighbor_id)
-        
+
         current_level = next_level
         paths.extend([p for _, p in current_level])
-    
+
     return paths
 
 def hot_path_status() -> Dict[str, Any]:

@@ -19,11 +19,11 @@ def list_cascade_patterns() -> list[dict[str, Any]]:
 def execute_cascade(pattern: str, tools: list[str], **kwargs: Any) -> dict[str, Any]:
     """Execute a cascade pattern."""
     logger.info(f"Executing cascade pattern: {pattern} with {len(tools)} tools")
-    
+
     results = []
     for tool in tools:
         results.append({"tool": tool, "status": "executed"})
-    
+
     return {
         "status": "success",
         "pattern": pattern,

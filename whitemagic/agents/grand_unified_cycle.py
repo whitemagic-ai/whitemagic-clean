@@ -78,17 +78,17 @@ ZODIAC_TO_WUXING: dict[ZodiacSign, WuXingElement] = {
     ZodiacSign.ARIES: WuXingElement.FIRE,
     ZodiacSign.LEO: WuXingElement.FIRE,
     ZodiacSign.SAGITTARIUS: WuXingElement.FIRE,
-    
+
     # Earth signs → Earth element
     ZodiacSign.TAURUS: WuXingElement.EARTH,
     ZodiacSign.VIRGO: WuXingElement.EARTH,
     ZodiacSign.CAPRICORN: WuXingElement.EARTH,
-    
+
     # Air signs → Metal element (structure, precision)
     ZodiacSign.GEMINI: WuXingElement.METAL,
     ZodiacSign.LIBRA: WuXingElement.METAL,
     ZodiacSign.AQUARIUS: WuXingElement.METAL,
-    
+
     # Water signs → Water element
     ZodiacSign.CANCER: WuXingElement.WATER,
     ZodiacSign.SCORPIO: WuXingElement.WATER,
@@ -129,66 +129,66 @@ STAGNATION_TACTICS = [
 @dataclass
 class UnifiedState:
     """Complete state snapshot of all cyclical systems"""
-    
+
     # Timestamp
     timestamp: datetime = field(default_factory=datetime.now)
-    
+
     # Cosmic Layer (Zodiac)
     zodiac_sign: ZodiacSign = ZodiacSign.PISCES
     zodiac_cycle_count: int = 0
     zodiac_phase_number: int = 0  # 0-11
-    
+
     # Elemental Layer (Wu Xing)
     wu_xing_element: WuXingElement = WuXingElement.WOOD
     wu_xing_energy: float = 0.5  # 0.0-1.0
     wu_xing_generating: WuXingElement = WuXingElement.FIRE
     wu_xing_overcoming: WuXingElement = WuXingElement.EARTH
-    
+
     # Polarity Layer (Yin-Yang)
     yin_yang_balance: float = 0.0  # -1.0 (yin) to +1.0 (yang)
     burnout_risk: float = 0.0  # 0.0-1.0
     yin_ratio: float = 0.5
     yang_ratio: float = 0.5
-    
+
     # Tactical Layer (Pipeline)
     pipeline_phase: PipelinePhase = PipelinePhase.SCOUT
     pipeline_cycle: int = 0
     stagnation_count: int = 0
-    
+
     # Strategic Layer
     campaign_phase: str = "reconnaissance"  # Art of War phase
     recommended_tactic: str = "Cast a Brick to Attract Jade"
-    
+
     # Execution Layer
     force_composition: dict[str, float] = field(default_factory=dict)
-    
+
     # Resonance
     resonance_events: list[str] = field(default_factory=list)
-    
+
     def get_dominant_influence(self) -> str:
         """Determine which system is currently dominant"""
         # High burnout → Yin-Yang dominates
         if self.burnout_risk > 0.7:
             return "yin_yang_balance"
-        
+
         # Stagnation → Emergency tactics dominate
         if self.stagnation_count >= 3:
             return "stagnation_emergency"
-        
+
         # Otherwise zodiac drives
         return f"zodiac_{self.zodiac_sign.value}"
-    
+
     def get_recommended_action(self) -> str:
         """Get the recommended action based on unified state"""
         if self.burnout_risk > 0.7:
             return "Force reflection phase (Water) — burnout prevention"
-        
+
         if self.stagnation_count >= 3:
             return f"Deploy emergency tactic: {STAGNATION_TACTICS[0]}"
-        
+
         if self.stagnation_count >= 2:
             return f"Prepare emergency tactic: {STAGNATION_TACTICS[1]}"
-        
+
         return f"Execute {self.recommended_tactic} in {self.pipeline_phase.value} phase"
 
 
@@ -198,16 +198,16 @@ class UnifiedState:
 
 class GrandUnifiedCycle:
     """The Grand Unified Cycle orchestrator.
-    
+
     Coordinates all 10 cyclical systems into a single breathing organism.
     Advances through cosmic → elemental → polarity → tactical → strategic → execution.
     """
-    
+
     def __init__(self):
         self.state = UnifiedState()
         self._cycle_count = 0
         self._phase_history: list[UnifiedState] = []
-        
+
         # Lazy-loaded subsystems
         self._zodiacal_round: Any | None = None
         self._wu_xing_engine: Any | None = None
@@ -217,16 +217,16 @@ class GrandUnifiedCycle:
         self._war_room: Any | None = None
         self._doctrine: Any | None = None
         self._gan_ying_bus: Any | None = None
-        
+
         self._initialized = False
-        
+
         logger.info("Grand Unified Cycle initialized")
-    
+
     def _ensure_initialized(self):
         """Lazy initialization of all subsystems"""
         if self._initialized:
             return
-        
+
         # Zodiacal Round
         try:
             from whitemagic.zodiac.zodiac_round_cycle import get_zodiacal_round
@@ -234,7 +234,7 @@ class GrandUnifiedCycle:
             logger.info("✓ Zodiacal Round connected")
         except Exception as e:
             logger.warning(f"Zodiacal Round unavailable: {e}")
-        
+
         # Wu Xing Engine
         try:
             from whitemagic.wu_xing import WuXingEngine
@@ -242,7 +242,7 @@ class GrandUnifiedCycle:
             logger.info("✓ Wu Xing Engine connected")
         except Exception as e:
             logger.warning(f"Wu Xing Engine unavailable: {e}")
-        
+
         # Wu Xing System
         try:
             from whitemagic.core.intelligence.wisdom.wu_xing import WuXingSystem
@@ -250,7 +250,7 @@ class GrandUnifiedCycle:
             logger.info("✓ Wu Xing System connected")
         except Exception as e:
             logger.warning(f"Wu Xing System unavailable: {e}")
-        
+
         # Yin-Yang Tracker
         try:
             from whitemagic.harmony.yin_yang_tracker import get_tracker
@@ -258,7 +258,7 @@ class GrandUnifiedCycle:
             logger.info("✓ Yin-Yang Tracker connected")
         except Exception as e:
             logger.warning(f"Yin-Yang Tracker unavailable: {e}")
-        
+
         # War Room
         try:
             from whitemagic.agents.war_room import get_war_room
@@ -266,7 +266,7 @@ class GrandUnifiedCycle:
             logger.info("✓ War Room connected")
         except Exception as e:
             logger.warning(f"War Room unavailable: {e}")
-        
+
         # Doctrine
         try:
             from whitemagic.agents.doctrine import get_doctrine
@@ -274,7 +274,7 @@ class GrandUnifiedCycle:
             logger.info("✓ Imperial Doctrine connected")
         except Exception as e:
             logger.warning(f"Imperial Doctrine unavailable: {e}")
-        
+
         # Gan Ying Bus
         try:
             from whitemagic.core.resonance.gan_ying import get_bus
@@ -282,13 +282,13 @@ class GrandUnifiedCycle:
             logger.info("✓ Gan Ying Bus connected")
         except Exception as e:
             logger.warning(f"Gan Ying Bus unavailable: {e}")
-        
+
         self._initialized = True
         logger.info("🎖️ Grand Unified Cycle fully initialized")
-    
+
     def advance_grand_cycle(self) -> UnifiedState:
         """Advance one complete grand cycle step.
-        
+
         Flow:
           1. Advance zodiac (1/12 of round)
           2. Map zodiac → wu xing element
@@ -296,41 +296,41 @@ class GrandUnifiedCycle:
           4. Determine tactical pipeline phase
           5. Select war room tactic
           6. Emit unified resonance event
-        
+
         Returns:
             UnifiedState with all systems synchronized
         """
         self._ensure_initialized()
         self._cycle_count += 1
-        
+
         logger.info(f"\n{'='*60}")
         logger.info(f"🌀 GRAND CYCLE {self._cycle_count} — Advancing all systems")
         logger.info(f"{'='*60}")
-        
+
         # 1. COSMIC LAYER: Advance Zodiac
         zodiac_sign = self._advance_zodiac()
         logger.info(f"  🌟 Zodiac: {zodiac_sign.value.upper()}")
-        
+
         # 2. ELEMENTAL LAYER: Map Zodiac → Wu Xing
         element = self._zodiac_to_wuxing(zodiac_sign)
         self._adjust_wu_xing(element)
         logger.info(f"  ☯️  Wu Xing: {element.value.upper()}")
-        
+
         # 3. POLARITY LAYER: Check Yin-Yang Balance
         balance = self._check_yin_yang_balance()
         logger.info(f"  ⚖️  Yin-Yang: {balance['balance']:.2f} (burnout: {balance['burnout_risk']:.0%})")
-        
+
         # 4. TACTICAL LAYER: Determine Pipeline Phase
         pipeline_phase = self._determine_pipeline_phase(element, balance)
         logger.info(f"  🎯 Pipeline: {pipeline_phase.value.upper()}")
-        
+
         # 5. STRATEGIC/EXECUTION LAYER: Select Tactic
         tactic = self._select_tactic(pipeline_phase, balance)
         logger.info(f"  🎖️  Tactic: {tactic}")
-        
+
         # 6. RESONANCE CASCADE: Emit unified event
         self._emit_resonance_cascade(zodiac_sign, element, balance, pipeline_phase, tactic)
-        
+
         # Update state
         self.state = UnifiedState(
             timestamp=datetime.now(),
@@ -353,33 +353,33 @@ class GrandUnifiedCycle:
             force_composition=self._get_force_composition(element),
             resonance_events=self.state.resonance_events[-10:],  # Keep last 10
         )
-        
+
         # Store in history
         self._phase_history.append(self.state)
-        
+
         logger.info(f"\n  ✨ Dominant: {self.state.get_dominant_influence()}")
         logger.info(f"  💡 Action: {self.state.get_recommended_action()}")
         logger.info(f"{'='*60}\n")
-        
+
         return self.state
-    
+
     def _advance_zodiac(self) -> ZodiacSign:
         """Advance zodiacal round by one phase"""
         if self._zodiacal_round and hasattr(self._zodiacal_round, 'state'):
             phase = self._zodiacal_round.state.current_phase
             if hasattr(phase, 'value'):
                 return ZodiacSign(phase.value)
-        
+
         # Fallback: cycle through signs
         signs = list(ZodiacSign)
         current_idx = signs.index(self.state.zodiac_sign)
         next_idx = (current_idx + 1) % len(signs)
         return signs[next_idx]
-    
+
     def _zodiac_to_wuxing(self, zodiac: ZodiacSign) -> WuXingElement:
         """Map zodiac sign to wu xing element"""
         return ZODIAC_TO_WUXING.get(zodiac, WuXingElement.EARTH)
-    
+
     def _adjust_wu_xing(self, element: WuXingElement):
         """Adjust wu xing element energy"""
         if self._wu_xing_engine:
@@ -387,7 +387,7 @@ class GrandUnifiedCycle:
                 self._wu_xing_engine.adjust_element(element.value, 0.1)
             except Exception as e:
                 logger.debug(f"Wu Xing adjustment failed: {e}")
-    
+
     def _check_yin_yang_balance(self) -> dict[str, Any]:
         """Check current yin-yang balance"""
         if self._yin_yang_tracker:
@@ -402,7 +402,7 @@ class GrandUnifiedCycle:
                 }
             except Exception as e:
                 logger.debug(f"Yin-Yang check failed: {e}")
-        
+
         # Fallback: time-based heuristic
         hour = datetime.now().hour
         if 6 <= hour < 12:
@@ -413,7 +413,7 @@ class GrandUnifiedCycle:
             balance = -0.2  # Evening: slightly yin
         else:
             balance = -0.5  # Night: yin
-        
+
         return {
             'balance': balance,
             'burnout_risk': max(0.0, (balance - 0.5) * 0.5),
@@ -421,42 +421,42 @@ class GrandUnifiedCycle:
             'yang_ratio': 0.5,
             'stagnation_count': 0,
         }
-    
+
     def _determine_pipeline_phase(
-        self, 
-        element: WuXingElement, 
+        self,
+        element: WuXingElement,
         balance: dict[str, Any]
     ) -> PipelinePhase:
         """Determine tactical pipeline phase"""
-        
+
         # Burnout override → Force reflection
         if balance['burnout_risk'] > 0.7:
             return PipelinePhase.REFLECT
-        
+
         # Wu Xing → Pipeline mapping
         phases = WUXING_TO_PIPELINE.get(element, [PipelinePhase.SCOUT])
-        
+
         # Select first phase for this element
         # (In full implementation, would track sub-phase progression)
         return phases[0]
-    
+
     def _select_tactic(
-        self, 
-        pipeline_phase: PipelinePhase, 
+        self,
+        pipeline_phase: PipelinePhase,
         balance: dict[str, Any]
     ) -> str:
         """Select war room tactic"""
-        
+
         # Stagnation override → Emergency tactics
         stagnation = balance.get('stagnation_count', 0)
         if stagnation >= 3:
             return STAGNATION_TACTICS[0]
         elif stagnation >= 2:
             return STAGNATION_TACTICS[1]
-        
+
         # Pipeline → Tactic mapping
         return PIPELINE_TO_TACTICS.get(pipeline_phase, "Chain of Stratagems")
-    
+
     def _emit_resonance_cascade(
         self,
         zodiac: ZodiacSign,
@@ -468,10 +468,10 @@ class GrandUnifiedCycle:
         """Emit Gan Ying resonance cascade"""
         if not self._gan_ying_bus:
             return
-        
+
         try:
             from whitemagic.core.resonance.gan_ying import emit_event, EventType
-            
+
             # Unified cycle event
             emit_event(
                 source="grand_unified_cycle",
@@ -485,25 +485,25 @@ class GrandUnifiedCycle:
                     "tactic": tactic,
                 },
             )
-            
+
             self.state.resonance_events.append(
                 f"cycle_{self._cycle_count}:{zodiac.value}→{element.value}→{pipeline_phase.value}"
             )
-            
+
         except Exception as e:
             logger.debug(f"Resonance emission failed: {e}")
-    
+
     def _get_zodiac_cycle_count(self) -> int:
         """Get zodiac cycle count"""
         if self._zodiacal_round and hasattr(self._zodiacal_round, 'state'):
             return self._zodiacal_round.state.cycle_count
         return 0
-    
+
     def _get_zodiac_phase_number(self) -> int:
         """Get current zodiac phase number (0-11)"""
         signs = list(ZodiacSign)
         return signs.index(self.state.zodiac_sign)
-    
+
     def _get_wu_xing_energy(self, element: WuXingElement) -> float:
         """Get wu xing element energy level"""
         if self._wu_xing_engine and hasattr(self._wu_xing_engine, 'elements'):
@@ -514,7 +514,7 @@ class GrandUnifiedCycle:
             except Exception:
                 pass
         return 0.5
-    
+
     def _get_generating_element(self, element: WuXingElement) -> WuXingElement:
         """Get the element this one generates"""
         generating = {
@@ -525,7 +525,7 @@ class GrandUnifiedCycle:
             WuXingElement.WATER: WuXingElement.WOOD,
         }
         return generating.get(element, WuXingElement.EARTH)
-    
+
     def _get_overcoming_element(self, element: WuXingElement) -> WuXingElement:
         """Get the element this one overcomes"""
         overcoming = {
@@ -536,7 +536,7 @@ class GrandUnifiedCycle:
             WuXingElement.METAL: WuXingElement.WOOD,
         }
         return overcoming.get(element, WuXingElement.EARTH)
-    
+
     def _get_campaign_phase(self, element: WuXingElement) -> str:
         """Map wu xing element to Art of War campaign phase"""
         phase_map = {
@@ -547,7 +547,7 @@ class GrandUnifiedCycle:
             WuXingElement.WATER: "planning",
         }
         return phase_map.get(element, "reconnaissance")
-    
+
     def _get_force_composition(self, element: WuXingElement) -> dict[str, float]:
         """Get force composition for wu xing element"""
         if self._doctrine:
@@ -559,35 +559,35 @@ class GrandUnifiedCycle:
                 return {k.value: v for k, v in weights.items()}
             except Exception:
                 pass
-        
+
         # Fallback
         return {"light_infantry": 0.4, "heavy_cavalry": 0.3, "officers": 0.3}
-    
+
     def run_full_round(self, num_phases: int = 12) -> list[UnifiedState]:
         """Run a full zodiacal round (12 phases).
-        
+
         Args:
             num_phases: Number of phases to run (default 12 for full round)
-        
+
         Returns:
             List of UnifiedState for each phase
         """
         logger.info(f"\n{'#'*60}")
         logger.info(f"🌀 STARTING FULL ROUND — {num_phases} phases")
         logger.info(f"{'#'*60}\n")
-        
+
         states = []
         for i in range(num_phases):
             state = self.advance_grand_cycle()
             states.append(state)
             time.sleep(0.1)  # Brief pause for resonance propagation
-        
+
         logger.info(f"\n{'#'*60}")
         logger.info(f"✅ FULL ROUND COMPLETE — {num_phases} phases executed")
         logger.info(f"{'#'*60}\n")
-        
+
         return states
-    
+
     def get_status(self) -> dict[str, Any]:
         """Get complete status of all systems"""
         return {

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { Brain, Network, Activity, Calendar, Search, Settings, Zap } from 'lucide-react';
+import { Brain, Network, Activity, Calendar, Search, Settings, Zap, Shield, BarChart3 } from 'lucide-react';
 import MemoryGraph from './components/MemoryGraph';
 import Timeline from './components/Timeline';
 import GardenHealth from './components/GardenHealth';
 import SearchBar from './components/SearchBar';
+import WuXingWheel from './components/WuXingWheel';
+import PolyglotBalance from './components/PolyglotBalance';
+import DreamCycleMonitor from './components/DreamCycleMonitor';
 import './App.css';
 
 const queryClient = new QueryClient();
@@ -23,6 +26,18 @@ const api = {
     const response = await fetch('/api/gardens');
     return response.json();
   },
+  getPolyglotBalance: async () => {
+    const response = await fetch('/api/polyglot/balance');
+    return response.json();
+  },
+  getDreamPhases: async () => {
+    const response = await fetch('/api/dream/phases');
+    return response.json();
+  },
+  getLocomoStats: async () => {
+    const response = await fetch('/api/locomo/stats');
+    return response.json();
+  },
   search: async (query) => {
     const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
     return response.json();
@@ -37,26 +52,45 @@ function Dashboard() {
   const { data: memories, isLoading: memoriesLoading } = useQuery({
     queryKey: ['memories'],
     queryFn: api.getMemories,
-    refetchInterval: 30000 // Refresh every 30 seconds
+    refetchInterval: 30000 
   });
 
   const { data: events, isLoading: eventsLoading } = useQuery({
     queryKey: ['events'],
     queryFn: api.getEvents,
-    refetchInterval: 10000 // Refresh every 10 seconds
+    refetchInterval: 10000 
   });
 
   const { data: gardens, isLoading: gardensLoading } = useQuery({
     queryKey: ['gardens'],
     queryFn: api.getGardens,
-    refetchInterval: 60000 // Refresh every minute
+    refetchInterval: 60000 
+  });
+
+  const { data: polyglotData, isLoading: polyglotLoading } = useQuery({
+    queryKey: ['polyglotBalance'],
+    queryFn: api.getPolyglotBalance,
+    refetchInterval: 60000 
+  });
+
+  const { data: dreamData, isLoading: dreamLoading } = useQuery({
+    queryKey: ['dreamPhases'],
+    queryFn: api.getDreamPhases,
+    refetchInterval: 5000 
+  });
+
+  const { data: locomoData, isLoading: locomoLoading } = useQuery({
+    queryKey: ['locomoStats'],
+    queryFn: api.getLocomoStats,
+    refetchInterval: 60000 
   });
 
   const stats = {
-    totalMemories: memories?.length || 0,
-    recentEvents: events?.slice(0, 5) || [],
-    activeGardens: gardens?.filter(g => g.status === 'active').length || 0,
-    totalGardens: gardens?.length || 0
+    totalMemories: memories?.memories?.length || 0,
+    recentEvents: events?.events?.slice(0, 5) || [],
+    activeGardens: gardens?.gardens?.filter(g => g.status === 'active').length || 0,
+    totalGardens: gardens?.gardens?.length || 0,
+    locomoAccuracy: locomoData?.overall_accuracy || 0
   };
 
   return (
@@ -91,10 +125,10 @@ function Dashboard() {
             color="purple"
           />
           <StatCard
-            icon={Network}
-            label="Active Gardens"
-            value={`${stats.activeGardens}/${stats.totalGardens}`}
-            loading={gardensLoading}
+            icon={Shield}
+            label="LoCoMo Accuracy"
+            value={`${stats.locomoAccuracy}%`}
+            loading={locomoLoading}
             color="blue"
           />
           <StatCard
@@ -106,40 +140,66 @@ function Dashboard() {
           />
           <StatCard
             icon={Zap}
-            label="System Health"
-            value="98%"
-            loading={false}
+            label="System Status"
+            value={dreamData?.is_master ? "MASTER" : "STANDALONE"}
+            loading={dreamLoading}
             color="yellow"
           />
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Memory Graph - 2 columns */}
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Memory Graph - Center Column */}
+          <div className="lg:col-span-6 space-y-8">
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Network className="w-5 h-5 mr-2 text-purple-600" />
                 Memory Network
               </h2>
               <MemoryGraph
-                memories={memories || []}
+                memories={memories?.memories || []}
                 selectedMemory={selectedMemory}
                 onMemorySelect={setSelectedMemory}
                 loading={memoriesLoading}
               />
             </div>
+            
+            {/* Dream Cycle Phase Monitor - v21 Feature */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Activity className="w-5 h-5 mr-2 text-indigo-600" />
+                Dream Cycle: 12-Phase Synchronization
+              </h2>
+              <DreamCycleMonitor data={dreamData} loading={dreamLoading} />
+            </div>
           </div>
 
-          {/* Side Panel */}
-          <div className="space-y-6">
-            {/* Garden Health */}
+          {/* Left Column: Language & Harmony */}
+          <div className="lg:col-span-3 space-y-6">
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Garden Health</h2>
-              <GardenHealth gardens={gardens || []} loading={gardensLoading} />
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <BarChart3 className="w-5 h-5 mr-2 text-blue-600" />
+                Lichen Balance
+              </h2>
+              <PolyglotBalance data={polyglotData} loading={polyglotLoading} />
             </div>
 
-            {/* Recent Events */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Zap className="w-5 h-5 mr-2 text-yellow-600" />
+                Wu Xing Alignment
+              </h2>
+              <WuXingWheel currentPhase="EARTH" />
+            </div>
+          </div>
+
+          {/* Right Column: Health & Events */}
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Garden Health</h2>
+              <GardenHealth gardens={gardens?.gardens || []} loading={gardensLoading} />
+            </div>
+
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Calendar className="w-5 h-5 mr-2 text-blue-600" />

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def bootstrap_nervous_system():
     """Discover and register all biological organs."""
     ns = get_nervous_system()
-    
+
     # 1. Immune System
     try:
         from whitemagic.core.immune.pattern_immunity import get_immune_system
@@ -35,12 +35,12 @@ def bootstrap_nervous_system():
         # Note: DreamCycle usually needs start(), we just register the instance here
         # Ideally we'd have a singleton accessor that returns the shared instance
         # whitemagic/core/dreaming/dream_cycle.py doesn't have a singleton accessor in the snippet I saw earlier?
-        # Wait, I saw `def get_dream_cycle() -> DreamCycle` in the snippet? 
+        # Wait, I saw `def get_dream_cycle() -> DreamCycle` in the snippet?
         # Checking... yes, I'll assume it exists or I'll fix it.
         # Actually, let's double check if I need to create one.
         # The snippet for dream_cycle.py ended before showing a singleton getter?
         # No, I can import it if it exists. If not, I'll catch the error.
-        ns.register_organ(OrganType.DREAM, get_dream_cycle()) 
+        ns.register_organ(OrganType.DREAM, get_dream_cycle())
     except ImportError as e:
         logger.warning(f"Failed to bootstrap Dream Cycle: {e}")
 
@@ -74,7 +74,7 @@ def bootstrap_nervous_system():
 
     # Wire Feedback Loops (Subscribers)
     _wire_feedback_loops(ns)
-    
+
     logger.info(f"Nervous System Bootstrap Complete. Organs online: {len(ns.organs)}")
 
 def _wire_feedback_loops(ns):
@@ -82,20 +82,20 @@ def _wire_feedback_loops(ns):
     try:
         from whitemagic.core.resonance.gan_ying_enhanced import get_bus, EventType
         bus = get_bus()
-        
+
         # Immune -> Dream (Threat -> Defense Cycle)
         def on_threat(event):
             ns.signal_threat_detected(event.confidence, event.data)
-            
+
         bus.listen(EventType.THREAT_DETECTED, on_threat)
-        
+
         # Dream -> Genetics (Consolidation -> Fitness)
         def on_consolidation(event):
             if "strategies" in event.data and event.data["strategies"] > 0:
                 ns.signal_dream_consolidation([{"type": "strategy_count", "count": event.data["strategies"]}])
-                
+
         bus.listen(EventType.MEMORY_CONSOLIDATED, on_consolidation)
-        
+
     except ImportError:
         logger.warning("Could not wire resonance events (bus missing?)")
 

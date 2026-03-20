@@ -14,21 +14,21 @@ import json
 @dataclass
 class CognitiveEpisode:
     """A single episode of reasoning/thought process."""
-    
+
     # Metadata
     id: str  # Unique ID (e.g. UUID)
     timestamp: datetime = field(default_factory=datetime.now)
     task_type: str = "unknown"  # e.g. "debugging", "synthesis", "coding"
-    
+
     # The Thinking
     strategy: str = "default"   # e.g. "chain_of_thought", "analytical"
     thought_trace: str = ""     # The actual reasoning steps/log
     context_summary: str = ""   # Brief context of what was being solved
-    
+
     # The Outcome
     outcome_score: float = 0.0  # -1.0 (fail) to +1.0 (breakthrough)
     outcome_metrics: Dict[str, Any] = field(default_factory=dict) # e.g. {"tests_passed": True}
-    
+
     # Associations
     related_memory_ids: List[str] = field(default_factory=list)
     tags: List[str] = field(default_factory=list)

@@ -217,6 +217,7 @@ def zig_graph_bridge_status() -> dict[str, Any]:
     """Get Zig graph bridge status."""
     _init_lib()
     return {
+        "available": _HAS_ZIG_GRAPH,
         "has_zig_graph": _HAS_ZIG_GRAPH,
         "lib_path": _LIB_PATH or "not found",
         "functions": ["wm_simd_cosine_f32", "wm_simd_dot_f32",

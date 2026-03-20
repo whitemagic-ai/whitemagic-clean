@@ -21,15 +21,15 @@ def phase_cli():
 def status_cmd():
     """Show current Wu Xing phase."""
     # Mock connection to active scheduler
-    scheduler = WuXingScheduler() 
+    scheduler = WuXingScheduler()
     st = scheduler.status()
-    
+
     # Rich formatting if available
     try:
         from rich.console import Console
         from rich.panel import Panel
         console = Console()
-        
+
         color_map = {
             "wood": "green",
             "fire": "red",
@@ -39,7 +39,7 @@ def status_cmd():
         }
         p = st['phase']
         color = color_map.get(p, "white")
-        
+
         console.print(Panel(
             f"[bold {color}]Current Phase: {p.upper()}[/]\n"
             f"Duration: {st['duration_min']} min / {st['target_duration']} min\n\n"

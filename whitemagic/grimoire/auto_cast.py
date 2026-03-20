@@ -3,7 +3,6 @@
 Monitors context and automatically casts appropriate spells.
 """
 import logging
-import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from dataclasses import dataclass, field
 from datetime import datetime

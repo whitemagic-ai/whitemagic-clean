@@ -20,56 +20,56 @@ logger = logging.getLogger(__name__)
 
 class UnifiedNervousSystem:
     """Central nervous system connecting the 7 biological metaphors."""
-    
+
     def __init__(self):
         self.is_active = False
         self._stats = {
             "pulses": 0,
             "errors": 0
         }
-        
+
         # 1. Immune System
         try:
             from whitemagic.core.intelligence.immune.dna import DNA_Memory
             self.immune = DNA_Memory()
         except ImportError:
             self.immune = None
-            
+
         # 2. Evolution System
         try:
             from whitemagic.core.intelligence.phylogenetics import GenomeTracker
             self.evolution = GenomeTracker()
         except ImportError:
             self.evolution = None
-            
+
         # 3. Dream System
         try:
             from whitemagic.core.intelligence.dream_cycle import DreamCycle
             self.dreams = DreamCycle()
         except ImportError:
             self.dreams = None
-            
+
         # 4. Memory Metabolism
         try:
             from whitemagic.core.intelligence.hologram.consolidation import HolographicConsolidator
             self.metabolism = HolographicConsolidator()
         except ImportError:
             self.metabolism = None
-            
+
         # 5. Consciousness
         try:
             from whitemagic.core.intelligence.agentic.coherence_persistence import CoherenceTracker
             self.consciousness = CoherenceTracker()
         except ImportError:
             self.consciousness = None
-            
+
         # 6. Resonance
         try:
             from whitemagic.core.intelligence.agentic.resonance_amp import ResonanceAmplifier
             self.resonance = ResonanceAmplifier()
         except ImportError:
             self.resonance = None
-            
+
         # 7. Emergence
         try:
             from whitemagic.core.intelligence.agentic.emergence_engine import EmergenceEngine
@@ -91,19 +91,18 @@ class UnifiedNervousSystem:
         """A single heartbeat of the system. Triggers homeostasis loops."""
         if not self.is_active:
             return {"status": "inactive"}
-            
+
         self._stats["pulses"] += 1
-        results = {}
-        
+
         # Minimal pulse for now, will expand with true cross-system orchestration
         if self.metabolism:
             try:
                 # In real scenario, this is an async background task or Rust offload
-                pass 
+                pass
             except Exception as e:
                 self._stats["errors"] += 1
                 logger.error(f"Metabolism pulse failed: {e}")
-                
+
         return {
             "status": "ok",
             "pulses": self._stats["pulses"],

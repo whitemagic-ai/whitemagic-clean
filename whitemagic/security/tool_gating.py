@@ -427,7 +427,7 @@ def check_tool_execution(
     tool_name: str, params: dict[str, Any],
 ) -> tuple[bool, str, dict[str, Any]]:
     """Check if a tool can be executed with given parameters."""
-    
+
     # NEW: SutraCode Kernel check (hard stop)
     try:
         import whitemagic_rust
@@ -438,7 +438,7 @@ def check_tool_execution(
             payload_str = json.dumps(params, default=str)
             # This will panic and crash the thread if a violation is found
             kernel.verify_action("mcp_client", tool_name, payload_str)
-    except Exception as e:
+    except Exception:
         # We only catch Python-level exceptions here (like missing module).
         # Rust panics will bubble up and crash the worker thread safely.
         pass

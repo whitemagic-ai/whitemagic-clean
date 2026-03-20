@@ -4,7 +4,7 @@
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, List, Tuple, Optional
+from typing import Any, List
 
 logger = logging.getLogger(__name__)
 
@@ -19,13 +19,13 @@ class SpecialistResult:
 
 class PolyglotSpecialists:
     """8 language specialists for optimal performance"""
-    
+
     def __init__(self):
         from whitemagic.optimization.polyglot_router import get_router
         self.router = get_router()
-        self.stats = {"rust": 0, "zig": 0, "mojo": 0, "haskell": 0, 
+        self.stats = {"rust": 0, "zig": 0, "mojo": 0, "haskell": 0,
                       "elixir": 0, "go": 0, "julia": 0, "python": 0}
-    
+
     # Specialist 1: Pattern Matching (Rust)
     def extract_patterns(self, content: str, limit: int = 50) -> SpecialistResult:
         start = time.time()
@@ -35,13 +35,13 @@ class PolyglotSpecialists:
             self.stats["rust"] += 1
             return SpecialistResult("PatternMatcher", "rust", True, patterns,
                                    (time.time() - start) * 1000, False)
-        except:
+        except Exception:
             import re
             patterns = list(set(re.findall(r'\b[a-zA-Z]{3,}\b', content)))[:limit]
             self.stats["python"] += 1
             return SpecialistResult("PatternMatcher", "python", True, patterns,
                                    (time.time() - start) * 1000, True)
-    
+
     # Specialist 2: SIMD Operations (Zig)
     def distance_matrix(self, vectors: List[List[float]]) -> SpecialistResult:
         start = time.time()
@@ -51,13 +51,13 @@ class PolyglotSpecialists:
             self.stats["zig"] += 1
             return SpecialistResult("SIMDProcessor", "zig", True, matrix,
                                    (time.time() - start) * 1000, False)
-        except:
+        except Exception:
             import numpy as np
             matrix = np.zeros((len(vectors), len(vectors)))
             self.stats["python"] += 1
             return SpecialistResult("SIMDProcessor", "python", True, matrix,
                                    (time.time() - start) * 1000, True)
-    
+
     # Specialist 3: Tensor Operations (Mojo)
     def batch_encode(self, memories: List[dict], current_time: int) -> SpecialistResult:
         start = time.time()
@@ -66,7 +66,7 @@ class PolyglotSpecialists:
         self.stats[lang] += 1
         return SpecialistResult("TensorProcessor", lang, True, coords,
                                (time.time() - start) * 1000, lang == "python")
-    
+
     # Specialist 4: Type Safety (Haskell)
     def evaluate_rules(self, action: str, context: dict) -> SpecialistResult:
         start = time.time()
@@ -76,12 +76,12 @@ class PolyglotSpecialists:
             self.stats["haskell"] += 1
             return SpecialistResult("RuleEvaluator", "haskell", True, result,
                                    (time.time() - start) * 1000, False)
-        except:
+        except Exception:
             result = {"decision": "ALLOW", "confidence": 0.5}
             self.stats["python"] += 1
             return SpecialistResult("RuleEvaluator", "python", True, result,
                                    (time.time() - start) * 1000, True)
-    
+
     # Specialist 5: Concurrency (Elixir)
     def parallel_tasks(self, tasks: List[dict]) -> SpecialistResult:
         start = time.time()
@@ -90,7 +90,7 @@ class PolyglotSpecialists:
         self.stats["python"] += 1  # Fallback for now
         return SpecialistResult("ConcurrencyManager", "python", True, results,
                                (time.time() - start) * 1000, True)
-    
+
     # Specialist 6: Networking (Go)
     def mesh_discovery(self) -> SpecialistResult:
         start = time.time()
@@ -99,7 +99,7 @@ class PolyglotSpecialists:
         self.stats["python"] += 1
         return SpecialistResult("NetworkManager", "python", True, peers,
                                (time.time() - start) * 1000, True)
-    
+
     # Specialist 7: Statistics (Julia)
     def statistical_analysis(self, data: List[float]) -> SpecialistResult:
         start = time.time()
@@ -109,13 +109,13 @@ class PolyglotSpecialists:
             self.stats["julia"] += 1
             return SpecialistResult("StatisticalAnalyzer", "julia", True, stats,
                                    (time.time() - start) * 1000, False)
-        except:
+        except Exception:
             import statistics
             stats = {"mean": statistics.mean(data) if data else 0}
             self.stats["python"] += 1
             return SpecialistResult("StatisticalAnalyzer", "python", True, stats,
                                    (time.time() - start) * 1000, True)
-    
+
     # Specialist 8: Orchestration (Python)
     def orchestrate(self, workflow: dict) -> SpecialistResult:
         start = time.time()
@@ -123,7 +123,7 @@ class PolyglotSpecialists:
         self.stats["python"] += 1
         return SpecialistResult("Orchestrator", "python", True, result,
                                (time.time() - start) * 1000, False)
-    
+
     def get_stats(self) -> dict:
         total = sum(self.stats.values())
         native = total - self.stats["python"]

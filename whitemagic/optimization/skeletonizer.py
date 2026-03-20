@@ -10,13 +10,11 @@ classes, and docstrings (summarized).
 """
 
 import ast
-import re
 from pathlib import Path
-from typing import Optional
 
 class Skeletonizer:
     """AST-based code skeletonizer for Python."""
-    
+
     def __init__(self):
         pass
 
@@ -39,7 +37,7 @@ class Skeletonizer:
         path = Path(file_path)
         if not path.exists():
             return f"# File not found: {path}"
-        
+
         try:
             content = path.read_text(encoding="utf-8", errors="replace")
             if path.suffix == ".py":
@@ -58,7 +56,7 @@ class SkeletonTransformer(ast.NodeTransformer):
     def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.FunctionDef:
         """Keep signature, strip body."""
         # Process arguments (defaults, annotations) - ast.unparse handles this if we keep the node
-        
+
         # Check for docstring
         docstring = ast.get_docstring(node)
         new_body = []
@@ -66,10 +64,10 @@ class SkeletonTransformer(ast.NodeTransformer):
             # Keep first line of docstring
             summary = docstring.split('\n')[0].strip()
             new_body.append(ast.Expr(value=ast.Constant(value=summary + " ...")))
-        
+
         # Add ellipsis
         new_body.append(ast.Expr(value=ast.Constant(value=...)))
-        
+
         node.body = new_body
         return node
 
@@ -80,7 +78,7 @@ class SkeletonTransformer(ast.NodeTransformer):
         if docstring:
             summary = docstring.split('\n')[0].strip()
             new_body.append(ast.Expr(value=ast.Constant(value=summary + " ...")))
-        
+
         new_body.append(ast.Expr(value=ast.Constant(value=...)))
         node.body = new_body
         return node
@@ -88,15 +86,15 @@ class SkeletonTransformer(ast.NodeTransformer):
     def visit_ClassDef(self, node: ast.ClassDef) -> ast.ClassDef:
         """Keep class structure, visit methods recursively."""
         # Docstring
-        docstring = ast.get_docstring(node)
-        
+        ast.get_docstring(node)
+
         # Recurse into body to process methods
         self.generic_visit(node)
-        
+
         # If body is empty after stripping (shouldn't happen with generic_visit on methods), add pass
         if not node.body:
              node.body = [ast.Pass()]
-             
+
         return node
 
 def skeletonize(code: str) -> str:

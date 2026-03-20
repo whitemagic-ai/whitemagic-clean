@@ -127,13 +127,13 @@ DISPATCH_TABLE: dict[str, Callable[..., dict[str, Any]]] = {
     "kg.query": LazyHandler("knowledge_graph", "handle_kg_query"),
     "kg.top": LazyHandler("knowledge_graph", "handle_kg_top"),
     "kg.status": LazyHandler("knowledge_graph", "handle_kg_status"),
-    
+
     # --- Knowledge Graph 2.0 (v16: LightNER + typed edges) ---
     "kg2.extract": LazyHandler("knowledge_graph", "handle_kg2_extract"),
     "kg2.batch": LazyHandler("knowledge_graph", "handle_kg2_batch"),
     "kg2.entity": LazyHandler("knowledge_graph", "handle_kg2_entity"),
     "kg2.stats": LazyHandler("knowledge_graph", "handle_kg2_stats"),
-    
+
     # --- Embedding Daemon (v16) ---
     "embedding.daemon_start": LazyHandler("knowledge_graph", "handle_embedding_daemon_start"),
     "embedding.daemon_stop": LazyHandler("knowledge_graph", "handle_embedding_daemon_stop"),
@@ -734,7 +734,6 @@ def _build_pipeline() -> Any:
         mw_rate_limiter,
         mw_security_monitor,
         mw_tool_permissions,
-        mw_sutra_auto_execute,
     )
     p = DispatchPipeline()
     p.use("input_sanitizer", mw_input_sanitizer)

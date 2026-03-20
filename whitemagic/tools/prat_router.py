@@ -666,16 +666,16 @@ _KOKA_GANA_HANDLERS: dict[str, tuple[str, set[str]]] = {
 
 def _try_koka_handler(gana_name: str, tool: str | None, args: dict | None) -> dict | None:
     """Attempt to route a Gana call through Koka native handler.
-    
+
     Returns None if Koka unavailable or operation not supported.
     Used for hot-path acceleration of 3+ Ganas (S023 VC #8).
     """
     handler_info = _KOKA_GANA_HANDLERS.get(gana_name)
     if not handler_info:
         return None  # This Gana doesn't have Koka handler
-    
+
     koka_module, supported_ops = handler_info
-    
+
     # Check if the operation is supported
     op = tool or "native"
     if op not in supported_ops and tool is not None:
@@ -683,7 +683,7 @@ def _try_koka_handler(gana_name: str, tool: str | None, args: dict | None) -> di
         op_match = any(s in op for s in supported_ops)
         if not op_match:
             return None  # Operation not supported in Koka
-    
+
     try:
         from whitemagic.core.acceleration.koka_native_bridge import koka_dispatch
         result = koka_dispatch(
@@ -700,7 +700,7 @@ def _try_koka_handler(gana_name: str, tool: str | None, args: dict | None) -> di
             return result
     except Exception as e:
         logger.debug(f"Koka handler fallback for {gana_name}: {e}")
-    
+
     return None  # Fallback to Python
 
 

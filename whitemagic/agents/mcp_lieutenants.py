@@ -30,14 +30,14 @@ GANA_TO_LIEUTENANT = {
     "gana_straddling_legs": LieutenantDomain.SECURITY, # 15. STRADDLING LEGS (ethics)
     "gana_hairy_head": LieutenantDomain.SECURITY,     # 20. HAIRY HEAD (detail)
     "gana_star": LieutenantDomain.SECURITY,           # 24. STAR (governance)
-    
+
     # Lieutenant Aria Chen (Performance) — 5 Ganas, 131K clones
     "gana_heart": LieutenantDomain.PERFORMANCE,       # 5. HEART (session context)
     "gana_tail": LieutenantDomain.PERFORMANCE,        # 6. TAIL (performance)
     "gana_roof": LieutenantDomain.PERFORMANCE,        # 12. ROOF (sovereign compute)
     "gana_turtle_beak": LieutenantDomain.PERFORMANCE, # 19. TURTLE BEAK (precision)
     "gana_mound": LieutenantDomain.PERFORMANCE,       # 26. MOUND (metrics)
-    
+
     # Lieutenant Marcus Silva (Intelligence) — 6 Ganas, 185K clones
     "gana_neck": LieutenantDomain.INTELLIGENCE,       # 2. NECK (memory creation)
     "gana_winnowing_basket": LieutenantDomain.INTELLIGENCE, # 7. WINNOWING BASKET (search)
@@ -45,18 +45,18 @@ GANA_TO_LIEUTENANT = {
     "gana_wall": LieutenantDomain.INTELLIGENCE,       # 14. WALL (voting)
     "gana_three_stars": LieutenantDomain.INTELLIGENCE, # 18. THREE STARS (judgment)
     "gana_extended_net": LieutenantDomain.INTELLIGENCE, # 21. EXTENDED NET (patterns)
-    
+
     # Lieutenant Keiko Tanaka (Synthesis) — 3 Ganas, 92K clones
     "gana_net": LieutenantDomain.SYNTHESIS,           # 16. NET (capture & filtering)
     "gana_stomach": LieutenantDomain.SYNTHESIS,       # 17. STOMACH (digestion)
     "gana_abundance": LieutenantDomain.SYNTHESIS,     # 27. ABUNDANCE (lifecycle)
-    
+
     # Lieutenant Omar Hassan (Discovery) — 4 Ganas, 168K clones
     "gana_ox": LieutenantDomain.DISCOVERY,            # 9. OX (endurance)
     "gana_ghost": LieutenantDomain.DISCOVERY,         # 22. GHOST (introspection)
     "gana_willow": LieutenantDomain.DISCOVERY,        # 23. WILLOW (resilience)
     "gana_chariot": LieutenantDomain.DISCOVERY,       # 28. CHARIOT (archaeology)
-    
+
     # Lieutenant Priya Sharma (Infrastructure) — 4 Ganas, 103K clones
     "gana_horn": LieutenantDomain.INFRASTRUCTURE,     # 1. HORN (session init)
     "gana_root": LieutenantDomain.INFRASTRUCTURE,     # 3. ROOT (system health)
@@ -76,7 +76,7 @@ LIEUTENANT_MCP_TOOLS = {
         "salience.spotlight", "anomaly.check", "karma_report", "karmic_trace",
         "governor_set_goal", "governor_check_dharma", "forge.validate",
     ],
-    
+
     LieutenantDomain.PERFORMANCE: [
         # Performance & acceleration tools
         "scratchpad", "session.handoff", "context.pack", "working_memory.attend",
@@ -85,7 +85,7 @@ LIEUTENANT_MCP_TOOLS = {
         "edge_infer", "bitnet_infer", "edge_batch_infer",
         "view_hologram", "get_yin_yang_balance", "green.report", "track_metric",
     ],
-    
+
     LieutenantDomain.INTELLIGENCE: [
         # Memory, search & intelligence tools
         "create_memory", "update_memory", "import_memories", "delete_memory",
@@ -95,7 +95,7 @@ LIEUTENANT_MCP_TOOLS = {
         "reasoning.bicameral", "ensemble.query", "kaizen_analyze", "sabha.convene",
         "pattern_search", "cluster_stats", "association.mine", "constellation.detect", "resonance_trace",
     ],
-    
+
     LieutenantDomain.SYNTHESIS: [
         # Synthesis & pipeline tools
         "prompt.render", "prompt.list", "karma.verify_chain",
@@ -103,7 +103,7 @@ LIEUTENANT_MCP_TOOLS = {
         "dream_start", "dream_status", "serendipity_surface", "memory.lifecycle",
         "narrative.compress", "gratitude.stats",
     ],
-    
+
     LieutenantDomain.DISCOVERY: [
         # Discovery & research tools
         "swarm.decompose", "swarm.route", "swarm.complete", "war_room.execute",
@@ -112,7 +112,7 @@ LIEUTENANT_MCP_TOOLS = {
         "archaeology_search", "archaeology_scan_directory", "kg.extract", "kg.query",
         "windsurf_search_conversations",
     ],
-    
+
     LieutenantDomain.INFRASTRUCTURE: [
         # Infrastructure & deployment tools
         "session_bootstrap", "create_session", "resume_session", "checkpoint_session",
@@ -126,28 +126,28 @@ LIEUTENANT_MCP_TOOLS = {
 @dataclass
 class LieutenantWithMCP(Lieutenant):
     """Lieutenant with MCP tool integration for real-time decision-making."""
-    
+
     ganas_commanded: list[str] = field(default_factory=list)
     mcp_tools_available: list[str] = field(default_factory=list)
     mcp_calls_made: int = 0
     mcp_call_history: list[dict[str, Any]] = field(default_factory=list)
-    
+
     def __post_init__(self):
         """Initialize MCP tool authority based on domain."""
         if not self.mcp_tools_available:
             self.mcp_tools_available = LIEUTENANT_MCP_TOOLS.get(self.domain, [])
-        
+
         if not self.ganas_commanded:
             # Find all Ganas commanded by this lieutenant
             self.ganas_commanded = [
                 gana for gana, domain in GANA_TO_LIEUTENANT.items()
                 if domain == self.domain
             ]
-    
+
     def can_use_tool(self, tool_name: str) -> bool:
         """Check if lieutenant has authority to use this MCP tool."""
         return tool_name in self.mcp_tools_available
-    
+
     def call_mcp_tool(self, tool_name: str, args: dict[str, Any] | None = None) -> dict[str, Any]:
         """Make an MCP tool call with authority checking and logging."""
         if not self.can_use_tool(tool_name):
@@ -159,10 +159,10 @@ class LieutenantWithMCP(Lieutenant):
                 "message": f"Unauthorized: {tool_name} not in lieutenant's authority",
                 "authorized_tools": self.mcp_tools_available[:10],  # Show first 10
             }
-        
+
         try:
             result = call_tool(tool_name, args or {})
-            
+
             # Log the call
             self.mcp_calls_made += 1
             self.mcp_call_history.append({
@@ -171,14 +171,14 @@ class LieutenantWithMCP(Lieutenant):
                 "result_status": result.get("status", "unknown"),
                 "call_number": self.mcp_calls_made,
             })
-            
+
             logger.info(
                 f"Lieutenant {self.name} called {tool_name} "
                 f"(call #{self.mcp_calls_made}): {result.get('status', 'unknown')}"
             )
-            
+
             return result
-            
+
         except Exception as e:
             logger.error(f"Lieutenant {self.name} MCP call failed: {tool_name} - {e}")
             return {
@@ -186,7 +186,7 @@ class LieutenantWithMCP(Lieutenant):
                 "message": str(e),
                 "tool": tool_name,
             }
-    
+
     def reconnaissance(self, campaign_code: str) -> dict[str, Any]:
         """Pre-deployment reconnaissance using MCP tools."""
         intel = {
@@ -194,49 +194,49 @@ class LieutenantWithMCP(Lieutenant):
             "lieutenant": self.name,
             "domain": self.domain.value,
         }
-        
+
         # System health check
         if self.can_use_tool("health_report"):
             health = self.call_mcp_tool("health_report", {})
             intel["system_health"] = health
-            
+
             if health.get("status") != "healthy":
                 intel["recommendation"] = "defer_deployment"
                 intel["reason"] = "system_unhealthy"
                 return intel
-        
+
         # Domain-specific reconnaissance
         if self.domain == LieutenantDomain.INTELLIGENCE:
             # Check graph topology
             if self.can_use_tool("graph_topology"):
                 topology = self.call_mcp_tool("graph_topology", {})
                 intel["graph_topology"] = topology
-            
+
             # Check cluster stats
             if self.can_use_tool("cluster_stats"):
                 clusters = self.call_mcp_tool("cluster_stats", {})
                 intel["clusters"] = clusters
-        
+
         elif self.domain == LieutenantDomain.PERFORMANCE:
             # Check SIMD status
             if self.can_use_tool("simd.status"):
                 simd = self.call_mcp_tool("simd.status", {})
                 intel["simd_status"] = simd
-            
+
             # Check Rust status
             if self.can_use_tool("rust_status"):
                 rust = self.call_mcp_tool("rust_status", {})
                 intel["rust_status"] = rust
-        
+
         elif self.domain == LieutenantDomain.DISCOVERY:
             # Check capabilities
             if self.can_use_tool("capabilities"):
                 caps = self.call_mcp_tool("capabilities", {})
                 intel["capabilities"] = caps
-        
+
         intel["recommendation"] = "proceed"
         return intel
-    
+
     def monitor_execution(self, batch_id: str, metrics: dict[str, Any]) -> dict[str, Any]:
         """Real-time monitoring during army execution using MCP tools."""
         monitoring = {
@@ -244,7 +244,7 @@ class LieutenantWithMCP(Lieutenant):
             "lieutenant": self.name,
             "adjustments": [],
         }
-        
+
         # Performance monitoring
         if self.domain == LieutenantDomain.PERFORMANCE:
             # Check if throughput is acceptable
@@ -256,7 +256,7 @@ class LieutenantWithMCP(Lieutenant):
                         "type": "fallback_to_python",
                         "reason": "simd_unavailable",
                     })
-        
+
         # Intelligence monitoring
         elif self.domain == LieutenantDomain.INTELLIGENCE:
             # Track metric for this batch
@@ -265,9 +265,9 @@ class LieutenantWithMCP(Lieutenant):
                     "metric": f"batch_{batch_id}_throughput",
                     "value": metrics.get("throughput", 0),
                 })
-        
+
         return monitoring
-    
+
     def verify_victory_conditions(self, campaign_code: str, results: dict[str, Any]) -> dict[str, Any]:
         """Post-deployment verification using MCP tools."""
         verification = {
@@ -276,7 +276,7 @@ class LieutenantWithMCP(Lieutenant):
             "checks": [],
             "victory": False,
         }
-        
+
         # Domain-specific verification
         if self.domain == LieutenantDomain.INTELLIGENCE:
             # Verify graph reconstruction
@@ -286,7 +286,7 @@ class LieutenantWithMCP(Lieutenant):
                     "check": "graph_topology",
                     "passed": topology.get("nodes", 0) > 0,
                 })
-            
+
             # Verify constellation detection
             if self.can_use_tool("constellation.detect"):
                 constellations = self.call_mcp_tool("constellation.detect", {})
@@ -294,7 +294,7 @@ class LieutenantWithMCP(Lieutenant):
                     "check": "constellations",
                     "passed": len(constellations.get("constellations", [])) > 0,
                 })
-        
+
         elif self.domain == LieutenantDomain.PERFORMANCE:
             # Verify SIMD performance
             if self.can_use_tool("simd.status"):
@@ -303,14 +303,14 @@ class LieutenantWithMCP(Lieutenant):
                     "check": "simd_available",
                     "passed": simd.get("available", False),
                 })
-        
+
         # Overall victory determination
         verification["victory"] = all(
             check.get("passed", False) for check in verification["checks"]
         )
-        
+
         return verification
-    
+
     def status_report_with_mcp(self) -> dict[str, Any]:
         """Enhanced status report including MCP activity."""
         base_status = self.status_report()
@@ -325,10 +325,10 @@ class LieutenantWithMCP(Lieutenant):
 
 class MCPLieutenantCorps(LieutenantCorps):
     """Enhanced Lieutenant Corps with MCP integration."""
-    
+
     def _initialize_lieutenants(self) -> None:
         """Initialize MCP-enabled lieutenants."""
-        
+
         # Security Lieutenant — Zhang Wei
         self.lieutenants[LieutenantDomain.SECURITY] = LieutenantWithMCP(
             domain=LieutenantDomain.SECURITY,
@@ -342,7 +342,7 @@ class MCPLieutenantCorps(LieutenantCorps):
                 "Dharma enforcement and ethical boundaries",
             ]
         )
-        
+
         # Performance Lieutenant — Aria Chen
         self.lieutenants[LieutenantDomain.PERFORMANCE] = LieutenantWithMCP(
             domain=LieutenantDomain.PERFORMANCE,
@@ -356,7 +356,7 @@ class MCPLieutenantCorps(LieutenantCorps):
                 "Local inference and edge computing",
             ]
         )
-        
+
         # Intelligence Lieutenant — Marcus Silva
         self.lieutenants[LieutenantDomain.INTELLIGENCE] = LieutenantWithMCP(
             domain=LieutenantDomain.INTELLIGENCE,
@@ -370,7 +370,7 @@ class MCPLieutenantCorps(LieutenantCorps):
                 "Multi-galaxy memory coordination",
             ]
         )
-        
+
         # Synthesis Lieutenant — Keiko Tanaka
         self.lieutenants[LieutenantDomain.SYNTHESIS] = LieutenantWithMCP(
             domain=LieutenantDomain.SYNTHESIS,
@@ -384,7 +384,7 @@ class MCPLieutenantCorps(LieutenantCorps):
                 "Memory lifecycle management",
             ]
         )
-        
+
         # Discovery Lieutenant — Omar Hassan
         self.lieutenants[LieutenantDomain.DISCOVERY] = LieutenantWithMCP(
             domain=LieutenantDomain.DISCOVERY,
@@ -398,7 +398,7 @@ class MCPLieutenantCorps(LieutenantCorps):
                 "Swarm coordination and task decomposition",
             ]
         )
-        
+
         # Infrastructure Lieutenant — Priya Sharma
         self.lieutenants[LieutenantDomain.INFRASTRUCTURE] = LieutenantWithMCP(
             domain=LieutenantDomain.INFRASTRUCTURE,
@@ -412,16 +412,16 @@ class MCPLieutenantCorps(LieutenantCorps):
                 "Agent coordination and mesh networking",
             ]
         )
-        
+
         logger.info(f"MCP Lieutenant Corps initialized: {len(self.lieutenants)} lieutenants with MCP authority")
-    
+
     def get_lieutenant_for_gana(self, gana_name: str) -> LieutenantWithMCP | None:
         """Get the lieutenant responsible for a specific Gana."""
         domain = GANA_TO_LIEUTENANT.get(gana_name)
         if domain:
             return self.lieutenants.get(domain)
         return None
-    
+
     def corps_status_with_mcp(self) -> dict[str, Any]:
         """Enhanced corps status including MCP activity."""
         base_status = self.corps_status()

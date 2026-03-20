@@ -14,10 +14,8 @@ This bridges the abstract pipeline to concrete WhiteMagic operations.
 """
 
 import re
-import json
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
-from dataclasses import dataclass
+from typing import Dict, List, Any, Optional
 
 from whitemagic.agents.tactical_pipeline import (
     TacticalPipeline,
@@ -29,24 +27,24 @@ from whitemagic.agents.tactical_pipeline import (
 class PipelineIntegration:
     """
     Integrates Tactical Pipeline with WhiteMagic deployment system.
-    
+
     Provides concrete implementations for each pipeline phase that work
     with shadow clone armies, campaign files, and victory conditions.
     """
-    
+
     def __init__(self, campaign_codename: str, campaign_file: Path):
         self.campaign_codename = campaign_codename
         self.campaign_file = campaign_file
         self.campaign_data = self._load_campaign()
         self.pipeline = TacticalPipeline(campaign_codename)
-    
+
     def _load_campaign(self) -> Dict[str, Any]:
         """Load campaign markdown file and parse metadata"""
         if not self.campaign_file.exists():
             raise FileNotFoundError(f"Campaign file not found: {self.campaign_file}")
-        
+
         content = self.campaign_file.read_text()
-        
+
         # Extract YAML frontmatter
         frontmatter = {}
         if content.startswith('---'):
@@ -55,22 +53,22 @@ class PipelineIntegration:
                 import yaml
                 frontmatter = yaml.safe_load(parts[1]) or {}
                 content = parts[2]
-        
+
         # Extract sections
         sections = self._parse_sections(content)
-        
+
         return {
             'frontmatter': frontmatter,
             'sections': sections,
             'content': content,
         }
-    
+
     def _parse_sections(self, content: str) -> Dict[str, str]:
         """Parse markdown sections"""
         sections = {}
         current_section = None
         current_content = []
-        
+
         for line in content.split('\n'):
             if line.startswith('## '):
                 if current_section:
@@ -79,18 +77,18 @@ class PipelineIntegration:
                 current_content = []
             elif current_section:
                 current_content.append(line)
-        
+
         if current_section:
             sections[current_section] = '\n'.join(current_content).strip()
-        
+
         return sections
-    
+
     # ========== PHASE 1: SCOUT ==========
-    
+
     def scout_implementation(self) -> List[Dict[str, Any]]:
         """
         Scout phase: Scan codebase/DB for current state
-        
+
         Returns findings about:
         - Current file/code state
         - Database metrics
@@ -98,34 +96,34 @@ class PipelineIntegration:
         - Baseline measurements
         """
         findings = []
-        
+
         # 1. Scan for target files/patterns from campaign
         targets = self._extract_targets()
         for target in targets:
             finding = self._scan_target(target)
             if finding:
                 findings.append(finding)
-        
+
         # 2. Measure baselines if campaign mentions metrics
         metrics = self._extract_metrics()
         for metric in metrics:
             baseline = self._measure_baseline(metric)
             if baseline:
                 findings.append(baseline)
-        
+
         # 3. Check current victory condition status
         vc_status = self._check_current_vcs()
         findings.append({
             'type': 'victory_conditions',
             'data': vc_status,
         })
-        
+
         return findings
-    
+
     def _extract_targets(self) -> List[Dict[str, Any]]:
         """Extract target files/patterns from campaign"""
         targets = []
-        
+
         # Look for Targets section
         if 'Targets' in self.campaign_data['sections']:
             targets_text = self.campaign_data['sections']['Targets']
@@ -138,9 +136,9 @@ class PipelineIntegration:
                             'file': parts[0],
                             'pattern': parts[1] if len(parts) > 1 else None,
                         })
-        
+
         return targets
-    
+
     def _scan_target(self, target: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Scan a specific target file/pattern"""
         # This would use grep_search or file reading
@@ -150,12 +148,12 @@ class PipelineIntegration:
             'target': target,
             'status': 'scanned',
         }
-    
+
     def _extract_metrics(self) -> List[str]:
         """Extract metrics mentioned in campaign"""
         metrics = []
         content = self.campaign_data['content'].lower()
-        
+
         # Look for common metric patterns
         metric_patterns = [
             r'(\d+x)\s+speedup',
@@ -164,13 +162,13 @@ class PipelineIntegration:
             r'(\d+)\s+queries',
             r'accuracy\s+[>≥]\s*(\d+%)',
         ]
-        
+
         for pattern in metric_patterns:
             matches = re.findall(pattern, content)
             metrics.extend(matches)
-        
+
         return metrics
-    
+
     def _measure_baseline(self, metric: str) -> Optional[Dict[str, Any]]:
         """Measure baseline for a metric"""
         # This would run actual benchmarks
@@ -180,30 +178,30 @@ class PipelineIntegration:
             'metric': metric,
             'value': 'to_be_measured',
         }
-    
+
     def _check_current_vcs(self) -> Dict[str, Any]:
         """Check current victory condition status"""
         vcs = self._extract_victory_conditions()
-        
+
         met = 0
         total = len(vcs)
-        
+
         for vc in vcs:
             # This would run actual verification
             # For now, assume not met
             vc['met'] = False
-        
+
         return {
             'vcs': vcs,
             'met': met,
             'total': total,
             'percentage': 100 * met / total if total > 0 else 0,
         }
-    
+
     def _extract_victory_conditions(self) -> List[Dict[str, Any]]:
         """Extract victory conditions from campaign"""
         vcs = []
-        
+
         if 'Victory Conditions' in self.campaign_data['sections']:
             vc_text = self.campaign_data['sections']['Victory Conditions']
             for line in vc_text.split('\n'):
@@ -215,15 +213,15 @@ class PipelineIntegration:
                         'text': text,
                         'met': met,
                     })
-        
+
         return vcs
-    
+
     # ========== PHASE 2: DISCOVER ==========
-    
+
     def discover_implementation(self, scout_findings: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
         Discover phase: Find patterns and identify gaps
-        
+
         Analyzes scout findings to discover:
         - Common patterns across targets
         - Missing baselines
@@ -231,7 +229,7 @@ class PipelineIntegration:
         - Implementation gaps
         """
         patterns = []
-        
+
         # 1. Identify vague victory conditions
         vc_findings = [f for f in scout_findings if f.get('type') == 'victory_conditions']
         if vc_findings:
@@ -243,7 +241,7 @@ class PipelineIntegration:
                     'vcs': vague_vcs,
                     'severity': 'high',
                 })
-        
+
         # 2. Identify missing baselines
         baseline_findings = [f for f in scout_findings if f.get('type') == 'baseline_measurement']
         missing_baselines = [f for f in baseline_findings if f.get('value') == 'to_be_measured']
@@ -254,7 +252,7 @@ class PipelineIntegration:
                 'metrics': [f['metric'] for f in missing_baselines],
                 'severity': 'high',
             })
-        
+
         # 3. Identify discovery vs implementation gap
         if self._has_discovery_gap():
             patterns.append({
@@ -262,41 +260,41 @@ class PipelineIntegration:
                 'description': 'Campaign has discovery objectives but no implementation phase',
                 'severity': 'critical',
             })
-        
+
         return patterns
-    
+
     def _find_vague_vcs(self, vcs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Identify vague victory conditions"""
         vague_keywords = ['optimize', 'improve', 'enhance', 'consider', 'explore', 'investigate']
         vague = []
-        
+
         for vc in vcs:
             text_lower = vc['text'].lower()
             if any(keyword in text_lower for keyword in vague_keywords):
                 # Check if it has specific metrics
                 has_number = bool(re.search(r'\d+', vc['text']))
                 has_comparison = bool(re.search(r'[>≥<≤=]', vc['text']))
-                
+
                 if not (has_number and has_comparison):
                     vague.append(vc)
-        
+
         return vague
-    
+
     def _has_discovery_gap(self) -> bool:
         """Check if campaign has discovery but no implementation"""
         strategy = self.campaign_data['frontmatter'].get('type', '')
-        
+
         # Discovery-only strategies
         discovery_types = ['discovery', 'security_scan', 'consensus_vote']
-        
+
         return strategy in discovery_types
-    
+
     # ========== PHASE 3: CLARIFY ==========
-    
+
     def clarify_implementation(self, discovered_patterns: List[Dict[str, Any]]) -> List[ObjectiveRefinement]:
         """
         Clarify phase: Transform vague → specific + measurable
-        
+
         Takes discovered patterns and generates refined objectives with:
         - Specific numeric targets
         - Clear baselines
@@ -304,31 +302,31 @@ class PipelineIntegration:
         - Success metrics
         """
         refinements = []
-        
+
         for pattern in discovered_patterns:
             if pattern['type'] == 'vague_victory_conditions':
                 for vc in pattern['vcs']:
                     refined = self._refine_vague_vc(vc)
                     if refined:
                         refinements.append(refined)
-            
+
             elif pattern['type'] == 'missing_baselines':
                 for metric in pattern['metrics']:
                     refined = self._add_baseline_to_metric(metric)
                     if refined:
                         refinements.append(refined)
-            
+
             elif pattern['type'] == 'discovery_implementation_gap':
                 refined = self._add_implementation_phase()
                 if refined:
                     refinements.append(refined)
-        
+
         return refinements
-    
+
     def _refine_vague_vc(self, vc: Dict[str, Any]) -> Optional[ObjectiveRefinement]:
         """Refine a vague victory condition"""
         original = vc['text']
-        
+
         # Apply refinement rules
         if 'optimize' in original.lower():
             refined = original.replace('optimize', 'achieve ≥10x speedup on')
@@ -343,7 +341,7 @@ class PipelineIntegration:
             refined = f"{original} (measured with specific numeric target ≥X)"
             metrics = ['baseline', 'target', 'actual']
             verification = 'automated_check'
-        
+
         return ObjectiveRefinement(
             original=original,
             refined=refined,
@@ -351,7 +349,7 @@ class PipelineIntegration:
             verification_method=verification,
             confidence=0.7,
         )
-    
+
     def _add_baseline_to_metric(self, metric: str) -> Optional[ObjectiveRefinement]:
         """Add baseline measurement to a metric"""
         return ObjectiveRefinement(
@@ -363,7 +361,7 @@ class PipelineIntegration:
             verification_method='benchmark',
             confidence=0.8,
         )
-    
+
     def _add_implementation_phase(self) -> Optional[ObjectiveRefinement]:
         """Add implementation phase to discovery-only campaign"""
         return ObjectiveRefinement(
@@ -373,13 +371,13 @@ class PipelineIntegration:
             verification_method='code_verification',
             confidence=0.9,
         )
-    
+
     # ========== PHASE 4: PLAN ==========
-    
+
     def plan_implementation(self, refined_objectives: List[ObjectiveRefinement]) -> List[StrategySimulation]:
         """
         Plan phase: Generate strategies, simulate, rank by consensus
-        
+
         Creates multiple strategy options and simulates their outcomes:
         - Small parallel armies (10-30K each)
         - Two-phase deployment (scout → implement)
@@ -387,7 +385,7 @@ class PipelineIntegration:
         - Consensus voting on best approach
         """
         simulations = []
-        
+
         # Strategy 1: Small parallel armies (RECOMMENDED)
         simulations.append(StrategySimulation(
             strategy_name="small_parallel_armies",
@@ -398,7 +396,7 @@ class PipelineIntegration:
             dependencies=[],
             consensus_votes=10,  # Highest based on doctrine
         ))
-        
+
         # Strategy 2: Two-phase deployment (scout → implement)
         simulations.append(StrategySimulation(
             strategy_name="two_phase_deployment",
@@ -409,7 +407,7 @@ class PipelineIntegration:
             dependencies=["Clear implementation VCs"],
             consensus_votes=9,
         ))
-        
+
         # Strategy 3: Focused single army
         simulations.append(StrategySimulation(
             strategy_name="focused_single_army",
@@ -420,7 +418,7 @@ class PipelineIntegration:
             dependencies=[],
             consensus_votes=7,
         ))
-        
+
         # Strategy 4: Massive brute force (NOT RECOMMENDED)
         simulations.append(StrategySimulation(
             strategy_name="massive_brute_force",
@@ -431,15 +429,15 @@ class PipelineIntegration:
             dependencies=["Stress test only"],
             consensus_votes=2,
         ))
-        
+
         return simulations
-    
+
     # ========== PHASE 5: EXECUTE ==========
-    
+
     def execute_implementation(self, strategy: StrategySimulation) -> Dict[str, Any]:
         """
         Execute phase: Deploy shadow clone armies with top strategy
-        
+
         This would call the actual deployment system.
         For now, returns simulation results.
         """
@@ -450,35 +448,35 @@ class PipelineIntegration:
             'findings': [],  # Would be populated by actual deployment
             'status': 'simulated',  # Would be 'completed' for real deployment
         }
-    
+
     # ========== PHASE 6: VERIFY ==========
-    
+
     def verify_implementation(self, execution_results: Dict[str, Any]) -> Dict[str, Any]:
         """
         Verify phase: Check victory conditions and measure results
-        
+
         Auto-verifies what can be checked programmatically.
         """
         vcs = self._extract_victory_conditions()
-        
+
         # This would run actual verification
         # For now, simulate partial completion
         vcs_met = 0
         vcs_total = len(vcs)
-        
+
         return {
             'vcs_met': vcs_met,
             'vcs_total': vcs_total,
             'percentage': 100 * vcs_met / vcs_total if vcs_total > 0 else 0,
             'details': vcs,
         }
-    
+
     # ========== PHASE 7: REFLECT ==========
-    
+
     def reflect_implementation(self, cycle_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Reflect phase: Learn from cycle, prepare for next iteration
-        
+
         Analyzes what worked, what didn't, and how to improve.
         """
         insights = {
@@ -487,61 +485,61 @@ class PipelineIntegration:
             'recommendations': [],
             'next_cycle_strategy': None,
         }
-        
+
         # Analyze verification results
         if cycle_data['verification_results']:
             last_verify = cycle_data['verification_results'][-1]
             vcs_percentage = last_verify.get('percentage', 0)
-            
+
             if vcs_percentage == 0:
                 insights['improvements'].append("No VCs met - need to refine objectives")
                 insights['recommendations'].append("Run clarify phase again with more specific metrics")
                 insights['next_cycle_strategy'] = 'focus_on_clarification'
-            
+
             elif vcs_percentage < 50:
                 insights['improvements'].append("Partial progress - execution strategy may need adjustment")
                 insights['recommendations'].append("Try two-phase deployment or smaller armies")
                 insights['next_cycle_strategy'] = 'adjust_execution_strategy'
-            
+
             elif vcs_percentage < 100:
                 insights['improvements'].append("High progress - close to victory")
                 insights['recommendations'].append("Focus on remaining VCs with targeted deployment")
                 insights['next_cycle_strategy'] = 'targeted_completion'
-            
+
             else:
                 insights['improvements'].append("Victory achieved!")
                 insights['next_cycle_strategy'] = 'complete'
-        
+
         return insights
-    
+
     # ========== FULL CYCLE EXECUTION ==========
-    
+
     def run_full_cycle(self) -> Dict[str, Any]:
         """Execute one complete Yin-Yang cycle"""
         self.pipeline.start_cycle()
-        
+
         # YIN: Scout → Discover → Clarify → Plan
-        findings = self.pipeline.scout(self.scout_implementation)
-        patterns = self.pipeline.discover(lambda f: self.discover_implementation(f))
-        objectives = self.pipeline.clarify(lambda p: self.clarify_implementation(p))
-        strategies = self.pipeline.plan(lambda o: self.plan_implementation(o))
-        
+        self.pipeline.scout(self.scout_implementation)
+        self.pipeline.discover(lambda f: self.discover_implementation(f))
+        self.pipeline.clarify(lambda p: self.clarify_implementation(p))
+        self.pipeline.plan(lambda o: self.plan_implementation(o))
+
         self.pipeline.advance_phase()  # SCOUT → DISCOVER
         self.pipeline.advance_phase()  # DISCOVER → CLARIFY
         self.pipeline.advance_phase()  # CLARIFY → PLAN
-        
+
         # YANG: Execute → Verify
-        execution = self.pipeline.execute(lambda s: self.execute_implementation(s))
-        verification = self.pipeline.verify(lambda e: self.verify_implementation(e))
-        
+        self.pipeline.execute(lambda s: self.execute_implementation(s))
+        self.pipeline.verify(lambda e: self.verify_implementation(e))
+
         self.pipeline.advance_phase()  # PLAN → EXECUTE
         self.pipeline.advance_phase()  # EXECUTE → VERIFY
-        
+
         # YIN: Reflect
-        reflection = self.pipeline.reflect(lambda c: self.reflect_implementation(c))
-        
+        self.pipeline.reflect(lambda c: self.reflect_implementation(c))
+
         self.pipeline.advance_phase()  # VERIFY → REFLECT
-        
+
         return {
             'cycle_complete': True,
             'summary': self.pipeline.get_cycle_summary(),

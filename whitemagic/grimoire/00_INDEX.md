@@ -2,9 +2,11 @@
 
 Start with the canonical introduction: [Prologue](00_PROLOGUE.md)
 
-**Version**: 15.0.0 "Holographic Intelligence"
-**Structure**: 28 Chapters (Lunar Mansions)
+**Version**: 21.0.0 "Living Intelligence"
+**Structure**: 28 Chapters (Lunar Mansions) + Super-Coherence Core
 **Flow**: Cyclical (28 → 1 → 2 → ... → 28 → 1)
+**Tools**: 412 MCP tools (or 28 PRAT Gana meta-tools)
+**Benchmark**: LoCoMo 78.3% recall accuracy
 
 ---
 

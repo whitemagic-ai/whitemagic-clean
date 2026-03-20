@@ -41,7 +41,6 @@ from typing import Any, cast
 
 import numpy as np
 
-from whitemagic.core.acceleration import cosine_similarity
 
 logger = logging.getLogger(__name__)
 
@@ -167,7 +166,7 @@ class EmbeddingEngine:
         """Check if embedding backend is available."""
         if self._available is not None:
             return self._available
-        
+
         # Try LocalEmbedder (FastEmbed) first
         try:
             from whitemagic.inference.local_embedder import LocalEmbedder
@@ -195,7 +194,7 @@ class EmbeddingEngine:
                 return self._model
             if not self.available():
                 return None
-            
+
             # 1. Try FastEmbed (LocalEmbedder)
             try:
                 from whitemagic.inference.local_embedder import LocalEmbedder
@@ -400,7 +399,19 @@ class EmbeddingEngine:
 
     def get_cached_embedding(self, memory_id: str) -> list[float] | None:
         """Retrieve a cached embedding for a memory (sync version)."""
-        return self.get_cached_embedding_async(memory_id)
+        db = self._get_db()
+        if db is None:
+            return None
+        try:
+            row = db.execute(
+                "SELECT embedding FROM memory_embeddings WHERE memory_id = ?",
+                (memory_id,),
+            ).fetchone()
+            if row and row[0]:
+                return _unpack_embedding(row[0])
+        except Exception:
+            pass
+        return None
 
     async def cache_embedding_async(self, memory_id: str, embedding: list[float]) -> bool:
         """Cache an embedding for a memory (async version)."""
@@ -561,7 +572,7 @@ class EmbeddingEngine:
                 if len(vec) == EMBEDDING_DIM:
                     valid_ids.append(r[0])
                     valid_vecs.append(vec)
-            
+
             ids = valid_ids
             # Unpack all blobs into a single contiguous float32 array
             vecs = np.array(
@@ -810,17 +821,17 @@ class EmbeddingEngine:
         try:
             import whitemagic_rust
             import json
-            
+
             # Load cached embeddings directly (no DB queries needed!)
             ids, vectors = self._load_vec_cache()
             if len(ids) < 2:
                 return []
-            
+
             # Flatten numpy array to 1D list for efficient Rust transfer
             # This avoids expensive JSON serialization of nested arrays
             embeddings_flat = vectors.flatten().tolist()
             embedding_dim = vectors.shape[1]
-            
+
             # Call Rust SimHash LSH duplicate finder (H001 optimization)
             # Uses random hyperplane LSH to preserve cosine similarity
             # Pure Rust hot path - no DB queries, no keyword extraction
@@ -831,7 +842,7 @@ class EmbeddingEngine:
                 max_results
             )
             rust_results = json.loads(result_json)
-            
+
             # Convert Rust results to our format
             pairs = []
             for dup in rust_results:
@@ -840,10 +851,10 @@ class EmbeddingEngine:
                     "target_id": ids[dup["idx_b"]],
                     "similarity": round(dup["similarity"], 4),
                 })
-            
+
             logger.info(f"🦀 Rust SimHash LSH found {len(pairs)} duplicates (threshold={threshold})")
             return pairs
-            
+
         except Exception as e:
             logger.debug(f"Rust SimHash unavailable ({e}), falling back to Python cosine similarity")
             # Fallback to Python implementation

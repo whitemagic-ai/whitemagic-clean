@@ -1,13 +1,10 @@
 import asyncio
 import logging
 import os
-import queue
-import threading
 import time
 import traceback
 from collections.abc import Coroutine
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
-from datetime import datetime
 from pathlib import Path
 from typing import Any, TypeVar, cast
 from uuid import uuid4
@@ -65,19 +62,19 @@ GANA_TIMEOUTS_PATCH = '''
 GANA_TOOL_TIMEOUTS: dict[str, int] = {
     # Root/Foundation (gana_root)
     "health_report": 10, "rust_audit": 30, "rust_status": 15, "state_summary": 10, "ship_check": 15,
-    
+
     # Winnowing Basket (gana_winnowing_basket)
     "search_memories": 15, "vector_search": 20, "hybrid_recall": 20, "graph_walk": 25, "recall": 10,
     "batch_read_memories": 30, "list_memories": 15, "fast_read_memory": 10, "vector_index": 20,
     "vector_status": 15,
-    
+
     # Neck (gana_neck)
     "create_memory": 10, "update_memory": 10, "delete_memory": 10, "import_memories": 60,
     "thought_clone": 15, "remember": 10,
-    
+
     # Net (gana_net)
     "prompt_render": 5, "prompt_list": 5, "prompt_reload": 5, "karma_verify_chain": 10,
-    
+
     # Ghost (gana_ghost)
     "gnosis": 15, "get_telemetry_summary": 10, "web_search": 30, "web_fetch": 30,
     "research_topic": 60, "browser_navigate": 45, "browser_click": 10, "browser_type": 10,
@@ -87,29 +84,29 @@ GANA_TOOL_TIMEOUTS: dict[str, int] = {
     "selfmodel_alerts": 15, "watcher_add": 10, "watcher_remove": 10, "watcher_list": 10,
     "watcher_status": 10, "watcher_recent_events": 15, "watcher_start": 15, "watcher_stop": 15,
     "watcher_stats": 10, "web_search_and_read": 45,
-    
+
     # Heart (gana_heart)
     "scratchpad": 10, "scratchpad_create": 10, "scratchpad_update": 10, "scratchpad_finalize": 10,
     "analyze_scratchpad": 20, "session_handoff": 15, "context_pack": 30, "context_status": 10,
     "working_memory_attend": 15, "working_memory_context": 15, "working_memory_status": 10,
-    
+
     # Horn (gana_horn)
     "session_bootstrap": 20, "create_session": 15, "resume_session": 20, "checkpoint_session": 30,
     "session_handoff_transfer": 15, "session_list_handoffs": 10, "session_accept_handoff": 15,
     "session_status": 10, "focus_session": 15,
-    
+
     # Dipper (gana_dipper) - Extended timeouts for stability
     "homeostasis": 60, "homeostasis_check": 60, "homeostasis_status": 30, "maturity_assess": 60,
     "starter_packs": 30, "starter_packs_list": 20, "starter_packs_get": 20, "starter_packs_suggest": 45,
     "cognitive_set": 30, "cognitive_mode": 25, "cognitive_stats": 25, "cognitive_hints": 30,
     "doctrine_stratagems": 45, "doctrine_summary": 35, "doctrine_force": 45,
-    
+
     # Willow (gana_willow) - Extended timeouts for stability
     "cast_oracle": 45, "grimoire_list": 25, "grimoire_read": 25, "grimoire_suggest": 35,
     "grimoire_recommend": 35, "grimoire_cast": 45, "grimoire_walkthrough": 60,
     "rate_limiter_stats": 15, "fool_guard_status": 25, "fool_guard_ralph": 45,
     "fool_guard_dare_to_die": 60, "grimoire_auto_status": 15,
-    
+
     # Room (gana_room)
     "sangha_lock": 10, "sangha_lock_acquire": 10, "sangha_lock_release": 10, "sangha_lock_list": 10,
     "hermit_status": 20, "hermit_check_access": 15, "hermit_assess": 30, "hermit_mediate": 45,
@@ -117,17 +114,17 @@ GANA_TOOL_TIMEOUTS: dict[str, int] = {
     "sandbox_set_limits": 20, "sandbox_violations": 20, "mcp_integrity_status": 20,
     "mcp_integrity_verify": 25, "mcp_integrity_snapshot": 25, "anti_loop_check": 15,
     "immune_scan": 45, "immune_heal": 45, "security_monitor_status": 20, "security_alerts": 20,
-    
+
     # Star (gana_star)
     "governor_validate": 25, "governor_set_goal": 20, "governor_check_drift": 45,
     "governor_check_budget": 20, "governor_check_dharma": 30, "governor_stats": 20,
     "governor_validate_path": 35, "forge_status": 20, "forge_reload": 30, "forge_validate": 35,
     "dharma_reload": 30, "set_dharma_profile": 20, "guideline_evolve": 45,
-    
+
     # Tail (gana_tail)
     "simd_status": 15, "simd_cosine": 25, "simd_batch": 35, "execute_cascade": 90,
     "list_cascade_patterns": 20, "token_report": 15,
-    
+
     # Three Stars (gana_three_stars)
     "reasoning_bicameral": 60, "reasoning_multispectral": 75, "ensemble": 75,
     "ensemble_query": 45, "ensemble_history": 30, "ensemble_status": 20, "think": 45,
@@ -135,12 +132,12 @@ GANA_TOOL_TIMEOUTS: dict[str, int] = {
     "elemental_optimize": 75, "art_of_war_wisdom": 30, "art_of_war_terrain": 35,
     "art_of_war_chapter": 30, "art_of_war_campaign": 45, "satkona_fuse": 60,
     "sabha_convene": 45, "sabha_status": 20,
-    
+
     # Straddling Legs (gana_straddling_legs)
     "evaluate_ethics": 45, "verify_consent": 20, "check_boundaries": 30, "get_ethical_score": 20,
     "get_dharma_guidance": 35, "wu_xing_balance": 30, "harmony_vector": 30,
     "verification_request": 20, "verification_status": 20, "verification_attest": 20,
-    
+
     # Abundance (gana_abundance)
     "dream_start": 30, "dream_stop": 25, "dream_status": 15, "dream_now": 75,
     "entity_resolve": 45, "gratitude_benefits": 25, "gratitude_stats": 15, "ilp_status": 20,
@@ -151,11 +148,11 @@ GANA_TOOL_TIMEOUTS: dict[str, int] = {
     "reconsolidation_update": 45, "narrative_compress": 60, "narrative_stats": 20,
     "serendipity_surface": 45, "serendipity_mark_accessed": 20, "galactic_stats": 20,
     "galactic_sweep": 75, "dream": 75,
-    
+
     # Girl (gana_girl)
     "agent_list": 20, "agent_register": 30, "agent_deregister": 20, "agent_heartbeat": 15,
     "agent_capabilities": 20, "agent_trust": 30,
-    
+
     # Void (gana_void)
     "galaxy_list": 20, "galaxy_status": 20, "galaxy_create": 30, "galaxy_delete": 20,
     "galaxy_switch": 20, "galaxy_transfer": 45, "galaxy_merge": 60, "galaxy_sync": 75,
@@ -166,51 +163,51 @@ GANA_TOOL_TIMEOUTS: dict[str, int] = {
     "garden_resonance": 60, "garden_synergy": 60, "oms_list": 20, "oms_status": 20,
     "oms_price": 20, "oms_export": 75, "oms_import": 75, "oms_verify": 45,
     "oms_inspect": 45, "galactic_dashboard": 60,
-    
+
     # Wings (gana_wings)
     "export_memories": 75, "audit_export": 75, "mesh_status": 20, "mesh_broadcast": 45,
-    
+
     # Mound (gana_mound)
     "get_metrics_summary": 20, "view_hologram": 45, "get_yin_yang_balance": 20,
     "track_metric": 15, "green_report": 30, "green_record": 15, "record_yin_yang_activity": 15,
-    
+
     # Hairy Head (gana_hairy_head)
     "salience_spotlight": 45, "anomaly_check": 30, "anomaly_status": 20, "anomaly_history": 30,
     "karma_report": 20, "karmic_trace": 45, "karma_anchor": 30, "karma_anchor_status": 20,
     "karma_verify_anchor": 30, "dharma_rules": 20, "otel": 20, "otel_metrics": 20,
     "otel_spans": 20, "otel_status": 15, "anomaly": 30,
-    
+
     # Ox (gana_ox)
     "swarm_decompose": 75, "swarm_route": 60, "swarm_plan": 75, "swarm_vote": 45,
     "swarm_resolve": 60, "swarm_complete": 75, "swarm_status": 20, "worker_status": 20,
     "war_room_plan": 75, "war_room_status": 30, "war_room_hierarchy": 45,
     "war_room_execute": 75, "war_room_phase": 60, "war_room_campaigns": 30,
-    
+
     # Turtle Beak (gana_turtle_beak)
     "edge_infer": 30, "edge_batch_infer": 60, "edge_stats": 20, "edge_add_rule": 20,
     "bitnet_infer": 45, "bitnet_status": 20,
-    
+
     # Roof (gana_roof)
     "ollama_models": 20, "ollama_generate": 75, "ollama_chat": 75, "ollama_agent": 60,
     "shelter_create": 45, "shelter_destroy": 20, "shelter_execute": 60, "shelter_inspect": 30,
     "shelter_status": 20, "shelter_policy": 30, "model_list": 20, "model_register": 30,
     "model_signing_status": 20, "model_hash": 30, "model_verify": 35,
-    
+
     # Stomach (gana_stomach)
     "pipeline": 45, "pipeline_create": 30, "pipeline_list": 20, "pipeline_status": 20,
     "task_distribute": 60, "task_route_smart": 60, "task_status": 20, "task_list": 20,
     "task_complete": 30,
-    
+
     # Wall (gana_wall)
     "vote_create": 30, "vote_cast": 20, "vote_analyze": 45, "vote_list": 20,
     "vote_record_outcome": 30, "engagement_issue": 20, "engagement_validate": 20,
     "engagement_list": 20, "engagement_revoke": 20, "engagement_status": 20,
-    
+
     # Encampment (gana_encampment)
     "sangha_chat_send": 20, "sangha_chat_read": 20, "broker_publish": 30,
     "broker_history": 30, "broker_status": 20, "ganying_emit": 20, "ganying_history": 30,
     "ganying_listeners": 20,
-    
+
     # Extended Net (gana_extended_net)
     "pattern_search": 45, "cluster_stats": 30, "learning_patterns": 60, "learning_status": 20,
     "learning_suggest": 45, "resonance_trace": 60, "association_mine": 75,
@@ -220,7 +217,7 @@ GANA_TOOL_TIMEOUTS: dict[str, int] = {
     "constellation_merge": 45, "emergence_scan": 75, "emergence_status": 20,
     "novelty_detect": 60, "novelty_stats": 20, "tool_graph": 45, "tool_graph_full": 60,
     "pattern_consciousness_status": 20,
-    
+
     # Chariot (gana_chariot) - Extended timeouts for stability
     "archaeology": 75, "archaeology_stats": 20, "archaeology_search": 60,
     "archaeology_scan_directory": 75, "archaeology_mark_read": 30, "archaeology_mark_written": 30,
@@ -233,7 +230,7 @@ GANA_TOOL_TIMEOUTS: dict[str, int] = {
     "marketplace_remove": 30, "windsurf_list_conversations": 30, "windsurf_read_conversation": 45,
     "windsurf_search_conversations": 45, "windsurf_export_conversation": 60, "windsurf_stats": 20,
     "kg2": 60,
-    
+
     # Net (gana_net)
     "embedding_daemon_start": 45, "embedding_daemon_stop": 20, "embedding_daemon_status": 20,
     "embedding_daemon_process": 60,
@@ -260,23 +257,23 @@ def _get_gana_tool_timeout(tool_name: str) -> int:
 def _get_gana_cb_config(tool_name: str) -> dict[str, float]:
     """Get circuit breaker config for a Gana tool based on its characteristics."""
     tool_lower = tool_name.lower()
-    
+
     # Critical status/info tools - be lenient
     if any(x in tool_lower for x in ["status", "stats", "list", "health", "report", "check"]):
         return GANA_CB_CONFIGS["critical"]
-    
+
     # Heavy compute tools - strict
     if any(x in tool_lower for x in ["swarm_", "war_room_", "sweep", "mine", "scan", "consolidate", "compress", "emergence"]):
         return GANA_CB_CONFIGS["heavy"]
-    
+
     # Network operations - moderate
     if any(x in tool_lower for x in ["web_", "browser_", "network", "fetch", "search", "galaxy_"]):
         return GANA_CB_CONFIGS["network"]
-    
+
     # Fast operations
     if any(x in tool_lower for x in ["get_", "check_", "prompt_", "karma_"]):
         return GANA_CB_CONFIGS["fast"]
-    
+
     return GANA_CB_CONFIGS["standard"]
 
 # Debug flag for Gana tool execution
@@ -302,7 +299,7 @@ if __name__ == "__main__":
 def _dispatch_timeout_for_tool(tool_name: str) -> float:
     if tool_name in _TOOL_CLASS_TIMEOUTS:
         return _TOOL_CLASS_TIMEOUTS[tool_name]
-    
+
     timeout_class = _TOOL_TIMEOUT_CLASS_BY_TOOL.get(tool_name, "default")
     return _TOOL_TIMEOUT_CLASS_BUDGETS_S.get(timeout_class, _DEFAULT_TOOL_DISPATCH_TIMEOUT_S)
 
@@ -548,7 +545,7 @@ def _dispatch_tool_with_timeout(tool_name: str, timeout_s: float, **kwargs: Any)
     """Run tool dispatch with a hard client-facing timeout."""
     # v21: Use the centralized executor instead of spawning raw threads
     future = _TOOL_DISPATCH_EXECUTOR.submit(_dispatch_tool, tool_name, **kwargs)
-    
+
     try:
         return future.result(timeout=timeout_s)
     except TimeoutError as exc:

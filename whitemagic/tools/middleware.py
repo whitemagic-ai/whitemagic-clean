@@ -280,32 +280,32 @@ def mw_observability(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | 
     """Record tool metrics to Prometheus and OpenTelemetry."""
     import time
     _ensure_cached()
-    
+
     start = time.perf_counter()
     result = next_fn(ctx)
     duration = time.perf_counter() - start
-    
+
     # Determine status
     status = "success"
     if isinstance(result, dict):
         status_val = str(result.get("status", "")).lower()
         if status_val == "error":
             status = "error"
-    
+
     # Record to Prometheus
     if _get_prometheus is not None:
         try:
             _get_prometheus().record_tool_call(ctx.tool_name, duration, status)
         except Exception:
             pass
-    
+
     # Record to OTel
     if _get_otel is not None:
         try:
             _get_otel().record_tool_span(ctx.tool_name, duration, status)
         except Exception:
             pass
-    
+
     return result
 
 
@@ -414,15 +414,15 @@ def mw_sutra_auto_execute(ctx: DispatchContext, next_fn: NextFn) -> dict[str, An
     try:
         from whitemagic.core.bridge.sutra_bridge import get_sutra_kernel
         sutra = get_sutra_kernel()
-        
+
         # We estimate intent and karma from the tool metadata or context
         # (For now, use defaults or dummy values, real implementation would extract from Gnosis/Karma)
         verdict = sutra.evaluate_action(
-            action_type=ctx.tool_name, 
-            intent_score=1.0, 
+            action_type=ctx.tool_name,
+            intent_score=1.0,
             karma_debt=0.0
         )
-        
+
         if verdict.startswith("Panic") or verdict.startswith("Intervene"):
             # Block and push to UI for Karmic Consent
             try:
@@ -434,14 +434,14 @@ def mw_sutra_auto_execute(ctx: DispatchContext, next_fn: NextFn) -> dict[str, An
                 })
             except Exception as e:
                 logger.warning(f"Failed to push consent to Nexus UI: {e}")
-                
+
             return {
                 "status": "paused",
                 "error": f"Sutra Kernel Intervention: {verdict}. Awaiting Karmic Consent.",
                 "action_required": "user_approval"
             }
-            
+
     except Exception as e:
         logger.warning(f"Sutra Auto-Execute Middleware failed: {e}")
-        
+
     return next_fn(ctx)

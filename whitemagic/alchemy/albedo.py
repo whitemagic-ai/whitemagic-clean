@@ -37,16 +37,16 @@ class AlbedoPurifier:
         """
         logger.info(f"Vectorizing {len(memories)} memories...")
         texts = [m.get('content', '') for m in memories]
-        
+
         # Batch encode
         embeddings = self.engine.encode_batch(texts, batch_size=64)
-        
+
         results = []
         for i, m in enumerate(memories):
             if embeddings and i < len(embeddings):
                 m['embedding'] = embeddings[i]
                 results.append(m)
-        
+
         return results
 
     def cluster(self, vectorized_memories: List[Dict[str, Any]], n_clusters: int = 20) -> List[Dict[str, Any]]:
@@ -59,19 +59,19 @@ class AlbedoPurifier:
 
         # Extract vectors
         X = np.array([m['embedding'] for m in vectorized_memories])
-        
+
         # KMeans clustering
-        # In a real system, we might use HDBSCAN for density-based, 
+        # In a real system, we might use HDBSCAN for density-based,
         # but KMeans is robust for fixed target of 'Golden Rules'
         logger.info(f"Clustering into {n_clusters} patterns...")
         kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
         labels = kmeans.fit_predict(X)
-        
+
         # Group by label
         clusters = defaultdict(list)
         for i, label in enumerate(labels):
             clusters[int(label)].append(vectorized_memories[i])
-            
+
         # Format results
         output = []
         for label, items in clusters.items():
@@ -82,7 +82,7 @@ class AlbedoPurifier:
                 "items": items,
                 "centroid": centroid.tolist()
             })
-            
+
         # Sort by size (most common patterns first)
         output.sort(key=lambda x: x['size'], reverse=True)
         return output

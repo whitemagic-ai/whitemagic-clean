@@ -13,17 +13,16 @@ Usage:
     response = llm.complete("Why is the sky blue?")
 """
 
-import json
 import logging
 import requests
 import time
-from typing import Dict, Any, Optional, List, Generator
+from typing import Dict, Optional, List
 
 logger = logging.getLogger(__name__)
 
 class LocalLLM:
     """Interface for local LLM inference."""
-    
+
     def __init__(self, base_url: str = "http://localhost:11434", model: str = "phi3:mini"):
         self.base_url = base_url.rstrip("/")
         self.model = model
@@ -114,7 +113,7 @@ class LocalLLM:
         )
         response = self.complete(prompt, stop=["\n"], max_tokens=10, temperature=0.0)
         cleaned = response.strip().lower()
-        
+
         # Simple fuzzy match
         for cat in categories:
             if cat.lower() in cleaned:

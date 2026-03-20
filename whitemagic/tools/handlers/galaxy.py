@@ -63,7 +63,7 @@ def handle_galaxy_list(**kwargs: Any) -> dict[str, Any]:
             return cached
     except Exception:
         pass
-    
+
     from whitemagic.core.memory.galaxy_manager import get_galaxy_manager
 
     gm = get_galaxy_manager()
@@ -74,13 +74,13 @@ def handle_galaxy_list(**kwargs: Any) -> dict[str, Any]:
         "count": len(galaxies),
         "galaxies": galaxies,
     }
-    
+
     # Cache the result
     try:
         cache.set("galaxy_list", result, ttl=30)
     except Exception:
         pass
-    
+
     return result
 
 
@@ -95,18 +95,18 @@ def handle_galaxy_status(**kwargs: Any) -> dict[str, Any]:
             return cached
     except Exception:
         pass
-    
+
     from whitemagic.core.memory.galaxy_manager import get_galaxy_manager
 
     gm = get_galaxy_manager()
     result = {"status": "success", **gm.status()}
-    
+
     # Cache the result
     try:
         cache.set("galaxy_status", result, ttl=30)
     except Exception:
         pass
-    
+
     return result
 
 

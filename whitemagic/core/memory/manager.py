@@ -356,19 +356,11 @@ class MemoryManager:
         self.unified.backend.store(memory)
         return {"success": True, "memory_type": memory_type}
 
-    def _memory_to_dict(self, memory: Memory) -> dict[str, Any]:
-        status = memory.metadata.get("status", "active")
-        return {
-            "id": memory.id,
-            "filename": f"{memory.id}.md", # Legacy compatibility
-            "title": memory.title,
-            "content": memory.content,
-            "type": memory.memory_type.name.lower(),
-            "status": status, # Legacy compatibility
-            "created": memory.created_at.isoformat(),
-            "updated": memory.accessed_at.isoformat(),
-            "tags": list(memory.tags),
-            "path": f"virtual://{memory.memory_type.name.lower()}/{memory.id}",
-            "importance": memory.importance,
-            "metadata": memory.metadata,
-        }
+_manager: MemoryManager | None = None
+
+def get_memory_manager(base_dir: Union[str, Path] = ".") -> MemoryManager:
+    """Get or create the global MemoryManager singleton."""
+    global _manager
+    if _manager is None:
+        _manager = MemoryManager(base_dir=base_dir)
+    return _manager

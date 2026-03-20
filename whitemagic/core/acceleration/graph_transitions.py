@@ -95,14 +95,14 @@ def transition_single(
     weights: tuple[float, float, float, float] = (0.4, 0.3, 0.2, 0.1),
 ) -> float:
     """Compute transition probability for a single edge.
-    
+
     Args:
         semantic_sim: Semantic similarity score (0.0 to 1.0)
         galactic_gravity: Galactic gravity score (0.0 to 1.0)
         recency: Recency score (0.0 to 1.0)
         staleness: Staleness score (0.0 to 1.0, lower is better)
         weights: Tuple of (w_semantic, w_gravity, w_recency, w_staleness)
-    
+
     Returns:
         Transition probability in [0.0, 1.0]
     """
@@ -115,7 +115,7 @@ def transition_single(
             ))
         except Exception as e:
             logger.debug("Zig transition_single failed: %s", e)
-    
+
     # Python fallback
     prob = (
         weights[0] * semantic_sim +
@@ -134,14 +134,14 @@ def transition_batch(
     weights: tuple[float, float, float, float] = (0.4, 0.3, 0.2, 0.1),
 ) -> list[float]:
     """Compute transition probabilities for a batch of edges.
-    
+
     Args:
         semantic: List of semantic similarity scores
         gravity: List of galactic gravity scores
         recency: List of recency scores
         staleness: List of staleness scores
         weights: Tuple of (w_semantic, w_gravity, w_recency, w_staleness)
-    
+
     Returns:
         List of transition probabilities in [0.0, 1.0]
     """
@@ -150,7 +150,7 @@ def transition_batch(
         return []
     if not (len(gravity) == len(recency) == len(staleness) == n):
         raise ValueError("All input arrays must have the same length")
-    
+
     lib = _load_lib()
     if lib is not None:
         try:
@@ -160,7 +160,7 @@ def transition_batch(
             stal_arr = (ctypes.c_float * n)(*staleness)
             weights_arr = (ctypes.c_float * 4)(*weights)
             probs_arr = (ctypes.c_float * n)()
-            
+
             lib.wm_graph_transition_batch(
                 sem_arr, grav_arr, rec_arr, stal_arr,
                 weights_arr, n, probs_arr
@@ -168,7 +168,7 @@ def transition_batch(
             return [float(probs_arr[i]) for i in range(n)]
         except Exception as e:
             logger.debug("Zig transition_batch failed: %s", e)
-    
+
     # Python fallback
     return [
         max(0.0, min(1.0,

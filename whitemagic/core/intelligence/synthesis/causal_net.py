@@ -24,7 +24,7 @@ class CausalNet:
     def infer_dependencies(self, active_clusters: dict[tuple[int, int], list[str]]) -> dict[str, list[str]]:
         """Infer a Directed Acyclic Graph (DAG) between clusters.
         Logic: Calculate the 'flow' between clusters based on coordinate gradients.
-        
+
         Rust Fast-Path: If whitemagic_rust is available, it handles the coordinate math and DAG generation.
         """
         # Phase B: Rust Fast-Path for v20
@@ -37,7 +37,7 @@ class CausalNet:
                 for key, mids in active_clusters.items():
                     placeholders = ",".join("?" for _ in mids)
                     rows = conn.execute(
-                        "SELECT x, y, z, w FROM holographic_coords WHERE memory_id IN (" + placeholders + ")", 
+                        "SELECT x, y, z, w FROM holographic_coords WHERE memory_id IN (" + placeholders + ")",
                         mids
                     ).fetchall()
                     if rows:
@@ -45,11 +45,11 @@ class CausalNet:
                         centroid = np.mean(arr, axis=0)
                         cluster_data[str(key)] = {"centroid": centroid.tolist(), "ids": mids}
                 conn.close()
-                
+
                 # Call Rust fast-path
                 edges = rs.synthesis_engine.infer_dag_from_coords(
-                    cluster_data, 
-                    dist_threshold=0.5, 
+                    cluster_data,
+                    dist_threshold=0.5,
                     w_threshold=0.001
                 )
                 if edges:
@@ -57,7 +57,7 @@ class CausalNet:
                     return edges
         except Exception as e:
             logger.debug(f"Rust fast-path unavailable, using Python fallback: {e}")
-        
+
         # Python fallback
         cluster_data = {}
         conn = sqlite3.connect(str(self.db_path))

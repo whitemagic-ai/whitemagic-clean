@@ -37,7 +37,7 @@ def is_noise(content: str, title: str = "") -> bool:
     """
     if not content or len(content.strip()) < 10:
         return True
-    
+
     # Check specific noise titles
     if title and any(x in title.lower() for x in ["checkpoint", "backup", "dump"]):
         # These might be valuable, handled separately? No, scout said "Noise Filter" included these.
@@ -49,7 +49,7 @@ def is_noise(content: str, title: str = "") -> bool:
     for pat in NOISE_PATTERNS:
         if re.search(pat, content):
             return True
-            
+
     # Check for excessive non-alphanumeric (binary dumps, large hashes)
     alnum_ratio = sum(c.isalnum() for c in content) / len(content)
     if len(content) > 500 and alnum_ratio < 0.3:
@@ -65,13 +65,13 @@ def find_duplicates(cursor, batch_size: int = 1000) -> List[str]:
     # Get all active content hashes
     cursor.execute("SELECT content_hash FROM memories WHERE memory_type != 'quarantined' AND content_hash IS NOT NULL")
     active_hashes = set(row[0] for row in cursor.fetchall())
-    
+
     # Find quarantined memories with these hashes
     # We can do this in SQL for speed
-    placeholders = ",".join("?" * len(active_hashes))
+    ",".join("?" * len(active_hashes))
     # Too many for IN clause potentially. Better to iterate quarantined and check set in python?
     # Or temporary table.
-    
+
     # Let's stream quarantined
     to_purge = []
     cursor.execute("SELECT id, content_hash FROM memories WHERE memory_type = 'quarantined'")
@@ -82,5 +82,5 @@ def find_duplicates(cursor, batch_size: int = 1000) -> List[str]:
         for mid, chash in rows:
             if chash in active_hashes:
                 to_purge.append(mid)
-                
+
     return to_purge

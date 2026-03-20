@@ -8,10 +8,10 @@ logger = logging.getLogger(__name__)
 def get_metrics_summary() -> dict[str, Any]:
     """Get summary of all tracked metrics."""
     from whitemagic.core.memory.hologram import HologramCache
-    
+
     cache = HologramCache()
     stats = cache.get_stats()
-    
+
     return {
         "status": "success",
         "metrics": {

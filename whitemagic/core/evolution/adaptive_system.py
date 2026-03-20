@@ -26,82 +26,82 @@ class AdaptationRule:
 class AdaptiveSystem:
     """
     Manages automatic application of discovered adaptations.
-    
+
     Safety-first approach:
     - Conservative thresholds by default
     - Monitoring and rollback capability
     - Manual approval for high-impact changes
     """
-    
+
     def __init__(self):
         self.rules = AdaptationRule()
         self.applied_adaptations: List[Dict[str, Any]] = []
         self.pending_approvals: List[Dict[str, Any]] = []
         self.rollback_history: List[Dict[str, Any]] = []
-        
+
         # Monitoring
         self.coherence_history: List[float] = []
         self.performance_history: List[float] = []
-        
+
         logger.info("🔄 Adaptive System initialized (DISABLED by default)")
-    
+
     def enable(self, require_approval: bool = True):
         """
         Enable automatic adaptations.
-        
+
         Args:
             require_approval: Whether to require human approval
         """
         self.rules.enabled = True
         self.rules.require_approval = require_approval
-        
+
         logger.warning(f"⚠️ Adaptive System ENABLED (approval={'required' if require_approval else 'not required'})")
-    
+
     def disable(self):
         """Disable automatic adaptations."""
         self.rules.enabled = False
         logger.info("🔒 Adaptive System DISABLED")
-    
+
     def should_apply_adaptation(self, adaptation: Dict[str, Any]) -> tuple[bool, str]:
         """
         Determine if an adaptation should be applied.
-        
+
         Returns:
             (should_apply, reason)
         """
         if not self.rules.enabled:
             return False, "Adaptive system is disabled"
-        
+
         # Check confidence
         confidence = adaptation.get("confidence", 0.0)
         if confidence < self.rules.min_confidence:
             return False, f"Confidence {confidence:.2f} < threshold {self.rules.min_confidence}"
-        
+
         # Check frequency
         frequency = adaptation.get("frequency", 0)
         if frequency < self.rules.min_frequency:
             return False, f"Frequency {frequency} < threshold {self.rules.min_frequency}"
-        
+
         # Check impact
         impact = adaptation.get("impact_score", 0.0)
         if impact > self.rules.max_impact_score:
             return False, f"Impact {impact:.2f} > threshold {self.rules.max_impact_score}"
-        
+
         # Check if approval required
         if self.rules.require_approval:
             return False, "Human approval required"
-        
+
         return True, "All criteria met"
-    
+
     def propose_adaptation(self, adaptation: Dict[str, Any]) -> bool:
         """
         Propose an adaptation for application.
-        
+
         Returns:
             True if applied immediately, False if pending approval
         """
         should_apply, reason = self.should_apply_adaptation(adaptation)
-        
+
         if should_apply:
             return self._apply_adaptation(adaptation)
         else:
@@ -114,22 +114,22 @@ class AdaptiveSystem:
                 logger.info(f"📋 Adaptation pending approval: {adaptation.get('description', 'Unknown')}")
             else:
                 logger.debug(f"⏸️ Adaptation not applied: {reason}")
-            
+
             return False
-    
+
     def _apply_adaptation(self, adaptation: Dict[str, Any]) -> bool:
         """Apply an adaptation to the system."""
         try:
             adaptation_type = adaptation.get("type", "unknown")
-            
+
             logger.info(f"🚀 Applying adaptation: {adaptation.get('description', 'Unknown')}")
-            
+
             # Record pre-adaptation state
             pre_state = {
                 "coherence": self.coherence_history[-1] if self.coherence_history else 0.0,
                 "performance": self.performance_history[-1] if self.performance_history else 0.0,
             }
-            
+
             # Apply based on type
             if adaptation_type == "optimize_pathway":
                 success = self._optimize_pathway(adaptation)
@@ -138,7 +138,7 @@ class AdaptiveSystem:
             else:
                 logger.warning(f"Unknown adaptation type: {adaptation_type}")
                 success = False
-            
+
             if success:
                 # Record application
                 self.applied_adaptations.append({
@@ -146,83 +146,83 @@ class AdaptiveSystem:
                     "applied_at": datetime.now().isoformat(),
                     "pre_state": pre_state,
                 })
-                
-                logger.info(f"✅ Adaptation applied successfully")
+
+                logger.info("✅ Adaptation applied successfully")
                 return True
             else:
-                logger.error(f"❌ Adaptation failed to apply")
+                logger.error("❌ Adaptation failed to apply")
                 return False
-        
+
         except Exception as e:
             logger.error(f"❌ Error applying adaptation: {e}")
             return False
-    
+
     def _optimize_pathway(self, adaptation: Dict[str, Any]) -> bool:
         """Optimize a pathway (implementation placeholder)."""
         # In production, this would actually modify the system
         logger.info(f"  Optimizing pathway: {adaptation.get('pattern_id', 'unknown')}")
         return True
-    
+
     def _strengthen_pathway(self, adaptation: Dict[str, Any]) -> bool:
         """Strengthen a pathway (implementation placeholder)."""
         # In production, this would actually modify the system
         logger.info(f"  Strengthening pathway: {adaptation.get('pattern_id', 'unknown')}")
         return True
-    
+
     def approve_adaptation(self, adaptation_index: int) -> bool:
         """
         Approve a pending adaptation.
-        
+
         Args:
             adaptation_index: Index in pending_approvals list
-        
+
         Returns:
             True if applied successfully
         """
         if adaptation_index >= len(self.pending_approvals):
             logger.error(f"Invalid adaptation index: {adaptation_index}")
             return False
-        
+
         pending = self.pending_approvals.pop(adaptation_index)
         return self._apply_adaptation(pending["adaptation"])
-    
+
     def reject_adaptation(self, adaptation_index: int):
         """Reject a pending adaptation."""
         if adaptation_index >= len(self.pending_approvals):
             logger.error(f"Invalid adaptation index: {adaptation_index}")
             return
-        
+
         pending = self.pending_approvals.pop(adaptation_index)
         logger.info(f"❌ Adaptation rejected: {pending['adaptation'].get('description', 'Unknown')}")
-    
+
     def rollback_last_adaptation(self) -> bool:
         """Rollback the most recent adaptation."""
         if not self.applied_adaptations:
             logger.warning("No adaptations to rollback")
             return False
-        
+
         last_adaptation = self.applied_adaptations.pop()
-        
+
         self.rollback_history.append({
             "adaptation": last_adaptation,
             "rolled_back_at": datetime.now().isoformat(),
         })
-        
+
         logger.info(f"⏪ Rolled back adaptation: {last_adaptation['adaptation'].get('description', 'Unknown')}")
         return True
-    
+
     def update_metrics(self, coherence: float, performance: float):
         """Update system metrics for monitoring."""
         self.coherence_history.append(coherence)
         self.performance_history.append(performance)
-        
+
         # Keep only recent history
         max_history = 100
         if len(self.coherence_history) > max_history:
             self.coherence_history = self.coherence_history[-max_history:]
         if len(self.performance_history) > max_history:
             self.performance_history = self.performance_history[-max_history:]
-    
+
     def get_status(self) -> Dict[str, Any]:
         """Get current adaptive system status."""
         return {

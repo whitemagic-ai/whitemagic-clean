@@ -25,28 +25,28 @@ class BackendType(Enum):
 
 class PolyglotDB:
     """Unified database interface with polyglot backend support."""
-    
+
     def __init__(self, backend: BackendType = BackendType.AUTO):
         self.backend_type = backend
         self.rust_db = None
         self.elixir_port = None
         self.sqlite_pool = None
         self.blackboard = None
-        
+
         # Try to initialize backends
         self._init_rust()
         self._init_elixir()
         self._init_sqlite()
         self._init_blackboard()
-        
+
         # Select active backend
         if backend == BackendType.AUTO:
             self.active_backend = self._select_best_backend()
         else:
             self.active_backend = backend
-        
+
         logger.info(f"PolyglotDB initialized with {self.active_backend.value} backend")
-    
+
     def _init_rust(self):
         """Initialize Rust backend (DashMap + RocksDB)."""
         try:
@@ -55,32 +55,32 @@ class PolyglotDB:
             logger.debug("Rust GalacticDB initialized")
         except Exception as e:
             logger.debug(f"Rust backend unavailable: {e}")
-    
+
     def _init_elixir(self):
         """Initialize Elixir backend (ETS + GenServer)."""
         try:
             import erlport
             from erlport.erlterms import Atom
             from erlport.erlang import call
-            
+
             # Start Elixir node
             self.elixir_port = erlport.erlang.Atom(b'whitemagic@localhost')
-            
+
             # Test connection
             result = call(Atom(b'Elixir.WhiteMagicCore.GalacticStore'), Atom(b'stats'), [])
             logger.debug(f"Elixir GalacticStore initialized: {result}")
         except Exception as e:
             logger.debug(f"Elixir backend unavailable: {e}")
-    
+
     def _init_sqlite(self):
         """Initialize SQLite backend with connection pooling."""
         try:
             from sqlalchemy import create_engine
             from sqlalchemy.pool import QueuePool
             from whitemagic.config.paths import MEMORY_DIR
-            
+
             db_path = MEMORY_DIR / "whitemagic.db"
-            
+
             # Create engine with connection pool
             self.sqlite_pool = create_engine(
                 f"sqlite:///{db_path}",
@@ -102,7 +102,7 @@ class PolyglotDB:
                 logger.debug("SQLite direct connection initialized")
             except Exception as e2:
                 logger.error(f"SQLite backend unavailable: {e2}")
-    
+
     def _init_blackboard(self):
         """Initialize blackboard for cross-tool communication."""
         try:
@@ -111,7 +111,7 @@ class PolyglotDB:
             logger.debug("Blackboard integration enabled")
         except Exception as e:
             logger.debug(f"Blackboard unavailable: {e}")
-    
+
     def _select_best_backend(self) -> BackendType:
         """Select best available backend."""
         if self.rust_db is not None:
@@ -122,7 +122,7 @@ class PolyglotDB:
             return BackendType.SQLITE
         else:
             raise RuntimeError("No database backend available")
-    
+
     def store(self, memory_id: str, content: str, metadata: dict[str, Any]) -> dict[str, Any]:
         """Store a memory using active backend."""
         try:
@@ -132,22 +132,22 @@ class PolyglotDB:
                     "memory_id": memory_id,
                     "backend": self.active_backend.value,
                 })
-            
+
             if self.active_backend == BackendType.RUST and self.rust_db:
                 self.rust_db.store(memory_id, content, json.dumps(metadata))
                 return {"status": "success", "backend": "rust"}
-            
+
             elif self.active_backend == BackendType.ELIXIR and self.elixir_port:
                 from erlport.erlterms import Atom
                 from erlport.erlang import call
-                
+
                 call(
                     Atom(b'Elixir.WhiteMagicCore.GalacticStore'),
                     Atom(b'store_memory'),
                     [memory_id, content, metadata]
                 )
                 return {"status": "success", "backend": "elixir"}
-            
+
             elif self.active_backend == BackendType.SQLITE and self.sqlite_pool:
                 # Use SQLAlchemy or direct SQLite
                 if hasattr(self.sqlite_pool, 'connect'):
@@ -166,16 +166,16 @@ class PolyglotDB:
                         (memory_id, content, json.dumps(metadata))
                     )
                     self.sqlite_pool.commit()
-                
+
                 return {"status": "success", "backend": "sqlite"}
-            
+
             else:
                 return {"status": "error", "error": "No backend available"}
-        
+
         except Exception as e:
             logger.error(f"Store failed: {e}")
             return {"status": "error", "error": str(e)}
-    
+
     def get(self, memory_id: str) -> dict[str, Any]:
         """Retrieve a memory using active backend."""
         try:
@@ -185,24 +185,24 @@ class PolyglotDB:
                     "memory_id": memory_id,
                     "backend": self.active_backend.value,
                 })
-            
+
             if self.active_backend == BackendType.RUST and self.rust_db:
                 result = self.rust_db.get(memory_id)
                 if result:
                     return {"status": "success", "memory": json.loads(result), "backend": "rust"}
                 return {"status": "error", "error": "Not found"}
-            
+
             elif self.active_backend == BackendType.ELIXIR and self.elixir_port:
                 from erlport.erlterms import Atom
                 from erlport.erlang import call
-                
+
                 result = call(
                     Atom(b'Elixir.WhiteMagicCore.GalacticStore'),
                     Atom(b'get_memory'),
                     [memory_id]
                 )
                 return {"status": "success", "memory": result, "backend": "elixir"}
-            
+
             elif self.active_backend == BackendType.SQLITE and self.sqlite_pool:
                 if hasattr(self.sqlite_pool, 'connect'):
                     with self.sqlite_pool.connect() as conn:
@@ -216,7 +216,7 @@ class PolyglotDB:
                         "SELECT content, metadata FROM memories WHERE id = ?",
                         (memory_id,)
                     ).fetchone()
-                
+
                 if result:
                     return {
                         "status": "success",
@@ -228,14 +228,14 @@ class PolyglotDB:
                         "backend": "sqlite"
                     }
                 return {"status": "error", "error": "Not found"}
-            
+
             else:
                 return {"status": "error", "error": "No backend available"}
-        
+
         except Exception as e:
             logger.error(f"Get failed: {e}")
             return {"status": "error", "error": str(e)}
-    
+
     def batch_write(self, memories: list[dict[str, Any]]) -> dict[str, Any]:
         """Batch write multiple memories (optimized for parallel workloads)."""
         try:
@@ -245,7 +245,7 @@ class PolyglotDB:
                     "count": len(memories),
                     "backend": self.active_backend.value,
                 })
-            
+
             if self.active_backend == BackendType.RUST and self.rust_db:
                 # Rust backend handles parallel writes efficiently
                 batch_data = [
@@ -254,18 +254,18 @@ class PolyglotDB:
                 ]
                 count = self.rust_db.batch_write(json.dumps(batch_data))
                 return {"status": "success", "count": count, "backend": "rust"}
-            
+
             elif self.active_backend == BackendType.ELIXIR and self.elixir_port:
                 from erlport.erlterms import Atom
                 from erlport.erlang import call
-                
+
                 result = call(
                     Atom(b'Elixir.WhiteMagicCore.GalacticStore'),
                     Atom(b'batch_write'),
                     [memories]
                 )
                 return {"status": "success", "count": result, "backend": "elixir"}
-            
+
             elif self.active_backend == BackendType.SQLITE and self.sqlite_pool:
                 # Use transaction for atomic batch write
                 if hasattr(self.sqlite_pool, 'connect'):
@@ -282,34 +282,34 @@ class PolyglotDB:
                         [(m["id"], m["content"], json.dumps(m.get("metadata", {}))) for m in memories]
                     )
                     self.sqlite_pool.commit()
-                
+
                 return {"status": "success", "count": len(memories), "backend": "sqlite"}
-            
+
             else:
                 return {"status": "error", "error": "No backend available"}
-        
+
         except Exception as e:
             logger.error(f"Batch write failed: {e}")
             return {"status": "error", "error": str(e)}
-    
+
     def stats(self) -> dict[str, Any]:
         """Get database statistics."""
         try:
             if self.active_backend == BackendType.RUST and self.rust_db:
                 stats_json = self.rust_db.stats()
                 return {"status": "success", "stats": json.loads(stats_json), "backend": "rust"}
-            
+
             elif self.active_backend == BackendType.ELIXIR and self.elixir_port:
                 from erlport.erlterms import Atom
                 from erlport.erlang import call
-                
+
                 stats = call(
                     Atom(b'Elixir.WhiteMagicCore.GalacticStore'),
                     Atom(b'stats'),
                     []
                 )
                 return {"status": "success", "stats": stats, "backend": "elixir"}
-            
+
             elif self.active_backend == BackendType.SQLITE and self.sqlite_pool:
                 if hasattr(self.sqlite_pool, 'connect'):
                     with self.sqlite_pool.connect() as conn:
@@ -317,16 +317,16 @@ class PolyglotDB:
                 else:
                     cursor = self.sqlite_pool.cursor()
                     count = cursor.execute("SELECT COUNT(*) FROM memories").fetchone()[0]
-                
+
                 return {
                     "status": "success",
                     "stats": {"memory_count": count},
                     "backend": "sqlite"
                 }
-            
+
             else:
                 return {"status": "error", "error": "No backend available"}
-        
+
         except Exception as e:
             logger.error(f"Stats failed: {e}")
             return {"status": "error", "error": str(e)}

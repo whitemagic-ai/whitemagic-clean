@@ -367,16 +367,16 @@ def handle_garden_browse(**kwargs: Any) -> dict[str, Any]:
         path: Virtual path (e.g., "/gardens/wisdom", "/systems/memory")
     """
     path = kwargs.get("path", "/gardens")
-    
+
     try:
         from whitemagic.core.garden_virtual_fs import get_garden_virtual_fs
         vfs = get_garden_virtual_fs()
-        
+
         if not vfs._loaded:
             vfs.load()
-        
+
         nodes = vfs.list_directory(path)
-        
+
         return {
             "status": "success",
             "path": path,
@@ -402,19 +402,19 @@ def handle_garden_resolve(**kwargs: Any) -> dict[str, Any]:
         virtual_path: Virtual path (e.g., "/gardens/wisdom/python/sqlite_backend.py")
     """
     virtual_path = kwargs.get("virtual_path", "")
-    
+
     if not virtual_path:
         return {"status": "error", "error": "virtual_path parameter required"}
-    
+
     try:
         from whitemagic.core.garden_virtual_fs import get_garden_virtual_fs
         vfs = get_garden_virtual_fs()
-        
+
         if not vfs._loaded:
             vfs.load()
-        
+
         physical = vfs.get_physical_path(virtual_path)
-        
+
         if physical:
             return {
                 "status": "success",

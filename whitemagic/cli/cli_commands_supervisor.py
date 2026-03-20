@@ -23,7 +23,7 @@ def status_cmd() -> None:
     """Show Supervisor status and loaded SOPs."""
     sup = _get_supervisor()
     st = sup.status()
-    
+
     click.echo("🤖 Supervisor Status")
     click.echo(f"SOPs Loaded: {st['sops_loaded']}")
     click.echo(f"SOPs Enabled: {st['sops_enabled']}")

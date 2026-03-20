@@ -10,23 +10,23 @@ class TimescaleSync:
             "planner": [],     # 1s
             "consolidation": [] # 1hr
         }
-        
+
     def register_hook(self, timescale: str, callback):
         if timescale in self.loops:
             self.loops[timescale].append(callback)
-            
+
     async def run_reflex_loop(self):
         while True:
             for cb in self.loops["reflex"]:
                 cb()
             await asyncio.sleep(0.01)
-            
+
     async def run_planner_loop(self):
         while True:
             for cb in self.loops["planner"]:
                 cb()
             await asyncio.sleep(1.0)
-            
+
     async def run_consolidation_loop(self):
         while True:
             for cb in self.loops["consolidation"]:

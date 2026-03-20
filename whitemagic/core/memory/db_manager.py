@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 # Transient error codes that warrant retry
 _TRANSIENT_ERRORS = {
     sqlite3.SQLITE_BUSY: "database is locked",
-    sqlite3.SQLITE_LOCKED: "table is locked", 
+    sqlite3.SQLITE_LOCKED: "table is locked",
     sqlite3.SQLITE_PROTOCOL: "locking protocol error",
 }
 
@@ -40,7 +40,7 @@ def retry_with_backoff(
     max_delay: float = 2.0,
 ) -> Any:
     """Decorator for retrying operations with exponential backoff.
-    
+
     Usage:
         @retry_with_backoff
         def my_db_operation():

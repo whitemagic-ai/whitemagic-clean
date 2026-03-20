@@ -24,14 +24,18 @@ sys.path.append(str(CORE_SYSTEM_DIR))
 
 try:
     from fastmcp import FastMCP
+    _HAS_FASTMCP = True
 except ImportError:
-    print("❌ Error: fastmcp not installed. Please install it: pip install fastmcp")
-    sys.exit(1)
+    _HAS_FASTMCP = False
+    # Only exit if we are actually trying to run the server, not just importing for tests
+    if __name__ == "__main__":
+        print("❌ Error: fastmcp not installed. Please install it: pip install fastmcp")
+        sys.exit(1)
 
 # Server setup
 
 # Initialize Server
-mcp = FastMCP("WhiteMagic Core")
+mcp = FastMCP("WhiteMagic Core") if _HAS_FASTMCP else None
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
@@ -134,7 +138,6 @@ _LITE_TOOLS = {
 
 def _register_prat_tools(mcp_client: str) -> int:
     """Register the 28 PRAT Gana meta-tools for the stable MCP contract."""
-    from whitemagic.tools.registry import TOOL_REGISTRY
     from whitemagic.tools.schema_adapter import adapt_schema
     from whitemagic.tools.tool_surface import GANA_NAMES, GANA_SHORT_DESC, get_callable_tool_definitions
     from whitemagic.tools.prat_router import (

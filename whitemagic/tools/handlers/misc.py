@@ -339,15 +339,15 @@ def handle_read_memory(**kwargs: Any) -> dict[str, Any]:
 def handle_list_memories(**kwargs: Any) -> dict[str, Any]:
     """List recent memories."""
     from whitemagic.core.memory.unified import get_unified_memory
-    
+
     limit = int(kwargs.get("limit", 20))
     memory_type = kwargs.get("memory_type") or kwargs.get("type")
-    
+
     um = get_unified_memory()
-    
+
     # Get recent memories from backend
     memories = um.backend.list_recent(limit=limit, memory_type=memory_type)
-    
+
     # Convert to dict format
     results = []
     for mem in memories:
@@ -359,7 +359,7 @@ def handle_list_memories(**kwargs: Any) -> dict[str, Any]:
             "created_at": mem.created_at,
             "importance": mem.importance,
         })
-    
+
     return {"status": "success", "results": results, "count": len(results)}
 
 

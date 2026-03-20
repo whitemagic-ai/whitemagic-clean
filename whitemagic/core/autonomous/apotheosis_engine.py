@@ -73,14 +73,14 @@ class SelfMonitoringHealthLoop:
     Continuous self-monitoring system that watches WhiteMagic's own vitals
     and triggers dream cycles or alerts when health degrades.
     """
-    
+
     def __init__(self, check_interval_seconds: float = 60.0) -> None:
         self.interval = check_interval_seconds
         self._running = False
         self._last_check: float = 0.0
         self._history: list[HealthReading] = []
         self._callbacks: list[Callable[[HealthStatus, str], None]] = []
-        
+
         # Health thresholds
         self.thresholds = {
             "coherence": 0.6,
@@ -89,18 +89,18 @@ class SelfMonitoringHealthLoop:
             "error_rate": 0.05,
             "dream_cycle_age_hours": 24.0,
         }
-    
+
     def register_callback(self, callback: Callable[[HealthStatus, str], None]) -> None:
         """Register a callback for health status changes."""
         self._callbacks.append(callback)
-    
+
     def check_health(self) -> dict[str, HealthReading]:
         """
         Perform comprehensive health check across all vital signs.
         """
         readings: dict[str, HealthReading] = {}
         now = time.time()
-        
+
         # 1. Coherence check
         coherence_metric = get_coherence_metric()
         coherence_overall = sum(coherence_metric.scores.values()) / len(coherence_metric.scores)
@@ -111,7 +111,7 @@ class SelfMonitoringHealthLoop:
             threshold=self.thresholds["coherence"],
             status=self._status_from_value(coherence_overall, self.thresholds["coherence"], higher_is_better=True),
         )
-        
+
         # 2. Memory usage check (placeholder - would integrate with actual memory backend)
         readings["memory_usage"] = HealthReading(
             timestamp=now,
@@ -120,7 +120,7 @@ class SelfMonitoringHealthLoop:
             threshold=self.thresholds["memory_usage_percent"],
             status=HealthStatus.HEALTHY,
         )
-        
+
         # 3. Response time check
         readings["response_time"] = HealthReading(
             timestamp=now,
@@ -129,7 +129,7 @@ class SelfMonitoringHealthLoop:
             threshold=self.thresholds["response_time_ms"],
             status=HealthStatus.HEALTHY,
         )
-        
+
         # 4. Error rate check
         readings["error_rate"] = HealthReading(
             timestamp=now,
@@ -138,7 +138,7 @@ class SelfMonitoringHealthLoop:
             threshold=self.thresholds["error_rate"],
             status=HealthStatus.EXCELLENT,
         )
-        
+
         # 5. Dream cycle freshness
         readings["dream_freshness"] = HealthReading(
             timestamp=now,
@@ -147,23 +147,23 @@ class SelfMonitoringHealthLoop:
             threshold=self.thresholds["dream_cycle_age_hours"],
             status=HealthStatus.HEALTHY,
         )
-        
+
         # Store history
         self._history.extend(readings.values())
-        
+
         # Trigger callbacks if any status is concerning
         worst_status = max(
             (r.status for r in readings.values()),
             key=lambda s: list(HealthStatus).index(s)
         )
-        
+
         if worst_status in (HealthStatus.STRESSED, HealthStatus.DEGRADED, HealthStatus.CRITICAL):
             for callback in self._callbacks:
                 callback(worst_status, self._generate_diagnosis(readings))
-        
+
         self._last_check = now
         return readings
-    
+
     def _status_from_value(
         self,
         value: float,
@@ -193,7 +193,7 @@ class SelfMonitoringHealthLoop:
                 return HealthStatus.DEGRADED
             else:
                 return HealthStatus.CRITICAL
-    
+
     def _generate_diagnosis(self, readings: dict[str, HealthReading]) -> str:
         """Generate a human-readable health diagnosis."""
         concerns = [
@@ -202,7 +202,7 @@ class SelfMonitoringHealthLoop:
             if r.status in (HealthStatus.STRESSED, HealthStatus.DEGRADED, HealthStatus.CRITICAL)
         ]
         return "Health concerns detected: " + "; ".join(concerns)
-    
+
     def get_health_trend(self, metric: str, hours: float = 24.0) -> Optional[list[HealthReading]]:
         """Get health trend for a specific metric over time."""
         cutoff = time.time() - (hours * 3600)
@@ -210,24 +210,24 @@ class SelfMonitoringHealthLoop:
             r for r in self._history
             if r.metric_name == metric and r.timestamp >= cutoff
         ]
-    
+
     def auto_heal(self, readings: dict[str, HealthReading]) -> list[str]:
         """
         Automatically trigger healing measures based on health readings.
         Returns list of actions taken.
         """
         actions: list[str] = []
-        
+
         # Trigger dream cycle if coherence low
         if readings["coherence"].status in (HealthStatus.DEGRADED, HealthStatus.CRITICAL):
             actions.append("triggered_dream_cycle")
             logger.warning("🩺 Auto-heal: Triggering dream cycle for coherence restoration")
-        
+
         # Trigger galactic sweep if memory stressed
         if readings["memory_usage"].status in (HealthStatus.STRESSED, HealthStatus.DEGRADED):
             actions.append("scheduled_galactic_sweep")
             logger.warning("🩺 Auto-heal: Scheduling galactic sweep for memory pressure")
-        
+
         return actions
 
 
@@ -236,38 +236,38 @@ class PredictiveMaintenanceEngine:
     Predictive maintenance system that analyzes patterns and forecasts
     problems before they cascade into system failures.
     """
-    
+
     def __init__(self) -> None:
         self._alerts: list[PredictiveAlert] = []
         self._pattern_history: list[dict[str, Any]] = []
-    
+
     def analyze_trends(self, health_history: list[HealthReading]) -> list[PredictiveAlert]:
         """
         Analyze health trends to predict future issues.
         """
         alerts: list[PredictiveAlert] = []
-        
+
         # Group readings by metric
         by_metric: dict[str, list[HealthReading]] = {}
         for reading in health_history:
             if reading.metric_name not in by_metric:
                 by_metric[reading.metric_name] = []
             by_metric[reading.metric_name].append(reading)
-        
+
         # Analyze each metric for concerning trends
         for metric_name, readings in by_metric.items():
             if len(readings) < 3:
                 continue
-            
+
             # Calculate trend
             values = [r.value for r in readings]
             if len(values) >= 2:
                 trend = (values[-1] - values[0]) / len(values)
-                
+
                 # Predict time to threshold crossing
                 threshold = readings[-1].threshold
                 current = values[-1]
-                
+
                 if trend < 0 and current > threshold:  # Declining toward threshold
                     time_to_cross = (current - threshold) / abs(trend)
                     if 0 < time_to_cross < 24:  # Within 24 "check intervals"
@@ -282,10 +282,10 @@ class PredictiveMaintenanceEngine:
                             created_at=time.time(),
                         )
                         alerts.append(alert)
-        
+
         self._alerts.extend(alerts)
         return alerts
-    
+
     def _recommend_action(self, component: str) -> str:
         """Get recommended action for a component."""
         actions = {
@@ -296,7 +296,7 @@ class PredictiveMaintenanceEngine:
             "dream_cycle_age_hours": "Trigger dream cycle immediately",
         }
         return actions.get(component, "Monitor closely; investigate if trend continues")
-    
+
     def forecast_memory_growth(
         self,
         current_count: int,
@@ -308,7 +308,7 @@ class PredictiveMaintenanceEngine:
         """
         projected_count = current_count + (growth_rate_per_day * days_ahead)
         days_to_threshold = (100000 - current_count) / growth_rate_per_day if growth_rate_per_day > 0 else float('inf')
-        
+
         return {
             "current_memories": current_count,
             "projected_in_{}d".format(days_ahead): int(projected_count),
@@ -316,7 +316,7 @@ class PredictiveMaintenanceEngine:
             "estimated_days_to_sweep": days_to_threshold,
             "recommended_sweep_date": datetime.now().isoformat() if days_to_threshold < 14 else None,
         }
-    
+
     def get_active_alerts(self, max_age_hours: float = 24.0) -> list[PredictiveAlert]:
         """Get alerts still within their prediction window."""
         now = time.time()
@@ -330,21 +330,21 @@ class CapabilityDiscoveryEngine:
     """
     Discovers emergent capabilities by testing unused tools and combinations.
     """
-    
+
     def __init__(self) -> None:
         self._discovered: list[DiscoveredCapability] = []
         self._tested_combinations: set[tuple[str, ...]] = set()
         self._tool_usage: dict[str, int] = {}
-    
+
     def discover_capabilities(self, available_tools: list[str]) -> list[DiscoveredCapability]:
         """
         Test unused tools and combinations to discover new capabilities.
         """
         discoveries: list[DiscoveredCapability] = []
-        
+
         # Find unused tools
         unused = [t for t in available_tools if self._tool_usage.get(t, 0) == 0]
-        
+
         # Test each unused tool
         for tool in unused[:5]:  # Limit to first 5 for safety
             discovery = DiscoveredCapability(
@@ -358,7 +358,7 @@ class CapabilityDiscoveryEngine:
                 discovered_at=time.time(),
             )
             discoveries.append(discovery)
-        
+
         # Test promising combinations
         from itertools import combinations
         for combo in combinations(available_tools[:10], 2):
@@ -375,10 +375,10 @@ class CapabilityDiscoveryEngine:
                 )
                 discoveries.append(discovery)
                 self._tested_combinations.add(combo)
-        
+
         self._discovered.extend(discoveries)
         return discoveries
-    
+
     def test_capability(self, capability: DiscoveredCapability) -> dict[str, Any]:
         """
         Test a discovered capability and record results.
@@ -390,13 +390,13 @@ class CapabilityDiscoveryEngine:
             "output_sample": f"Test output for {capability.capability_name}",
             "errors": [],
         }
-        
+
         capability.tested = True
         capability.test_results = test_result
         capability.confidence = 0.9 if test_result["success"] else 0.3
-        
+
         return test_result
-    
+
     def report_emergent_capabilities(self) -> list[dict[str, Any]]:
         """Generate report of discovered and tested capabilities."""
         return [
@@ -419,27 +419,27 @@ class ApotheosisEngine:
     predictive maintenance, and capability discovery into a cohesive
     autonomous evolution system.
     """
-    
+
     def __init__(self) -> None:
         self.health_loop = SelfMonitoringHealthLoop()
         self.predictive = PredictiveMaintenanceEngine()
         self.capability = CapabilityDiscoveryEngine()
         self._running = False
         self._metrics: dict[str, Any] = {}
-    
+
     def start(self) -> None:
         """Start the Apotheosis Engine."""
         self._running = True
         logger.info("🌟 Apotheosis Engine started - autonomous evolution active")
-        
+
         # Register auto-heal callback
         self.health_loop.register_callback(self._on_health_degrade)
-    
+
     def stop(self) -> None:
         """Stop the Apotheosis Engine."""
         self._running = False
         logger.info("🌟 Apotheosis Engine stopped")
-    
+
     def tick(self, available_tools: list[str]) -> dict[str, Any]:
         """
         Single iteration of the Apotheosis Engine loop.
@@ -447,12 +447,12 @@ class ApotheosisEngine:
         """
         if not self._running:
             return {"status": "stopped"}
-        
+
         results: dict[str, Any] = {
             "timestamp": time.time(),
             "status": "active",
         }
-        
+
         # 1. Health check
         health_readings = self.health_loop.check_health()
         results["health"] = {
@@ -462,12 +462,12 @@ class ApotheosisEngine:
             }
             for metric, r in health_readings.items()
         }
-        
+
         # 2. Auto-heal if needed
         actions = self.health_loop.auto_heal(health_readings)
         if actions:
             results["auto_heal_actions"] = actions
-        
+
         # 3. Predictive analysis
         history = [
             r for r in self.health_loop._history
@@ -484,29 +484,29 @@ class ApotheosisEngine:
                 }
                 for a in alerts
             ]
-        
+
         # 4. Capability discovery
         discoveries = self.capability.discover_capabilities(available_tools)
         if discoveries:
             results["discoveries"] = len(discoveries)
-        
+
         # 5. Test top discoveries
         tested = 0
         for disc in discoveries[:3]:
             self.capability.test_capability(disc)
             tested += 1
         results["capabilities_tested"] = tested
-        
+
         return results
-    
+
     def _on_health_degrade(self, status: HealthStatus, diagnosis: str) -> None:
         """Callback when health degrades."""
         logger.warning(f"🩺 Health degraded to {status.value}: {diagnosis}")
-        
+
         if status == HealthStatus.CRITICAL:
             logger.error("🚨 CRITICAL HEALTH - Triggering emergency dream cycle")
             # Would trigger emergency measures
-    
+
     def get_status_report(self) -> str:
         """Generate human-readable status report."""
         lines = [

@@ -33,7 +33,7 @@ def handle_reconsolidation_mark(**kwargs: Any) -> dict[str, Any]:
     memory_id = kwargs.get("memory_id")
     if not memory_id:
         return {"status": "error", "error": "memory_id required"}
-    
+
     from whitemagic.core.memory.unified import get_unified_memory
     mem = get_unified_memory()
     mem.mark_for_reconsolidation(memory_id)
@@ -44,10 +44,10 @@ def handle_reconsolidation_update(**kwargs: Any) -> dict[str, Any]:
     """Update reconsolidated memory."""
     memory_id = kwargs.get("memory_id")
     updates = kwargs.get("updates", {})
-    
+
     if not memory_id:
         return {"status": "error", "error": "memory_id required"}
-    
+
     from whitemagic.core.memory.unified import get_unified_memory
     mem = get_unified_memory()
     mem.update_reconsolidated(memory_id, updates)
@@ -59,7 +59,7 @@ def handle_reconsolidation_status(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.memory.unified import get_unified_memory
         mem = get_unified_memory()
-        
+
         # Try different method names that might exist
         pending = []
         if hasattr(mem, 'get_pending_reconsolidation'):
@@ -68,7 +68,7 @@ def handle_reconsolidation_status(**kwargs: Any) -> dict[str, Any]:
             pending = mem.get_reconsolidation_queue()
         elif hasattr(mem, 'list_pending'):
             pending = mem.list_pending()
-        
+
         return {"status": "success", "pending_count": len(pending), "pending": pending[:10]}
     except Exception as e:
         return {"status": "success", "pending_count": 0, "pending": [], "note": f"Reconsolidation tracking: {str(e)[:100]}"}
@@ -83,14 +83,14 @@ def handle_rerank(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.reranker import Reranker
         reranker = Reranker()
-        
+
         items = kwargs.get("items", [])
         query = kwargs.get("query", "")
         top_k = kwargs.get("top_k", 10)
-        
+
         if not items:
             return {"status": "error", "error": "items required"}
-        
+
         reranked = reranker.rerank(items=items, query=query, top_k=top_k)
         return {
             "status": "success",

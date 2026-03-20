@@ -1,4 +1,3 @@
-from typing import Any
 """
 🕸️ Graph Engine - The Neural Nexus
 Connects the Python NeuralMemory system to the Rust Graph Core.
@@ -16,27 +15,27 @@ class GraphEngine:
     """
     Manages the graph structure of memories using Rust acceleration.
     """
-    
+
     def __init__(self) -> None:
         self._graph_cache: Dict[str, List[Tuple[str, float]]] = {}
         self._is_dirty = True
-        
+
     def build_graph(self, memories: List[Memory], force: bool = False) -> Dict[str, List[Tuple[str, float]]]:
         """
         Build the full memory graph.
         """
         if not force and not self._is_dirty and self._graph_cache:
             return self._graph_cache
-            
+
         logger.info(f"Building memory graph for {len(memories)} memories...")
-        
+
         # Convert to tuples for Rust
         # Memory content might be Any, cast to str
         memory_tuples = [
-            (m.id, str(m.content), list(m.tags)) 
+            (m.id, str(m.content), list(m.tags))
             for m in memories
         ]
-        
+
         # Build graph using Rust Bridge
         # Returns: {source_id: [(target_id, weight), ...]}
         self._graph_cache = build_memory_graph(
@@ -44,27 +43,27 @@ class GraphEngine:
             min_similarity=0.2,
             max_links=15
         )
-        
+
         self._is_dirty = False
         logger.info(f"Graph built with {len(self._graph_cache)} nodes")
         return self._graph_cache
-        
+
     def get_cluster(self, start_id: str, memories: List[Memory], max_depth: int = 3) -> Set[str]:
         """
         Get a cluster of related memories around a start node.
         """
         memory_tuples = [
-            (m.id, str(m.content), list(m.tags)) 
+            (m.id, str(m.content), list(m.tags))
             for m in memories
         ]
-        
+
         return parallel_traverse(
             memory_tuples,
             start_id,
             max_depth=max_depth,
             min_similarity=0.3
         )
-        
+
     def invalidate(self) -> None:
         """Mark graph as dirty (needs rebuild)."""
         self._is_dirty = True

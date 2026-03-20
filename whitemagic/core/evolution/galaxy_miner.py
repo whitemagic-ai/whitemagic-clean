@@ -55,10 +55,10 @@ class SemanticCluster:
 
 class GalaxyPatternMiner:
     """Mine patterns from galaxy archive databases."""
-    
+
     def __init__(self, galaxy_paths: List[str]):
         """Initialize the miner.
-        
+
         Args:
             galaxy_paths: List of paths to galaxy DB files
         """
@@ -66,16 +66,16 @@ class GalaxyPatternMiner:
         self.connections: Dict[str, sqlite3.Connection] = {}
         self.patterns: List[AccessPattern] = []
         self.clusters: List[SemanticCluster] = []
-        
+
         logger.info(f"🌌 GalaxyPatternMiner initialized with {len(galaxy_paths)} galaxies")
-    
+
     def connect(self) -> None:
         """Connect to all galaxy databases."""
         for path in self.galaxy_paths:
             if not Path(path).exists():
                 logger.warning(f"Galaxy DB not found: {path}")
                 continue
-            
+
             try:
                 conn = sqlite3.connect(path)
                 conn.row_factory = sqlite3.Row
@@ -83,19 +83,19 @@ class GalaxyPatternMiner:
                 logger.info(f"✓ Connected to: {Path(path).name}")
             except Exception as e:
                 logger.error(f"Failed to connect to {path}: {e}")
-    
+
     def disconnect(self) -> None:
         """Close all database connections."""
         for conn in self.connections.values():
             conn.close()
         self.connections.clear()
-    
+
     def mine_access_patterns(self, min_frequency: int = 5) -> List[AccessPattern]:
         """Mine memory access patterns from access logs.
-        
+
         Args:
             min_frequency: Minimum access count to consider
-            
+
         Returns:
             List of discovered access patterns
         """
@@ -121,11 +121,11 @@ class GalaxyPatternMiner:
             self.patterns.extend(patterns)
             logger.info(f"✓ Discovered {len(patterns)} access patterns (Rust)")
             return patterns
-        
+
         # Python fallback
         logger.info("🔍 Mining access patterns...")
         patterns = []
-        
+
         for db_path, conn in self.connections.items():
             try:
                 # Get access frequency per memory
@@ -137,14 +137,14 @@ class GalaxyPatternMiner:
                     ORDER BY access_count DESC
                     LIMIT 1000
                 """, (min_frequency,))
-                
+
                 frequent_memories = cursor.fetchall()
-                
+
                 if frequent_memories:
                     # Create pattern for frequently accessed memories
                     memory_ids = [row['id'] for row in frequent_memories]
                     avg_access = sum(row['access_count'] for row in frequent_memories) / len(frequent_memories)
-                    
+
                     pattern = AccessPattern(
                         pattern_id=f"freq_access_{Path(db_path).stem}",
                         pattern_type='frequent_access',
@@ -161,34 +161,34 @@ class GalaxyPatternMiner:
                     )
                     patterns.append(pattern)
                     logger.info(f"  Found {len(memory_ids)} frequently accessed memories in {Path(db_path).name}")
-            
+
             except Exception as e:
                 logger.error(f"Error mining access patterns from {db_path}: {e}")
-        
+
         self.patterns.extend(patterns)
         logger.info(f"✓ Discovered {len(patterns)} access patterns")
         return patterns
-    
+
     def mine_co_access_patterns(self, min_co_occurrence: int = 3) -> List[AccessPattern]:
         """Mine co-access patterns (memories accessed together).
-        
+
         Args:
             min_co_occurrence: Minimum times memories must be accessed together
-            
+
         Returns:
             List of co-access patterns
         """
         logger.info("🔍 Mining co-access patterns...")
         patterns = []
-        
+
         for db_path, conn in self.connections.items():
             try:
                 # Get memories with similar access times (within 1 hour)
                 cursor = conn.execute("""
-                    SELECT m1.id as id1, m2.id as id2, 
+                    SELECT m1.id as id1, m2.id as id2,
                            COUNT(*) as co_access_count
                     FROM memories m1
-                    JOIN memories m2 ON 
+                    JOIN memories m2 ON
                         m1.id < m2.id AND
                         ABS(JULIANDAY(m1.accessed_at) - JULIANDAY(m2.accessed_at)) < 0.042
                     WHERE m1.memory_type != 'quarantined'
@@ -198,9 +198,9 @@ class GalaxyPatternMiner:
                     ORDER BY co_access_count DESC
                     LIMIT 100
                 """, (min_co_occurrence,))
-                
+
                 co_access_pairs = cursor.fetchall()
-                
+
                 if co_access_pairs:
                     # Group into clusters
                     for row in co_access_pairs:
@@ -217,23 +217,23 @@ class GalaxyPatternMiner:
                             discovered_at=datetime.now().isoformat()
                         )
                         patterns.append(pattern)
-                    
+
                     logger.info(f"  Found {len(co_access_pairs)} co-access pairs in {Path(db_path).name}")
-            
+
             except Exception as e:
                 logger.error(f"Error mining co-access patterns from {db_path}: {e}")
-        
+
         self.patterns.extend(patterns)
         logger.info(f"✓ Discovered {len(patterns)} co-access patterns")
         return patterns
-    
+
     def mine_cache_candidates(self, min_access: int = 10, min_importance: float = 0.7) -> List[AccessPattern]:
         """Identify memories that should be cached.
-        
+
         Args:
             min_access: Minimum access count
             min_importance: Minimum importance score
-            
+
         Returns:
             List of cache candidate patterns
         """
@@ -259,15 +259,15 @@ class GalaxyPatternMiner:
             self.patterns.extend(patterns)
             logger.info(f"✓ Discovered {len(patterns)} cache candidates (Rust)")
             return patterns
-        
+
         # Python fallback
         logger.info("🔍 Mining cache candidates...")
         patterns = []
-        
+
         for db_path, conn in self.connections.items():
             try:
                 cursor = conn.execute("""
-                    SELECT id, title, access_count, importance, 
+                    SELECT id, title, access_count, importance,
                            LENGTH(content) as content_size
                     FROM memories
                     WHERE access_count >= ?
@@ -276,14 +276,14 @@ class GalaxyPatternMiner:
                     ORDER BY access_count * importance DESC
                     LIMIT 500
                 """, (min_access, min_importance))
-                
+
                 candidates = cursor.fetchall()
-                
+
                 if candidates:
                     memory_ids = [row['id'] for row in candidates]
                     avg_access = sum(row['access_count'] for row in candidates) / len(candidates)
                     avg_importance = sum(row['importance'] for row in candidates) / len(candidates)
-                    
+
                     pattern = AccessPattern(
                         pattern_id=f"cache_candidates_{Path(db_path).stem}",
                         pattern_type='cache_candidate',
@@ -301,20 +301,20 @@ class GalaxyPatternMiner:
                     )
                     patterns.append(pattern)
                     logger.info(f"  Found {len(memory_ids)} cache candidates in {Path(db_path).name}")
-            
+
             except Exception as e:
                 logger.error(f"Error mining cache candidates from {db_path}: {e}")
-        
+
         self.patterns.extend(patterns)
         logger.info(f"✓ Discovered {len(patterns)} cache candidate patterns")
         return patterns
-    
+
     def mine_semantic_clusters(self, min_cluster_size: int = 3) -> List[SemanticCluster]:
         """Mine semantic clusters based on tags and content.
-        
+
         Args:
             min_cluster_size: Minimum memories in a cluster
-            
+
         Returns:
             List of semantic clusters
         """
@@ -339,14 +339,14 @@ class GalaxyPatternMiner:
             self.clusters.extend(clusters)
             logger.info(f"✓ Discovered {len(clusters)} semantic clusters (Rust)")
             return clusters
-        
+
         # Python fallback
         logger.info("🔍 Mining semantic clusters...")
         clusters = []
-        
+
         # Aggregate tags across all galaxies
         tag_to_memories: Dict[str, List[Tuple[str, str, float]]] = defaultdict(list)
-        
+
         for db_path, conn in self.connections.items():
             try:
                 # Get tags from tags table (many-to-many relationship)
@@ -359,28 +359,28 @@ class GalaxyPatternMiner:
                     HAVING tags IS NOT NULL
                     LIMIT 10000
                 """)
-                
+
                 for row in cursor.fetchall():
                     memory_id = row['id']
                     tags_str = row['tags'] or ''
                     importance = row['importance'] or 0.5
-                    
+
                     # Parse tags (comma-separated)
                     tags = set(t.strip() for t in tags_str.split(',') if t.strip())
-                    
+
                     for tag in tags:
                         tag_to_memories[tag].append((memory_id, Path(db_path).name, importance))
-            
+
             except Exception as e:
                 logger.error(f"Error mining semantic clusters from {db_path}: {e}")
-        
+
         # Create clusters from tags with enough members
         for tag, memories in tag_to_memories.items():
             if len(memories) >= min_cluster_size:
                 memory_ids = [m[0] for m in memories]
                 galaxy_sources = list(set(m[1] for m in memories))
                 avg_importance = sum(m[2] for m in memories) / len(memories)
-                
+
                 cluster = SemanticCluster(
                     cluster_id=f"semantic_{tag}",
                     memory_ids=memory_ids,
@@ -390,15 +390,15 @@ class GalaxyPatternMiner:
                     confidence=min(1.0, len(memories) / 50.0)
                 )
                 clusters.append(cluster)
-        
+
         self.clusters.extend(clusters)
         logger.info(f"✓ Discovered {len(clusters)} semantic clusters")
         return clusters
-    
+
     def get_summary(self) -> Dict[str, Any]:
         """Get mining summary statistics."""
         pattern_types = Counter(p.pattern_type for p in self.patterns)
-        
+
         return {
             'total_patterns': len(self.patterns),
             'total_clusters': len(self.clusters),
@@ -415,10 +415,10 @@ _galaxy_miner: Optional[GalaxyPatternMiner] = None
 
 def get_galaxy_miner(galaxy_paths: Optional[List[str]] = None) -> GalaxyPatternMiner:
     """Get the singleton GalaxyPatternMiner instance.
-    
+
     Args:
         galaxy_paths: List of galaxy DB paths (only used on first call)
-        
+
     Returns:
         GalaxyPatternMiner instance
     """

@@ -88,7 +88,7 @@ class KaizenEngine:
         """Run full kaizen analysis with Rust acceleration for metrics."""
         proposals = []
         metrics = {}
-        
+
         # Phase B: Rust accelerated metrics gathering for v20
         rust_metrics = self._gather_rust_metrics()
         if rust_metrics:
@@ -134,28 +134,28 @@ class KaizenEngine:
             proposals=proposals,
             metrics=metrics,
         )
-    
+
     def _gather_rust_metrics(self) -> dict[str, Any]:
         """Gather metrics using Rust fast-path acceleration."""
         try:
             import whitemagic_rust as rs
             if not hasattr(rs, 'synthesis_engine') or not hasattr(rs.synthesis_engine, 'fast_kaizen_metrics'):
                 return {}
-            
+
             conn = self._get_conn()
             cur = conn.cursor()
-            
+
             # Gather memory titles
             cur.execute("SELECT title FROM memories")
             titles = [row[0] or "" for row in cur.fetchall()]
-            
+
             # Gather holographic coordinates
             cur.execute("SELECT x, y, z, w FROM holographic_coords")
             coords = [[row[0], row[1], row[2], row[3]] for row in cur.fetchall()]
-            
+
             # Call Rust fast-path
             rust_result = rs.synthesis_engine.fast_kaizen_metrics(titles, coords)
-            
+
             # Convert to Python dict
             metrics = {
                 "untitled_count": rust_result.get("untitled_count", 0),
@@ -166,7 +166,7 @@ class KaizenEngine:
                 "min_gravity": rust_result.get("min_gravity", 0.0),
                 "high_gravity_count": rust_result.get("high_gravity_count", 0),
             }
-            
+
             return metrics
         except Exception as e:
             logger.debug(f"Rust metrics gathering failed, using Python fallback: {e}")

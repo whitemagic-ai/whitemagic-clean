@@ -200,7 +200,7 @@ class ContextOptimizer:
     ) -> PackedContext:
         """Pack both memories and wisdom (Golden Rules) into the budget."""
         items = []
-        
+
         # 1. Get Wisdom
         try:
             from whitemagic.alchemy.holocron import Holocron
@@ -212,7 +212,7 @@ class ContextOptimizer:
                     id=rule["id"],
                     content=f"GOLDEN RULE: {rule['title']}\n{rule['description']}",
                     source="holocron",
-                    importance=1.0, 
+                    importance=1.0,
                     recency=1.0,
                     relevance=0.9,
                     tokens=0

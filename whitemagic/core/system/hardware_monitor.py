@@ -19,12 +19,12 @@ class HardwareProfile:
     available_ram_gb: float
     has_gpu: bool
     disk_free_gb: float
-    
+
     # Computed limits
     max_workers: int
     batch_size: int
     memory_limit_mb: int
-    
+
     @property
     def is_constrained(self) -> bool:
         """Check if running on constrained hardware."""
@@ -33,7 +33,7 @@ class HardwareProfile:
             self.available_ram_gb < 8 or
             not self.has_gpu
         )
-    
+
     @property
     def resource_tier(self) -> str:
         """Classify hardware tier."""
@@ -53,10 +53,10 @@ def detect_hardware() -> HardwareProfile:
         cpu_threads = cpuinfo.count('processor')
         # Estimate physical cores (rough approximation)
         cpu_count = max(1, cpu_threads // 2)
-    except:
+    except Exception:
         cpu_count = 4
         cpu_threads = 8
-    
+
     # RAM - read from /proc/meminfo
     try:
         with open('/proc/meminfo', 'r') as f:
@@ -68,13 +68,13 @@ def detect_hardware() -> HardwareProfile:
             elif line.startswith('MemAvailable:'):
                 avail_ram_kb = int(line.split()[1])
                 available_ram_gb = avail_ram_kb / (1024**2)
-    except:
+    except Exception:
         total_ram_gb = 8.0
         available_ram_gb = 4.0
-    
+
     # GPU detection (simple check for nvidia-smi)
     has_gpu = os.path.exists('/usr/bin/nvidia-smi') or os.path.exists('/usr/local/cuda')
-    
+
     # Disk - use df command
     try:
         result = subprocess.run(['df', '-BG', str(Path.home())], capture_output=True, text=True)
@@ -84,17 +84,17 @@ def detect_hardware() -> HardwareProfile:
             disk_free_gb = float(parts[3].rstrip('G'))
         else:
             disk_free_gb = 50.0
-    except:
+    except Exception:
         disk_free_gb = 50.0
-    
+
     # Compute safe limits
     # Use 50% of available RAM, leave headroom
     safe_ram_gb = available_ram_gb * 0.5
     memory_limit_mb = int(safe_ram_gb * 1024)
-    
+
     # Workers: use 75% of threads, minimum 2
     max_workers = max(2, int(cpu_threads * 0.75))
-    
+
     # Batch size based on available RAM
     # Assume ~1MB per item for embedding
     if available_ram_gb >= 8:
@@ -103,7 +103,7 @@ def detect_hardware() -> HardwareProfile:
         batch_size = 250
     else:
         batch_size = 100
-    
+
     return HardwareProfile(
         cpu_count=cpu_count,
         cpu_threads=cpu_threads,
@@ -119,7 +119,7 @@ def detect_hardware() -> HardwareProfile:
 def get_safe_batch_config(task_type: str = "embedding") -> dict:
     """Get safe batch configuration for task type."""
     hw = detect_hardware()
-    
+
     configs = {
         "embedding": {
             "HIGH": {"batch_size": 1000, "workers": 12, "memory_mb": 4096},
@@ -137,16 +137,16 @@ def get_safe_batch_config(task_type: str = "embedding") -> dict:
             "LOW": {"batch_size": 1000, "workers": 2, "memory_mb": 256},
         },
     }
-    
+
     tier = hw.resource_tier
     config = configs.get(task_type, configs["processing"])[tier]
-    
+
     # Further constrain if RAM is critically low
     if hw.available_ram_gb < 3:
         config["batch_size"] = min(config["batch_size"], 50)
         config["workers"] = 1
         config["memory_mb"] = min(config["memory_mb"], 256)
-    
+
     return config
 
 def check_resource_headroom() -> dict:
@@ -161,20 +161,20 @@ def check_resource_headroom() -> dict:
                 total_kb = int(line.split()[1])
             elif line.startswith('MemAvailable:'):
                 avail_kb = int(line.split()[1])
-        
+
         ram_available_gb = avail_kb / (1024**2)
         ram_percent_used = ((total_kb - avail_kb) / total_kb * 100) if total_kb > 0 else 50
-        
+
         # CPU usage - read from /proc/stat (simplified)
         cpu_percent = 50.0  # Conservative estimate
-        
+
         return {
             "ram_available_gb": ram_available_gb,
             "ram_percent_used": ram_percent_used,
             "cpu_percent_used": cpu_percent,
             "safe_to_proceed": ram_percent_used < 85 and cpu_percent < 90,
         }
-    except:
+    except Exception:
         return {
             "ram_available_gb": 4.0,
             "ram_percent_used": 50.0,

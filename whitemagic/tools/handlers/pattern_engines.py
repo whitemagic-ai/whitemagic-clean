@@ -14,10 +14,10 @@ def handle_causal_mine(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.synthesis.causal_net import CausalNetMiner
         miner = CausalNetMiner()
-        
+
         query = kwargs.get("query", "")
         max_patterns = kwargs.get("max_patterns", 10)
-        
+
         patterns = miner.mine_causal_patterns(query=query, max_patterns=max_patterns)
         return {
             "status": "success",
@@ -67,10 +67,10 @@ def handle_emergence_scan(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.emergence import EmergenceDetector
         detector = EmergenceDetector()
-        
+
         scan_depth = kwargs.get("scan_depth", 3)
         threshold = kwargs.get("threshold", 0.7)
-        
+
         emergent_patterns = detector.scan(depth=scan_depth, threshold=threshold)
         return {
             "status": "success",
@@ -119,10 +119,10 @@ def handle_association_mine(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.synthesis.association_miner import AssociationMiner
         miner = AssociationMiner()
-        
+
         memory_ids = kwargs.get("memory_ids", [])
         batch_size = kwargs.get("batch_size", 100)
-        
+
         associations = miner.mine_associations(memory_ids=memory_ids, batch_size=batch_size)
         return {
             "status": "success",
@@ -146,10 +146,10 @@ def handle_association_mine_semantic(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.synthesis.association_miner import SemanticAssociationMiner
         miner = SemanticAssociationMiner()
-        
+
         query = kwargs.get("query", "")
         top_k = kwargs.get("top_k", 10)
-        
+
         associations = miner.find_semantic_associations(query=query, top_k=top_k)
         return {
             "status": "success",
@@ -177,10 +177,10 @@ def handle_constellation_detect(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.synthesis.constellation import ConstellationDetector
         detector = ConstellationDetector()
-        
+
         algorithm = kwargs.get("algorithm", "hdbscan")
         min_cluster_size = kwargs.get("min_cluster_size", 5)
-        
+
         constellations = detector.detect(
             algorithm=algorithm,
             min_cluster_size=min_cluster_size
@@ -228,10 +228,10 @@ def handle_constellation_merge(**kwargs: Any) -> dict[str, Any]:
     try:
         from whimentelligence.synthesis.constellation import ConstellationDetector
         detector = ConstellationDetector()
-        
+
         similarity_threshold = kwargs.get("similarity_threshold", 0.8)
         merged = detector.merge_similar(threshold=similarity_threshold)
-        
+
         return {
             "status": "success",
             "constellations_merged": merged,
@@ -256,13 +256,13 @@ def handle_novelty_detect(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.novelty import NoveltyDetector
         detector = NoveltyDetector()
-        
+
         content = kwargs.get("content", "")
         threshold = kwargs.get("threshold", 0.5)
-        
+
         novelty_score = detector.detect(content=content, threshold=threshold)
         is_novel = novelty_score > threshold
-        
+
         return {
             "status": "success",
             "novelty_score": novelty_score,
@@ -310,10 +310,10 @@ def handle_reasoning_multispectral(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.synthesis.multispectral import MultispectralReasoner
         reasoner = MultispectralReasoner()
-        
+
         topic = kwargs.get("topic", "")
         perspectives = kwargs.get("perspectives", ["logical", "emotional", "creative", "critical"])
-        
+
         result = reasoner.reason(topic=topic, perspectives=perspectives)
         return {
             "status": "success",
@@ -338,10 +338,10 @@ def handle_satkona_fuse(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.synthesis.satkona import SatkonaFuser
         fuser = SatkonaFuser()
-        
+
         inputs = kwargs.get("inputs", [])
         fusion_mode = kwargs.get("fusion_mode", "harmonic")
-        
+
         result = fuser.fuse(inputs=inputs, mode=fusion_mode)
         return {
             "status": "success",
@@ -365,10 +365,10 @@ def handle_bridge_synthesize(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.synthesis.bridge_builder import BridgeSynthesizer
         synthesizer = BridgeSynthesizer()
-        
+
         max_bridges = kwargs.get("max_bridges", 10)
         bridges = synthesizer.synthesize(max_bridges=max_bridges)
-        
+
         return {
             "status": "success",
             "bridges_synthesized": len(bridges),
@@ -394,10 +394,10 @@ def handle_galactic_sweep(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.hologram.galactic_sweep import GalacticSweeper
         sweeper = GalacticSweeper()
-        
+
         zone = kwargs.get("zone", "all")
         dry_run = kwargs.get("dry_run", False)
-        
+
         result = sweeper.sweep(zone=zone, dry_run=dry_run)
         return {
             "status": "success",
@@ -446,13 +446,13 @@ def handle_guideline_evolve(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.guideline_evolution import GuidelineEvolver
         evolver = GuidelineEvolver()
-        
+
         guideline_id = kwargs.get("guideline_id")
         feedback = kwargs.get("feedback", [])
-        
+
         if not guideline_id:
             return {"status": "error", "error": "guideline_id required"}
-        
+
         result = evolver.evolve(guideline_id=guideline_id, feedback=feedback)
         return {
             "status": "success",
@@ -475,10 +475,10 @@ def handle_elemental_optimize(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.wu_xing_optimizer import WuXingOptimizer
         optimizer = WuXingOptimizer()
-        
+
         target = kwargs.get("target", "memory")
         element = kwargs.get("element", "water")  # water, wood, fire, earth, metal
-        
+
         result = optimizer.optimize(target=target, element=element)
         return {
             "status": "success",

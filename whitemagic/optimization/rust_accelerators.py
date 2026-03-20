@@ -43,14 +43,15 @@ _RUST_V131 = False
 _rs: Any = None
 
 try:
-    import whitemagic_rust as _rs_mod
-    _rs = _rs_mod
+    import whitemagic_rust as _rs
+    _HAS_RUST = True
 except ImportError:
     try:
-        import whitemagic_rs as _rs_mod
-        _rs = _rs_mod
-    except ImportError as e:
-        logger.debug(f"Rust extension not available — using Python fallback: {e}")
+        import whitemagic_rs as _rs
+        _HAS_RUST = True
+    except ImportError:
+        _rs = None
+        _HAS_RUST = False
 
 if _rs is not None:
     # Check for v12.3 accelerator functions
@@ -59,7 +60,7 @@ if _rs is not None:
         logger.debug("Rust v12.3 accelerators loaded")
     else:
         logger.debug("Rust extension found but missing v12.3 accelerators")
-    
+
     # Check for v15.10 galaxy miner functions
     if hasattr(_rs, "mine_access_patterns"):
         logger.debug("Rust v15.10 galaxy miner loaded")
@@ -881,11 +882,11 @@ def arrow_available() -> bool:
 
 def mine_access_patterns(db_path: str, min_frequency: int) -> Any:
     """Mine access patterns from galaxy archive DB (Rust accelerated).
-    
+
     Args:
         db_path: Path to SQLite database
         min_frequency: Minimum access count threshold
-        
+
     Returns:
         List of AccessPattern objects
     """
@@ -896,12 +897,12 @@ def mine_access_patterns(db_path: str, min_frequency: int) -> Any:
 
 def mine_cache_candidates(db_path: str, min_access: int, min_importance: float) -> Any:
     """Mine cache candidate patterns from galaxy archive DB (Rust accelerated).
-    
+
     Args:
         db_path: Path to SQLite database
         min_access: Minimum access count threshold
         min_importance: Minimum importance threshold
-        
+
     Returns:
         List of AccessPattern objects
     """
@@ -912,11 +913,11 @@ def mine_cache_candidates(db_path: str, min_access: int, min_importance: float) 
 
 def mine_semantic_clusters(db_path: str, min_cluster_size: int) -> Any:
     """Mine semantic clusters from galaxy archive DB (Rust accelerated).
-    
+
     Args:
         db_path: Path to SQLite database
         min_cluster_size: Minimum memories per cluster
-        
+
     Returns:
         List of SemanticCluster objects
     """
@@ -927,10 +928,10 @@ def mine_semantic_clusters(db_path: str, min_cluster_size: int) -> Any:
 
 def get_galaxy_stats(db_path: str) -> Any:
     """Get quick statistics from galaxy archive DB (Rust accelerated).
-    
+
     Args:
         db_path: Path to SQLite database
-        
+
     Returns:
         Dict with stats (total_memories, high_access_memories, etc.)
     """
@@ -945,12 +946,12 @@ def get_galaxy_stats(db_path: str) -> Any:
 
 def mine_geneseed_patterns(repo_path: str, min_confidence: float, max_commits: int) -> Any:
     """Mine optimization patterns from git repository history (Rust accelerated).
-    
+
     Args:
         repo_path: Path to git repository
         min_confidence: Minimum confidence threshold (0.0-1.0)
         max_commits: Maximum commits to analyze
-        
+
     Returns:
         List of OptimizationPattern objects
     """
@@ -961,10 +962,10 @@ def mine_geneseed_patterns(repo_path: str, min_confidence: float, max_commits: i
 
 def get_geneseed_stats(repo_path: str) -> Any:
     """Get repository statistics (Rust accelerated).
-    
+
     Args:
         repo_path: Path to git repository
-        
+
     Returns:
         GeneseedStats object with commit counts and metrics
     """

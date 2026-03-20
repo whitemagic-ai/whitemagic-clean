@@ -21,7 +21,7 @@ class SpeculativeExecutor:
     """
     Validates code/text candidates using a hierarchy of cheap->expensive checks.
     """
-    
+
     def __init__(self, local_llm=None):
         self.local_llm = local_llm
 
@@ -43,15 +43,15 @@ class SpeculativeExecutor:
         Fast regex scan for obvious security issues (SQLi, hardcoded secrets).
         """
         issues = []
-        
+
         # SQL Injection patterns
         if re.search(r'execute\(\s*f["\']', code):
             issues.append("Potential SQL Injection (f-string in execute)")
-            
+
         # Hardcoded secrets
         if re.search(r'(api_key|secret)\s*=\s*["\'][A-Za-z0-9-_]{20,}["\']', code):
             issues.append("Potential Hardcoded Secret")
-            
+
         # Dangerous exec
         if re.search(r'\b(exec|eval)\(', code):
             issues.append("Dangerous usage of exec/eval")
@@ -70,9 +70,9 @@ class SpeculativeExecutor:
             f"Code:\n```python\n{code}\n```\n"
             f"Return ONLY the fixed code block."
         )
-        
+
         fixed = self.local_llm.complete(prompt, max_tokens=1024)
-        
+
         # Extract code block
         match = re.search(r'```python\n(.*?)\n```', fixed, re.DOTALL)
         if match:
@@ -104,5 +104,5 @@ class SpeculativeExecutor:
             if not valid_sec:
                 result["valid"] = False
                 result["errors"].extend(issues)
-        
+
         return result

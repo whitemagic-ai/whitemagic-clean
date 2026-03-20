@@ -52,19 +52,19 @@ class SharedMemoryHeader(ctypes.Structure):
 
 class SharedMemoryBridge:
     """POSIX shared memory bridge for zero-copy embedding transfer."""
-    
+
     def __init__(self, name: str = SHM_NAME, create: bool = False):
         self.name = name
         self._shm: Optional[shared_memory.SharedMemory] = None
         self._header: Optional[SharedMemoryHeader] = None
         self._lock = threading.Lock()
         self._is_owner = create
-        
+
         if create:
             self._create_segment()
         else:
             self._open_segment()
-    
+
     def _create_segment(self) -> None:
         try:
             try:
@@ -73,7 +73,7 @@ class SharedMemoryBridge:
                 existing.unlink()
             except FileNotFoundError:
                 pass
-            
+
             self._shm = shared_memory.SharedMemory(name=self.name, create=True, size=SEGMENT_SIZE)
             self._header = SharedMemoryHeader.from_buffer(self._shm.buf)
             self._header.magic = 0x574D454D
@@ -90,7 +90,7 @@ class SharedMemoryBridge:
         except Exception as e:
             logger.error(f"Failed to create shared memory: {e}")
             raise
-    
+
     def _open_segment(self) -> None:
         try:
             self._shm = shared_memory.SharedMemory(name=self.name)
@@ -101,117 +101,117 @@ class SharedMemoryBridge:
         except Exception as e:
             logger.error(f"Failed to open shared memory: {e}")
             raise
-    
+
     def write_embedding(self, memory_id: int, vector: list[float]) -> bool:
         if len(vector) != EMBEDDING_DIM:
             raise ValueError(f"Vector dimension mismatch: {len(vector)} != {EMBEDDING_DIM}")
-        
+
         with self._lock:
             if self._header is None:
                 return False
             if self._header.count >= self._header.capacity:
                 self._header.read_pos = (self._header.read_pos + 1) % self._header.capacity
-            
+
             pos = self._header.write_pos
             offset = HEADER_SIZE + (pos * SLOT_SIZE)
-            
+
             # Write directly to buffer
             header_bytes = struct.pack("<II", memory_id, 1)
             vector_bytes = struct.pack(f"<{EMBEDDING_DIM}f", *vector)
             self._shm.buf[offset:offset + 8] = header_bytes
             self._shm.buf[offset + 8:offset + SLOT_SIZE] = vector_bytes
-            
+
             self._header.write_pos = (pos + 1) % self._header.capacity
             if self._header.count < self._header.capacity:
                 self._header.count += 1
             self._header.total_written += 1
             self._header.last_write_ts = time.time()
             return True
-    
+
     def write_batch_numpy(self, ids: np.ndarray, vectors: np.ndarray) -> int:
         if vectors.shape[1] != EMBEDDING_DIM:
             raise ValueError(f"Vector dimension mismatch: {vectors.shape[1]} != {EMBEDDING_DIM}")
-        
+
         n = len(ids)
         written = 0
-        
+
         with self._lock:
             if self._header is None:
                 return 0
-            
+
             for i in range(n):
                 if self._header.count >= self._header.capacity:
                     self._header.read_pos = (self._header.read_pos + 1) % self._header.capacity
-                
+
                 pos = self._header.write_pos
                 offset = HEADER_SIZE + (pos * SLOT_SIZE)
-                
+
                 header_bytes = struct.pack("<II", int(ids[i]), 1)
                 vec_bytes = vectors[i].astype(np.float32).tobytes()
                 self._shm.buf[offset:offset + 8] = header_bytes
                 self._shm.buf[offset + 8:offset + SLOT_SIZE] = vec_bytes
-                
+
                 self._header.write_pos = (pos + 1) % self._header.capacity
                 if self._header.count < self._header.capacity:
                     self._header.count += 1
                 written += 1
-            
+
             self._header.total_written += written
             self._header.last_write_ts = time.time()
         return written
-    
+
     def read_embedding(self) -> Optional[tuple[int, list[float]]]:
         with self._lock:
             if self._header is None or self._header.count == 0:
                 return None
-            
+
             pos = self._header.read_pos
             offset = HEADER_SIZE + (pos * SLOT_SIZE)
-            
+
             header_bytes = bytes(self._shm.buf[offset:offset + 8])
             memory_id, flags = struct.unpack("<II", header_bytes)
-            
+
             if flags != 1:
                 return None
-            
+
             vector_bytes = bytes(self._shm.buf[offset + 8:offset + SLOT_SIZE])
             vector = list(struct.unpack(f"<{EMBEDDING_DIM}f", vector_bytes))
-            
+
             self._shm.buf[offset + 4:offset + 8] = struct.pack("<I", 0)
-            
+
             self._header.read_pos = (pos + 1) % self._header.capacity
             self._header.count -= 1
             self._header.total_read += 1
             self._header.last_read_ts = time.time()
             return memory_id, vector
-    
+
     def read_batch_numpy(self, max_count: int = 1000) -> tuple[np.ndarray, np.ndarray]:
         with self._lock:
             if self._header is None or self._header.count == 0:
                 return np.array([], dtype=np.int32), np.zeros((0, EMBEDDING_DIM), dtype=np.float32)
-            
+
             count = min(max_count, self._header.count)
             ids = np.zeros(count, dtype=np.int32)
             vectors = np.zeros((count, EMBEDDING_DIM), dtype=np.float32)
-            
+
             for i in range(count):
                 pos = (self._header.read_pos + i) % self._header.capacity
                 offset = HEADER_SIZE + (pos * SLOT_SIZE)
-                
+
                 header_bytes = bytes(self._shm.buf[offset:offset + 8])
                 ids[i], _ = struct.unpack("<II", header_bytes)
-                
+
                 vector_bytes = bytes(self._shm.buf[offset + 8:offset + SLOT_SIZE])
                 vectors[i] = np.frombuffer(vector_bytes, dtype=np.float32)
-                
+
                 self._shm.buf[offset + 4:offset + 8] = struct.pack("<I", 0)
-            
+
             self._header.read_pos = (self._header.read_pos + count) % self._header.capacity
             self._header.count -= count
             self._header.total_read += count
             self._header.last_read_ts = time.time()
             return ids, vectors
-    
+
     def get_stats(self) -> dict:
         with self._lock:
             if self._header is None:
@@ -226,13 +226,13 @@ class SharedMemoryBridge:
                 "total_read": self._header.total_read,
                 "segment_size": SEGMENT_SIZE,
             }
-    
+
     def close(self) -> None:
         self._header = None
         if self._shm:
             self._shm.close()
             self._shm = None
-    
+
     def destroy(self) -> None:
         self.close()
         if self._is_owner:
@@ -243,10 +243,10 @@ class SharedMemoryBridge:
                 logger.info(f"Destroyed shared memory: {self.name}")
             except Exception:
                 pass
-    
+
     def __enter__(self):
         return self
-    
+
     def __exit__(self, *args):
         self.close()
         return False
@@ -263,17 +263,17 @@ def open_bridge() -> SharedMemoryBridge:
 def benchmark_transfer(n_embeddings: int = 1000) -> dict:
     ids = np.arange(n_embeddings, dtype=np.int32)
     vectors = np.random.randn(n_embeddings, EMBEDDING_DIM).astype(np.float32)
-    
+
     bridge = create_bridge()
     try:
         start = time.perf_counter()
         written = bridge.write_batch_numpy(ids, vectors)
         write_time = (time.perf_counter() - start) * 1000
-        
+
         start = time.perf_counter()
         read_ids, read_vecs = bridge.read_batch_numpy(n_embeddings)
         read_time = (time.perf_counter() - start) * 1000
-        
+
         total_time = write_time + read_time
         return {
             "n_embeddings": n_embeddings,

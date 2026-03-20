@@ -109,7 +109,7 @@ class ChariotArchaeologist:
 
         # Initialize output file (clear old run)
         if not self.report_file.exists():
-            with open(self.report_file, "w") as f:
+            with open(self.report_file, "w"):
                 pass
 
         self.stats_data = {"scanned": 0, "found": 0, "errors": 0, "skipped": 0}
@@ -188,7 +188,8 @@ class ChariotArchaeologist:
         dir_path = Path(directory)
         unread = []
         for root, _, files in os.walk(dir_path):
-            if any(ex in root for e in self.exclude_dirs for ex in (e,)): continue
+            if any(ex in root for e in self.exclude_dirs for ex in (e,)):
+                continue
             for file in files:
                 fpath = str(Path(root) / file)
                 if fpath not in self._read_files:

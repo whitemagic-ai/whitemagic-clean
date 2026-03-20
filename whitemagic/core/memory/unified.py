@@ -100,16 +100,16 @@ class UnifiedMemory:
             return None
         if self._holographic_loaded:
             return self._holographic
-        
+
         # Thread-safe lazy loading
         if self._holographic_lock is None:
             import threading
             self._holographic_lock = threading.Lock()
-        
+
         with self._holographic_lock:
             if self._holographic_loaded:
                 return self._holographic
-            
+
             count = 0
             try:
                 coords_map = self.backend.get_all_coords()
@@ -123,7 +123,7 @@ class UnifiedMemory:
                     logger.info(f"🌌 Holographic Index loaded: {count} points (lazy)")
             except Exception as e:
                 logger.info(f"⚠️  Failed to load holographic index: {e}")
-            
+
             return self._holographic
 
     def store(self, content: Any, memory_type: MemoryType | str = MemoryType.SHORT_TERM,
@@ -141,7 +141,7 @@ class UnifiedMemory:
                 memory_type = MemoryType[memory_type.upper()]
             except (KeyError, ValueError):
                 memory_type = MemoryType.SHORT_TERM
-        
+
         metadata = metadata or {}
         enable_surprise_gate = bool(kwargs.pop("enable_surprise_gate", True))
         enable_entity_extraction = bool(kwargs.pop("enable_entity_extraction", True))

@@ -6,10 +6,9 @@ Integrates with Gan Ying bus for real-time awareness.
 
 import logging
 import random
-import time
-from collections import defaultdict, deque
+from collections import deque
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -30,13 +29,13 @@ class ToolUsageMetrics:
 
 class ToolDiscovery:
     """Discover and suggest tools based on context and usage patterns."""
-    
+
     def __init__(self, max_history: int = 1000):
         self.metrics: dict[str, ToolUsageMetrics] = {}
         self.recent_calls: deque[tuple[str, datetime]] = deque(maxlen=max_history)
         self.context_stack: list[str] = []
         self.gan_ying_enabled = False
-        
+
         # Try to connect to Gan Ying bus
         try:
             from whitemagic.core.resonance.gan_ying_enhanced import get_gan_ying_bus
@@ -46,7 +45,7 @@ class ToolDiscovery:
         except Exception as e:
             logger.debug(f"Gan Ying bus not available: {e}")
             self.gan_ying = None
-    
+
     def record_call(
         self,
         tool_name: str,
@@ -56,33 +55,33 @@ class ToolDiscovery:
     ):
         """Record a tool call for pattern analysis."""
         now = datetime.now()
-        
+
         # Initialize metrics if needed
         if tool_name not in self.metrics:
             self.metrics[tool_name] = ToolUsageMetrics(tool_name=tool_name)
-        
+
         metric = self.metrics[tool_name]
-        
+
         # Update metrics
         metric.call_count += 1
         metric.last_called = now
-        
+
         # Update rolling average latency
         if metric.avg_latency_ms == 0:
             metric.avg_latency_ms = latency_ms
         else:
             metric.avg_latency_ms = (metric.avg_latency_ms * 0.9) + (latency_ms * 0.1)
-        
+
         # Update success rate
         if success:
             metric.success_rate = (metric.success_rate * 0.95) + 0.05
         else:
             metric.success_rate = metric.success_rate * 0.95
-        
+
         # Update context tags
         if context_tags:
             metric.context_tags.update(context_tags)
-        
+
         # Track sequential patterns
         if len(self.recent_calls) > 0:
             prev_tool, _ = self.recent_calls[-1]
@@ -93,10 +92,10 @@ class ToolDiscovery:
                 if prev_tool in self.metrics:
                     self.metrics[prev_tool].follows_tools[tool_name] = \
                         self.metrics[prev_tool].follows_tools.get(tool_name, 0) + 1
-        
+
         # Record in history
         self.recent_calls.append((tool_name, now))
-        
+
         # Emit to Gan Ying bus
         if self.gan_ying_enabled:
             try:
@@ -112,12 +111,12 @@ class ToolDiscovery:
                 )
             except Exception:
                 pass
-    
+
     def discover_by_category(self, category: str) -> list[dict[str, Any]]:
         """Discover tools by category."""
         try:
             from whitemagic.tools.tool_surface import get_callable_tool_definitions
-            
+
             tools = [
                 {
                     "name": t.name,
@@ -128,33 +127,33 @@ class ToolDiscovery:
                 for t in get_callable_tool_definitions()
                 if t.category.value == category
             ]
-            
+
             # Sort by usage count
             tools.sort(key=lambda x: x["usage_count"], reverse=True)
             return tools
         except Exception as e:
             logger.error(f"Tool discovery failed: {e}")
             return []
-    
+
     def discover_by_search(self, query: str, limit: int = 10) -> list[dict[str, Any]]:
         """Discover tools by search query."""
         try:
             from whitemagic.tools.tool_surface import get_callable_tool_definitions
-            
+
             query_lower = query.lower()
             tools = []
-            
+
             for t in get_callable_tool_definitions():
                 score = 0
                 if query_lower in t.name.lower():
                     score += 10
                 if query_lower in t.description.lower():
                     score += 5
-                
+
                 # Boost by usage
                 usage = self.metrics.get(t.name, ToolUsageMetrics(t.name))
                 score += min(usage.call_count, 5)
-                
+
                 if score > 0:
                     tools.append({
                         "name": t.name,
@@ -163,13 +162,13 @@ class ToolDiscovery:
                         "score": score,
                         "usage_count": usage.call_count,
                     })
-            
+
             tools.sort(key=lambda x: x["score"], reverse=True)
             return tools[:limit]
         except Exception as e:
             logger.error(f"Tool search failed: {e}")
             return []
-    
+
     def autocast_suggestions(
         self,
         current_context: list[str] | None = None,
@@ -177,7 +176,7 @@ class ToolDiscovery:
         include_random: bool = True,
     ) -> list[dict[str, Any]]:
         """Generate context-aware tool suggestions (autocast).
-        
+
         Suggests tools based on:
         - Sequential patterns (what typically follows recent tools)
         - Context similarity
@@ -186,7 +185,7 @@ class ToolDiscovery:
         """
         suggestions = []
         now = datetime.now()
-        
+
         # Strategy 1: Sequential patterns (40% weight)
         if len(self.recent_calls) > 0:
             last_tool, _ = self.recent_calls[-1]
@@ -202,7 +201,7 @@ class ToolDiscovery:
                             "confidence": min(count / 10.0, 0.9),
                             "strategy": "sequential",
                         })
-        
+
         # Strategy 2: Context similarity (30% weight)
         if current_context:
             context_set = set(current_context)
@@ -216,7 +215,7 @@ class ToolDiscovery:
                             "confidence": min(overlap / len(context_set), 0.8),
                             "strategy": "context",
                         })
-        
+
         # Strategy 3: Underutilized tools (20% weight)
         underutilized = []
         for tool_name, metric in self.metrics.items():
@@ -229,21 +228,21 @@ class ToolDiscovery:
                         "confidence": 0.5,
                         "strategy": "underutilized",
                     })
-        
+
         if underutilized:
             # Pick top 2 underutilized
             underutilized.sort(key=lambda x: self.metrics[x["tool"]].last_called or datetime.min)
             suggestions.extend(underutilized[:2])
-        
+
         # Strategy 4: Random exploration (10% weight)
         if include_random:
             try:
                 from whitemagic.tools.tool_surface import get_callable_tool_definitions
-                
+
                 # Pick 1-2 random tools not in recent calls
                 recent_tool_names = {name for name, _ in self.recent_calls}
                 available = [t.name for t in get_callable_tool_definitions() if t.name not in recent_tool_names]
-                
+
                 if available:
                     num_random = min(2, len(available))
                     random_tools = random.sample(available, num_random)
@@ -256,7 +255,7 @@ class ToolDiscovery:
                         })
             except Exception:
                 pass
-        
+
         # Deduplicate and sort by confidence
         seen = set()
         unique_suggestions = []
@@ -264,19 +263,19 @@ class ToolDiscovery:
             if s["tool"] not in seen:
                 seen.add(s["tool"])
                 unique_suggestions.append(s)
-        
+
         unique_suggestions.sort(key=lambda x: x["confidence"], reverse=True)
-        
+
         # Return top N
         return unique_suggestions[:num_suggestions]
-    
+
     def get_tool_stats(self, tool_name: str) -> dict[str, Any]:
         """Get detailed stats for a specific tool."""
         if tool_name not in self.metrics:
             return {"error": "Tool not found in metrics"}
-        
+
         metric = self.metrics[tool_name]
-        
+
         return {
             "tool": tool_name,
             "call_count": metric.call_count,
@@ -293,31 +292,31 @@ class ToolDiscovery:
                 for t, c in sorted(metric.follows_tools.items(), key=lambda x: x[1], reverse=True)[:5]
             ],
         }
-    
+
     def get_global_stats(self) -> dict[str, Any]:
         """Get global tool usage statistics."""
         total_calls = sum(m.call_count for m in self.metrics.values())
-        
+
         # Most used tools
         most_used = sorted(
             self.metrics.items(),
             key=lambda x: x[1].call_count,
             reverse=True
         )[:10]
-        
+
         # Fastest tools
         fastest = sorted(
             [(name, m) for name, m in self.metrics.items() if m.call_count > 0],
             key=lambda x: x[1].avg_latency_ms
         )[:10]
-        
+
         # Most reliable tools
         most_reliable = sorted(
             [(name, m) for name, m in self.metrics.items() if m.call_count > 5],
             key=lambda x: x[1].success_rate,
             reverse=True
         )[:10]
-        
+
         return {
             "total_tools_tracked": len(self.metrics),
             "total_calls": total_calls,

@@ -32,7 +32,7 @@ class WuXingScheduler:
     """
     Manages the 5-phase operational cycle.
     """
-    
+
     TRANSITIONS = {
         Phase.WOOD: Phase.FIRE,
         Phase.FIRE: Phase.EARTH,
@@ -66,24 +66,24 @@ class WuXingScheduler:
         """
         if self.manual_override:
             return self.state.current
-            
+
         now = datetime.now()
         elapsed = (now - self.state.start_time).total_seconds() / 60.0
         self.state.duration_minutes = elapsed
-        
+
         target_duration = self.PHASE_DURATION_DEFAULTS[self.state.current]
-        
+
         # Check for emergency transitions based on metrics
         if self._check_emergency_earth(metrics):
             self.transition_to(Phase.EARTH, reason="High error rate emergency")
             return Phase.EARTH
-            
+
         # Check for natural time-based transition
         if elapsed >= target_duration:
             next_phase = self.TRANSITIONS[self.state.current]
             self.transition_to(next_phase, reason="Time complete")
             return next_phase
-            
+
         return self.state.current
 
     def transition_to(self, phase: Phase, reason: str = ""):

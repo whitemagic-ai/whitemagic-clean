@@ -16,7 +16,7 @@ Each cycle refines objectives until victory conditions are met.
 import json
 import time
 from dataclasses import dataclass, field, asdict
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Any
 from pathlib import Path
 from enum import Enum
 
@@ -97,7 +97,7 @@ class PipelineState:
     current_phase: PipelinePhase
     current_cycle: int
     total_cycles: int = 0
-    
+
     # Accumulated knowledge across cycles
     scout_findings: List[Dict[str, Any]] = field(default_factory=list)
     discovered_patterns: List[Dict[str, Any]] = field(default_factory=list)
@@ -105,15 +105,15 @@ class PipelineState:
     strategy_simulations: List[StrategySimulation] = field(default_factory=list)
     execution_results: List[Dict[str, Any]] = field(default_factory=list)
     verification_results: List[Dict[str, Any]] = field(default_factory=list)
-    
+
     # Cycle history
     cycle_metrics: List[CycleMetrics] = field(default_factory=list)
-    
+
     # Victory tracking
     victory_achieved: bool = False
     victory_cycle: Optional[int] = None
     stagnation_count: int = 0  # Cycles without progress
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization"""
         return {
@@ -137,26 +137,26 @@ class PipelineState:
 class TacticalPipeline:
     """
     Yin-Yang Tactical Pipeline for cyclical campaign refinement.
-    
+
     Transforms vague objectives into victories through iterative cycles:
     - Each cycle refines objectives, strategies, and execution
     - Yin phases (scout/discover/clarify/plan) gather intelligence
     - Yang phases (execute/verify) manifest and measure
     - Reflect phase learns from results and prepares next cycle
     """
-    
+
     def __init__(self, campaign_codename: str, state_dir: Optional[Path] = None):
         self.campaign_codename = campaign_codename
         self.state_dir = state_dir or Path.home() / ".whitemagic" / "pipeline_state"
         self.state_dir.mkdir(parents=True, exist_ok=True)
-        
+
         self.state = self._load_or_create_state()
         self.current_cycle_metrics: Optional[CycleMetrics] = None
-    
+
     def _load_or_create_state(self) -> PipelineState:
         """Load existing state or create new"""
         state_file = self.state_dir / f"{self.campaign_codename}_pipeline.json"
-        
+
         if state_file.exists():
             with open(state_file, 'r') as f:
                 data = json.load(f)
@@ -184,13 +184,13 @@ class TacticalPipeline:
                 current_phase=PipelinePhase.SCOUT,
                 current_cycle=1,
             )
-    
+
     def save_state(self):
         """Persist pipeline state to disk"""
         state_file = self.state_dir / f"{self.campaign_codename}_pipeline.json"
         with open(state_file, 'w') as f:
             json.dump(self.state.to_dict(), f, indent=2)
-    
+
     def start_cycle(self) -> CycleMetrics:
         """Begin a new cycle"""
         self.current_cycle_metrics = CycleMetrics(
@@ -199,7 +199,7 @@ class TacticalPipeline:
         )
         self.state.current_phase = PipelinePhase.SCOUT
         return self.current_cycle_metrics
-    
+
     def advance_phase(self) -> PipelinePhase:
         """Move to next phase in the cycle"""
         phase_order = [
@@ -211,201 +211,201 @@ class TacticalPipeline:
             PipelinePhase.VERIFY,
             PipelinePhase.REFLECT,
         ]
-        
+
         current_idx = phase_order.index(self.state.current_phase)
         next_idx = (current_idx + 1) % len(phase_order)
-        
+
         # If we've completed REFLECT, start new cycle
         if self.state.current_phase == PipelinePhase.REFLECT:
             self.end_cycle()
             self.state.current_cycle += 1
             self.state.total_cycles += 1
             self.start_cycle()
-        
+
         self.state.current_phase = phase_order[next_idx]
         self.save_state()
         return self.state.current_phase
-    
+
     def end_cycle(self):
         """Complete current cycle and save metrics"""
         if self.current_cycle_metrics:
             self.current_cycle_metrics.end_time = time.time()
             self.state.cycle_metrics.append(self.current_cycle_metrics)
             self.current_cycle_metrics = None
-    
+
     def record_phase_duration(self, phase: PipelinePhase, duration: float):
         """Record how long a phase took"""
         if self.current_cycle_metrics:
             self.current_cycle_metrics.phase_durations[phase.value] = duration
-    
+
     # ========== PHASE 1: SCOUT (YIN) ==========
-    
+
     def scout(self, scout_fn) -> List[Dict[str, Any]]:
         """
         Phase 1: Scout and explore terrain
-        
+
         Args:
             scout_fn: Function that performs scouting (e.g., file scan, DB query)
-        
+
         Returns:
             List of findings from scouting
         """
         start = time.time()
         findings = scout_fn()
-        
+
         self.state.scout_findings.extend(findings)
         if self.current_cycle_metrics:
             self.current_cycle_metrics.findings_count += len(findings)
-        
+
         self.record_phase_duration(PipelinePhase.SCOUT, time.time() - start)
         self.save_state()
         return findings
-    
+
     # ========== PHASE 2: DISCOVER (YIN) ==========
-    
+
     def discover(self, discover_fn) -> List[Dict[str, Any]]:
         """
         Phase 2: Discover patterns and identify gaps
-        
+
         Args:
             discover_fn: Function that analyzes findings and discovers patterns
-        
+
         Returns:
             List of discovered patterns
         """
         start = time.time()
         patterns = discover_fn(self.state.scout_findings)
-        
+
         self.state.discovered_patterns.extend(patterns)
-        
+
         self.record_phase_duration(PipelinePhase.DISCOVER, time.time() - start)
         self.save_state()
         return patterns
-    
+
     # ========== PHASE 3: CLARIFY (YIN) ==========
-    
+
     def clarify(self, clarify_fn) -> List[ObjectiveRefinement]:
         """
         Phase 3: Convert vague objectives → specific + measurable
-        
+
         Args:
             clarify_fn: Function that takes patterns and generates refined objectives
-        
+
         Returns:
             List of refined objectives with metrics
         """
         start = time.time()
         refinements = clarify_fn(self.state.discovered_patterns)
-        
+
         self.state.refined_objectives.extend(refinements)
         if self.current_cycle_metrics:
             self.current_cycle_metrics.objectives_refined += len(refinements)
-        
+
         self.record_phase_duration(PipelinePhase.CLARIFY, time.time() - start)
         self.save_state()
         return refinements
-    
+
     # ========== PHASE 4: PLAN (YIN) ==========
-    
+
     def plan(self, plan_fn) -> List[StrategySimulation]:
         """
         Phase 4: Generate strategies, simulate, rank by consensus
-        
+
         Args:
             plan_fn: Function that generates and simulates strategies
-        
+
         Returns:
             List of strategy simulations ranked by consensus
         """
         start = time.time()
         simulations = plan_fn(self.state.refined_objectives)
-        
+
         # Rank strategies by consensus votes
         simulations.sort(key=lambda s: s.consensus_votes, reverse=True)
         for idx, sim in enumerate(simulations):
             sim.rank = idx + 1
-        
+
         self.state.strategy_simulations = simulations  # Replace with latest
         if self.current_cycle_metrics:
             self.current_cycle_metrics.strategies_generated += len(simulations)
-        
+
         self.record_phase_duration(PipelinePhase.PLAN, time.time() - start)
         self.save_state()
         return simulations
-    
+
     # ========== PHASE 5: EXECUTE (YANG) ==========
-    
+
     def execute(self, execute_fn) -> Dict[str, Any]:
         """
         Phase 5: Deploy parallel armies with top-ranked strategy
-        
+
         Args:
             execute_fn: Function that executes the top strategy
-        
+
         Returns:
             Execution results
         """
         start = time.time()
-        
+
         # Get top-ranked strategy
         if not self.state.strategy_simulations:
             raise ValueError("No strategies available for execution. Run plan() first.")
-        
+
         top_strategy = self.state.strategy_simulations[0]
         results = execute_fn(top_strategy)
-        
+
         self.state.execution_results.append(results)
         if self.current_cycle_metrics:
             self.current_cycle_metrics.clones_deployed += results.get('clones_deployed', 0)
-        
+
         self.record_phase_duration(PipelinePhase.EXECUTE, time.time() - start)
         self.save_state()
         return results
-    
+
     # ========== PHASE 6: VERIFY (YANG) ==========
-    
+
     def verify(self, verify_fn) -> Dict[str, Any]:
         """
         Phase 6: Check victory conditions and measure results
-        
+
         Args:
             verify_fn: Function that verifies victory conditions
-        
+
         Returns:
             Verification results with VCs met/total
         """
         start = time.time()
-        
+
         verification = verify_fn(self.state.execution_results[-1] if self.state.execution_results else {})
-        
+
         self.state.verification_results.append(verification)
         if self.current_cycle_metrics:
             self.current_cycle_metrics.victory_conditions_met = verification.get('vcs_met', 0)
             self.current_cycle_metrics.victory_conditions_total = verification.get('vcs_total', 0)
-        
+
         # Check for victory
         if verification.get('vcs_met', 0) == verification.get('vcs_total', 0) and verification.get('vcs_total', 0) > 0:
             self.state.victory_achieved = True
             self.state.victory_cycle = self.state.current_cycle
-        
+
         self.record_phase_duration(PipelinePhase.VERIFY, time.time() - start)
         self.save_state()
         return verification
-    
+
     # ========== PHASE 7: REFLECT (YIN) ==========
-    
+
     def reflect(self, reflect_fn) -> Dict[str, Any]:
         """
         Phase 7: Learn from cycle, prepare for next iteration
-        
+
         Args:
             reflect_fn: Function that analyzes cycle and generates insights
-        
+
         Returns:
             Reflection insights and recommendations
         """
         start = time.time()
-        
+
         # Gather all cycle data
         cycle_data = {
             'cycle_number': self.state.current_cycle,
@@ -417,9 +417,9 @@ class TacticalPipeline:
             'verification_results': self.state.verification_results,
             'metrics': asdict(self.current_cycle_metrics) if self.current_cycle_metrics else {},
         }
-        
+
         insights = reflect_fn(cycle_data)
-        
+
         # Check for stagnation
         if self.state.verification_results:
             last_vcs = self.state.verification_results[-1].get('vcs_met', 0)
@@ -429,20 +429,20 @@ class TacticalPipeline:
                     self.state.stagnation_count += 1
                 else:
                     self.state.stagnation_count = 0
-        
+
         if self.current_cycle_metrics:
             self.current_cycle_metrics.improvements_from_last_cycle = insights.get('improvements', [])
-        
+
         self.record_phase_duration(PipelinePhase.REFLECT, time.time() - start)
         self.save_state()
         return insights
-    
+
     # ========== UTILITY METHODS ==========
-    
+
     def get_current_polarity(self) -> YinYang:
         """Get current phase polarity (Yin or Yang)"""
         return PHASE_POLARITY[self.state.current_phase]
-    
+
     def get_cycle_summary(self) -> Dict[str, Any]:
         """Get summary of current cycle"""
         return {
@@ -458,7 +458,7 @@ class TacticalPipeline:
             'victory_achieved': self.state.victory_achieved,
             'stagnation_count': self.state.stagnation_count,
         }
-    
+
     def should_continue(self, max_cycles: int = 10, max_stagnation: int = 3) -> bool:
         """Determine if pipeline should continue cycling"""
         if self.state.victory_achieved:
@@ -468,38 +468,38 @@ class TacticalPipeline:
         if self.state.stagnation_count >= max_stagnation:
             return False
         return True
-    
+
     def get_progress_report(self) -> str:
         """Generate human-readable progress report"""
         lines = [
             f"=== Tactical Pipeline: {self.campaign_codename} ===",
             f"Cycle: {self.state.current_cycle}/{self.state.total_cycles}",
             f"Phase: {self.state.current_phase.value.upper()} ({self.get_current_polarity().value})",
-            f"",
-            f"Intelligence Gathered:",
+            "",
+            "Intelligence Gathered:",
             f"  Scout findings: {len(self.state.scout_findings)}",
             f"  Patterns discovered: {len(self.state.discovered_patterns)}",
             f"  Objectives refined: {len(self.state.refined_objectives)}",
             f"  Strategies simulated: {len(self.state.strategy_simulations)}",
-            f"",
-            f"Execution:",
+            "",
+            "Execution:",
             f"  Deployments: {len(self.state.execution_results)}",
             f"  Verifications: {len(self.state.verification_results)}",
         ]
-        
+
         if self.state.verification_results:
             last_verify = self.state.verification_results[-1]
             vcs_met = last_verify.get('vcs_met', 0)
             vcs_total = last_verify.get('vcs_total', 0)
             lines.append(f"  Victory Conditions: {vcs_met}/{vcs_total} ({100*vcs_met/vcs_total if vcs_total > 0 else 0:.1f}%)")
-        
+
         lines.extend([
-            f"",
-            f"Status:",
+            "",
+            "Status:",
             f"  Victory: {'✅ ACHIEVED' if self.state.victory_achieved else '🔄 In Progress'}",
             f"  Stagnation: {self.state.stagnation_count} cycles",
         ])
-        
+
         return "\n".join(lines)
 
 

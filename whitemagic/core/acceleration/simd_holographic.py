@@ -75,6 +75,26 @@ def _load_lib() -> Any:
             ]
             lib.wm_holographic_5d_distance.restype = ctypes.c_float
 
+            # Circular Convolution (HRR Bind)
+            if hasattr(lib, "simd_circular_convolution"):
+                lib.simd_circular_convolution.argtypes = [
+                    ctypes.POINTER(ctypes.c_float),
+                    ctypes.POINTER(ctypes.c_float),
+                    ctypes.c_size_t,
+                    ctypes.POINTER(ctypes.c_float),
+                ]
+                lib.simd_circular_convolution.restype = None
+
+            # Circular Correlation (HRR Unbind)
+            if hasattr(lib, "simd_circular_correlation"):
+                lib.simd_circular_correlation.argtypes = [
+                    ctypes.POINTER(ctypes.c_float),
+                    ctypes.POINTER(ctypes.c_float),
+                    ctypes.c_size_t,
+                    ctypes.POINTER(ctypes.c_float),
+                ]
+                lib.simd_circular_correlation.restype = None
+
             _lib = lib
             _HAS_ZIG = True
             logger.info("Zig SIMD holographic 5D loaded: path=%s", path)
@@ -97,10 +117,7 @@ def holographic_5d_distance(
     b: tuple[float, ...],
     weights: tuple[float, ...] = _DEFAULT_WEIGHTS,
 ) -> float:
-    """Compute weighted 5D distance between two holographic coordinates.
-
-    Uses Zig SIMD acceleration when available, pure Python fallback otherwise.
-    """
+    """Compute weighted 5D distance between two holographic coordinates."""
     lib = _load_lib()
     if lib is not None:
         try:
@@ -111,8 +128,45 @@ def holographic_5d_distance(
         except Exception as e:
             logger.debug("Zig holographic_5d_distance failed, using Python: %s", e)
 
-    # Python fallback: weighted Euclidean distance
     return _py_weighted_distance(a, b, weights)
+
+
+def circular_convolution(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """SIMD-accelerated circular convolution via Zig."""
+    dim = len(a)
+    lib = _load_lib()
+    if lib is not None and hasattr(lib, "simd_circular_convolution"):
+        try:
+            out = np.zeros(dim, dtype=np.float32)
+            a_ptr = a.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+            b_ptr = b.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+            out_ptr = out.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+            lib.simd_circular_convolution(a_ptr, b_ptr, dim, out_ptr)
+            return out
+        except Exception as e:
+            logger.debug("Zig circular_convolution failed: %s", e)
+    
+    # Fallback to FFT
+    return np.real(np.fft.ifft(np.fft.fft(a) * np.fft.fft(b))).astype(np.float32)
+
+
+def circular_correlation(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """SIMD-accelerated circular correlation via Zig."""
+    dim = len(a)
+    lib = _load_lib()
+    if lib is not None and hasattr(lib, "simd_circular_correlation"):
+        try:
+            out = np.zeros(dim, dtype=np.float32)
+            a_ptr = a.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+            b_ptr = b.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+            out_ptr = out.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+            lib.simd_circular_correlation(a_ptr, b_ptr, dim, out_ptr)
+            return out
+        except Exception as e:
+            logger.debug("Zig circular_correlation failed: %s", e)
+            
+    # Fallback to FFT correlation
+    return np.real(np.fft.ifft(np.conj(np.fft.fft(b)) * np.fft.fft(a))).astype(np.float32)
 
 
 def _py_weighted_distance(

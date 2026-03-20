@@ -15,7 +15,7 @@ Metrics exposed:
 Usage:
     from whitemagic.core.monitoring.prometheus_export import start_prometheus_server
     start_prometheus_server()  # Starts HTTP server on port 9090
-    
+
     # Or configure via environment:
     # WM_PROMETHEUS_PORT=9090 WM_PROMETHEUS_ENABLED=1
 """
@@ -25,7 +25,6 @@ from __future__ import annotations
 import logging
 import os
 import threading
-import time
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -33,7 +32,7 @@ logger = logging.getLogger(__name__)
 # Try to import prometheus_client
 HAS_PROMETHEUS = False
 try:
-    from prometheus_client import Counter, Gauge, Histogram, start_http_server, REGISTRY
+    from prometheus_client import Counter, Gauge, Histogram, start_http_server
     HAS_PROMETHEUS = True
 except ImportError:
     pass
@@ -72,7 +71,7 @@ class PrometheusMetrics:
 
             # Tool error counter
             self._tool_errors = Counter(
-                "whitemagic_tool_errors_total", 
+                "whitemagic_tool_errors_total",
                 "Total tool errors",
                 ["tool"]
             )
@@ -120,7 +119,7 @@ class PrometheusMetrics:
         """Start Prometheus HTTP server."""
         if not self._enabled or not HAS_PROMETHEUS:
             return False
-        
+
         if self._server_started:
             return True
 

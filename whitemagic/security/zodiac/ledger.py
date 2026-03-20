@@ -66,7 +66,7 @@ class ZodiacEntry:
 
 class ZodiacLedger:
     """In-memory and persistent cryptographic ledger."""
-    
+
     def __init__(self, db_manager=None):
         self._chain: List[ZodiacEntry] = []
         self._genesis_hash = hashlib.sha256(b"WHITEMAGIC_GENESIS_v16").hexdigest()
@@ -75,9 +75,9 @@ class ZodiacLedger:
         self._lock = __import__('threading').Lock()
 
     def record_action(
-        self, 
-        actor_id: str, 
-        action_type: str, 
+        self,
+        actor_id: str,
+        action_type: str,
         payload: Dict[str, Any],
         context_id: Optional[str] = None,
         consent_token: Optional[str] = None
@@ -94,10 +94,10 @@ class ZodiacLedger:
                 context_id=context_id,
                 consent_token=consent_token
             )
-            
+
             self._chain.append(entry)
             self._current_tail = entry.hash_signature
-            
+
             # Persist to SQLite ledger table via db_manager
             try:
                 db_path = "/home/lucas/.whitemagic/memory/whitemagic.db"
@@ -117,7 +117,7 @@ class ZodiacLedger:
             except Exception as e:
                 import logging
                 logging.getLogger(__name__).error(f"Failed to persist zodiac entry: {e}")
-                
+
             return entry
 
     def verify_chain(self) -> bool:
@@ -125,16 +125,16 @@ class ZodiacLedger:
         with self._lock:
             if not self._chain:
                 return True
-                
+
             expected_parent = self._genesis_hash
-            
+
             for entry in self._chain:
                 if entry.parent_hash != expected_parent:
                     return False
                 if entry.hash_signature != entry._calculate_hash():
                     return False
                 expected_parent = entry.hash_signature
-                
+
             return True
 
 # Global singleton accessor

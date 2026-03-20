@@ -361,12 +361,12 @@ def analyze_file_for_garden(
     4. Import patterns
     """
     path_lower = file_path.lower()
-    
+
     # Start with path-based hint
     primary_garden = "mystery"  # default
     confidence = 0.0
     reason = "default"
-    
+
     # Check path hints first (highest confidence for structural organization)
     for hint_path, garden in PATH_GARDEN_HINTS.items():
         if hint_path.lower() in path_lower:
@@ -374,30 +374,30 @@ def analyze_file_for_garden(
             confidence = 0.8
             reason = f"path_hint:{hint_path}"
             break
-    
+
     # Analyze content if available
     if content:
         content_lower = content.lower()
-        
+
         # Calculate resonance scores for each garden
         garden_scores: dict[str, float] = {}
-        
+
         for garden, data in GARDEN_KEYWORDS.items():
             score = 0.0
-            
+
             # Keyword matches
             for kw in data.get("keywords", []):
                 if kw in content_lower:
                     score += 1.0
-            
+
             # Path matches
             for path_hint in data.get("paths", []):
                 if path_hint in path_lower:
                     score += 2.0  # Path matches are stronger
-            
+
             if score > 0:
                 garden_scores[garden] = score
-        
+
         # Use resonance calculation from registry
         resonance = calculate_resonance(content[:1000] if len(content) > 1000 else content)
         for garden, res_data in resonance.items():
@@ -405,18 +405,18 @@ def analyze_file_for_garden(
                 garden_scores[garden] += res_data.get("score", 0) * 0.5
             else:
                 garden_scores[garden] = res_data.get("score", 0) * 0.5
-        
+
         # Pick highest scoring garden
         if garden_scores:
             best_garden = max(garden_scores.keys(), key=lambda g: garden_scores[g])
             best_score = garden_scores[best_garden]
-            
+
             # Only override path hint if content score is significantly higher
             if best_score > 3.0 or confidence < 0.5:
                 primary_garden = best_garden
                 confidence = min(0.95, best_score / 10.0)
                 reason = f"content_analysis:score={best_score:.1f}"
-    
+
     # Analyze function names if available
     if public_functions:
         func_text = " ".join(public_functions).lower()
@@ -426,14 +426,14 @@ def analyze_file_for_garden(
                     if garden != primary_garden:
                         # Add as resonant garden
                         pass
-    
+
     # Get garden metadata from registry
     garden_entry = get_by_garden(primary_garden)
     quadrant = garden_entry.quadrant.value if garden_entry else ""
     element = garden_entry.element.value if garden_entry else ""
     gana = garden_entry.gana if garden_entry else ""
     gana_tool = garden_entry.gana_tool if garden_entry else ""
-    
+
     # Determine file type
     ext = Path(file_path).suffix
     file_type_map = {
@@ -458,12 +458,12 @@ def analyze_file_for_garden(
         ".sh": "shell",
     }
     file_type = file_type_map.get(ext, ext.lstrip(".") if ext else "unknown")
-    
+
     # Count LOC if content available
     loc_count = 0
     if content:
         loc_count = len([line for line in content.split("\n") if line.strip() and not line.strip().startswith("#")])
-    
+
     return FileGardenMapping(
         file_path=file_path,
         primary_garden=primary_garden,

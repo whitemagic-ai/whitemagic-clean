@@ -39,17 +39,17 @@ class LatencyStats:
     samples: deque = field(default_factory=lambda: deque(maxlen=100))
     total_calls: int = 0
     total_time_us: float = 0.0
-    
+
     def record(self, latency_us: float) -> None:
         self.samples.append(latency_us)
         self.total_calls += 1
         self.total_time_us += latency_us
-    
+
     def avg_us(self) -> float:
         if not self.samples:
             return 0.0
         return sum(self.samples) / len(self.samples)
-    
+
     def p95_us(self) -> float:
         if not self.samples:
             return 0.0
@@ -67,7 +67,7 @@ class OperationProfile:
     chain_benefit: bool
     base_complexity: float  # 0.0-1.0
     latency_stats: LatencyStats = field(default_factory=LatencyStats)
-    
+
     @property
     def complexity_score(self) -> float:
         """Dynamic complexity based on runtime performance."""
@@ -86,7 +86,7 @@ OPERATION_PROFILES = {
     "prat_route": OperationProfile("prat_route", False, False, False, 0.1),
     "resonance_predecessor": OperationProfile("resonance_predecessor", False, False, False, 0.1),
     "resonance_successor": OperationProfile("resonance_successor", False, False, False, 0.1),
-    
+
     # Stateful operations - Koka safe path
     "circuit_check": OperationProfile("circuit_check", True, True, False, 0.6),
     "circuit_record": OperationProfile("circuit_record", True, True, False, 0.7),
@@ -97,7 +97,7 @@ OPERATION_PROFILES = {
 
 class PythonFastPath:
     """Python in-memory implementations for simple operations."""
-    
+
     TOOL_TO_GANA = {
         "search_memories": "gana_winnowing_basket",
         "gnosis": "gana_ghost",
@@ -107,7 +107,7 @@ class PythonFastPath:
         "consolidate": "gana_abundance",
         "synthesize": "gana_three_stars",
     }
-    
+
     GANA_ORDER = [
         "gana_horn", "gana_neck", "gana_root", "gana_room", "gana_heart",
         "gana_tail", "gana_winnowing_basket", "gana_ghost", "gana_willow",
@@ -118,17 +118,17 @@ class PythonFastPath:
         "gana_encampment", "gana_wall"
     ]
     GANA_INDEX = {name: i for i, name in enumerate(GANA_ORDER)}
-    
+
     circuit_state = {"state": "closed", "failures": 0, "successes": 0, "threshold": 5}
     dream_state = {"phase": "dormant", "cycles": 0, "memories": 0, "insights": 0}
-    
+
     @classmethod
     def prat_route(cls, tool: str) -> str:
         try:
             return rs.prat_route(tool)
         except Exception:
             return cls.TOOL_TO_GANA.get(tool, "gana_ghost")
-    
+
     @classmethod
     def get_predecessor(cls, gana: str) -> str:
         try:
@@ -136,7 +136,7 @@ class PythonFastPath:
         except Exception:
             idx = cls.GANA_INDEX.get(gana, 0)
             return cls.GANA_ORDER[(idx - 1) % 28]
-    
+
     @classmethod
     def get_successor(cls, gana: str) -> str:
         try:
@@ -144,11 +144,11 @@ class PythonFastPath:
         except Exception:
             idx = cls.GANA_INDEX.get(gana, 0)
             return cls.GANA_ORDER[(idx + 1) % 28]
-    
+
     @classmethod
     def circuit_check(cls) -> str:
         return cls.circuit_state["state"]
-    
+
     @classmethod
     def circuit_record_success(cls) -> str:
         cls.circuit_state["successes"] += 1
@@ -156,7 +156,7 @@ class PythonFastPath:
             cls.circuit_state["state"] = "closed"
             cls.circuit_state["failures"] = 0
         return "ok"
-    
+
     @classmethod
     def circuit_record_failure(cls) -> str:
         cls.circuit_state["failures"] += 1
@@ -169,7 +169,7 @@ class PythonFastPath:
 
 class KokaProcess:
     """Manages a persistent Koka IPC process with health tracking."""
-    
+
     def __init__(self, binary_name: str, pool_id: int = 0):
         self.binary_name = binary_name
         self.binary_path = KOKA_DIR / binary_name
@@ -179,7 +179,7 @@ class KokaProcess:
         self._healthy = True
         self._call_count = 0
         self._last_error: str | None = None
-    
+
     def start(self) -> bool:
         """Start the persistent process. Returns True if started."""
         with self._lock:
@@ -230,14 +230,14 @@ class KokaProcess:
                 except (ProcessLookupError, OSError):
                     pass
         self._proc = None
-    
+
     def call(self, request: dict) -> dict:
         """Send request and get response."""
         with self._lock:
             if self._proc is None:
                 if not self.start():
                     return {"error": "Process not available", "healthy": False}
-            
+
             try:
                 self._proc.stdin.write(json.dumps(request) + '\n')
                 self._proc.stdin.flush()
@@ -254,14 +254,14 @@ class KokaProcess:
                 self._last_error = str(e)
                 self._reset_process()
                 return {"error": str(e), "healthy": False}
-    
+
     def batch(self, requests: list[dict]) -> list[dict]:
         """Send multiple requests in sequence (single IPC overhead)."""
         results = []
         with self._lock:
             if self._proc is None and not self.start():
                 return [{"error": "Process not available"} for _ in requests]
-            
+
             try:
                 for req in requests:
                     self._proc.stdin.write(json.dumps(req) + '\n')
@@ -282,13 +282,13 @@ class KokaProcess:
                 # Fill remaining with errors
                 while len(results) < len(requests):
                     results.append({"error": str(e)})
-        
+
         return results
-    
+
     @property
     def is_healthy(self) -> bool:
         return self._healthy and self._proc is not None
-    
+
     def stop(self) -> None:
         with self._lock:
             if self._proc:
@@ -298,7 +298,7 @@ class KokaProcess:
                     pass
                 self._proc = None
             self._healthy = False
-    
+
     def stats(self) -> dict:
         return {
             "binary": self.binary_name,
@@ -311,7 +311,7 @@ class KokaProcess:
 
 class KokaProcessPool:
     """Pool of Koka processes for parallel execution."""
-    
+
     def __init__(self, binary_name: str, pool_size: int = 2):
         self.binary_name = binary_name
         self.pool_size = pool_size
@@ -319,62 +319,62 @@ class KokaProcessPool:
         self._executor = ThreadPoolExecutor(max_workers=pool_size)
         self._current_idx = 0
         self._lock = threading.Lock()
-    
+
     def start(self) -> None:
         """Start all processes in pool."""
         for i in range(self.pool_size):
             proc = KokaProcess(self.binary_name, pool_id=i)
             proc.start()
             self._processes.append(proc)
-    
+
     def call(self, request: dict) -> dict:
         """Route to next available process (round-robin)."""
         with self._lock:
             if not self._processes:
                 self.start()
-            
+
             # Find healthy process
             for _ in range(len(self._processes)):
                 proc = self._processes[self._current_idx]
                 self._current_idx = (self._current_idx + 1) % len(self._processes)
                 if proc.is_healthy:
                     return proc.call(request)
-            
+
             # All unhealthy, try restart
             for proc in self._processes:
                 proc.start()
                 if proc.is_healthy:
                     return proc.call(request)
-            
+
             return {"error": "No healthy processes"}
-    
+
     def call_parallel(self, requests: list[dict]) -> list[dict]:
         """Execute multiple requests in parallel across pool."""
         if not self._processes:
             self.start()
-        
+
         futures: list[Future] = []
         results = [None] * len(requests)
-        
+
         for i, req in enumerate(requests):
             proc_idx = i % len(self._processes)
             future = self._executor.submit(self._processes[proc_idx].call, req)
             futures.append((i, future))
-        
+
         for i, future in futures:
             try:
                 results[i] = future.result(timeout=_DEFAULT_PARALLEL_CALL_TIMEOUT_S)
             except Exception as e:
                 results[i] = {"error": f"parallel call failed: {e}"}
-        
+
         return results
-    
+
     def stop(self) -> None:
         for proc in self._processes:
             proc.stop()
         self._processes.clear()
         self._executor.shutdown(wait=False)
-    
+
     def stats(self) -> dict:
         return {
             "binary": self.binary_name,
@@ -385,7 +385,7 @@ class KokaProcessPool:
 
 class HybridDispatcherV2:
     """Enhanced adaptive dispatcher with runtime adaptation, batching, and pooling."""
-    
+
     def __init__(
         self,
         mode: DispatchMode = DispatchMode.ADAPTIVE,
@@ -398,38 +398,38 @@ class HybridDispatcherV2:
         self.pool_size = pool_size
         self.latency_threshold = latency_threshold_us
         self.enable_predictive_warm = enable_predictive_warm
-        
+
         self._koka_pools: dict[str, KokaProcessPool] = {}
         self._python_stats = LatencyStats()
         self._koka_stats = LatencyStats()
         self._warm_started = False
-        
+
         # Predictive pre-warming state
         self._operation_history: deque = deque(maxlen=50)
         self._predicted_binaries: set[str] = set()
-        
+
         # Circuit breaker fallback state
         self._koka_healthy = True
         self._koka_failure_count = 0
         self._koka_failure_threshold = 3
         self._fallback_mode = False
-        
+
         if warm_start:
             self._do_warm_start()
-    
+
     def _do_warm_start(self) -> None:
         """Pre-initialize Koka processes for common binaries."""
         if self._warm_started:
             return
-        
+
         # Start pools for commonly used binaries
         for binary in ["circuit", "resonance", "dream_cycle", "gan_ying", "hot_paths", "unified_runtime"]:
             pool = KokaProcessPool(binary, pool_size=self.pool_size)
             pool.start()
             self._koka_pools[binary] = pool
-        
+
         self._warm_started = True
-    
+
     def _predict_next_binaries(self, operation: str) -> list[str]:
         """Predict which binaries will likely be needed next based on operation patterns."""
         # Operation -> likely next binaries mapping
@@ -442,33 +442,33 @@ class HybridDispatcherV2:
             "dream_phase": ["dream_cycle", "gan_ying"],
             "dream_run": ["dream_cycle", "gan_ying", "hot_paths"],
         }
-        
+
         # Record operation for pattern analysis
         self._operation_history.append(operation)
-        
+
         # Get predicted binaries
         predicted = prediction_map.get(operation, [])
-        
+
         # Also analyze recent history for patterns
         if len(self._operation_history) >= 3:
             recent = list(self._operation_history)[-3:]
             # If we see circuit ops followed by dream ops, pre-warm unified_runtime
             if any("circuit" in op for op in recent) and any("dream" in op for op in recent):
                 predicted.append("unified_runtime")
-        
+
         return predicted
-    
+
     def _pre_warm_binaries(self, binaries: list[str]) -> None:
         """Pre-warm predicted binaries if not already warm."""
         if not self.enable_predictive_warm:
             return
-        
+
         for binary in binaries:
             if binary not in self._koka_pools:
                 pool = KokaProcessPool(binary, pool_size=1)  # Single process for predicted
                 pool.start()
                 self._koka_pools[binary] = pool
-    
+
     def _check_koka_health(self) -> bool:
         """Check if Koka processes are healthy, update fallback mode."""
         if self._fallback_mode:
@@ -478,30 +478,30 @@ class HybridDispatcherV2:
                 self._koka_healthy = True
                 return True
             return False
-        
+
         # Check pool health
         healthy_pools = 0
         total_pools = len(self._koka_pools)
-        
+
         for pool in self._koka_pools.values():
             if pool._processes and all(p.is_healthy for p in pool._processes):
                 healthy_pools += 1
-        
+
         self._koka_healthy = healthy_pools > 0 or total_pools == 0
         return self._koka_healthy
-    
+
     def _record_koka_failure(self) -> None:
         """Record Koka failure for circuit breaker."""
         self._koka_failure_count += 1
         if self._koka_failure_count >= self._koka_failure_threshold:
             self._fallback_mode = True
             self._koka_healthy = False
-    
+
     def _record_koka_success(self) -> None:
         """Record Koka success for circuit breaker recovery."""
         if self._koka_failure_count > 0:
             self._koka_failure_count -= 1
-    
+
     def _should_use_koka(self, operation: str) -> bool:
         """Decide whether to use Koka based on mode, complexity, and runtime perf."""
         # Check circuit breaker fallback
@@ -513,13 +513,13 @@ class HybridDispatcherV2:
                 pass
             else:
                 return False
-        
-        
+
+
         if self.mode == DispatchMode.SPEED:
             return False
         if self.mode == DispatchMode.SAFETY:
             return True
-        
+
         # Adaptive: consider complexity and runtime latency
         profile = OPERATION_PROFILES.get(operation)
         if profile:
@@ -530,7 +530,7 @@ class HybridDispatcherV2:
                 return profile.complexity_score > 0.8
             return profile.complexity_score > 0.5
         return False
-    
+
     def _get_pool(self, binary: str) -> KokaProcessPool:
         """Get or create process pool for binary."""
         if binary not in self._koka_pools:
@@ -538,7 +538,7 @@ class HybridDispatcherV2:
             pool.start()
             self._koka_pools[binary] = pool
         return self._koka_pools[binary]
-    
+
     def _record_latency(self, is_koka: bool, latency_us: float, operation: str, success: bool = True) -> None:
         """Record latency for runtime adaptation."""
         if is_koka:
@@ -551,26 +551,26 @@ class HybridDispatcherV2:
                 self._record_koka_failure()
         else:
             self._python_stats.record(latency_us)
-        
+
         # Predictive pre-warming
         predicted = self._predict_next_binaries(operation)
         self._pre_warm_binaries(predicted)
-    
+
     # ── PRAT Routing ─────────────────────────────────────────────────────────
-    
+
     def prat_route(self, tool: str) -> str:
         operation = "prat_route"
         start = time.perf_counter()
-        
+
         try:
             result = rs.prat_route(tool)
         except Exception:
             result = PythonFastPath.prat_route(tool)
-            
+
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(False, latency, operation)
         return result
-    
+
     def prat_route_batch(self, tools: list[str]) -> list[str]:
         """Route multiple tools in batch"""
         start = time.perf_counter()
@@ -578,13 +578,13 @@ class HybridDispatcherV2:
             results = rs.prat_route_batch(tools)
         except Exception:
             results = [PythonFastPath.prat_route(t) for t in tools]
-            
+
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(False, latency / max(1, len(tools)), "prat_route")
         return results
-    
+
     # ── Resonance ───────────────────────────────────────────────────────────
-    
+
     def get_predecessor(self, gana: str) -> str:
         operation = "resonance_predecessor"
         start = time.perf_counter()
@@ -592,11 +592,11 @@ class HybridDispatcherV2:
             result = rs.resonance_predecessor(gana)
         except Exception:
             result = PythonFastPath.get_predecessor(gana)
-            
+
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(False, latency, operation)
         return result
-    
+
     def get_successor(self, gana: str) -> str:
         operation = "resonance_successor"
         start = time.perf_counter()
@@ -604,17 +604,17 @@ class HybridDispatcherV2:
             result = rs.resonance_successor(gana)
         except Exception:
             result = PythonFastPath.get_successor(gana)
-            
+
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(False, latency, operation)
         return result
-    
+
     # ── Circuit Breaker ─────────────────────────────────────────────────────
-    
+
     def circuit_check(self) -> str:
         operation = "circuit_check"
         use_koka = self._should_use_koka(operation)
-        
+
         start = time.perf_counter()
         if use_koka:
             result = self._get_pool("circuit").call({"op": "check"})
@@ -626,11 +626,11 @@ class HybridDispatcherV2:
             latency = (time.perf_counter() - start) * 1_000_000
             self._record_latency(False, latency, operation)
             return result
-    
+
     def circuit_record_failure(self) -> str:
         operation = "circuit_record"
         use_koka = self._should_use_koka(operation)
-        
+
         start = time.perf_counter()
         if use_koka:
             result = self._get_pool("circuit").call({"op": "failure"})
@@ -642,11 +642,11 @@ class HybridDispatcherV2:
             latency = (time.perf_counter() - start) * 1_000_000
             self._record_latency(False, latency, operation)
             return result
-    
+
     def circuit_record_success(self) -> str:
         operation = "circuit_record"
         use_koka = self._should_use_koka(operation)
-        
+
         start = time.perf_counter()
         if use_koka:
             result = self._get_pool("circuit").call({"op": "success"})
@@ -658,9 +658,9 @@ class HybridDispatcherV2:
             latency = (time.perf_counter() - start) * 1_000_000
             self._record_latency(False, latency, operation)
             return result
-    
+
     # ── Dream Cycle ─────────────────────────────────────────────────────────
-    
+
     def dream_run(self) -> dict:
         """Run dream cycle (always Koka for effect handling)."""
         start = time.perf_counter()
@@ -668,19 +668,19 @@ class HybridDispatcherV2:
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(True, latency, "dream_run")
         return result
-    
+
     def dream_status(self) -> dict:
         start = time.perf_counter()
         result = self._get_pool("dream_cycle").call({"op": "status"})
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(True, latency, "dream_phase")
         return result
-    
+
     # ── Batch Operations ─────────────────────────────────────────────────────
-    
+
     def batch_circuit_ops(self, operations: list[dict]) -> list[dict]:
         """Execute multiple circuit operations in batch.
-        
+
         operations: [{"op": "check"}, {"op": "failure"}, {"op": "success"}, ...]
         """
         start = time.perf_counter()
@@ -688,19 +688,19 @@ class HybridDispatcherV2:
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(True, latency / len(operations), "circuit_check")
         return results
-    
+
     def batch_resonance(self, ganas: list[str]) -> list[dict]:
         """Get predecessor/successor for multiple ganas in batch."""
         requests = []
         for gana in ganas:
             requests.append({"op": "predecessor", "gana": gana})
             requests.append({"op": "successor", "gana": gana})
-        
+
         start = time.perf_counter()
         results = self._get_pool("resonance").call_parallel(requests)
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(True, latency / len(ganas), "resonance_predecessor")
-        
+
         # Pair up results
         paired = []
         for i in range(0, len(results), 2):
@@ -710,9 +710,9 @@ class HybridDispatcherV2:
                 "successor": results[i + 1].get("successor", "gana_horn"),
             })
         return paired
-    
+
     # ── Lifecycle ────────────────────────────────────────────────────────────
-    
+
     @contextmanager
     def session(self) -> Generator["HybridDispatcherV2", None, None]:
         """Context manager for session with cleanup."""
@@ -720,13 +720,13 @@ class HybridDispatcherV2:
             yield self
         finally:
             self.close()
-    
+
     def close(self) -> None:
         """Close all Koka process pools."""
         for pool in self._koka_pools.values():
             pool.stop()
         self._koka_pools.clear()
-    
+
     def stats(self) -> dict:
         """Get comprehensive statistics."""
         return {
@@ -749,7 +749,7 @@ class HybridDispatcherV2:
             "predictive_warm": self.enable_predictive_warm,
             "predicted_binaries": list(self._predicted_binaries),
         }
-    
+
     # Unified Fast Brain Hook
     def check_unified_fast_brain(self) -> dict:
         """Poll the Unified Fast Brain for its status via Elixir or direct Koka check."""
@@ -766,7 +766,7 @@ class HybridDispatcherV2:
         """Check health of all Koka processes."""
         healthy = True
         details = {}
-        
+
         for name, pool in self._koka_pools.items():
             pool_healthy = all(p.is_healthy for p in pool._processes)
             details[name] = {
@@ -775,7 +775,7 @@ class HybridDispatcherV2:
             }
             if not pool_healthy:
                 healthy = False
-        
+
         return {
             "overall_healthy": healthy,
             "pools": details,

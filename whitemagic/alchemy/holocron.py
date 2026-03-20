@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 class Holocron:
     """The Holocron stores Golden Rules."""
-    
+
     DEFAULT_PATH = Path.home() / ".whitemagic" / "wisdom" / "holocron.json"
 
     def __init__(self, path: Path = None):
@@ -44,7 +44,7 @@ class Holocron:
         if not self.path.exists():
             logger.warning(f"Holocron not found at {self.path}")
             return
-        
+
         try:
             with open(self.path, "r") as f:
                 data = json.load(f)
@@ -63,7 +63,7 @@ class Holocron:
         """
         if not self.rules:
             return []
-            
+
         # Simple scoring based on word overlap
         context_words = set(context.lower().split())
         scored = []
@@ -71,6 +71,6 @@ class Holocron:
             title_words = set(rule.get("title", "").lower().split())
             score = len(context_words.intersection(title_words))
             scored.append((score, rule))
-            
+
         scored.sort(key=lambda x: x[0], reverse=True)
         return [r for s, r in scored[:limit] if s > 0]

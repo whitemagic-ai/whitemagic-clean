@@ -18,6 +18,8 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Generator
+import queue
+import threading
 
 KOKA_DIR = Path(__file__).parent.parent / "whitemagic-koka"
 _DEFAULT_HYBRID_PROCESS_TIMEOUT_S = 5.0
@@ -45,7 +47,7 @@ OPERATION_PROFILES = {
     "prat_route": OperationProfile("prat_route", False, False, False, 0.1),
     "resonance_predecessor": OperationProfile("resonance_predecessor", False, False, False, 0.1),
     "resonance_successor": OperationProfile("resonance_successor", False, False, False, 0.1),
-    
+
     # Stateful operations - Koka safe path
     "circuit_check": OperationProfile("circuit_check", True, True, False, 0.6),
     "circuit_record": OperationProfile("circuit_record", True, True, False, 0.7),
@@ -56,7 +58,7 @@ OPERATION_PROFILES = {
 
 class PythonFastPath:
     """Python in-memory implementations for simple operations."""
-    
+
     # PRAT routing table
     TOOL_TO_GANA = {
         "search_memories": "gana_winnowing_basket",
@@ -67,7 +69,7 @@ class PythonFastPath:
         "consolidate": "gana_abundance",
         "synthesize": "gana_three_stars",
     }
-    
+
     # Gana order for predecessor/successor
     GANA_ORDER = [
         "gana_horn", "gana_neck", "gana_root", "gana_room", "gana_heart",
@@ -79,7 +81,7 @@ class PythonFastPath:
         "gana_encampment", "gana_wall"
     ]
     GANA_INDEX = {name: i for i, name in enumerate(GANA_ORDER)}
-    
+
     # Circuit breaker state
     circuit_state = {
         "state": "closed",
@@ -88,7 +90,7 @@ class PythonFastPath:
         "threshold": 5,
         "timeout_ms": 30000,
     }
-    
+
     # Dream cycle state
     dream_state = {
         "phase": "dormant",
@@ -96,30 +98,30 @@ class PythonFastPath:
         "memories": 0,
         "insights": 0,
     }
-    
+
     @classmethod
     def prat_route(cls, tool: str) -> str:
         """Route tool to Gana (sub-µs)."""
         return cls.TOOL_TO_GANA.get(tool, "gana_ghost")
-    
+
     @classmethod
     def get_predecessor(cls, gana: str) -> str:
         """Get predecessor Gana (sub-µs)."""
         idx = cls.GANA_INDEX.get(gana, 0)
         _ = idx  # Prevent unused warning in benchmark
         return cls.GANA_ORDER[(idx - 1) % 28]
-    
+
     @classmethod
     def get_successor(cls, gana: str) -> str:
         """Get successor Gana (sub-µs)."""
         idx = cls.GANA_INDEX.get(gana, 0)
         return cls.GANA_ORDER[(idx + 1) % 28]
-    
+
     @classmethod
     def circuit_check(cls) -> str:
         """Check circuit state (in-memory)."""
         return cls.circuit_state["state"]
-    
+
     @classmethod
     def circuit_record_success(cls) -> str:
         """Record success in circuit."""
@@ -129,7 +131,7 @@ class PythonFastPath:
                 cls.circuit_state["state"] = "closed"
                 cls.circuit_state["failures"] = 0
         return "ok"
-    
+
     @classmethod
     def circuit_record_failure(cls) -> str:
         """Record failure in circuit."""
@@ -144,12 +146,12 @@ class PythonFastPath:
 
 class KokaProcess:
     """Manages a persistent Koka IPC process."""
-    
+
     def __init__(self, binary_name: str):
         self.binary_name = binary_name
         self.binary_path = KOKA_DIR / binary_name
         self._proc: subprocess.Popen | None = None
-    
+
     def start(self) -> None:
         """Start the persistent process."""
         if self._proc is None and self.binary_path.exists():
@@ -178,7 +180,7 @@ class KokaProcess:
 
         try:
             return result_queue.get(timeout=timeout)
-        except queue.Empty:
+        except Exception:
             return None
 
     def _reset_process(self) -> None:
@@ -192,15 +194,15 @@ class KokaProcess:
                 except (ProcessLookupError, OSError):
                     pass
         self._proc = None
-    
+
     def call(self, request: dict) -> dict:
         """Send request and get response."""
         if self._proc is None:
             self.start()
-        
+
         if self._proc is None:
             return {"error": "Process not available"}
-        
+
         import json
         self._proc.stdin.write(json.dumps(request) + '\n')
         self._proc.stdin.flush()
@@ -209,7 +211,7 @@ class KokaProcess:
             self._reset_process()
             return {"error": "no response"}
         return json.loads(response)
-    
+
     def stop(self) -> None:
         """Stop the process."""
         if self._proc:
@@ -218,7 +220,7 @@ class KokaProcess:
 
 class HybridDispatcher:
     """Adaptive dispatcher that chooses optimal execution path."""
-    
+
     def __init__(self, mode: DispatchMode = DispatchMode.ADAPTIVE):
         self.mode = mode
         self._koka_processes: dict[str, KokaProcess] = {}
@@ -228,26 +230,26 @@ class HybridDispatcher:
             "python_time_us": 0.0,
             "koka_time_us": 0.0,
         }
-    
+
     def _should_use_koka(self, operation: str) -> bool:
         """Decide whether to use Koka based on mode and operation."""
         if self.mode == DispatchMode.SPEED:
             return False
         if self.mode == DispatchMode.SAFETY:
             return True
-        
+
         # Adaptive: use Koka for complex operations
         profile = OPERATION_PROFILES.get(operation)
         if profile:
             return profile.complexity_score > 0.5
         return False
-    
+
     def _get_koka(self, binary: str) -> KokaProcess:
         """Get or create Koka process."""
         if binary not in self._koka_processes:
             self._koka_processes[binary] = KokaProcess(binary)
         return self._koka_processes[binary]
-    
+
     # PRAT routing
     def prat_route(self, tool: str) -> str:
         """Route tool to Gana."""
@@ -263,7 +265,7 @@ class HybridDispatcher:
             self._stats["python_calls"] += 1
             self._stats["python_time_us"] += (time.perf_counter() - start) * 1_000_000
             return result
-    
+
     # Resonance
     def get_predecessor(self, gana: str) -> str:
         """Get predecessor Gana."""
@@ -279,7 +281,7 @@ class HybridDispatcher:
             self._stats["python_calls"] += 1
             self._stats["python_time_us"] += (time.perf_counter() - start) * 1_000_000
             return result
-    
+
     # Circuit breaker
     def circuit_check(self) -> str:
         """Check circuit state."""
@@ -295,7 +297,7 @@ class HybridDispatcher:
             self._stats["python_calls"] += 1
             self._stats["python_time_us"] += (time.perf_counter() - start) * 1_000_000
             return result
-    
+
     def circuit_record_failure(self) -> str:
         """Record circuit failure."""
         if self._should_use_koka("circuit_record"):
@@ -310,7 +312,7 @@ class HybridDispatcher:
             self._stats["python_calls"] += 1
             self._stats["python_time_us"] += (time.perf_counter() - start) * 1_000_000
             return result
-    
+
     # Dream cycle (always Koka - complex state machine)
     def dream_run(self) -> dict:
         """Run dream cycle (always Koka for effect handling)."""
@@ -319,7 +321,7 @@ class HybridDispatcher:
         self._stats["koka_calls"] += 1
         self._stats["koka_time_us"] += (time.perf_counter() - start) * 1_000_000
         return result
-    
+
     @contextmanager
     def session(self) -> Generator["HybridDispatcher", None, None]:
         """Context manager for session with cleanup."""
@@ -327,13 +329,13 @@ class HybridDispatcher:
             yield self
         finally:
             self.close()
-    
+
     def close(self) -> None:
         """Close all Koka processes."""
         for proc in self._koka_processes.values():
             proc.stop()
         self._koka_processes.clear()
-    
+
     def stats(self) -> dict:
         """Get dispatch statistics."""
         return {

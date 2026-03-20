@@ -44,20 +44,20 @@ class GardenVirtualFS:
         """Build the virtual filesystem tree from file mappings."""
         # Root node
         root_node = VirtualNode(virtual_path="/", node_type="directory")
-        
+
         # Create garden nodes
         gardens_node = VirtualNode(virtual_path="/gardens", node_type="directory")
         root_node.children["gardens"] = gardens_node
-        
+
         # Track all gardens
         gardens_seen: set[str] = set()
-        
+
         for fp, mapping in file_mappings.items():
             garden = mapping.get("primary_garden", "mystery")
             file_type = mapping.get("file_type", "unknown")
-            
+
             gardens_seen.add(garden)
-            
+
             # Get or create garden node
             if garden not in self._garden_nodes:
                 garden_node = VirtualNode(
@@ -74,7 +74,7 @@ class GardenVirtualFS:
                 self._garden_nodes[garden] = garden_node
             else:
                 garden_node = self._garden_nodes[garden]
-            
+
             # Get or create file type node
             if file_type not in garden_node.children:
                 type_node = VirtualNode(
@@ -85,7 +85,7 @@ class GardenVirtualFS:
                 garden_node.children[file_type] = type_node
             else:
                 type_node = garden_node.children[file_type]
-            
+
             # Create file node
             file_name = Path(fp).name
             file_node = VirtualNode(
@@ -100,11 +100,11 @@ class GardenVirtualFS:
                 },
             )
             type_node.children[file_name] = file_node
-        
+
         # Create systems node
         systems_node = VirtualNode(virtual_path="/systems", node_type="directory")
         root_node.children["systems"] = systems_node
-        
+
         # Load system mappings if available
         system_registry = self.root / "data" / "garden_system_registry.json"
         if system_registry.exists():
@@ -121,7 +121,7 @@ class GardenVirtualFS:
                     },
                 )
                 systems_node.children[system_id] = system_node
-        
+
         self._tree = root_node
         self._loaded = True
         return root_node
@@ -130,10 +130,10 @@ class GardenVirtualFS:
         """Load and build the virtual filesystem."""
         if self._loaded:
             return True
-        
+
         if not self.registry_path.exists():
             return False
-        
+
         try:
             data = json.loads(self.registry_path.read_text())
             self.build_tree(data.get("file_mappings", {}))
@@ -145,15 +145,15 @@ class GardenVirtualFS:
         """Resolve a virtual path to a node."""
         if not self._tree:
             return None
-        
+
         parts = [p for p in virtual_path.strip("/").split("/") if p]
         current = self._tree
-        
+
         for part in parts:
             if part not in current.children:
                 return None
             current = current.children[part]
-        
+
         return current
 
     def list_directory(self, virtual_path: str) -> list[VirtualNode]:
@@ -175,16 +175,16 @@ class GardenVirtualFS:
         garden_node = self._garden_nodes.get(garden)
         if not garden_node:
             return []
-        
+
         files = []
-        
+
         def collect_files(node: VirtualNode) -> None:
             if node.node_type == "file":
                 if file_type is None or file_type in node.virtual_path:
                     files.append(node)
             for child in node.children.values():
                 collect_files(child)
-        
+
         collect_files(garden_node)
         return files
 
@@ -192,45 +192,45 @@ class GardenVirtualFS:
         """Search for files by name across gardens."""
         results = []
         query_lower = query.lower()
-        
+
         search_gardens = gardens or list(self._garden_nodes.keys())
-        
+
         for garden in search_gardens:
             garden_node = self._garden_nodes.get(garden)
             if not garden_node:
                 continue
-            
+
             def search_node(node: VirtualNode) -> None:
                 if node.node_type == "file":
                     if query_lower in node.virtual_path.lower() or (node.physical_path and query_lower in node.physical_path.lower()):
                         results.append(node)
                 for child in node.children.values():
                     search_node(child)
-            
+
             search_node(garden_node)
-        
+
         return results
 
     def get_tree_summary(self) -> dict[str, Any]:
         """Get a summary of the virtual filesystem."""
         if not self._tree:
             return {}
-        
+
         summary = {
             "gardens": {},
             "total_files": 0,
             "total_directories": 0,
         }
-        
+
         for garden_name, garden_node in self._garden_nodes.items():
             file_count = 0
             type_counts: dict[str, int] = {}
-            
+
             for type_name, type_node in garden_node.children.items():
                 count = len(type_node.children)
                 type_counts[type_name] = count
                 file_count += count
-            
+
             summary["gardens"][garden_name] = {
                 "files": file_count,
                 "types": type_counts,
@@ -238,9 +238,9 @@ class GardenVirtualFS:
                 "element": garden_node.metadata.get("element", ""),
             }
             summary["total_files"] += file_count
-        
+
         summary["total_directories"] = len(self._garden_nodes)
-        
+
         return summary
 
     def to_json(self) -> str:
@@ -254,7 +254,7 @@ class GardenVirtualFS:
                 "metadata": node.metadata,
                 "children": {k: node_to_dict(v) for k, v in node.children.items()},
             }
-        
+
         tree_dict = node_to_dict(self._tree) if self._tree else {}
         return json.dumps(tree_dict, indent=2)
 
@@ -288,10 +288,10 @@ if __name__ == "__main__":
     print("=" * 60)
     print("GARDEN VIRTUAL FILESYSTEM")
     print("=" * 60)
-    
+
     vfs = get_garden_virtual_fs()
     summary = vfs.get_tree_summary()
-    
+
     print(f"Total files: {summary.get('total_files', 0)}")
     print(f"Gardens: {len(summary.get('gardens', {}))}")
     print()

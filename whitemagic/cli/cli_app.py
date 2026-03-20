@@ -230,7 +230,7 @@ def main(
             pass
 
 # --- Enhanced Commands (Rich Enabled) --- (PSR-028: status/health/doctor extracted to cli/commands/diagnostics_commands.py)
-from whitemagic.cli.commands.diagnostics_commands import register_diagnostics_commands  # noqa: E402
+from whitemagic.cli.commands.diagnostics_commands import register_diagnostics_commands, status_command  # noqa: E402
 register_diagnostics_commands(main)
 
 
@@ -1354,10 +1354,11 @@ if HAS_PLUGINS:
         load_plugins()
         register_commands(main)
     except Exception as e:
-        if HAS_RICH and console:
-            console.print(f"[yellow]Warning: Failed to load plugins: {e}[/yellow]")
-        else:
-            click.echo(f"Warning: Failed to load plugins: {e}", err=True)
+        if not os.getenv("WM_SILENT_INIT"):
+            if HAS_RICH and console:
+                console.print(f"[yellow]Warning: Failed to load plugins: {e}[/yellow]")
+            else:
+                click.echo(f"Warning: Failed to load plugins: {e}", err=True)
 
 # Register init command (v14.0 — first-run scaffolding)
 try:

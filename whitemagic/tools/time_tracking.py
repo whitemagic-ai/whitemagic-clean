@@ -17,13 +17,13 @@ class PhaseTiming:
     start_time: float  # Unix timestamp
     end_time: Optional[float] = None
     metadata: Optional[Dict] = None
-    
+
     @property
     def duration_seconds(self) -> Optional[float]:
         if self.end_time:
             return self.end_time - self.start_time
         return None
-    
+
     def to_dict(self) -> Dict:
         return {
             "phase_name": self.phase_name,
@@ -36,12 +36,12 @@ class PhaseTiming:
 
 class PhaseTimer:
     """Context manager for timing workflow phases."""
-    
+
     def __init__(self, phase_name: str, metadata: Optional[Dict] = None):
         self.phase_name = phase_name
         self.metadata = metadata or {}
         self._timing: Optional[PhaseTiming] = None
-        
+
     def __enter__(self) -> "PhaseTimer":
         start = time.time()
         self._timing = PhaseTiming(
@@ -51,7 +51,7 @@ class PhaseTimer:
         )
         print(f"⏱️  Phase '{self.phase_name}' started at {self._start_iso()}")
         return self
-    
+
     def __exit__(self, exc_type: Optional[type], exc_val: Optional[Exception], exc_tb: Optional[Any]) -> Literal[False]:
         if self._timing is None:
             return False
@@ -61,12 +61,12 @@ class PhaseTimer:
         if exc_type:
             print(f"   ⚠️  Phase ended with exception: {exc_type.__name__}")
         return False  # Don't suppress exceptions
-    
+
     def _start_iso(self) -> str:
         if self._timing is None:
             return "unknown"
         return datetime.fromtimestamp(self._timing.start_time, tz=timezone.utc).isoformat()
-    
+
     @property
     def timing(self) -> Optional[PhaseTiming]:
         return self._timing
@@ -74,42 +74,42 @@ class PhaseTimer:
 
 class WorkflowTimer:
     """Tracks multiple phases of a workflow."""
-    
+
     def __init__(self, workflow_name: str):
         self.workflow_name = workflow_name
         self.phases: List[PhaseTiming] = []
         self._current: Optional[PhaseTimer] = None
         self._workflow_start: Optional[float] = None
         self._workflow_end: Optional[float] = None
-    
+
     def start_workflow(self) -> None:
         """Mark workflow start time."""
         self._workflow_start = time.time()
         print(f"\n🚀 Workflow '{self.workflow_name}' started")
         print(f"   {datetime.now(timezone.utc).isoformat()}")
-    
+
     def end_workflow(self) -> None:
         """Mark workflow end time."""
         self._workflow_end = time.time()
         duration: float = self._workflow_end - self._workflow_start if self._workflow_start else 0.0
         print(f"\n✅ Workflow '{self.workflow_name}' completed in {duration:.2f}s")
-    
+
     def phase(self, phase_name: str, metadata: Optional[Dict] = None) -> PhaseTimer:
         """Get a context manager for a new phase."""
         timer = PhaseTimer(phase_name, metadata)
         return timer
-    
+
     def record_phase(self, phase_timer: PhaseTimer) -> None:
         """Record a completed phase."""
         if phase_timer.timing and phase_timer.timing.end_time:
             self.phases.append(phase_timer.timing)
-    
+
     def get_report(self) -> Dict:
         """Generate timing report."""
         total_duration: float = 0.0
         if self._workflow_start and self._workflow_end:
             total_duration = self._workflow_end - self._workflow_start
-        
+
         return {
             "workflow_name": self.workflow_name,
             "started": datetime.fromtimestamp(self._workflow_start, tz=timezone.utc).isoformat() if self._workflow_start else None,
@@ -118,7 +118,7 @@ class WorkflowTimer:
             "phases": [p.to_dict() for p in self.phases],
             "phase_count": len(self.phases)
         }
-    
+
     def print_report(self) -> None:
         """Print formatted timing report."""
         report = self.get_report()
@@ -156,15 +156,15 @@ if __name__ == "__main__":
     # Demo usage
     workflow = WorkflowTimer("demo_workflow")
     workflow.start_workflow()
-    
+
     with workflow.phase("initialization", {"priority": "high"}):
         time.sleep(0.5)
-    
+
     with workflow.phase("processing", {"items": 100}):
         time.sleep(1.0)
-    
+
     with workflow.phase("cleanup"):
         time.sleep(0.3)
-    
+
     workflow.end_workflow()
     workflow.print_report()

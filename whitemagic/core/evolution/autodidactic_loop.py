@@ -13,8 +13,7 @@ import json
 import time
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-from dataclasses import dataclass, asdict
-from datetime import datetime
+from dataclasses import dataclass
 import sqlite3
 
 @dataclass
@@ -26,7 +25,7 @@ class PatternApplication:
     timestamp: float
     initial_confidence: float
     context: Dict[str, Any]
-    
+
 @dataclass
 class PatternOutcome:
     """Measured outcome of a pattern application"""
@@ -53,20 +52,20 @@ class UpdatedPattern:
 
 class AutodidacticLoop:
     """Manages the recursive self-improvement feedback loop"""
-    
+
     def __init__(self, db_path: Optional[Path] = None):
         if db_path is None:
             db_path = Path.home() / ".whitemagic/autodidactic/feedback.db"
-        
+
         self.db_path = db_path
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()
-    
+
     def _init_db(self):
         """Initialize SQLite database for tracking"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
-        
+
         # Pattern applications
         c.execute("""
             CREATE TABLE IF NOT EXISTS pattern_applications (
@@ -78,7 +77,7 @@ class AutodidacticLoop:
                 context TEXT NOT NULL
             )
         """)
-        
+
         # Pattern outcomes
         c.execute("""
             CREATE TABLE IF NOT EXISTS pattern_outcomes (
@@ -94,7 +93,7 @@ class AutodidacticLoop:
                 FOREIGN KEY (application_id) REFERENCES pattern_applications(application_id)
             )
         """)
-        
+
         # Pattern confidence updates
         c.execute("""
             CREATE TABLE IF NOT EXISTS pattern_updates (
@@ -108,22 +107,22 @@ class AutodidacticLoop:
                 updated_at REAL NOT NULL
             )
         """)
-        
+
         # Indexes
         c.execute("CREATE INDEX IF NOT EXISTS idx_pattern_id ON pattern_applications(pattern_id)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_outcome_pattern ON pattern_outcomes(pattern_id)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_update_pattern ON pattern_updates(pattern_id)")
-        
+
         conn.commit()
         conn.close()
-    
+
     def record_application(self, application: PatternApplication) -> None:
         """Record that a pattern was applied"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
-        
+
         c.execute("""
-            INSERT INTO pattern_applications 
+            INSERT INTO pattern_applications
             (application_id, pattern_id, pattern_type, timestamp, initial_confidence, context)
             VALUES (?, ?, ?, ?, ?, ?)
         """, (
@@ -134,18 +133,18 @@ class AutodidacticLoop:
             application.initial_confidence,
             json.dumps(application.context),
         ))
-        
+
         conn.commit()
         conn.close()
-    
+
     def record_outcome(self, outcome: PatternOutcome) -> None:
         """Record the measured outcome of a pattern application"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
-        
+
         c.execute("""
             INSERT INTO pattern_outcomes
-            (application_id, pattern_id, success, performance_gain, quality_score, 
+            (application_id, pattern_id, success, performance_gain, quality_score,
              user_feedback, measured_at, metrics)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
@@ -158,39 +157,39 @@ class AutodidacticLoop:
             outcome.measured_at,
             json.dumps(outcome.metrics),
         ))
-        
+
         conn.commit()
         conn.close()
-        
+
         # Trigger confidence update
         self._update_pattern_confidence(outcome.pattern_id)
-    
+
     def _update_pattern_confidence(self, pattern_id: str) -> None:
         """Update pattern confidence based on accumulated outcomes"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
-        
+
         # Get all outcomes for this pattern
         c.execute("""
             SELECT success, performance_gain, quality_score
             FROM pattern_outcomes
             WHERE pattern_id = ?
         """, (pattern_id,))
-        
+
         outcomes = c.fetchall()
         if not outcomes:
             conn.close()
             return
-        
+
         # Calculate statistics
         total = len(outcomes)
         successes = sum(1 for o in outcomes if o[0])
         success_rate = successes / total
-        
+
         # Average performance gain (only from successful applications)
         gains = [o[1] for o in outcomes if o[0] and o[1] is not None]
         avg_gain = sum(gains) / len(gains) if gains else 0.0
-        
+
         # Get original confidence
         c.execute("""
             SELECT initial_confidence
@@ -198,10 +197,10 @@ class AutodidacticLoop:
             WHERE pattern_id = ?
             LIMIT 1
         """, (pattern_id,))
-        
+
         result = c.fetchone()
         original_confidence = result[0] if result else 0.5
-        
+
         # Calculate updated confidence
         # Formula: original * (0.7) + success_rate * (0.2) + normalized_gain * (0.1)
         normalized_gain = min(avg_gain / 10.0, 1.0) if avg_gain > 0 else 0.0
@@ -209,7 +208,7 @@ class AutodidacticLoop:
             original_confidence * 0.7 + success_rate * 0.2 + normalized_gain * 0.1,
             1.0
         )
-        
+
         # Record update
         c.execute("""
             INSERT INTO pattern_updates
@@ -225,15 +224,15 @@ class AutodidacticLoop:
             avg_gain,
             time.time(),
         ))
-        
+
         conn.commit()
         conn.close()
-    
+
     def get_pattern_confidence(self, pattern_id: str) -> Optional[float]:
         """Get the latest confidence score for a pattern"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
-        
+
         c.execute("""
             SELECT updated_confidence
             FROM pattern_updates
@@ -241,17 +240,17 @@ class AutodidacticLoop:
             ORDER BY updated_at DESC
             LIMIT 1
         """, (pattern_id,))
-        
+
         result = c.fetchone()
         conn.close()
-        
+
         return result[0] if result else None
-    
+
     def get_pattern_stats(self, pattern_id: str) -> Optional[Dict[str, Any]]:
         """Get comprehensive statistics for a pattern"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
-        
+
         # Get latest update
         c.execute("""
             SELECT original_confidence, updated_confidence, application_count,
@@ -261,12 +260,12 @@ class AutodidacticLoop:
             ORDER BY updated_at DESC
             LIMIT 1
         """, (pattern_id,))
-        
+
         result = c.fetchone()
         if not result:
             conn.close()
             return None
-        
+
         # Get recent outcomes
         c.execute("""
             SELECT success, performance_gain, quality_score, measured_at
@@ -275,10 +274,10 @@ class AutodidacticLoop:
             ORDER BY measured_at DESC
             LIMIT 10
         """, (pattern_id,))
-        
+
         recent_outcomes = c.fetchall()
         conn.close()
-        
+
         return {
             'pattern_id': pattern_id,
             'original_confidence': result[0],
@@ -298,52 +297,52 @@ class AutodidacticLoop:
                 for o in recent_outcomes
             ],
         }
-    
+
     def get_top_patterns(self, limit: int = 10) -> List[Dict[str, Any]]:
         """Get top patterns by updated confidence"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
-        
+
         c.execute("""
             SELECT DISTINCT pattern_id
             FROM pattern_updates
         """)
-        
+
         pattern_ids = [row[0] for row in c.fetchall()]
         conn.close()
-        
+
         # Get stats for each
         stats = []
         for pid in pattern_ids:
             s = self.get_pattern_stats(pid)
             if s:
                 stats.append(s)
-        
+
         # Sort by current confidence
         stats.sort(key=lambda x: x['current_confidence'], reverse=True)
         return stats[:limit]
-    
+
     def get_learning_summary(self) -> Dict[str, Any]:
         """Get overall learning statistics"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
-        
+
         # Total applications
         c.execute("SELECT COUNT(*) FROM pattern_applications")
         total_applications = c.fetchone()[0]
-        
+
         # Total outcomes
         c.execute("SELECT COUNT(*) FROM pattern_outcomes")
         total_outcomes = c.fetchone()[0]
-        
+
         # Overall success rate
         c.execute("SELECT AVG(success) FROM pattern_outcomes")
         overall_success_rate = c.fetchone()[0] or 0.0
-        
+
         # Average performance gain
         c.execute("SELECT AVG(performance_gain) FROM pattern_outcomes WHERE performance_gain IS NOT NULL")
         avg_performance_gain = c.fetchone()[0] or 0.0
-        
+
         # Patterns with improved confidence
         c.execute("""
             SELECT COUNT(DISTINCT pattern_id)
@@ -351,7 +350,7 @@ class AutodidacticLoop:
             WHERE updated_confidence > original_confidence
         """)
         improved_patterns = c.fetchone()[0]
-        
+
         # Patterns with decreased confidence
         c.execute("""
             SELECT COUNT(DISTINCT pattern_id)
@@ -359,9 +358,9 @@ class AutodidacticLoop:
             WHERE updated_confidence < original_confidence
         """)
         decreased_patterns = c.fetchone()[0]
-        
+
         conn.close()
-        
+
         return {
             'total_applications': total_applications,
             'total_outcomes': total_outcomes,

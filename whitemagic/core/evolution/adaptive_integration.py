@@ -33,7 +33,7 @@ class DiscoveredPattern:
 
 class AdaptiveIntegration:
     """Manages pattern integration with adaptive systems"""
-    
+
     def __init__(
         self,
         auto_apply_threshold: float = 0.77,
@@ -43,17 +43,17 @@ class AdaptiveIntegration:
         self.auto_apply_threshold = auto_apply_threshold
         self.manual_review_threshold = manual_review_threshold
         self.autodidactic_loop = autodidactic_loop or AutodidacticLoop()
-        
+
         # Pattern queues
         self.auto_apply_queue: List[DiscoveredPattern] = []
         self.manual_review_queue: List[DiscoveredPattern] = []
         self.applied_patterns: List[str] = []
-    
+
     def load_patterns(self, results_file: Path) -> None:
         """Load patterns from cross-validation results"""
         with open(results_file) as f:
             results = json.load(f)
-        
+
         # Load ultra-high confidence patterns
         for pattern_data in results.get('ultra_high_patterns', []):
             pattern = DiscoveredPattern(
@@ -68,16 +68,16 @@ class AdaptiveIntegration:
                 longevity_score=pattern_data['longevity_score'],
                 metadata=pattern_data,
             )
-            
+
             if pattern.confidence >= self.auto_apply_threshold:
                 self.auto_apply_queue.append(pattern)
             elif pattern.confidence >= self.manual_review_threshold:
                 self.manual_review_queue.append(pattern)
-    
+
     def apply_pattern(self, pattern: DiscoveredPattern, context: Dict[str, Any]) -> str:
         """Apply a pattern and record the application"""
         application_id = str(uuid.uuid4())
-        
+
         # Record application
         application = PatternApplication(
             application_id=application_id,
@@ -87,12 +87,12 @@ class AdaptiveIntegration:
             initial_confidence=pattern.confidence,
             context=context,
         )
-        
+
         self.autodidactic_loop.record_application(application)
         self.applied_patterns.append(pattern.pattern_id)
-        
+
         return application_id
-    
+
     def record_outcome(
         self,
         application_id: str,
@@ -114,23 +114,23 @@ class AdaptiveIntegration:
             measured_at=time.time(),
             metrics=metrics or {},
         )
-        
+
         self.autodidactic_loop.record_outcome(outcome)
-    
+
     def get_next_pattern(self) -> Optional[DiscoveredPattern]:
         """Get the next pattern to apply (highest confidence first)"""
         if self.auto_apply_queue:
             return self.auto_apply_queue.pop(0)
         return None
-    
+
     def get_pattern_stats(self, pattern_id: str) -> Optional[Dict[str, Any]]:
         """Get learning statistics for a pattern"""
         return self.autodidactic_loop.get_pattern_stats(pattern_id)
-    
+
     def get_integration_summary(self) -> Dict[str, Any]:
         """Get summary of integration status"""
         learning_summary = self.autodidactic_loop.get_learning_summary()
-        
+
         return {
             'auto_apply_queue': len(self.auto_apply_queue),
             'manual_review_queue': len(self.manual_review_queue),
@@ -144,11 +144,11 @@ def simulate_pattern_application(
     integration: AdaptiveIntegration,
 ) -> Dict[str, Any]:
     """Simulate applying a pattern and measuring the outcome
-    
+
     In production, this would actually apply the optimization.
     For now, we simulate based on pattern characteristics.
     """
-    
+
     # Apply pattern
     context = {
         'pattern_tag': pattern.tag,
@@ -156,14 +156,14 @@ def simulate_pattern_application(
         'sources': pattern.sources,
         'simulation': True,
     }
-    
+
     application_id = integration.apply_pattern(pattern, context)
-    
+
     # Simulate outcome based on pattern confidence
     # Higher confidence = higher success probability
     success_probability = pattern.confidence
     success = success_probability > 0.75  # Threshold for success
-    
+
     # Simulate performance gain
     # Patterns related to "optimization", "speedup", "performance" get gains
     performance_gain = None
@@ -171,10 +171,10 @@ def simulate_pattern_application(
         # Simulate gain based on confidence (higher confidence = higher gain)
         base_gain = 1.5 + (pattern.confidence * 5.0)  # 1.5x to 6.5x range
         performance_gain = base_gain if success else None
-    
+
     # Simulate quality score
     quality_score = pattern.confidence * 0.95 if success else 0.3
-    
+
     # Record outcome
     integration.record_outcome(
         application_id=application_id,
@@ -189,7 +189,7 @@ def simulate_pattern_application(
             'confidence': pattern.confidence,
         }
     )
-    
+
     return {
         'application_id': application_id,
         'pattern_id': pattern.pattern_id,

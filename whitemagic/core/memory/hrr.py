@@ -106,33 +106,36 @@ class HRREngine:
     ) -> np.ndarray:
         """Circular convolution: bind A to role B.
 
-        bind(A, B) = IFFT(FFT(A) * FFT(B))
-
-        This is the core HRR operation. The result is a vector of the
-        same dimensionality that "encodes" A-in-the-role-of-B.
+        bind(A, B) = IFFT(FFT(A) * FFT(B)) or SIMD(A, B)
         """
         a_arr = self._to_array(a)
         b_arr = self._to_array(b)
-        result = np.real(np.fft.ifft(np.fft.fft(a_arr) * np.fft.fft(b_arr)))
-        return result.astype(np.float32)
+        
+        try:
+            from whitemagic.core.acceleration.simd_holographic import circular_convolution
+            return circular_convolution(a_arr, b_arr)
+        except (ImportError, Exception):
+            result = np.real(np.fft.ifft(np.fft.fft(a_arr) * np.fft.fft(b_arr)))
+            return result.astype(np.float32)
 
     def unbind(
         self, bound: list[float] | np.ndarray, b: list[float] | np.ndarray,
     ) -> np.ndarray:
         """Circular correlation: unbind B from bound vector.
 
-        unbind(bound, B) ≈ A  (approximate recovery of the bound concept)
-
-        Uses the inverse of B (conjugate in frequency domain).
+        unbind(bound, B) ≈ A
         """
         bound_arr = self._to_array(bound)
         b_arr = self._to_array(b)
-        # Correlation = convolution with the inverse
-        # In frequency domain: conj(FFT(B)) * FFT(bound)
-        result = np.real(np.fft.ifft(
-            np.conj(np.fft.fft(b_arr)) * np.fft.fft(bound_arr),
-        ))
-        return result.astype(np.float32)
+        
+        try:
+            from whitemagic.core.acceleration.simd_holographic import circular_correlation
+            return circular_correlation(bound_arr, b_arr)
+        except (ImportError, Exception):
+            result = np.real(np.fft.ifft(
+                np.conj(np.fft.fft(b_arr)) * np.fft.fft(bound_arr),
+            ))
+            return result.astype(np.float32)
 
     def superpose(self, *vectors: list[float] | np.ndarray) -> np.ndarray:
         """Superposition: element-wise sum of multiple HRR vectors.

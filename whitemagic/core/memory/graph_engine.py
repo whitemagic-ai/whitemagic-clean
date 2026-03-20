@@ -464,7 +464,7 @@ class GraphEngine:
                     adjacencies: dict[str, list[str]] = {}
                     for node in UG.nodes():
                         adjacencies[str(node)] = [str(n) for n in UG.neighbors(node)]
-                    
+
                     betweenness_str = {str(k): v for k, v in between.items()}
                     results = _rust_graph.py_bridging_centrality(
                         betweenness_str, adjacencies, top_n
@@ -550,35 +550,36 @@ class GraphEngine:
                         if len(c) >= 2
                     ]
 
-            # Build Community objects
-            result: list[Community] = []
-            for idx, members in enumerate(communities_list):
-                if len(members) < 2:
-                    continue
-
-                # Count internal edges and average strength
-                internal_edges = 0
-                total_strength = 0.0
-                for u in members:
-                    for v in UG.neighbors(u):
-                        if v in members:
-                            internal_edges += 1
-                            total_strength += UG[u][v].get("weight", 0.5)
-
-                internal_edges //= 2  # undirected, counted twice
-                avg_strength = total_strength / max(1, internal_edges * 2)
-
-                # Get theme tags from members
-                theme_tags = self._get_member_tags(list(members)[:20])
-
-                result.append(Community(
-                    community_id=idx,
-                    member_ids=sorted(members),
-                    size=len(members),
-                    internal_edges=internal_edges,
-                    avg_strength=avg_strength,
-                    theme_tags=theme_tags,
-                ))
+            # Try Rust implementation first (S026 VC2)
+            if _RUST_AVAILABLE:
+                try:
+                    # Build internal edge counting via Rust
+                    adjacencies: dict[str, list[str]] = {str(n): [str(nb) for nb in UG.neighbors(n)] for n in UG.nodes()}
+                    edge_weights: dict[tuple[str, str], float] = {(str(u), str(v)): UG[u][v].get("weight", 0.5) for u, v in UG.edges()}
+                    communities_member_lists = [list(c) for c in communities_list]
+                    
+                    rust_results = _rust_graph.py_count_community_edges(
+                        adjacencies, edge_weights, communities_member_lists
+                    )
+                    
+                    result: list[Community] = []
+                    for idx, (size, internal_edges, avg_strength) in enumerate(rust_results):
+                        members = communities_list[idx]
+                        theme_tags = self._get_member_tags(list(members)[:20])
+                        result.append(Community(
+                            community_id=idx,
+                            member_ids=sorted(members),
+                            size=size,
+                            internal_edges=internal_edges,
+                            avg_strength=avg_strength,
+                            theme_tags=theme_tags,
+                        ))
+                    
+                    result.sort(key=lambda c: c.size, reverse=True)
+                    return result
+                except Exception as e:
+                    logger.debug(f"Rust community edge counting failed: {e}")
+                    # Fall back to Python
 
             result.sort(key=lambda c: c.size, reverse=True)
             return result
@@ -642,7 +643,7 @@ class GraphEngine:
                 curr_cent = {str(k): v for k, v in curr.eigenvector.items()}
                 new_edge_nodes = self._get_recent_edge_nodes()
                 new_edge_str = {str(n) for n in new_edge_nodes}
-                
+
                 results = _rust_graph.py_detect_echo_chambers(
                     prev_cent, curr_cent, new_edge_str, sigma_threshold
                 )

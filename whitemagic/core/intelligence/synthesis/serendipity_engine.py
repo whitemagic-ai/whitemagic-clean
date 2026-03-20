@@ -4,15 +4,20 @@ Surfaces rarely-accessed but valuable memories through intelligent random select
 Uses weighted sampling favoring high-gravity, low-access memories.
 """
 
-from __future__ import annotations
-
-import random
+import logging
+import os
 import sqlite3
-from dataclasses import dataclass
-from datetime import datetime, timedelta
+import random
+import hashlib
+import numpy as np
 from typing import Any
+from datetime import datetime, timedelta
+from dataclasses import dataclass
 
 from whitemagic.utils.core import parse_datetime
+from whitemagic.core.memory.unified_types import Memory, MemoryType
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -82,6 +87,8 @@ class SerendipityEngine:
             return self._surface_constellation_bridges(count)
         elif mode == "orphans":
             return self._surface_association_orphans(count)
+        elif mode == "quantum":
+            return self._surface_quantum(context, count)
         else:  # balanced
             results = []
             results.extend(self._surface_dormant(max(1, count // 3)))
@@ -89,6 +96,70 @@ class SerendipityEngine:
             results.extend(self._surface_association_orphans(max(1, count // 4)))
             results.extend(self._surface_ancient(count - len(results)))
             return results[:count]
+
+    def _surface_quantum(self, context: str | None, count: int) -> list[SurfacedMemory]:
+        """Surface memories using quantum-inspired superposition walks."""
+        try:
+            from whitemagic.core.intelligence.quantum_engine import QuantumEngine
+            from whitemagic.core.memory.unified import get_unified_memory
+            
+            engine = QuantumEngine()
+            um = get_unified_memory()
+            
+            # 1. Get seed memories from context or random core
+            seeds = []
+            if context:
+                seeds = um.search(context, limit=3)
+            if not seeds:
+                seeds = um.list_recent(limit=3)
+            
+            if not seeds:
+                return self._surface_random(count)
+                
+            # 2. Build local adjacency graph for walk
+            local_graph = {}
+            all_node_ids = set()
+            for seed in seeds:
+                all_node_ids.add(seed.id)
+                
+            # Expand one hop to build graph
+            for node_id in list(all_node_ids):
+                mem = um.recall(node_id)
+                if mem and hasattr(mem, 'associations'):
+                    neighbors = list(mem.associations.keys())
+                    local_graph[node_id] = neighbors
+                    all_node_ids.update(neighbors)
+            
+            # 3. Perform superposition walks from each seed
+            walk_results = []
+            for seed in seeds:
+                walk_results.append(engine.superposition_walk(local_graph, seed.id, hops=2))
+                
+            # 4. Interference fusion of results
+            fused_probs = engine.interference_fusion(walk_results)
+            
+            # 5. Map back to SurfacedMemory objects
+            sorted_mids = sorted(fused_probs.items(), key=lambda x: x[1], reverse=True)
+            surfaced = []
+            for mid, prob in sorted_mids:
+                if len(surfaced) >= count:
+                    break
+                mem = um.recall(mid)
+                if mem:
+                    surfaced.append(SurfacedMemory(
+                        id=mem.id,
+                        title=mem.title or "Untitled",
+                        content_preview=str(mem.content)[:200],
+                        gravity=getattr(mem, 'importance', 0.5),
+                        last_accessed=getattr(mem, 'accessed_at', None),
+                        access_count=getattr(mem, 'access_count', 0),
+                        reason="Quantum Superposition Walk",
+                        relevance_score=prob
+                    ))
+            return surfaced
+        except Exception as e:
+            logger.warning(f"Quantum serendipity failed: {e}")
+            return self._surface_random(count)
 
     def _surface_dormant(self, count: int) -> list[SurfacedMemory]:
         """Surface high-gravity, rarely-accessed memories."""

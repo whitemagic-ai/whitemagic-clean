@@ -38,12 +38,12 @@ class RubedoSynthesizer:
         Turn clusters into rules.
         """
         golden_rules = []
-        
+
         for cluster in clusters:
             rule = self._synthesize_cluster(cluster)
             if rule:
                 golden_rules.append(rule)
-                
+
         return golden_rules
 
     def _synthesize_cluster(self, cluster: Dict[str, Any]) -> Dict[str, Any]:
@@ -53,25 +53,25 @@ class RubedoSynthesizer:
         items = cluster.get('items', [])
         if not items:
             return None
-            
+
         # Extract common terms for title
         all_text = " ".join([m.get('title', '') for m in items])
         common_words = [w for w in all_text.split() if len(w) > 4]
         top_words = [w for w, c in Counter(common_words).most_common(3)]
-        
+
         rule_title = f"Pattern: {' '.join(top_words).title()}"
         rule_body = "Captured pattern from multiple memories."
-        
+
         # Try LLM Synthesis
         if self.llm:
             try:
                 # Sample content
                 samples = [m.get('content', '')[:300] for m in items[:5]]
                 prompt = (
-                    f"Synthesize a single 'Golden Rule' or principle from these memory excerpts.\n"
-                    f"The rule should be a concise actionable instruction.\n\n"
-                    f"Excerpts:\n" + "\n---\n".join(samples) + "\n\n"
-                    f"Golden Rule:"
+                    "Synthesize a single 'Golden Rule' or principle from these memory excerpts.\n"
+                    "The rule should be a concise actionable instruction.\n\n"
+                    "Excerpts:\n" + "\n---\n".join(samples) + "\n\n"
+                    "Golden Rule:"
                 )
                 response = self.llm.complete(prompt, max_tokens=64)
                 if response and not response.startswith("Error"):

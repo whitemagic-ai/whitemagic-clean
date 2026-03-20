@@ -112,7 +112,7 @@ class ContinuousExecutor:
         from .assessor import ProgressAssessor
         from .limits import ResourceLimits
         from .objective_generator import ObjectiveGenerator
-        
+
         # Load Unified Nervous System
         try:
             from whitemagic.core.intelligence.nervous_system import get_nervous_system
@@ -155,7 +155,7 @@ class ContinuousExecutor:
     def has_objectives(self) -> bool:
         """Check if there are pending objectives."""
         return len(self.objectives) > 0
-        
+
     def get_rust_stats(self) -> dict:
         """Get runtime stats from the Rust background daemon."""
         if self._rust_daemon and self._rust_daemon.is_running():
@@ -190,11 +190,11 @@ class ContinuousExecutor:
                     if self._rust_daemon and self._rust_daemon.is_running():
                         self._rust_daemon.stop()
                     break
-                    
+
                 # Homeostasis / Biological Subsystem pulse
                 # Update iteration count to properly trigger pulses
                 self.current_iteration = getattr(self, 'current_iteration', 0) + 1
-                
+
                 # Homeostasis / Biological Subsystem pulse
                 if self.current_iteration % 5 == 0:  # Lowered from 50 to 5 for testing
                     self.log("🧠 Triggering Nervous System Pulse")

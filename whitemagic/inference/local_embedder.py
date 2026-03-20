@@ -22,7 +22,7 @@ class LocalEmbedder:
     Local embedding provider using FastEmbed (BGE-Small-EN-V1.5 or similar).
     Target throughput: >500 docs/sec on CPU.
     """
-    
+
     def __init__(self, model_name: str = "BAAI/bge-small-en-v1.5", max_length: int = 512):
         self.model_name = model_name
         self.max_length = max_length
@@ -83,7 +83,7 @@ class LocalEmbedder:
     def encode(self, sentences: Union[str, List[str]], batch_size: int = 256, **kwargs) -> List[np.ndarray]:
         """
         Alias for embed() to match SentenceTransformer API.
-        Returns a list of numpy arrays (or single numpy array if input is string? 
+        Returns a list of numpy arrays (or single numpy array if input is string?
         SentenceTransformer.encode returns ndarray or list of ndarrays).
         """
         # Ignore extra kwargs like show_progress_bar

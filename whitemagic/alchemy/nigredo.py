@@ -11,7 +11,6 @@ Usage:
     category, score = classifier.classify(memory_content, memory_title)
 """
 
-import re
 from typing import Tuple
 
 class NigredoClassifier:
@@ -20,7 +19,7 @@ class NigredoClassifier:
     NOISE_TITLES = ["Checkpoint", "Session Handoff", "Twice-daily", "Summary", "Update", "Backup"]
     ROUTINE_CONTENT = ["traceback", "error", "exception", "lint", "mypy", "fix", "debug", "todo list"]
     NOVELTY_KEYWORDS = [
-        "concept", "architecture", "strategy", "philosophy", "insight", "discovery", 
+        "concept", "architecture", "strategy", "philosophy", "insight", "discovery",
         "pattern", "synthesis", "manifesto", "protocol", "framework", "system design",
         "golden rule", "lesson learned", "post-mortem", "root cause"
     ]
@@ -32,11 +31,11 @@ class NigredoClassifier:
         """
         title_lower = (title or "").lower()
         content_lower = (content or "").lower()
-        
+
         # 1. Noise Filter (High Confidence)
         if any(k.lower() in title_lower for k in self.NOISE_TITLES):
             return "Noise", 0.95
-        
+
         if len(content) < 50:
             return "Noise", 0.90
 
@@ -48,11 +47,11 @@ class NigredoClassifier:
 
         # 2. Novelty Detection
         novelty_hits = sum(1 for k in self.NOVELTY_KEYWORDS if k in content_lower)
-        
+
         # Structure bonus: Markdown headers often indicate structured thought
         if content.count("# ") + content.count("## ") > 2:
             novelty_hits += 1
-            
+
         # Code vs Text ratio: High text density often means documentation/insight
         # Simple heuristic: space count / length
         text_density = content.count(" ") / max(len(content), 1)

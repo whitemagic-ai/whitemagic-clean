@@ -51,7 +51,7 @@ def handle_bicameral_reason(**kwargs: Any) -> dict[str, Any]:
             "note": "Bicameral reasoner ready - provide 'query' parameter to reason",
             "example": {"query": "Analyze the tradeoffs of approach A vs approach B"}
         }
-    
+
     context = kwargs.get("context", {})
 
     try:

@@ -122,7 +122,7 @@ def handle_fast_read_memory(**kwargs: Any) -> dict[str, Any]:
         else:
             rust_error = "Rust bridge missing read_file functions"
             rust = None
-        
+
         if rust is not None:
             _emit("MEMORY_ACCESSED", {"filename": filename, "fast": True})
             try:

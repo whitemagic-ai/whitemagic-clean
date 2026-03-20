@@ -11,7 +11,7 @@ def handle_art_of_war_chapter(**kwargs: Any) -> dict[str, Any]:
         chapter = int(kwargs.get("chapter") or kwargs.get("chapter_number") or 1)
         engine = get_war_engine()
         principles = engine.consult_chapter(chapter)
-        
+
         return {
             "status": "success",
             "chapter": chapter,

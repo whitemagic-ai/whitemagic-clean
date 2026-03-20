@@ -14,13 +14,13 @@ def handle_jit_research(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.jit_researcher import JITResearcher
         researcher = JITResearcher()
-        
+
         query = kwargs.get("query", "")
         depth = kwargs.get("depth", 3)
-        
+
         if not query:
             return {"status": "error", "error": "query required"}
-        
+
         result = researcher.research(query=query, depth=depth)
         return {
             "status": "success",
@@ -70,13 +70,13 @@ def handle_narrative_compress(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.narrative_compression import NarrativeCompressor
         compressor = NarrativeCompressor()
-        
+
         content = kwargs.get("content", "")
         target_ratio = kwargs.get("target_ratio", 0.5)
-        
+
         if not content:
             return {"status": "error", "error": "content required"}
-        
+
         result = compressor.compress(content=content, target_ratio=target_ratio)
         return {
             "status": "success",
@@ -156,7 +156,7 @@ def handle_hermit_assess(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.privacy.hermit_crab import HermitCrab
         hermit = HermitCrab()
-        
+
         exposure_scan = kwargs.get("scan", True)
         result = hermit.assess(scan=exposure_scan)
         return {
@@ -179,7 +179,7 @@ def handle_hermit_withdraw(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.privacy.hermit_crab import HermitCrab
         hermit = HermitCrab()
-        
+
         level = kwargs.get("level", 1)  # 1-5 privacy levels
         result = hermit.withdraw(level=level)
         return {
@@ -203,13 +203,13 @@ def handle_hermit_mediate(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.privacy.hermit_crab import HermitCrab
         hermit = HermitCrab()
-        
+
         resource = kwargs.get("resource")
         requester = kwargs.get("requester")
-        
+
         if not resource:
             return {"status": "error", "error": "resource required"}
-        
+
         result = hermit.mediate(resource=resource, requester=requester)
         return {
             "status": "success",
@@ -232,13 +232,13 @@ def handle_hermit_resolve(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.privacy.hermit_crab import HermitCrab
         hermit = HermitCrab()
-        
+
         conflict_id = kwargs.get("conflict_id")
         resolution = kwargs.get("resolution", "review")
-        
+
         if not conflict_id:
             return {"status": "error", "error": "conflict_id required"}
-        
+
         result = hermit.resolve(conflict_id=conflict_id, resolution=resolution)
         return {
             "status": "success",
@@ -280,13 +280,13 @@ def handle_hermit_check_access(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.privacy.hermit_crab import HermitCrab
         hermit = HermitCrab()
-        
+
         resource = kwargs.get("resource")
         requester = kwargs.get("requester")
-        
+
         if not resource:
             return {"status": "error", "error": "resource required"}
-        
+
         result = hermit.check_access(resource=resource, requester=requester)
         return {
             "status": "success",
@@ -313,7 +313,7 @@ def handle_green_report(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.telemetry.green_score import GreenScoreReporter
         reporter = GreenScoreReporter()
-        
+
         timeframe = kwargs.get("timeframe", "session")
         report = reporter.generate(timeframe=timeframe)
         return {
@@ -338,10 +338,10 @@ def handle_green_record(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.telemetry.green_score import GreenScoreReporter
         reporter = GreenScoreReporter()
-        
+
         metric_type = kwargs.get("type", "energy")
         value = kwargs.get("value", 0)
-        
+
         reporter.record(metric_type=metric_type, value=value)
         return {
             "status": "success",
@@ -368,11 +368,11 @@ def handle_cognitive_mode(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.cognitive_modes import CognitiveModeManager
         manager = CognitiveModeManager()
-        
+
         mode = kwargs.get("mode")
         if mode:
             manager.set_mode(mode)
-        
+
         return {
             "status": "success",
             "current_mode": manager.get_mode(),
@@ -394,13 +394,13 @@ def handle_cognitive_set(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.cognitive_modes import CognitiveModeManager
         manager = CognitiveModeManager()
-        
+
         mode = kwargs.get("mode")
         params = kwargs.get("params", {})
-        
+
         if not mode:
             return {"status": "error", "error": "mode required"}
-        
+
         result = manager.set_mode_with_params(mode, params)
         return {
             "status": "success",
@@ -423,7 +423,7 @@ def handle_cognitive_hints(**kwargs: Any) -> dict[str, Any]:
     try:
         from whitemagic.core.intelligence.cognitive_modes import CognitiveModeManager
         manager = CognitiveModeManager()
-        
+
         task = kwargs.get("task", "")
         hints = manager.get_hints(task=task)
         return {

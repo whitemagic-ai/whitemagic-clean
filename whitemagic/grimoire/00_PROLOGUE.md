@@ -17,10 +17,12 @@ WhiteMagic is a tool and memory substrate for agentic systems.
 
 At its core, it provides:
 
-- persistent memory with retrieval and lifecycle management
-- a unified tool dispatch layer with governance and middleware
-- MCP-facing interfaces, especially PRAT mode through the 28 Ganas
-- optional polyglot accelerators for high-value hot paths
+- persistent memory with retrieval and lifecycle management (5D holographic coordinates, Galactic Map)
+- a unified tool dispatch layer with governance and middleware (412 MCP tools, 8-stage pipeline)
+- MCP-facing interfaces, especially PRAT mode through the 28 Ganas (28 meta-tools)
+- optional polyglot accelerators for high-value hot paths (9 languages)
+- ethical governance: Dharma Rules Engine, Karma Ledger, Harmony Vector
+- LoCoMo benchmark: 78.3% recall accuracy (beats Letta 74%, Mem0 68.5%, OpenAI 63.8%)
 
 The project contains both a **public contract** and a **research body**.
 The public contract should stay smaller, clearer, and more stable than the experimental surface area around it.

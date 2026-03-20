@@ -7,7 +7,7 @@ Usage:
     from whitemagic.core.acceleration.koka_native_bridge import (
         KokaNativeBridge, koka_dispatch
     )
-    
+
     result = koka_dispatch("prat", "route", {"tool": "memory.create"})
 """
 from __future__ import annotations
@@ -57,7 +57,7 @@ class KokaCircuitBreaker:
         self.last_failure_time = 0.0
         self.state = "CLOSED" # CLOSED (ok), OPEN (failing), HALF_OPEN (testing)
         self.lock = threading.Lock()
-        
+
     def record_failure(self):
         with self.lock:
             self.failures += 1
@@ -65,14 +65,14 @@ class KokaCircuitBreaker:
             if self.failures >= self.failure_threshold:
                 self.state = "OPEN"
                 logger.warning(f"Koka circuit breaker OPENED after {self.failures} failures")
-                
+
     def record_success(self):
         with self.lock:
             self.failures = 0
             if self.state != "CLOSED":
                 self.state = "CLOSED"
                 logger.info("Koka circuit breaker RESET to CLOSED")
-                
+
     def allow_request(self) -> bool:
         with self.lock:
             if self.state == "CLOSED":
@@ -87,11 +87,11 @@ class KokaCircuitBreaker:
 
 class KokaNativeBridge:
     """High-performance bridge to compiled Koka native binaries.
-    
+
     Uses persistent subprocesses to avoid process startup overhead.
     Thread-safe with connection pooling.
     """
-    
+
     def __init__(self, max_connections: int = 4):
         self._lock = threading.Lock()
         self._max_connections = max_connections
@@ -99,9 +99,9 @@ class KokaNativeBridge:
         self._available: dict[str, list[subprocess.Popen]] = {}
         self._binaries: dict[str, Path] = {}
         self._breakers: dict[str, KokaCircuitBreaker] = {}
-        
+
         self._check_binaries()
-    
+
     def _check_binaries(self) -> None:
         """Verify which Koka binaries are available."""
         for name, path in _MODULE_BINS.items():
@@ -113,7 +113,7 @@ class KokaNativeBridge:
                 logger.info("Koka binary available: %s", name)
             else:
                 logger.debug("Koka binary not found: %s", path)
-        
+
         # Check dispatcher
         if _DISPATCHER_BIN.exists() and os.access(_DISPATCHER_BIN, os.X_OK):
             self._binaries["dispatcher"] = _DISPATCHER_BIN
@@ -121,12 +121,12 @@ class KokaNativeBridge:
             if "dispatcher" not in self._breakers:
                 self._breakers["dispatcher"] = KokaCircuitBreaker()
             logger.info("Koka dispatcher available")
-    
+
     def is_available(self, module: str) -> bool:
         """Check if a Koka module is available and healthy."""
         if module not in self._binaries:
             return False
-            
+
         with self._lock:
             # Check for dead processes and prune them
             if module in self._processes:
@@ -135,11 +135,11 @@ class KokaNativeBridge:
                     self._processes[module].remove(p)
                     if module in self._available and p in self._available[module]:
                         self._available[module].remove(p)
-                        
+
             # If we have living processes or room to grow, we are available
             current_alive = len(self._processes.get(module, []))
             return current_alive > 0 or current_alive < self._max_connections
-            
+
     def _get_process(self, module: str) -> subprocess.Popen | None:
         """Get or create a subprocess for the module."""
         with self._lock:
@@ -149,22 +149,22 @@ class KokaNativeBridge:
                 self._available[module] = valid_procs
                 if valid_procs:
                     return self._available[module].pop()
-            
+
             # Check if we can create more
             # Clean dead processes from total tracked
             if module in self._processes:
                 self._processes[module] = [p for p in self._processes[module] if p.poll() is None]
-                
+
             current = len(self._processes.get(module, []))
             if current >= self._max_connections:
                 return None  # Pool exhausted
 
-            
+
             # Create new process
             binary = self._binaries.get(module)
             if not binary:
                 return None
-            
+
             try:
                 proc = subprocess.Popen(
                     ['stdbuf', '-o0', '-i0', str(binary)],
@@ -174,7 +174,7 @@ class KokaNativeBridge:
                     text=True,
                     bufsize=1  # Line buffered
                 )
-                
+
                 # Consume initialization line with timeout
                 init_line = self._readline_with_timeout(proc, 2.0)
                 if not init_line:
@@ -182,17 +182,17 @@ class KokaNativeBridge:
                     self._discard_process(module, proc)
                     return None
                 logger.debug("Koka init: %s", init_line.strip())
-                
+
                 if module not in self._processes:
                     self._processes[module] = []
                 self._processes[module].append(proc)
 
-                
+
                 return proc
             except Exception as e:
                 logger.error("Failed to start Koka process for %s: %s", module, e)
                 return None
-    
+
     def _return_process(self, module: str, proc: subprocess.Popen) -> None:
         """Return a process to the available pool."""
         with self._lock:
@@ -234,11 +234,11 @@ class KokaNativeBridge:
         try:
             res = result_queue.get(timeout=timeout)
             # Give thread a chance to finish cleanly
-            thread.join(0.1) 
+            thread.join(0.1)
             return res
         except queue.Empty:
             return None
-    
+
     def dispatch(
         self,
         module: str,
@@ -247,13 +247,13 @@ class KokaNativeBridge:
         timeout: float = 5.0
     ) -> dict[str, Any] | None:
         """Dispatch a call to a Koka native module.
-        
+
         Args:
             module: Koka module name (e.g., "prat", "gana")
             operation: Effect operation to invoke
             args: Arguments as JSON-serializable dict
             timeout: Maximum seconds to wait for response
-            
+
         Returns:
             Parsed JSON response or None on failure
         """
@@ -261,18 +261,18 @@ class KokaNativeBridge:
         if not self.is_available(module):
             logger.debug("Koka module not available: %s", module)
             return None
-            
+
         breaker = self._breakers.get(module)
         if breaker and not breaker.allow_request():
             logger.warning("Koka circuit breaker OPEN for %s - skipping dispatch", module)
             return None
 
-        
+
         proc = self._get_process(module)
         if not proc:
             logger.warning("Koka process pool exhausted for %s", module)
             return None
-        
+
         try:
             # Build request
             request = {
@@ -281,46 +281,51 @@ class KokaNativeBridge:
                 "args": args,
                 "timestamp": time.time()
             }
-            
+
             # Send request
             request_json = _json_dumps(request)
             proc.stdin.write(request_json + "\n")
             proc.stdin.flush()
-            
+
             # Read response with timeout
             start = time.time()
             response_line = self._readline_with_timeout(proc, timeout)
             elapsed = time.time() - start
-            
+
             if not response_line:
                 logger.error("Koka process timed out or returned no response for %s.%s", module, operation)
-                if breaker: breaker.record_failure()
+                if breaker:
+                    breaker.record_failure()
                 self._discard_process(module, proc)
                 return None
-            
+
             # Parse response
             try:
                 response = _json_loads(response_line)
                 response["_koka_latency_ms"] = elapsed * 1000
-                if breaker: breaker.record_success()
+                if breaker:
+                    breaker.record_success()
                 return response
             except json.JSONDecodeError as e:
                 logger.error("Invalid JSON from Koka: %s", e)
-                if breaker: breaker.record_failure()
+                if breaker:
+                    breaker.record_failure()
                 return None
-            
+
         except subprocess.TimeoutExpired:
             logger.error("Koka call timed out: %s.%s", module, operation)
-            if breaker: breaker.record_failure()
+            if breaker:
+                    breaker.record_failure()
             return None
         except Exception as e:
             logger.error("Koka dispatch error: %s", e)
-            if breaker: breaker.record_failure()
+            if breaker:
+                    breaker.record_failure()
             return None
         finally:
             if proc.poll() is None:
                 self._return_process(module, proc)
-    
+
     def close(self) -> None:
         """Close all Koka processes."""
         with self._lock:
@@ -357,13 +362,13 @@ def koka_dispatch(
     timeout: float = 5.0
 ) -> dict[str, Any] | None:
     """Convenience function to dispatch to Koka.
-    
+
     Args:
         module: Koka module name
         operation: Effect operation
         args: Arguments dict (default: empty)
         timeout: Maximum wait time
-        
+
     Returns:
         Response dict or None on failure
     """
@@ -373,12 +378,12 @@ def koka_dispatch(
 
 def koka_native_status() -> dict[str, Any]:
     """Get status of Koka native bridge.
-    
+
     Returns:
         Dict with available modules, process counts, etc.
     """
     bridge = get_koka_bridge()
-    
+
     # Also check hybrid dispatcher status
     hybrid_status = {}
     try:
@@ -391,7 +396,7 @@ def koka_native_status() -> dict[str, Any]:
         }
     except ImportError:
         hybrid_status = {"available": False, "reason": "not_installed"}
-    
+
     with bridge._lock:
         return {
             "available_modules": list(bridge._binaries.keys()),
@@ -418,10 +423,10 @@ def close_koka_bridge() -> None:
 # PRAT Router Integration
 class KokaPratRouter:
     """Drop-in replacement for PRAT routing using Koka effects."""
-    
+
     def __init__(self):
         self._bridge = get_koka_bridge()
-    
+
     def route_via_koka(
         self,
         gana_name: str,
@@ -429,12 +434,12 @@ class KokaPratRouter:
         args: dict[str, Any]
     ) -> dict[str, Any] | None:
         """Route a PRAT call through Koka handlers.
-        
+
         Falls back to Python if Koka unavailable.
         """
         if not self._bridge.is_available("prat"):
             return None
-        
+
         return koka_dispatch(
             "prat",
             "route-prat-call",
@@ -444,12 +449,12 @@ class KokaPratRouter:
                 "args": args
             }
         )
-    
+
     def get_resonance_via_koka(self, gana_name: str) -> dict[str, Any] | None:
         """Get resonance hints from Koka."""
         if not self._bridge.is_available("resonance"):
             return None
-        
+
         return koka_dispatch(
             "resonance",
             "generate-hints",
@@ -465,36 +470,36 @@ def benchmark_koka_dispatch(
     iterations: int = 1000
 ) -> dict[str, float]:
     """Benchmark Koka dispatch latency.
-    
+
     Returns:
         Dict with min, max, avg, p50, p99 latencies in microseconds
     """
     bridge = get_koka_bridge()
-    
+
     if not bridge.is_available(module):
         return {"error": f"Module {module} not available"}
-    
+
     latencies: list[float] = []
-    
+
     # Warmup
     for _ in range(10):
         bridge.dispatch(module, operation, args, timeout=5.0)
-    
+
     # Benchmark
     for _ in range(iterations):
         start = time.perf_counter()
         result = bridge.dispatch(module, operation, args, timeout=5.0)
         elapsed = (time.perf_counter() - start) * 1_000_000  # microseconds
-        
+
         if result is not None:
             latencies.append(elapsed)
-    
+
     if not latencies:
         return {"error": "All calls failed"}
-    
+
     latencies.sort()
     n = len(latencies)
-    
+
     return {
         "iterations": n,
         "min_us": latencies[0],
