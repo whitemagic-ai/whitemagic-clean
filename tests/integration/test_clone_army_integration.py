@@ -30,9 +30,11 @@ def test_clone_army_deploy_collect():
     assert result.clones_deployed == 500
     assert result.success_rate == 1.0
 
-@pytest.mark.skipif(not hasattr(__import__("whitemagic_rust"), "MassiveDeployer"), reason="MassiveDeployer not available in whitemagic_rust")
+@pytest.mark.skipif(
+    whitemagic_rust is None or not hasattr(whitemagic_rust, "MassiveDeployer"),
+    reason="MassiveDeployer not available in whitemagic_rust"
+)
 def test_massive_deployer_throughput():
-    import whitemagic_rust
     deployer = whitemagic_rust.MassiveDeployer(8)
     tasks = [
         whitemagic_rust.CampaignTask("camp", "migrate", f"file_{i}.py", "python", "rust", 1, 1, "10x")
