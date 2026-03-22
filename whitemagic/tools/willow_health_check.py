@@ -5,6 +5,7 @@ to prevent MCP hang issues. Implements circuit breaker validation,
 Koka handler timeout wrapping, and automatic recovery.
 """
 
+import asyncio
 import logging
 import time
 from dataclasses import dataclass
