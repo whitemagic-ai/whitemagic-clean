@@ -6,7 +6,7 @@ Consolidates 327 __init__(1)->None + 234 __init__(2)->None patterns
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 
 @dataclass

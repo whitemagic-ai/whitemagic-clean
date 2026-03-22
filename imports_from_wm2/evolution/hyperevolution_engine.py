@@ -28,10 +28,8 @@ import hashlib
 import numpy as np
 from pathlib import Path
 from dataclasses import dataclass, field, asdict
-from typing import Dict, List, Any, Set, Tuple, Optional
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
-from collections import defaultdict, Counter
-import sqlite3
+from typing import Dict, List, Any, Tuple
+from concurrent.futures import ProcessPoolExecutor
 
 # Add parent to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "whitemagicdev"))

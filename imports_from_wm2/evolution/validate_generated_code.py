@@ -11,7 +11,6 @@ Validates generated code through multiple tiers:
 import ast
 import json
 from typing import Dict, List, Tuple
-from pathlib import Path
 
 class CodeValidator:
     """Multi-tier code validation"""
@@ -59,7 +58,7 @@ class CodeValidator:
                 return False, unavailable, 0.0
             return True, imports, 0.1
             
-        except Exception as e:
+        except Exception:
             return False, [], 0.0
     
     def analyze_patterns(self, code: str) -> Dict[str, int]:
@@ -170,7 +169,7 @@ def main():
         genome = results['best_genome']
         validation = validator.validate_genome(genome)
         
-        print(f"🧬 GENOME ANALYSIS:")
+        print("🧬 GENOME ANALYSIS:")
         print(f"   Size: {validation['genome_size']} genes")
         print(f"   Synthetic fitness: {validation['synthetic_fitness']:.4f}")
         print(f"   Actionable insights: {validation['actionable_count']}")

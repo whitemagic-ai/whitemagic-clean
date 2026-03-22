@@ -8,7 +8,7 @@ Wires all 7 biological subsystems together for emergent intelligence.
 from wm2.core import BaseEngine
 from wm2.core.serializable import Serializable
 from wm2.core.metrics import MetricCollector, tracked
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 # Import all biological controllers
 from wm2.biological.dream_cycle_controller import DreamCycleController
@@ -53,7 +53,7 @@ class UnifiedNervousSystem(BaseEngine, Serializable, MetricCollector):
             try:
                 subsystem.activate()
                 results[name] = True
-            except Exception as e:
+            except Exception:
                 results[name] = False
         
         self.wired = all(results.values())

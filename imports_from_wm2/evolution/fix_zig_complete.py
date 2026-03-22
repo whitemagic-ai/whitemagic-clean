@@ -6,7 +6,6 @@ Systematically fix all Zig compilation errors.
 """
 
 import subprocess
-import re
 from pathlib import Path
 
 print("=" * 80)
@@ -103,7 +102,7 @@ if result.returncode == 0:
         print(f"   ⚠️  Execution failed with code {test_result.returncode}")
         print("Error:", test_result.stderr[:500])
 else:
-    print(f"   ❌ Compilation failed")
+    print("   ❌ Compilation failed")
     print()
     print("Errors:")
     print(result.stderr[:1000])

@@ -8,8 +8,6 @@ Analyzes the codebase for:
 4. Superposition-capable data structures in the memory system
 """
 
-import ast
-import os
 import re
 from pathlib import Path
 import json

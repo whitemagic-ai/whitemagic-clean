@@ -6,7 +6,6 @@ Consolidates initialization, loading, saving patterns
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Optional
 
 
 class Lifecycle(ABC):

@@ -4,7 +4,7 @@ WM2 Migration: whitemagic/core/memory/sqlite_backend.py
 Migrated from WM1 using unified base classes
 """
 
-from wm2.core import BaseEngine, BaseManager, BaseHandler
+from wm2.core import BaseHandler
 from typing import Dict, Any
 
 

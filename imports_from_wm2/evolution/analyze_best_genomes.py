@@ -7,7 +7,6 @@ Extract insights and prepare for code generation.
 
 import json
 from pathlib import Path
-import hyperevolution_core as rust
 
 print("=" * 80)
 print("BEST GENOME ANALYSIS - THREE PASSES")
@@ -59,14 +58,14 @@ fitness_improvement = ((third_pass['metrics']['best_fitness'] / first_pass['best
 print(f"1. FITNESS IMPROVEMENT: +{fitness_improvement:.2f}%")
 print(f"   - First: {first_pass['best_fitness']:.4f}")
 print(f"   - Third: {third_pass['metrics']['best_fitness']:.4f}")
-print(f"   - Optimized parameters working")
+print("   - Optimized parameters working")
 print()
 
 gene_reduction = ((third_pass['best_genome']['gene_count'] / first_pass['best_genes']) - 1) * 100
 print(f"2. GENOME COMPACTNESS: {gene_reduction:.1f}%")
 print(f"   - First: {first_pass['best_genes']} genes")
 print(f"   - Third: {third_pass['best_genome']['gene_count']} genes")
-print(f"   - Evolution finding more efficient solutions")
+print("   - Evolution finding more efficient solutions")
 print()
 
 print("3. DIVERSITY MAINTAINED: 90.50%")

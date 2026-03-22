@@ -8,9 +8,8 @@ Test all 20 mutations with actual metrics and effectiveness analysis.
 import hyperevolution_core as rust
 import time
 import json
-from pathlib import Path
 from dataclasses import dataclass, asdict
-from typing import Dict, List, Optional
+from typing import Dict, List
 import psutil
 
 @dataclass
@@ -140,15 +139,15 @@ class MutationTester:
         
         # Decision logic
         if significant >= 1 and negative == 0:
-            return "KEEP", f"At least one metric improved >5% with no major regressions"
+            return "KEEP", "At least one metric improved >5% with no major regressions"
         elif positive >= 3 and negative == 0:
-            return "KEEP", f"Multiple metrics improved >2% with no regressions"
+            return "KEEP", "Multiple metrics improved >2% with no regressions"
         elif negative >= 2:
-            return "DISCARD", f"Multiple metrics regressed >5%"
+            return "DISCARD", "Multiple metrics regressed >5%"
         elif max(improvements.values()) < 1:
-            return "DISCARD", f"No meaningful improvements (<1%)"
+            return "DISCARD", "No meaningful improvements (<1%)"
         else:
-            return "MAYBE", f"Mixed results - needs further testing"
+            return "MAYBE", "Mixed results - needs further testing"
     
     def test_mutation(
         self,
@@ -174,7 +173,7 @@ class MutationTester:
               f"duration={baseline.duration:.1f}s")
         
         # Run with mutation
-        print(f"🧬 Running with mutation...")
+        print("🧬 Running with mutation...")
         mutated = test_func(population, generations)
         print(f"   Mutated:  fitness={mutated.best_fitness:.4f}, "
               f"throughput={mutated.throughput:,.0f}/s, "

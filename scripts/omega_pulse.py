@@ -12,7 +12,6 @@ import logging
 import os
 import time
 from datetime import datetime
-from typing import Any, Dict, List
 
 # Configure logging
 logging.basicConfig(
@@ -171,7 +170,6 @@ class OmegaPulse:
         return go_mesh_status()
 
     def _run_neuro_health(self):
-        from whitemagic.core.memory.sqlite_backend import SQLiteBackend
         from whitemagic.config import DB_PATH
         import sqlite3
         conn = sqlite3.connect(DB_PATH)

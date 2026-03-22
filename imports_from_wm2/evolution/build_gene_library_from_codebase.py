@@ -9,8 +9,7 @@ This becomes the foundation for meaningful evolution.
 import os
 import json
 from pathlib import Path
-from typing import List, Dict, Set
-import re
+from typing import List, Dict
 from collections import defaultdict
 
 class GeneLibraryBuilder:
@@ -91,7 +90,7 @@ class GeneLibraryBuilder:
             if 'ctypes' in content or 'cffi' in content:
                 genes.append(self._create_gene('c_bindings', 'Polyglot', 0.80))
             
-        except Exception as e:
+        except Exception:
             pass
         
         return genes
@@ -118,7 +117,7 @@ class GeneLibraryBuilder:
             if 'PyO3' in content or 'pyo3' in content:
                 genes.append(self._create_gene('python_rust_bridge', 'Polyglot', 0.95))
             
-        except Exception as e:
+        except Exception:
             pass
         
         return genes

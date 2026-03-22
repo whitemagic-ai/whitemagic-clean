@@ -7,7 +7,6 @@ GalacticTelepathyEngine to the Go gossip/mesh layer.
 
 import asyncio
 import logging
-from typing import Any, Dict
 
 from whitemagic.core.memory.galactic_telepathy import get_telepathy_engine
 from whitemagic.core.acceleration.go_mesh_bridge import (

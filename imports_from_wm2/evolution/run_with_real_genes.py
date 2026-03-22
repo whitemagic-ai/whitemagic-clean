@@ -7,7 +7,6 @@ Safer approach: 200K × 100 to avoid crashes
 import hyperevolution_core as rust
 import time
 import json
-from pathlib import Path
 
 def load_real_gene_library():
     """Load gene library from seed vault"""
@@ -120,7 +119,7 @@ def main():
     
     # Compare to synthetic library
     print("📈 COMPARISON:")
-    print(f"   Synthetic library (1000 generic genes): fitness ~0.68")
+    print("   Synthetic library (1000 generic genes): fitness ~0.68")
     print(f"   Real library (34 WhiteMagic patterns): fitness {metrics.best_fitness:.4f}")
     print()
     

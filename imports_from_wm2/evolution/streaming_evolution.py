@@ -7,7 +7,7 @@ Enables 1M+ population evolution without crashes.
 """
 
 import hyperevolution_core as rust
-from typing import List, Optional
+from typing import List
 from dataclasses import dataclass
 import time
 

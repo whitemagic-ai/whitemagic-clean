@@ -85,7 +85,7 @@ class InsightsPipeline:
         # Stage 5: Rank by priority
         self._rank_recommendations()
         
-        logger.info(f"✅ Pipeline complete:")
+        logger.info("✅ Pipeline complete:")
         logger.info(f"   Insights: {len(self.insights)}")
         logger.info(f"   Recommendations: {len(self.recommendations)}")
         logger.info(f"   High-priority: {sum(1 for r in self.recommendations if r.priority >= 8)}")

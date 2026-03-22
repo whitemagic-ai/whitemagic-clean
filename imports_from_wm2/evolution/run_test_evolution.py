@@ -21,12 +21,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from evolution.hyperevolution_engine import (
     HyperEvolutionEngine,
     GeneLibrary,
-    FitnessEvaluator,
 )
 from evolution.polyglot_bridge import create_bridge
 from evolution.insights_pipeline import extract_actionable_insights
-from evolution.code_generator import generate_code_from_genome
-from evolution.kaizen_integration import extract_improvement_proposals
 
 
 def main():

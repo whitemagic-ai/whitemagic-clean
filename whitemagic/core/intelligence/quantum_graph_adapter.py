@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from whitemagic.core.intelligence.quantum_inspired_graph import (
     QuantumGraphEngine, QuantumNode
 )
-from whitemagic.core.memory.graph_walker import GraphWalker, WalkResult, WalkPath
+from whitemagic.core.memory.graph_walker import GraphWalker, WalkResult
 
 logger = logging.getLogger(__name__)
 

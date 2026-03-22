@@ -6,7 +6,7 @@ Wire all 7 biological subsystems into unified nervous system
 
 import sys
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 # Add WM1 to path for imports
 WM1_ROOT = Path(__file__).parent.parent.parent / "whitemagicdev"
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     print()
     
     health = wiring.get_health_status()
-    print(f"Health Status:")
+    print("Health Status:")
     print(f"   Active: {health['active']}/{health['total']}")
     print(f"   Fully Wired: {'✅' if health['wired'] else '⚠️'}")
     print()

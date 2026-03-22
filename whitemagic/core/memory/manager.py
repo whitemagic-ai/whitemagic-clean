@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Union, cast
 
 from whitemagic.core.memory.unified import get_unified_memory
-from whitemagic.core.memory.unified_types import Memory, MemoryType
+from whitemagic.core.memory.unified_types import MemoryType
 from whitemagic.core.resonance.gan_ying_enhanced import EventType
 
 

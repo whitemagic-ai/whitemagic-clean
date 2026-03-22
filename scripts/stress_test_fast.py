@@ -2,7 +2,6 @@ import time
 import uuid
 import random
 import logging
-import sqlite3
 from pathlib import Path
 from whitemagic.core.memory.sqlite_backend import SQLiteBackend
 from whitemagic.core.memory.unified_types import Memory, MemoryType

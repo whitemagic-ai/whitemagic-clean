@@ -8,7 +8,7 @@ Maps the 20-gene optimal genome to concrete code improvements.
 import json
 from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List
 
 @dataclass
 class CodeMutation:

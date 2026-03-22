@@ -10,7 +10,7 @@ Description: Memory lifecycle and decay management
 from wm2.core import BaseEngine
 from wm2.core.serializable import Serializable
 from wm2.core.metrics import MetricCollector, tracked
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 
 class MetabolismController(BaseEngine, Serializable, MetricCollector):

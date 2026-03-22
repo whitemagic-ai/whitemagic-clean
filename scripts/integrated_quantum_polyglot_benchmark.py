@@ -9,7 +9,6 @@ import json
 import time
 import random
 import math
-from typing import List, Dict, Any
 
 class IntegratedBenchmark:
     def __init__(self):
@@ -107,7 +106,7 @@ class IntegratedBenchmark:
         with open("reports/integrated_benchmark_results.json", "w") as f:
             json.dump(self.results, f, indent=2)
         
-        print(f"\n📊 Results saved to reports/integrated_benchmark_results.json")
+        print("\n📊 Results saved to reports/integrated_benchmark_results.json")
         print(f"⚡ Combined Speedup: {self.results['speedup_analysis']['combined_speedup']:.1f}x")
         
         return self.results

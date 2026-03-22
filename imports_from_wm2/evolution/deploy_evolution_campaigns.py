@@ -281,7 +281,7 @@ def main():
     print(f"Pending: {report['summary']['pending']}")
     print(f"Failed: {report['summary']['failed']}")
     print()
-    print(f"Report saved to: campaign_deployment_report.json")
+    print("Report saved to: campaign_deployment_report.json")
     print()
     
     # Next steps

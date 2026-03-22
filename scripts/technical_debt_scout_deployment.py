@@ -9,7 +9,7 @@ import asyncio
 import json
 import logging
 from dataclasses import dataclass, field
-from typing import List, Dict, Any
+from typing import List
 import os
 
 logging.basicConfig(level=logging.INFO)
@@ -226,7 +226,7 @@ async def main():
     with open('reports/technical_debt_scout_deployment.json', 'w') as f:
         json.dump(report, f, indent=2)
     
-    logger.info(f"📊 Report saved: reports/technical_debt_scout_deployment.json")
+    logger.info("📊 Report saved: reports/technical_debt_scout_deployment.json")
     logger.info(f"🎯 Summary: {report['findings']['actionable']} actionable markers found, "
                 f"{report['fixes_applied']} fixes applied")
 

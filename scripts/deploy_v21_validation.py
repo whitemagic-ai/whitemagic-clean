@@ -17,9 +17,8 @@ import argparse
 import asyncio
 import json
 import logging
-import sys
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

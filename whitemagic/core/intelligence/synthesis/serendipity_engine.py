@@ -5,17 +5,13 @@ Uses weighted sampling favoring high-gravity, low-access memories.
 """
 
 import logging
-import os
 import sqlite3
 import random
-import hashlib
-import numpy as np
 from typing import Any
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 
 from whitemagic.utils.core import parse_datetime
-from whitemagic.core.memory.unified_types import Memory, MemoryType
 
 logger = logging.getLogger(__name__)
 

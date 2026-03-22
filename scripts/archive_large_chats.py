@@ -3,7 +3,6 @@
 Archive Large Windsurf Cascade Files
 Moves .pb files > 10MB to an archive directory to reduce IDE memory pressure.
 """
-import os
 import shutil
 from pathlib import Path
 

@@ -12,9 +12,7 @@ import asyncio
 import json
 import logging
 import os
-import sys
 import time
-from typing import Dict, Any, List
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -57,7 +55,7 @@ async def main():
     with open("reports/massive_deployment_v21_1.json", "w") as f:
         json.dump(report, f, indent=2)
         
-    logger.info(f"📊 Massive deployment report saved to reports/massive_deployment_v21_1.json")
+    logger.info("📊 Massive deployment report saved to reports/massive_deployment_v21_1.json")
 
 if __name__ == "__main__":
     asyncio.run(main())

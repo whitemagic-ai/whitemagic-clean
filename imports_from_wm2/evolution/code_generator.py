@@ -494,7 +494,7 @@ def apply_mutations_to_codebase(
     generator = CodeGenerator(codebase_root)
     results = generator.apply_mutations_to_codebase(mutations, dry_run=dry_run)
     
-    logger.info(f"📝 Mutation application complete:")
+    logger.info("📝 Mutation application complete:")
     logger.info(f"   Applied: {results['mutations_applied']}")
     logger.info(f"   Failed: {results['mutations_failed']}")
     logger.info(f"   Files modified: {len(results['files_modified'])}")

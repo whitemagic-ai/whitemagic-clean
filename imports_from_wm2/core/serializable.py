@@ -7,7 +7,7 @@ Replaces 127 individual to_dict implementations
 
 import json
 from typing import Any, Dict, Type, TypeVar, get_type_hints
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 T = TypeVar('T', bound='Serializable')

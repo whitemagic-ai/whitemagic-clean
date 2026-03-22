@@ -7,13 +7,9 @@ using the CoordinateEncoder. Part of the v22 milestone.
 
 import asyncio
 import logging
-from pathlib import Path
-from datetime import datetime
 
-from whitemagic.core.memory.sqlite_backend import SQLiteBackend
 from whitemagic.core.memory.unified import UnifiedMemory
 from whitemagic.core.intelligence.hologram.encoder import CoordinateEncoder
-from whitemagic.config import DB_PATH
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

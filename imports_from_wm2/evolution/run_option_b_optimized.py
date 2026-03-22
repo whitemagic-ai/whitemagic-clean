@@ -12,7 +12,6 @@ import time
 import json
 from dataclasses import dataclass, asdict
 import psutil
-import os
 
 @dataclass
 class MassiveScaleResults:
@@ -58,9 +57,9 @@ def run_massive_scale():
     print()
     
     print("Expected performance (from Option C):")
-    print(f"  Throughput: ~132,000 lineages/sec")
-    print(f"  Duration: ~13 minutes")
-    print(f"  Fitness: 0.69-0.70 (target)")
+    print("  Throughput: ~132,000 lineages/sec")
+    print("  Duration: ~13 minutes")
+    print("  Fitness: 0.69-0.70 (target)")
     print()
     
     # Create gene library

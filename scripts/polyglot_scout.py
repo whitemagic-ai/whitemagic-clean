@@ -8,11 +8,9 @@ Verifies connectivity and readiness of:
 4. Rust (for low-level hot paths)
 """
 
-import os
 import subprocess
 import json
 import socket
-from pathlib import Path
 
 def check_elixir():
     try:

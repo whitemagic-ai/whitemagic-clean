@@ -2,7 +2,6 @@ import time
 import uuid
 import random
 import logging
-import os
 import sys
 from pathlib import Path
 from datetime import datetime
@@ -28,7 +27,7 @@ def run_stress_test(num_memories=5000, batch_size=100):
     # Force use of the backend which now has Koka fallbacks
     backend = SQLiteBackend(db_path)
     
-    print(f"\n🚀 Starting v21 Polyglot Stress Test (Reliable Feedback Mode)")
+    print("\n🚀 Starting v21 Polyglot Stress Test (Reliable Feedback Mode)")
     print(f"   Target: {num_memories} memories")
     print(f"   Batch Size: {batch_size}")
     print(f"   Database: {db_path}\n")
@@ -69,7 +68,7 @@ def run_stress_test(num_memories=5000, batch_size=100):
     duration = end_time - start_time
     ops_per_sec = total_inserted / duration if duration > 0 else 0
 
-    print(f"\n\n✅ Stress Test Complete")
+    print("\n\n✅ Stress Test Complete")
     print(f"   Total Inserted: {total_inserted}")
     print(f"   Duration: {duration:.2f}s")
     print(f"   Throughput: {ops_per_sec:.2f} ops/s")

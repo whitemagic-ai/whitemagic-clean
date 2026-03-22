@@ -45,7 +45,7 @@ print(f"  Mutation: {config.mutation_rate} (optimized)")
 print(f"  Selection: {config.selection_pressure} (optimized)")
 print(f"  Elitism: {config.elitism_rate} (optimized)")
 print()
-print(f"Expected duration: ~2-3 minutes")
+print("Expected duration: ~2-3 minutes")
 print()
 
 # Create gene library

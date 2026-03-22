@@ -122,7 +122,7 @@ async def execute_tool_v21(tool_name: str, **kwargs: Any) -> Dict[str, Any]:
 def _execute_tool_internal(tool_name: str, **kwargs: Any) -> Dict[str, Any]:
     """Internal tool execution - same as original unified_api."""
     # Import the handler mapping
-    from .prat_router import TOOL_TO_GANA, get_gana_for_tool
+    from .prat_router import get_gana_for_tool
     
     gana_name = get_gana_for_tool(tool_name)
     if not gana_name:

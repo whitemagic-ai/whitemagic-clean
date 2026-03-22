@@ -5,9 +5,8 @@ algorithms to accelerate graph operations.
 """
 
 import math
-import random
 import logging
-from typing import List, Dict, Any, Callable, Optional, Set
+from typing import List, Dict, Any, Callable
 from dataclasses import dataclass, field
 import numpy as np
 

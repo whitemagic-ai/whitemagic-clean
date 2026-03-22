@@ -1,7 +1,6 @@
 
 import subprocess
 import time
-import os
 
 binary_path = "./whitemagic-koka/batch_ipc"
 print(f"Testing binary: {binary_path}")

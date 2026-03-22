@@ -16,7 +16,7 @@ def run_stress_test(num_memories=10000, batch_size=1000):
         db_path.unlink()
     
     backend = SQLiteBackend(db_path)
-    logger.info(f"Starting 10K Worker Stress Test (v21 Polyglot Architecture) - Scale Verification")
+    logger.info("Starting 10K Worker Stress Test (v21 Polyglot Architecture) - Scale Verification")
     
     start_time = time.perf_counter()
     

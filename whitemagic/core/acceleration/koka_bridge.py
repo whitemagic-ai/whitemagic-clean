@@ -9,7 +9,7 @@ import queue
 import logging
 import subprocess
 import threading
-from typing import List, Dict, Any, Optional, IO
+from typing import List, Dict
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)

@@ -5,10 +5,8 @@ and simulated annealing for graph optimization.
 
 import math
 import random
-import time
-import json
 import logging
-from typing import List, Dict, Any, Callable, Optional
+from typing import List, Any, Callable, Optional
 from dataclasses import dataclass
 
 logging.basicConfig(level=logging.INFO)

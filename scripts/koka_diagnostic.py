@@ -1,4 +1,3 @@
-import sys
 import logging
 from whitemagic.core.acceleration.koka_bridge import get_koka_runtime
 

@@ -9,10 +9,8 @@ import hyperevolution_core as rust
 import time
 import json
 from dataclasses import dataclass, asdict
-from typing import Dict, List
+from typing import Dict
 import psutil
-import hashlib
-from functools import lru_cache
 
 @dataclass
 class TestMetrics:

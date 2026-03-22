@@ -6,7 +6,7 @@ Replaces 63 individual get_stats implementations
 """
 
 import time
-from typing import Any, Dict, Callable, Optional
+from typing import Any, Dict, Callable
 from functools import wraps
 from datetime import datetime, timezone
 from collections import defaultdict
@@ -115,7 +115,7 @@ def tracked(func: Callable) -> Callable:
         try:
             result = func(self, *args, **kwargs)
             return result
-        except Exception as e:
+        except Exception:
             error = True
             raise
         finally:

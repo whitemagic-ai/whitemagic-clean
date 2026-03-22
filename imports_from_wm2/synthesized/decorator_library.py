@@ -9,7 +9,6 @@ Total uses: 1175
 
 from functools import wraps
 from typing import Any, Callable, TypeVar
-from wm2.core.metrics import tracked
 
 F = TypeVar('F', bound=Callable[..., Any])
 
@@ -59,7 +58,7 @@ def retry(max_attempts: int = 3):
             for attempt in range(max_attempts):
                 try:
                     return func(*args, **kwargs)
-                except Exception as e:
+                except Exception:
                     if attempt == max_attempts - 1:
                         raise
             return None

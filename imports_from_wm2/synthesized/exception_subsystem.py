@@ -8,7 +8,7 @@ Total exception handlers: 2133
 Exception hierarchies: 4
 """
 
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional
 from wm2.core import BaseEngine
 from wm2.core.serializable import Serializable
 from wm2.core.metrics import MetricCollector, tracked

@@ -16,7 +16,6 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
 
 # Ensure root is in path
 ROOT = Path(__file__).resolve().parent.parent

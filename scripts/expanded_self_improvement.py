@@ -9,14 +9,13 @@ Analyzes:
 - Biological subsystem tuning
 """
 
-import ast
 import asyncio
 import json
 import logging
 import os
 import time
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, Any
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -144,7 +143,7 @@ if __name__ == "__main__":
     improver = ExpandedSelfImprovement()
     result = asyncio.run(improver.run_continuous(cycles))
     
-    print(f"\n🎯 Expanded Self-Improvement Complete!")
+    print("\n🎯 Expanded Self-Improvement Complete!")
     print(f"Cycles: {result['total_cycles']}")
     print(f"Findings: {result['total_findings']}")
     print(f"Quantum: {result['quantum_candidates']}")

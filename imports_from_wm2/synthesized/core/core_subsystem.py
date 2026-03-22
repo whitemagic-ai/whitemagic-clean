@@ -6,10 +6,10 @@ Synthesized from whitemagicdev and whitemagicpublic
 Missing classes: 1058
 """
 
-from wm2.core import BaseEngine, BaseManager
+from wm2.core import BaseEngine
 from wm2.core.serializable import Serializable
 from wm2.core.metrics import MetricCollector, tracked
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any
 
 
 class CoreSubsystem(BaseEngine, Serializable, MetricCollector):
