@@ -40,7 +40,7 @@ def benchmark_memory_operations():
     start = time.time()
     for _ in range(iterations):
         cache.clear()  # Force cache miss
-        mem = um.get_memory(test_id)
+        um.get_memory(test_id)
     cold_time = time.time() - start
     print(f"   Time: {cold_time*1000:.2f}ms for {iterations} iterations")
     print(f"   Avg: {cold_time*1000/iterations:.2f}ms per query")
@@ -52,7 +52,7 @@ def benchmark_memory_operations():
     
     start = time.time()
     for _ in range(iterations):
-        mem = um.get_memory(test_id)
+        um.get_memory(test_id)
     warm_time = time.time() - start
     print(f"   Time: {warm_time*1000:.2f}ms for {iterations} iterations")
     print(f"   Avg: {warm_time*1000/iterations:.2f}ms per query")
@@ -95,7 +95,7 @@ def benchmark_mcp_handlers():
     start = time.time()
     for _ in range(iterations):
         cache.invalidate("galaxy_list")
-        result = handle_galaxy_list()
+        handle_galaxy_list()
     cold_time = time.time() - start
     print(f"   Cold: {cold_time*1000:.2f}ms for {iterations} calls")
     print(f"   Avg: {cold_time*1000/iterations:.2f}ms per call")
@@ -106,7 +106,7 @@ def benchmark_mcp_handlers():
     
     start = time.time()
     for _ in range(iterations):
-        result = handle_galaxy_list()
+        handle_galaxy_list()
     warm_time = time.time() - start
     print(f"   Warm: {warm_time*1000:.2f}ms for {iterations} calls")
     print(f"   Avg: {warm_time*1000/iterations:.2f}ms per call")
@@ -122,7 +122,7 @@ def benchmark_mcp_handlers():
     start = time.time()
     for _ in range(iterations):
         cache.invalidate("galaxy_status")
-        result = handle_galaxy_status()
+        handle_galaxy_status()
     cold_time2 = time.time() - start
     print(f"   Cold: {cold_time2*1000:.2f}ms for {iterations} calls")
     
@@ -132,7 +132,7 @@ def benchmark_mcp_handlers():
     
     start = time.time()
     for _ in range(iterations):
-        result = handle_galaxy_status()
+        handle_galaxy_status()
     warm_time2 = time.time() - start
     print(f"   Warm: {warm_time2*1000:.2f}ms for {iterations} calls")
     
@@ -216,7 +216,7 @@ def generate_report(results):
     
     mem_results = results.get("memory", {})
     handler_results = results.get("handlers", {})
-    token_results = results.get("tokens", {})
+    results.get("tokens", {})
     
     print("\n🎯 Key Improvements:")
     print(f"   1. Memory Operations: {mem_results.get('speedup', 0):.1f}x faster with cache")

@@ -219,7 +219,7 @@ class EvolutionaryMasterLoop:
         print(f"Target: {max_generations} generations")
         
         for i in range(max_generations):
-            result = self.run_generation()
+            self.run_generation()
             
             # Check for stagnation
             if i > 2:

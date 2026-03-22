@@ -52,8 +52,8 @@ async def main():
          patch('whitemagic.systems.health_monitor.HealthMonitor') as MockHealth, \
          patch('whitemagic.systems.user.get_user_manager') as MockUser, \
          patch('whitemagic.intelligence.synthesis.kaizen_engine.get_kaizen_engine') as MockKaizen, \
-         patch('whitemagic.gardens.sangha.chat.get_chat') as MockChat, \
-         patch('whitemagic.gardens.sangha.session_handoff.get_handoff') as MockHandoff, \
+         patch('whitemagic.gardens.sangha.chat.get_chat'), \
+         patch('whitemagic.gardens.sangha.session_handoff.get_handoff'), \
          patch('whitemagic.zodiac.zodiac_cores.get_zodiac_cores') as MockCores, \
          patch('whitemagic.core.temporal.get_temporal_context') as MockTemporal:
         

@@ -72,7 +72,7 @@ def bench_core_memory():
         from whitemagic.core.memory.unified import get_unified_memory
         um = get_unified_memory()
         # UM doesn't expose .count(); use search to confirm it's populated
-        results = um.search("test", limit=1)
+        um.search("test", limit=1)
         assert um is not None, "Unified Memory failed to init"
         return "initialized, search functional"
 

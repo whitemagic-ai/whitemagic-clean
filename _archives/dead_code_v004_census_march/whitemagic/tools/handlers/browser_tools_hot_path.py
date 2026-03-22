@@ -62,7 +62,7 @@ def batch_process_actions(actions: list[dict[str, Any]]) -> list[dict[str, Any]]
     # Hot path: batch via Zig (for 5+ actions)
     if _load_zig_lib() and len(actions) >= 5:
         import json
-        actions_json = json.dumps(actions).encode('utf-8')
+        json.dumps(actions).encode('utf-8')
         
         # Results buffer (max 100 actions)
         max_results = min(len(actions), 100)

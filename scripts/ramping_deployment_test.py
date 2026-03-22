@@ -46,7 +46,7 @@ async def test_scale(scale: int, backend: str = "rust"):
             await asyncio.sleep(0.001)
             return {'task_id': task_id, 'success': True}
         
-        results = await asyncio.gather(*[execute_task(t) for t in tasks])
+        await asyncio.gather(*[execute_task(t) for t in tasks])
         duration = time.time() - start
         throughput = scale / duration if duration > 0 else 0
         backend_used = "Python"

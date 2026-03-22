@@ -63,7 +63,7 @@ def test_victory_tracker():
     status = tracker.get_status()
     assert status['vcs_met'] == 3
     assert status['total_vcs'] == 3
-    assert status['complete'] == True
+    assert status['complete']
     
     logger.info("✅ Victory tracker tests passed")
     return True

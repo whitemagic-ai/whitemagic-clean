@@ -87,7 +87,7 @@ async def test_run_continuous_empty_queue(executor):
     # Actually we just want to run execute_next which is the inner loop step
     # run_continuous calls self_direct if no objectives. We test run_continuous with mocked execute_batch_async and execute_next
     with patch.object(executor, 'self_direct', new_callable=AsyncMock) as mock_self_direct:
-        with patch.object(executor, 'execute_batch_async', new_callable=AsyncMock) as mock_batch:
+        with patch.object(executor, 'execute_batch_async', new_callable=AsyncMock):
             executor.limits.should_stop.side_effect = [(False, None), (True, "Stop for test")]
             await executor.run_continuous()
             mock_self_direct.assert_called()
@@ -151,7 +151,7 @@ async def test_checkpoint(executor):
     from unittest.mock import mock_open
     with patch('builtins.open', new_callable=mock_open) as mock_file:
         with patch('whitemagic.autonomous.executor.continuous_executor.Objective.to_dict', return_value={'test': 'data'}):
-            with patch('whitemagic.utils.fast_json.dumps_str') as mock_json:
+            with patch('whitemagic.utils.fast_json.dumps_str'):
                 # Need to also patch limits since it throws json serialize error on MagicMock
                 executor.limits = MagicMock()
                 executor.limits.get_status.return_value = {"limit": "ok"}

@@ -114,7 +114,7 @@ def merge_exact_duplicates():
         kept_ids = []
         for dup in duplicates[:100]:  # Limit to first 100 groups
             title = dup["title"]
-            count = dup["cnt"]
+            dup["cnt"]
             
             # Get all memories with this title
             cur.execute(

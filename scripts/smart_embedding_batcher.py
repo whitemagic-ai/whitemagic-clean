@@ -228,7 +228,7 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
             # Commit every N batches
             if batches_processed % commit_every == 0:
                 conn.commit()
-                commit_time = time.time() - last_commit_time
+                time.time() - last_commit_time
                 last_commit_time = time.time()
             
             # Progress update

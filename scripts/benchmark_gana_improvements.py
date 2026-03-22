@@ -193,7 +193,7 @@ def benchmark_database_backends():
             
             # Benchmark batch write
             start = time.perf_counter()
-            result = db.batch_write(test_memories)
+            db.batch_write(test_memories)
             write_time = time.perf_counter() - start
             
             # Benchmark reads

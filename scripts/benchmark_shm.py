@@ -47,7 +47,7 @@ def test_benchmark():
         bufsize=1
     )
     
-    init = proc.stdout.readline()
+    proc.stdout.readline()
     conn = proc.stdout.readline()
     if "error" in conn:
         print("Failed to connect:", conn)

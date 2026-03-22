@@ -194,7 +194,7 @@ class DeepIntelligenceScout:
         # Task 1: Architecture pattern mining
         start = time.time()
         try:
-            result = tokio_clones(
+            tokio_clones(
                 clone_count,
                 "architecture_analysis",
                 "Mining architectural patterns across codebases"
@@ -210,7 +210,7 @@ class DeepIntelligenceScout:
         # Task 2: Feature capability mapping
         start = time.time()
         try:
-            result = tokio_clones(
+            tokio_clones(
                 clone_count,
                 "feature_mapping",
                 "Mapping feature capabilities and integration points"

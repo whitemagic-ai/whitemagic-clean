@@ -118,7 +118,7 @@ class KokaProductionDeployer:
             )
             
             # Read startup
-            startup = proc.stdout.readline()
+            proc.stdout.readline()
             
             # Test write
             proc.stdin.write('{"op":"write"}\n')

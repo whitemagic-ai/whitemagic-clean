@@ -72,7 +72,7 @@ class InfiniteGauntlet:
         # Test Rust Tokio Clone Army if available
         try:
             # Note: Rust function might return (elapsed_ms, rate)
-            res = rs.tokio_clone_bench(count)
+            rs.tokio_clone_bench(count)
             elapsed = time.perf_counter() - start
             rate = count / elapsed
             logger.info(f"  Result: {elapsed:.2f}s, {rate/1e6:.2f}M clones/s")

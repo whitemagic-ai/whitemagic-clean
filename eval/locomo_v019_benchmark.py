@@ -127,7 +127,7 @@ class LoCoMoV019Optimizer:
             content_lower = cand.get('content', '')[:500].lower()  # First 500 chars
             
             # Feature extraction
-            title_words = set(title_lower.split())
+            set(title_lower.split())
             content_words = set(content_lower.split())
             
             # Jaccard similarity
@@ -230,7 +230,7 @@ class LoCoMoV019Optimizer:
         
         # Variance
         mean = sum(scores) / len(scores)
-        variance = sum((s - mean) ** 2 for s in scores) / len(scores)
+        sum((s - mean) ** 2 for s in scores) / len(scores)
         
         # Threshold checks
         if max_score < 0.25:

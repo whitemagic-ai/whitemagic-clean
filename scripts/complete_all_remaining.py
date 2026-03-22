@@ -106,7 +106,7 @@ class RemainingTasksCompletion:
                 
                 total_embedded += indexed
                 batch_time = time.time() - batch_start
-                elapsed = time.time() - start_time
+                time.time() - start_time
                 remaining_time = end_time - time.time()
                 
                 # Get current coverage

@@ -26,7 +26,7 @@ def compute_retention_score(row):
     - deep_archive (bulk-ingested, never accessed) → FAR_EDGE
     """
     importance = row["importance"] or 0.5
-    neuro_score = row["neuro_score"] or 1.0
+    row["neuro_score"] or 1.0
     emotional_valence = abs(row["emotional_valence"] or 0.0)
     recall_count = row["recall_count"] or 0
     access_count = row["access_count"] or 0

@@ -41,7 +41,7 @@ def test_hnsw_light():
         # Single search
         query = np.random.randn(384).astype(np.float32)
         start = time.perf_counter()
-        results = index.search(query, k=5)
+        index.search(query, k=5)
         elapsed = (time.perf_counter() - start) * 1000
         
         print(f"  ✓ HNSW search: {elapsed:.2f}ms for 10 vectors")

@@ -219,7 +219,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Run All WhiteMagic Engines')
     parser.add_argument('--quick', action='store_true', help='Quick test (skip slow operations)')
-    args = parser.parse_args()
+    parser.parse_args()
 
     success = run_all()
     return 0 if success else 1

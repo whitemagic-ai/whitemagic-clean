@@ -172,10 +172,9 @@ def wire_top_files(top_files):
             continue
         
         # Add import at top (after other imports)
-        import_section_end = 0
         for i, line in enumerate(content.split('\n')):
             if line.startswith('import ') or line.startswith('from '):
-                import_section_end = i + 1
+                i + 1
         
         lines = content.split('\n')
         

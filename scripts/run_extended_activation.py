@@ -677,18 +677,18 @@ def print_summary(results):
     print("=" * 70)
 
     db = results.get("db_stats", {})
-    sweep = results.get("galactic_sweep", {})
+    results.get("galactic_sweep", {})
     mining = results.get("association_mining", {})
     constellations = results.get("constellation_detection", {})
     graph = results.get("graph_topology", {})
-    dream = results.get("dream_cycle", {})
+    results.get("dream_cycle", {})
     causal = results.get("causal_mining", {})
     emergence = results.get("emergence_scan", {})
     merge = results.get("constellation_merge", {})
-    multispectral = results.get("multispectral_reasoning", {})
-    novelty = results.get("novelty_detection", {})
-    bridges = results.get("bridge_synthesis", {})
-    kg = results.get("knowledge_graph", {})
+    results.get("multispectral_reasoning", {})
+    results.get("novelty_detection", {})
+    results.get("bridge_synthesis", {})
+    results.get("knowledge_graph", {})
 
     new_assocs = (
         mining.get("keyword_mining", {}).get("links_created", 0) +

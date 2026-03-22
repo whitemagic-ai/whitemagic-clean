@@ -36,7 +36,7 @@ def run_cycle(cycle_num):
     try:
         engine = ContinuousEvolutionEngine()
         self_directed = SelfDirectedEvolution()
-        needs = self_directed.identify_needs()
+        self_directed.identify_needs()
         plan = self_directed.generate_action_plan()
         log(f"Ralph Global Objective: {plan[0]['objective']}")
         res = engine.run_single_cycle()

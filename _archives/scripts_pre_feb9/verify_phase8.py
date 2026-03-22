@@ -43,7 +43,7 @@ def test_rust_bindings():
         print("✅ whitemagic_rs import successful")
         # Trigger regex usage
         # Assuming scan_tree uses the regexes
-        res = whitemagic_rs.cast_heavens_net(".", "safe")
+        whitemagic_rs.cast_heavens_net(".", "safe")
         print("✅ cast_heavens_net executed without panic")
     except ImportError:
         print("⚠️ whitemagic_rs not built/installed (Skipping Rust test)")

@@ -172,13 +172,13 @@ def benchmark_comparison():
     iterations = 1000
     start = time.time()
     for _ in range(iterations):
-        result_py = accel._py_cosine(vec_a, vec_b)
+        accel._py_cosine(vec_a, vec_b)
     time_py = time.time() - start
     
     # Accelerated
     start = time.time()
     for _ in range(iterations):
-        result_accel = accel.cosine_similarity(vec_a, vec_b)
+        accel.cosine_similarity(vec_a, vec_b)
     time_accel = time.time() - start
     
     speedup = time_py / max(time_accel, 0.001)

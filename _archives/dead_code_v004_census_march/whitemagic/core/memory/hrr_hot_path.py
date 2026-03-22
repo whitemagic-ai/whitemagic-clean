@@ -127,13 +127,13 @@ def fast_compose_query(query_text: str, concept_embedding: np.ndarray) -> np.nda
     """
     # Extract relation from query text
     if "caused" in query_text.lower():
-        relation = "CAUSED_BY"
+        pass
     elif "causes" in query_text.lower():
-        relation = "CAUSES"
+        pass
     elif "follows" in query_text.lower():
-        relation = "FOLLOWS"
+        pass
     else:
-        relation = "SIMILAR_TO"
+        pass
     
     # Get relation vector (would be pre-computed in Mojo)
     relation_vec = np.random.randn(len(concept_embedding)).astype(np.float32)

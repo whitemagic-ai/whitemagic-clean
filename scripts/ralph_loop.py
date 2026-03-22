@@ -34,7 +34,7 @@ def run_ralph():
         print(f"\n[CYCLE {cycles + 1}] {datetime.now().isoformat()}")
         
         # 1. Identify needs & plan
-        needs = self_directed.identify_needs()
+        self_directed.identify_needs()
         plan = self_directed.generate_action_plan()
         print("  Active Objective:", plan[0]['objective'])
         

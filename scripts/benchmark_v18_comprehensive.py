@@ -220,7 +220,7 @@ class BenchmarkSuite:
         start = time.perf_counter()
         from whitemagic.gardens.galactic_map import GalacticMap
         gm = GalacticMap()
-        sweep_result = gm.sweep(zone="core")
+        gm.sweep(zone="core")
         elapsed = (time.perf_counter() - start) * 1000
         print(f"      Galactic Sweep: {elapsed:.1f}ms")
         

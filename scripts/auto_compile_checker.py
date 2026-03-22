@@ -15,7 +15,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 
 def check_module_needs_recompile(module_dir: Path) -> bool:
     """Check if a Rust module needs recompilation."""
-    cargo_toml = module_dir / "Cargo.toml"
+    module_dir / "Cargo.toml"
     target_dir = module_dir / "target" / "release"
     
     if not target_dir.exists():

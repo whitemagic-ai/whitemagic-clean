@@ -22,7 +22,7 @@ def benchmark_clone_throughput(clone_count: int, iterations: int = 5) -> List[fl
     
     for i in range(iterations):
         start = time.time()
-        result = whitemagic_rs.spawn_clone_army(clone_count, f"benchmark_{i}")
+        whitemagic_rs.spawn_clone_army(clone_count, f"benchmark_{i}")
         duration = time.time() - start
         
         throughput = clone_count / duration

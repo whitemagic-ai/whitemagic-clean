@@ -76,7 +76,7 @@ class V181BenchmarkSuite:
             times = []
             for _ in range(100):
                 start = time.perf_counter()
-                results = index.search(query, k=10)
+                index.search(query, k=10)
                 times.append(time.perf_counter() - start)
             
             hnsw_time = statistics.mean(times) * 1000

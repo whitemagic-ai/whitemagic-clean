@@ -38,7 +38,7 @@ def benchmark_koka_chain(num_requests: int = 100) -> dict:
             start = time.perf_counter()
             proc.stdin.write('{"tool":"search_memories"}\n')
             proc.stdin.flush()
-            response = proc.stdout.readline()
+            proc.stdout.readline()
             elapsed = time.perf_counter() - start
             latencies.append(elapsed * 1_000_000)  # to microseconds
         
@@ -66,12 +66,12 @@ def benchmark_python_chain(num_requests: int = 100) -> dict:
     
     # Warmup (Python doesn't need it, but fair comparison)
     for _ in range(10):
-        gana = TOOL_TO_GANA.get("search_memories", "gana_ghost")
+        TOOL_TO_GANA.get("search_memories", "gana_ghost")
     
     # Benchmark
     for _ in range(num_requests):
         start = time.perf_counter()
-        gana = TOOL_TO_GANA.get("search_memories", "gana_ghost")
+        TOOL_TO_GANA.get("search_memories", "gana_ghost")
         elapsed = time.perf_counter() - start
         latencies.append(elapsed * 1_000_000)
     
@@ -99,7 +99,7 @@ def benchmark_subprocess_per_call(num_requests: int = 100) -> dict:
         )
         proc.stdin.write('{"tool":"search_memories"}\n')
         proc.stdin.flush()
-        response = proc.stdout.readline()
+        proc.stdout.readline()
         proc.terminate()
         proc.wait(timeout=1.0)
         elapsed = time.perf_counter() - start

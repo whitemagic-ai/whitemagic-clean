@@ -78,7 +78,7 @@ def verify_python_syntax(files, directory):
     
     for rel_path in files:
         file_path = directory / rel_path
-        module_name = rel_path.replace("/", ".").replace(".py", "")
+        rel_path.replace("/", ".").replace(".py", "")
         
         try:
             # We don't actually run it, just compile it

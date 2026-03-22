@@ -146,7 +146,6 @@ CORE_TOOLS = {
     
     # HAIRY HEAD - Debug
     "karma_report": {},
-    "dharma_rules": {},
     
     # TURTLE BEAK - Edge
     "edge_stats": {},

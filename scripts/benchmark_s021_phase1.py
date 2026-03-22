@@ -68,13 +68,13 @@ def benchmark_sorting() -> dict:
     # Benchmark fast_sort
     start = time.perf_counter()
     for _ in range(10):
-        result = fast_sort(test_data.copy(), reverse=True)
+        fast_sort(test_data.copy(), reverse=True)
     fast_time = (time.perf_counter() - start) * 1000
     
     # Benchmark Python sorted
     start = time.perf_counter()
     for _ in range(10):
-        result = sorted(test_data.copy(), reverse=True)
+        sorted(test_data.copy(), reverse=True)
     py_time = (time.perf_counter() - start) * 1000
     
     speedup = py_time / fast_time if fast_time > 0 else 1.0
@@ -101,7 +101,7 @@ def benchmark_vector_ops() -> dict:
     # Benchmark batch cosine
     start = time.perf_counter()
     for _ in range(10):
-        results = accel.batch_cosine(query, vectors)
+        accel.batch_cosine(query, vectors)
     accel_time = (time.perf_counter() - start) * 1000
     
     # Pure Python benchmark
@@ -113,7 +113,7 @@ def benchmark_vector_ops() -> dict:
     
     start = time.perf_counter()
     for _ in range(10):
-        results = [py_cosine(query, v) for v in vectors]
+        [py_cosine(query, v) for v in vectors]
     py_time = (time.perf_counter() - start) * 1000
     
     speedup = py_time / accel_time if accel_time > 0 else 1.0
@@ -137,14 +137,14 @@ def benchmark_content_hash() -> dict:
     # Benchmark fast hash
     start = time.perf_counter()
     for c in contents:
-        result = fast_content_hash(c)
+        fast_content_hash(c)
     fast_time = (time.perf_counter() - start) * 1000
     
     # Benchmark stdlib hashlib
     import hashlib
     start = time.perf_counter()
     for c in contents:
-        result = hashlib.sha256(c.encode()).hexdigest()
+        hashlib.sha256(c.encode()).hexdigest()
     stdlib_time = (time.perf_counter() - start) * 1000
     
     speedup = stdlib_time / fast_time if fast_time > 0 else 1.0

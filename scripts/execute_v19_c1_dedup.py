@@ -74,7 +74,7 @@ def execute_v19_dedup(dry_run=True):
         sorted_ids = [row['id'] for row in cursor.fetchall()]
         if not sorted_ids: continue
         
-        keeper = sorted_ids[0]
+        sorted_ids[0]
         to_archive = sorted_ids[1:]
         
         for arch_id in to_archive:

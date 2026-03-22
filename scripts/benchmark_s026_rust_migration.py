@@ -152,14 +152,13 @@ def benchmark_galaxy_miner():
         
         # Rust benchmark
         print(f"\n🦀 Rust Galaxy Miner (n={n_memories})")
-        times = {}
         
         for _ in range(WARMUP):
             wr.galaxy_miner.get_galaxy_stats(db_path)
         
         for i in range(ITERATIONS):
             start = time.perf_counter()
-            stats = wr.galaxy_miner.get_galaxy_stats(db_path)
+            wr.galaxy_miner.get_galaxy_stats(db_path)
             elapsed = time.perf_counter() - start
             print(f"   get_galaxy_stats: {elapsed*1000:.2f}ms")
         
@@ -184,7 +183,7 @@ def benchmark_recursive_intelligence():
         n_events = 1000
         event_types = ["click", "view", "purchase", "logout", "search", "error"]
         events = [random.choice(event_types) for _ in range(n_events)]
-        timestamps = list(range(n_events))
+        list(range(n_events))
         
         print(f"\n🦀 Rust Pattern Discovery (n={n_events})")
         
@@ -244,7 +243,7 @@ def benchmark_holographic_encoder():
             wr.holographic_encoder_5d.holographic_encode_batch(json.dumps(rust_memories))
         for i in range(ITERATIONS):
             start = time.perf_counter()
-            result = wr.holographic_encoder_5d.holographic_encode_batch(json.dumps(rust_memories))
+            wr.holographic_encoder_5d.holographic_encode_batch(json.dumps(rust_memories))
             elapsed = time.perf_counter() - start
             rust_times.append(elapsed)
             print(f"   Batch encode {n_memories}: {elapsed*1000:.2f}ms")
@@ -262,7 +261,7 @@ def benchmark_holographic_encoder():
             [encoder.encode(m) for m in memories]
         for i in range(ITERATIONS):
             start = time.perf_counter()
-            coords = [encoder.encode(m) for m in memories]
+            [encoder.encode(m) for m in memories]
             elapsed = time.perf_counter() - start
             python_times.append(elapsed)
             print(f"   Batch encode {n_memories}: {elapsed*1000:.2f}ms")

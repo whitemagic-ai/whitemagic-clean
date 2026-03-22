@@ -47,9 +47,9 @@ async def main():
     # Mock global dependencies
     # Note: We must patch where the function is DEFINED or IMPORTED
     with patch('whitemagic.metrics.get_tracker') as MockTracker, \
-         patch('whitemagic.intelligence.synthesis.kaizen_engine.get_kaizen_engine') as MockKaizen, \
+         patch('whitemagic.intelligence.synthesis.kaizen_engine.get_kaizen_engine'), \
          patch('whitemagic.cascade.context_synthesizer.get_context_synthesizer') as MockSynth, \
-         patch('whitemagic.core.resonance.gan_ying.get_bus') as MockBus, \
+         patch('whitemagic.core.resonance.gan_ying.get_bus'), \
          patch('whitemagic.intelligence.synthesis.unified_patterns.get_pattern_api') as MockPatterns, \
          patch('whitemagic.cascade.advanced_parallel.AdaptiveParallelExecutor') as MockPar, \
          patch('whitemagic.archaeology.find_unread') as MockArch, \

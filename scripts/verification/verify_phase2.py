@@ -43,14 +43,14 @@ def test_ssrf_protection():
     print("Testing SSRF protection...")
     
     # Test helper
-    assert is_url_safe("http://localhost:11434") == True
-    assert is_url_safe("http://127.0.0.1:11434") == True
-    assert is_url_safe("http://google.com") == False
-    assert is_url_safe("http://169.254.169.254/latest/meta-data/") == False
+    assert is_url_safe("http://localhost:11434")
+    assert is_url_safe("http://127.0.0.1:11434")
+    assert not is_url_safe("http://google.com")
+    assert not is_url_safe("http://169.254.169.254/latest/meta-data/")
     
     # Test and verify Ollama safety
-    assert is_ollama_url_safe("http://localhost:11434") == True
-    assert is_ollama_url_safe("http://internal-api.prod") == False
+    assert is_ollama_url_safe("http://localhost:11434")
+    assert not is_ollama_url_safe("http://internal-api.prod")
     
     # Test Exception handling in LocalLLM
     try:

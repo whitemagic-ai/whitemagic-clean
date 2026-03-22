@@ -110,12 +110,11 @@ def main():
     total_done = 0
 
     while True:
-        result = conn.execute(f"""
+        conn.execute(f"""
             INSERT OR IGNORE INTO main.associations ({acol_list})
             SELECT {acol_list} FROM cold.associations
             LIMIT {batch_size} OFFSET {offset}
         """)
-        rows_affected = result.rowcount if result.rowcount >= 0 else batch_size
         conn.commit()
         total_done += batch_size
         offset += batch_size

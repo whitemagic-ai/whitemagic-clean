@@ -109,8 +109,8 @@ def benchmark_python_resonance(operations: int = 1000) -> dict:
         gana = gana_order[i % len(gana_order)]
         start = time.perf_counter()
         idx = gana_order.index(gana)
-        pred = gana_order[(idx - 1) % len(gana_order)]
-        succ = gana_order[(idx + 1) % len(gana_order)]
+        gana_order[(idx - 1) % len(gana_order)]
+        gana_order[(idx + 1) % len(gana_order)]
         latencies.append((time.perf_counter() - start) * 1_000_000)
     
     return {

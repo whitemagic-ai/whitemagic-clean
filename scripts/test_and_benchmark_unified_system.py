@@ -223,7 +223,7 @@ def benchmark_event_throughput(results: TestResults):
     print("  BENCHMARK 1: EVENT THROUGHPUT")
     print("="*70)
     
-    bus = get_bus()
+    get_bus()
     
     # Warm up
     for _ in range(100):

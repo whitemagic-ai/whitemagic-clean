@@ -271,7 +271,7 @@ class EvolutionaryDreamEngine:
             fitness += 0.4
         
         # Optimization stack
-        opt_mutations = {m.name for m in lineage.mutations if m.category == "optimization"}
+        {m.name for m in lineage.mutations if m.category == "optimization"}
         if "rust_hot_paths" in mutation_names and "orjson_serialization" in mutation_names:
             fitness += 0.7  # Rust + orjson combo
         

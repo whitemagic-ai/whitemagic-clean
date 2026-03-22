@@ -43,7 +43,7 @@ def benchmark_json(memories):
     encode_time = time.perf_counter() - start
     
     start = time.perf_counter()
-    decoded = json.loads(json_str)
+    json.loads(json_str)
     decode_time = time.perf_counter() - start
     
     return encode_time, decode_time, len(json_str)
@@ -60,7 +60,7 @@ def benchmark_arrow(memories):
     encode_time = time.perf_counter() - start
     
     start = time.perf_counter()
-    decoded_json = whitemagic_rs.arrow_decode_memories(bytes(ipc_bytes))
+    whitemagic_rs.arrow_decode_memories(bytes(ipc_bytes))
     decode_time = time.perf_counter() - start
     
     return encode_time, decode_time, len(ipc_bytes)

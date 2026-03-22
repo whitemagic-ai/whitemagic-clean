@@ -252,7 +252,7 @@ class PatternScorer:
     ) -> List[ScoredPattern]:
         """Cross-validate patterns between galaxy and geneseed sources."""
         # Find patterns that appear in both sources
-        galaxy_tags = {p.metadata.get('tag') for p in galaxy_patterns if 'tag' in p.metadata}
+        {p.metadata.get('tag') for p in galaxy_patterns if 'tag' in p.metadata}
         geneseed_messages = {
             p.metadata.get('commit_message', '').lower() 
             for p in geneseed_patterns

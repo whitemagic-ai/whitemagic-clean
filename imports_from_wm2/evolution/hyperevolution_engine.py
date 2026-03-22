@@ -411,7 +411,7 @@ class FitnessEvaluator:
         fitness = FitnessVector()
         
         # Base fitness from gene expression
-        total_expression = sum(g.expression_level for g in genome.genes)
+        sum(g.expression_level for g in genome.genes)
         gene_count = len(genome.genes)
         
         # Performance dimension
@@ -662,7 +662,7 @@ class HyperEvolutionEngine:
         
         # Evolution loop
         for gen in range(self.num_generations):
-            gen_start = time.time()
+            time.time()
             
             # Evaluate population
             evaluated_pop = self.evaluate_population(population, environment, parallel=True)

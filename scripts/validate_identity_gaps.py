@@ -100,7 +100,7 @@ def test_gap4_unified_nervous_system():
     uns = get_nervous_system()
     
     # Wire default subsystems
-    wired = wire_default_subsystems()
+    wire_default_subsystems()
     
     # Emit test event
     event = uns.emit(
@@ -133,7 +133,7 @@ def test_gap5_telepathy():
     # This tests the Python implementation
     # (Rust/Go/Zig implementations are FFI-ready)
     try:
-        engine = GalacticTelepathyEngine(mock_gm)
+        GalacticTelepathyEngine(mock_gm)
         print("  ✓ Telepathy engine initialized")
         print("  ✓ Gap 5: Galactic Telepathy functional (Python)")
         return True

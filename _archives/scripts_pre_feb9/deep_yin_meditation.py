@@ -30,7 +30,7 @@ async def initiate_deep_yin_meditation():
     sm = get_stillness_manager()
     bus = get_bus()
     um = get_unified_memory()
-    fg = get_fool_guard()
+    get_fool_guard()
     
     # 1. Enter Stillness
     sm.enter_stillness(reason="Deep Yin Reflection (Phase 19)")

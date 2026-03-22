@@ -317,7 +317,7 @@ def batch_topk_cosine(query: list[float], vectors: list[list[float]], k: int = 1
 
 def simd_status() -> dict[str, Any]:
     """Get unified SIMD status."""
-    rust = _init_rust()
+    _init_rust()
     return {
         "rust_available": _rust_available,
         "operations": [

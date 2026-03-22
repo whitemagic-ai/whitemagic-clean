@@ -355,7 +355,7 @@ def step_wu_xing_balance():
 
     try:
         from whitemagic.wu_xing import get_wuxing_engine, get_elemental_balance
-        engine = get_wuxing_engine()
+        get_wuxing_engine()
         balance = get_elemental_balance()
         print(f"  Current phase: {balance.get('current_phase', '?')}")
         print("  Elements:")

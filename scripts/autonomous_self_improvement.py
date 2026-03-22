@@ -441,10 +441,10 @@ class AutonomousSelfImprovement:
         while True:
             try:
                 # Analyze
-                summary = await self.analyze_codebase()
+                await self.analyze_codebase()
                 
                 # Apply auto-fixes
-                fixes = await self.apply_auto_fixes(dry_run=False)
+                await self.apply_auto_fixes(dry_run=False)
                 
                 # Generate report
                 report_path = self.workspace_path / "reports" / f"self_improvement_{int(time.time())}.md"

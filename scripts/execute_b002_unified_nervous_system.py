@@ -619,7 +619,7 @@ def main():
     unified = create_integration_architecture()
     
     # Phase 3: Generate report
-    report = generate_integration_report(analysis, unified)
+    generate_integration_report(analysis, unified)
     
     print("\n" + "="*70)
     print("✅ B002 COMPLETE - Unified Nervous System Operational")

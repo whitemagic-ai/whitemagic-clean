@@ -112,13 +112,6 @@ class PolyglotValidator:
             return
             
         # Check for expected kernel files
-        expected_kernels = [
-            'embeddings.mojo',
-            'vector_similarity.mojo', 
-            'graph_walker.mojo',
-            'holographic_compute.mojo',
-            'context_router.mojo'
-        ]
         
         kernels_dir = mojo_dir / 'kernels'
         found_kernels = []

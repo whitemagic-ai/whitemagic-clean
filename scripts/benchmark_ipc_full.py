@@ -82,7 +82,7 @@ class IPCBenchmark:
         
         with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
             futures = [executor.submit(do_search, core, i) for i in range(workers)]
-            all_results = [f.result() for f in concurrent.futures.as_completed(futures)]
+            [f.result() for f in concurrent.futures.as_completed(futures)]
         
         elapsed = time.time() - start
         total_ops = workers * ops_per_worker

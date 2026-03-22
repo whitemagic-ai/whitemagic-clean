@@ -44,10 +44,10 @@ def test_memory_workflow_without_optimization():
         
         # Step 1: Create memory
         # Step 2: Compute semantic links (EXPENSIVE - 15ms)
-        links = simulate_expensive_semantic_search(memory_id)
+        simulate_expensive_semantic_search(memory_id)
         
         # Step 3: Consolidate (EXPENSIVE - 10ms)
-        consolidation = simulate_consolidation_computation(memory_id)
+        simulate_consolidation_computation(memory_id)
     
     elapsed_ms = (time.time() - start) * 1000
     
@@ -93,10 +93,10 @@ def test_memory_workflow_with_optimization():
             # Pre-warm for next time
             optimizer.pre_warm_consolidation(memory_id, memory_data)
             # Still need to compute this time
-            consolidation = simulate_consolidation_computation(memory_id)
+            simulate_consolidation_computation(memory_id)
         else:
             # Cache hit - instant retrieval
-            consolidation = cached_consolidation
+            pass
     
     elapsed_ms = (time.time() - start) * 1000
     
@@ -119,7 +119,6 @@ def test_pattern_workflow_without_optimization():
     start = time.time()
     
     for i in range(15):
-        pattern_id = f"pattern_{i}"
         
         # Step 1: Detect pattern
         # Step 2: Load UI components (EXPENSIVE - 8ms)

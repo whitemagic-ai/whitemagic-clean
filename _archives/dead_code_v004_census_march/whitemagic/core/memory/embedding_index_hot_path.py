@@ -174,7 +174,7 @@ class GPUUtilizationTracker:
             import torch
             # Memory utilization as proxy
             allocated = torch.cuda.memory_allocated()
-            reserved = torch.cuda.memory_reserved()
+            torch.cuda.memory_reserved()
             total = torch.cuda.get_device_properties(0).total_memory
             
             util = (allocated / total) * 100
@@ -210,7 +210,6 @@ def install_hot_paths():
         embedding_index.gpu_tracker = gpu_tracker
         
         # Patch SimpleEmbedding
-        original_similarity = embedding_index.SimpleEmbedding.similarity
         
         def accelerated_similarity(self, emb1, emb2):
             # Convert dict embeddings to numpy if needed

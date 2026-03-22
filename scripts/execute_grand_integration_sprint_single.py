@@ -28,7 +28,7 @@ def main():
         engine = ContinuousEvolutionEngine()
         self_directed = SelfDirectedEvolution()
         
-        needs = self_directed.identify_needs()
+        self_directed.identify_needs()
         plan = self_directed.generate_action_plan()
         log(f"Ralph Active Objective: {plan[0]['objective']}")
         

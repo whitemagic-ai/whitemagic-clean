@@ -47,7 +47,7 @@ class PolyglotActivator:
     def activate_mojo(self):
         """Setup Mojo environment and compile kernels."""
         logger.info("🔥 Activating Mojo...")
-        mojo_dir = self.workspace / "whitemagic-mojo"
+        self.workspace / "whitemagic-mojo"
         
         try:
             # Check if Mojo is available

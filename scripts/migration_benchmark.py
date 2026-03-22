@@ -73,7 +73,7 @@ def run_migration_benchmark():
     print("🎯 BENCHMARK SUMMARY")
     print("=" * 80)
     print("JSON Speedup: ~4.5x projected")
-    print(f"Structure Validation: {sum(1 for v in results.values() if v == True)}/5 passed")
+    print(f"Structure Validation: {sum(1 for v in results.values() if v)}/5 passed")
     print(f"Migration Progress: {results.get('migration', {}).get('files', 0)} files")
     print()
     print("✅ Migration benchmark complete - Performance targets on track")

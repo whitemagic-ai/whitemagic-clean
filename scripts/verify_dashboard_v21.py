@@ -12,7 +12,7 @@ def verify_endpoints():
     
     for ep in endpoints:
         try:
-            url = base_url + ep
+            base_url + ep
             # Note: This assumes the server is running. 
             # Since I can't guarantee the server is up in this env, 
             # I will just check if the code paths are valid.

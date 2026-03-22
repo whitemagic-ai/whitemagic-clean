@@ -43,7 +43,8 @@ except ImportError as e:
     get_bus = MockBus
     get_emergence_engine = MockEngine
     EventType = type('Enum', (), {'SYMPATHETIC_RESONANCE': 'sympathetic_resonance', 'BREAKTHROUGH_ACHIEVED': 'breakthrough_achieved'})
-    ResonanceEvent = lambda **k: type('Event', (), k)()
+    def ResonanceEvent(**k):
+        return type('Event', (), k)()
 
 DB_PATH = Path(os.getenv("WM_DB_PATH", str(DEFAULT_DB_PATH))).expanduser()
 OUTPUT_FILE = "emergence_report.md"

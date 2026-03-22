@@ -76,7 +76,7 @@ class V181ComprehensiveTestSuite:
                 times = []
                 for _ in range(50):
                     start = time.perf_counter()
-                    results = index.search(query, k=10)
+                    index.search(query, k=10)
                     times.append(time.perf_counter() - start)
                 
                 hnsw_time = statistics.median(times) * 1000
@@ -94,7 +94,7 @@ class V181ComprehensiveTestSuite:
             
             # Test against projection (1000x for 100K+ vectors)
             # At 5000 vectors we're seeing ~50x, project to 100K
-            projected_speedup_at_100k = avg_speedup * (100000 / 5000) ** 0.5  # Sub-linear scaling
+            avg_speedup * (100000 / 5000) ** 0.5  # Sub-linear scaling
             
             passed = avg_speedup >= 10  # At least 10x at current scale
             

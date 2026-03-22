@@ -7,7 +7,6 @@ HEADER_SIZE = 64
 MAGIC = 0x574D4B4B # "WMKK"
 
 def create_shm_segment(name="/whitemagic_embed_bridge", capacity=1000):
-    slot_size = 1544 # Matches shm_consumer.kk
     segment_size = 1544704 # Matches shm_consumer.kk
     
     try:

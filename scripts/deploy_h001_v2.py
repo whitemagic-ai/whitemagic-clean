@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 def load_h001_campaign() -> dict:
     """Load H001 campaign configuration."""
-    campaign_file = project_root / "campaigns" / "H001_embeddings_hot_path.md"
+    project_root / "campaigns" / "H001_embeddings_hot_path.md"
     
     # For now, create campaign dict directly
     # In full implementation, would parse from markdown

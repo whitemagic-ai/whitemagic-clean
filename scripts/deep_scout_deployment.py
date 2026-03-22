@@ -35,7 +35,7 @@ class DeepScout:
                 functions = [node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
                 
                 # Find classes
-                classes = [node for node in ast.walk(tree) if isinstance(node, ast.ClassDef)]
+                [node for node in ast.walk(tree) if isinstance(node, ast.ClassDef)]
                 
                 # Analyze complexity
                 for func in functions:

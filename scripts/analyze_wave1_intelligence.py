@@ -254,9 +254,9 @@ class Wave2Strategist:
     def _calculate_force_allocation(self) -> dict[str, Any]:
         """Calculate optimal force allocation"""
         # Based on Wave 1 findings, allocate forces
-        critical_count = len([f for f in self.intel.async_conversion_candidates if f.severity == "critical"])
-        high_count = len([f for f in self.intel.async_conversion_candidates if f.severity == "high"])
-        medium_count = len([f for f in self.intel.async_conversion_candidates if f.severity == "medium"])
+        len([f for f in self.intel.async_conversion_candidates if f.severity == "critical"])
+        len([f for f in self.intel.async_conversion_candidates if f.severity == "high"])
+        len([f for f in self.intel.async_conversion_candidates if f.severity == "medium"])
         
         # Allocate 5M Immortal v3 + 5M Tokio = 10M total
         return {

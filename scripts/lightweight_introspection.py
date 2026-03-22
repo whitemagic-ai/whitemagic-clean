@@ -228,7 +228,7 @@ def main():
     quick_codebase_stats()
     
     # Database analysis
-    db_stats = analyze_active_database()
+    analyze_active_database()
     
     # Session summary
     session_summary()

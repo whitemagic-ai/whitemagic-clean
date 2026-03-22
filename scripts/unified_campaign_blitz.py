@@ -227,7 +227,7 @@ def generate_victory_report(results, corps_status):
     
     completed = [r for r in results if r.get("status") == "complete"]
     partial = [r for r in results if r.get("status") == "partial"]
-    incomplete = [r for r in results if r.get("status") == "incomplete"]
+    [r for r in results if r.get("status") == "incomplete"]
     
     total_campaigns = 16 + len(completed)  # Starting from 16
     completion_pct = (total_campaigns / 40) * 100

@@ -74,7 +74,7 @@ def train_reranker():
     model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=1)
     
     # Create dataset
-    dataset = LoCoMoDataset(questions, tokenizer)
+    LoCoMoDataset(questions, tokenizer)
     # dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
     
     print("\nTraining setup complete.")

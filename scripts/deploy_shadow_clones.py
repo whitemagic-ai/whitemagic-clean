@@ -166,7 +166,6 @@ def objective_5_corpus_denoising():
         LIMIT 50
     """).fetchall()
 
-    clone_classifications = []
     strategies = ["direct", "chain_of_thought", "adversarial",
                   "analytical", "synthesis", "memory_grounded"]
 
@@ -649,7 +648,7 @@ def objective_4_aria_archive():
 
     for r in aria_memories:
         title = (r["title"] or "").lower()
-        content_preview = (r["content"] or "")[:500].lower()
+        (r["content"] or "")[:500].lower()
         entry = {
             "id": r["id"],
             "title": r["title"] or "Untitled",
@@ -949,7 +948,7 @@ def objective_2_performance():
         ("associations", "source_id", "idx_assoc_source"),
         ("associations", "target_id", "idx_assoc_target"),
     ]
-    existing_idx_names = [i["name"] for i in indexes]
+    [i["name"] for i in indexes]
     for table, col, idx_name in missing_idx_checks:
         if table in table_names:
             has_idx = any(idx_name.lower() in (i["name"] or "").lower() for i in indexes)
@@ -1202,7 +1201,7 @@ def objective_8_rust_coverage():
     print(f"   Found {len(unaccelerated)} potentially unaccelerated hot paths")
 
     # Clone consensus
-    clone_result = deploy_clones(
+    deploy_clones(
         f"Rust coverage: {len(rust_funcs)} Rust funcs, {len(fallbacks)} Python fallbacks, "
         f"{len(unaccelerated)} unaccelerated hot paths. "
         f"Categories: {Counter(u['category'] for u in unaccelerated).most_common()}",

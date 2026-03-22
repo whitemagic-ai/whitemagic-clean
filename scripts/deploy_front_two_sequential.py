@@ -126,7 +126,7 @@ def deploy_single_campaign(campaign: dict, campaign_num: int, total: int) -> dic
     try:
         # Load campaign file
         campaign_file = project_root / campaign['file']
-        campaign_data = load_campaign_file(campaign_file)
+        load_campaign_file(campaign_file)
         
         # Create simplified campaign config
         config = {

@@ -44,7 +44,7 @@ def python_baseline_search(query_vec, vectors, top_k=5):
     vecs_norm = vectors / np.linalg.norm(vectors, axis=1)[:, np.newaxis]
     
     similarities = np.dot(vecs_norm, query_norm)
-    top_indices = np.argsort(similarities)[::-1][:top_k]
+    np.argsort(similarities)[::-1][:top_k]
     
     end = time.perf_counter()
     return end - start
@@ -82,7 +82,7 @@ def test_benchmark():
         bufsize=1
     )
     
-    init = proc.stdout.readline()
+    proc.stdout.readline()
     conn = proc.stdout.readline()
     if "error" in conn:
         print("Failed to connect:", conn)

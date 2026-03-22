@@ -604,7 +604,7 @@ def retrieve_title_boosted(query: str, limit: int = 20) -> list[dict]:
             return retrieve_vector(query, limit)
         
         # Fetch full memory details and apply title boost
-        unified = get_unified_memory()
+        get_unified_memory()
         scored_results = []
         
         for r in vector_results:

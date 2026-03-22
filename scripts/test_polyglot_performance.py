@@ -91,7 +91,7 @@ class PerformanceTester:
         rust_dir = self.root / 'whitemagic-rust' / 'src' / 'monte_carlo_variants'
         
         if rust_dir.exists():
-            variant_count = len(list(rust_dir.rglob('*.rs')))
+            len(list(rust_dir.rglob('*.rs')))
             
             # Check specific modules
             modules = ['consolidation', 'association_miner', 'unified', 'sqlite_backend']

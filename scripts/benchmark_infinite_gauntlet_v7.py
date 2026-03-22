@@ -84,10 +84,10 @@ class InfiniteGauntletV7:
         # Test with N=1000 items
         items = list(range(1000))
         target = 777
-        oracle = lambda x: x == target
+        def oracle(x):
+            return x == target
         
         # 1. Classical Search (Simulated average)
-        classical_ops = 500 # Average N/2
         
         # 2. Quantum Grover
         start = time.perf_counter_ns()

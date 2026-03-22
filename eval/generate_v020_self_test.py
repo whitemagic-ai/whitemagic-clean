@@ -44,7 +44,7 @@ def _generate_memory_corpus() -> List[Dict]:
     memories = []
     
     # Topic clusters for multi-hop testing
-    topics = {
+    {
         "mcp_architecture": list(range(0, 15)),
         "memory_systems": list(range(15, 30)),
         "graph_algorithms": list(range(30, 45)),

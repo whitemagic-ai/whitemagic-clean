@@ -44,8 +44,8 @@ def main():
         bufsize=1
     )
     
-    init = proc.stdout.readline()
-    conn_msg = proc.stdout.readline()
+    proc.stdout.readline()
+    proc.stdout.readline()
     
     times = []
     total_nodes = 0

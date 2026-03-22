@@ -3386,7 +3386,7 @@ def run_campaign_mode(time_limit: float = 300.0, columns: int = 1,
     # Execute based on mode
     if yin_yang:
         # Yin-Yang autonomous cycle: recon → action → verify → repeat
-        yy_result = run_yin_yang_cycle(campaigns, conn, time_limit, columns)
+        run_yin_yang_cycle(campaigns, conn, time_limit, columns)
         completed = campaigns  # all campaigns participate in cycles
         skipped = []
     elif columns > 1:

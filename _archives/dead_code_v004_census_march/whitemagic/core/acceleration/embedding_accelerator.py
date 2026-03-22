@@ -234,7 +234,7 @@ def _worker_embed_batch(args: Tuple[List[str], int, int, bool]) -> dict:
                         accel = get_accelerator()
                         if accel.is_available():
                             # Flatten and normalize
-                            flat = np.array(vectors, dtype=np.float32).flatten()
+                            np.array(vectors, dtype=np.float32).flatten()
                             # Note: Would call accel.batch_normalize_vectors here
                             # For now, use numpy
                             vectors = [v.tolist() for v in vectors]

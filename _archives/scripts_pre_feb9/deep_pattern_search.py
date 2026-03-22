@@ -60,7 +60,7 @@ def analyze_patterns():
     print("\n🌟 Searching for Hyper-Bridges (memories with >3 keywords)...")
     # This is a bit expensive, so we limit result
     # We construct a dynamic query
-    conditions = [f"(content LIKE '%{kw}%')" for kw in KEYWORDS]
+    [f"(content LIKE '%{kw}%')" for kw in KEYWORDS]
     # We want rows where at least 3 conditions match
     # Since SQL doesn't easily support "at least N of these booleans", we'll do it in python 
     # iterate over a subset or use a clever query if possible. 

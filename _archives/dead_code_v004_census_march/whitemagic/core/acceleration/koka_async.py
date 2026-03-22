@@ -151,7 +151,7 @@ class AsyncKokaRuntime:
                     pending.future.set_result(result)
             
             # Update metrics
-            elapsed = time.perf_counter() - start
+            time.perf_counter() - start
             self.metrics["commands_executed"] += len(batch)
             self.metrics["batches_sent"] += 1
             self.metrics["avg_batch_size"] = (

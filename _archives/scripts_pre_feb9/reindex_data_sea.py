@@ -37,7 +37,7 @@ async def realign_data_sea():
 
     # Initialize Rust Index if available
     rust_available = is_rust_available()
-    rs = get_rust_module() if rust_available else None
+    get_rust_module() if rust_available else None
     
     if rust_available:
         logger.info("🦀 Rust Acceleration Enabled.")

@@ -67,7 +67,7 @@ class RustONNXWorker:
             print("❌ IPC init failed, using direct mode")
         
         # Load embedder
-        rs = self._load_embedder()
+        self._load_embedder()
         
         print("📡 Worker ready - waiting for requests via IPC...")
         print("   Subscribe to: wm/commands for embed_requests")

@@ -195,7 +195,7 @@ class MonteCarloSimulator:
         throughput, p99_latency = self.simulate_event_processing(config)
         
         # Simulate memory operations
-        memory_ops = self.simulate_memory_operations(config)
+        self.simulate_memory_operations(config)
         
         # Calculate efficiency scores
         mem_eff, energy_eff, scalability = self.calculate_efficiency_scores(config, throughput)

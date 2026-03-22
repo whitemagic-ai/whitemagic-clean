@@ -12,7 +12,7 @@ logger = logging.getLogger("TikkunVerification")
 
 async def verify_phase_33():
     memory = get_unified_memory()
-    refiner = get_refining_fire()
+    get_refining_fire()
     tzimtzum = get_tzimtzum()
     homeostasis = get_homeostasis()
     chronos = get_chronos_guard()

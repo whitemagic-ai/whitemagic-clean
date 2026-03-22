@@ -200,7 +200,7 @@ def tier2_rust(quick=False):
     try:
         start = time.perf_counter_ns()
         # Find the correct location for tokio_clone_bench
-        result = whitemagic_rs.tokio_clone_bench(10000)
+        whitemagic_rs.tokio_clone_bench(10000)
         elapsed = time.perf_counter_ns() - start
         rate = 10000 / (elapsed / 1e9)
         print(f"  ✓ Tokio clone army (10K): {elapsed / 1e6:.1f}ms ({_fmt_rate(rate)})")
@@ -501,7 +501,7 @@ def print_summary():
     for t in tiers:
         tier_results = [r for r in RESULTS if r["tier"] == t]
         tier_pass = sum(1 for r in tier_results if r["status"] == "pass")
-        tier_err = sum(1 for r in tier_results if r["status"] == "error")
+        sum(1 for r in tier_results if r["status"] == "error")
         tier_names = {1: "Core", 2: "Rust", 3: "Graph", 4: "Intelligence", 5: "Dream", 6: "Fusion", 7: "JSON+Dispatch"}
         print(f"  Tier {t} ({tier_names.get(t, '?')}): {tier_pass}/{len(tier_results)} passed")
 

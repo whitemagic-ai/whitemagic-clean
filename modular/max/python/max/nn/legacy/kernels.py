@@ -211,9 +211,7 @@ def fused_qkv_ragged_matmul(
             f"expected layer_idx to have dtype uint32, was {layer_idx.dtype}"
         )
 
-    if kv_params.cache_strategy not in {
-        KVCacheStrategy.PAGED,
-    }:
+    if kv_params.cache_strategy != KVCacheStrategy.PAGED:
         raise ValueError(
             f"unsupported cache strategy for fused_qkv_ragged_matmul: {kv_params.cache_strategy}"
         )
@@ -580,7 +578,7 @@ def unfused_qkv_ragged_matmul_gguf_quantized(
             f"expected layer_idx to have dtype uint32, was {layer_idx.dtype}"
         )
 
-    if kv_params.cache_strategy not in {KVCacheStrategy.PAGED}:
+    if kv_params.cache_strategy != KVCacheStrategy.PAGED:
         raise ValueError(
             f"unsupported cache strategy for fused_qkv_ragged_matmul: {kv_params.cache_strategy}"
         )
@@ -665,9 +663,7 @@ def fused_qkv_ragged_matmul_quantized(
             f"expected layer_idx to have dtype uint32, was {layer_idx.dtype}"
         )
 
-    if kv_params.cache_strategy not in {
-        KVCacheStrategy.PAGED,
-    }:
+    if kv_params.cache_strategy != KVCacheStrategy.PAGED:
         raise ValueError(
             f"unsupported cache strategy for fused_qkv_ragged_matmul: {kv_params.cache_strategy}"
         )
@@ -984,9 +980,7 @@ def fused_qk_ragged_rope(
             f"expected layer_idx to have dtype uint32, was {layer_idx.dtype}"
         )
 
-    if kv_params.cache_strategy not in {
-        KVCacheStrategy.PAGED,
-    }:
+    if kv_params.cache_strategy != KVCacheStrategy.PAGED:
         raise ValueError(
             f"unsupported cache strategy for fused_qk_ragged_rope: {kv_params.cache_strategy}"
         )
@@ -1747,9 +1741,7 @@ def flash_attention_ragged(
             f"expected uint32 input_row_offsets but got {input_row_offsets.dtype}"
         )
 
-    if kv_params.cache_strategy not in {
-        KVCacheStrategy.PAGED,
-    }:
+    if kv_params.cache_strategy != KVCacheStrategy.PAGED:
         raise ValueError(
             f"unsupported cache strategy for flash_attention_ragged: {kv_params.cache_strategy}"
         )
@@ -2791,9 +2783,7 @@ def cross_attention_ragged(
             f"expected uint32 input_row_offsets but got {input_row_offsets.dtype}"
         )
 
-    if kv_params.cache_strategy not in {
-        KVCacheStrategy.PAGED,
-    }:
+    if kv_params.cache_strategy != KVCacheStrategy.PAGED:
         raise ValueError(
             f"unsupported cache strategy for cross_attention_ragged: {kv_params.cache_strategy}"
         )
@@ -4132,10 +4122,10 @@ def quantize_dynamic_block_scaled_fp4(
     if input.dtype != DType.bfloat16:
         raise ValueError("input tensor dtype must be bfloat16")
 
-    if out_type not in (DType.uint8,):
+    if out_type != DType.uint8:
         raise ValueError("out_type must be uint8 (fp4-e2m1fnX2)")
 
-    if scales_type not in (DType.float8_e4m3fn,):
+    if scales_type != DType.float8_e4m3fn:
         raise ValueError("scales_type must be float8_e4m3fn for NVFP4")
 
     if sf_vector_size != 16:

@@ -133,9 +133,9 @@ class ParameterOptimizer:
             return None, "No results"
         
         # Find best by different criteria
-        best_fitness = max(self.results, key=lambda r: r.best_fitness)
-        best_diversity = max(self.results, key=lambda r: r.diversity)
-        best_throughput = max(self.results, key=lambda r: r.throughput)
+        max(self.results, key=lambda r: r.best_fitness)
+        max(self.results, key=lambda r: r.diversity)
+        max(self.results, key=lambda r: r.throughput)
         
         # Composite score: fitness (60%) + diversity (20%) + throughput (20%)
         def composite_score(r: ParameterTest) -> float:

@@ -150,7 +150,7 @@ def _worker_extract_entities(
     ).fetchall()
 
     for row in rows:
-        mid, content, title = row[0], row[1] or "", row[2] or ""
+        _mid, content, title = row[0], row[1] or "", row[2] or ""
         text = f"{title} {content}"
         found_entities: list[tuple[str, str]] = []
 

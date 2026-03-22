@@ -25,7 +25,7 @@ async def verify_sovereignty():
     print(f"   ├─ Signal emitted: {resp['emitted']}")
     
     coll = get_collective()
-    stats = coll.get_stats()
+    coll.get_stats()
     resonance = coll.get_shared_context("verif").resonance_index
     print(f"   └─ Labs Gratitude Score: {resonance.get('labs', 0.0)}")
 

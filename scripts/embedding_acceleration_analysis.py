@@ -273,8 +273,8 @@ def main():
     print("\nAnalyzing current performance and proposing acceleration strategies")
     print("using shadow clones, MCP ganas, polyglot cores, and other systems...")
     
-    bottlenecks = analyze_bottlenecks()
-    strategies = propose_acceleration_strategies()
+    analyze_bottlenecks()
+    propose_acceleration_strategies()
     recommend_implementation()
     
     print("\n" + "=" * 80)

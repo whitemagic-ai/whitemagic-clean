@@ -139,7 +139,7 @@ def test_performance_impact():
     print("="*80)
     
     memory_opt = get_memory_optimizer()
-    pattern_opt = get_pattern_optimizer()
+    get_pattern_optimizer()
     
     # Simulate memory workflow without optimization
     print("\n[3.1] Baseline (no optimization)...")

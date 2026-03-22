@@ -107,7 +107,6 @@ class EvolutionaryExecutor:
         print("="*70)
         
         # Scan for Rust opportunities
-        rust_candidates = []
         polyglot_status = {
             "Rust": {"files": 0, "lines": 0},
             "Zig": {"files": 0, "lines": 0},

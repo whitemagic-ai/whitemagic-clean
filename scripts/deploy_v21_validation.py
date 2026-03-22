@@ -289,13 +289,13 @@ async def main():
     deployment = V21ValidationDeployment()
     
     if args.all or (not args.nervous_system and not args.willow_health and not args.polyglot):
-        results = await deployment.run_all()
+        await deployment.run_all()
     elif args.nervous_system:
-        results = await deployment.deploy_nervous_system_validation()
+        await deployment.deploy_nervous_system_validation()
     elif args.willow_health:
-        results = await deployment.deploy_willow_health_validation()
+        await deployment.deploy_willow_health_validation()
     elif args.polyglot:
-        results = await deployment.deploy_polyglot_validation()
+        await deployment.deploy_polyglot_validation()
     else:
         parser.print_help()
         return
