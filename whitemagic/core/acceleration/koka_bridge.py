@@ -10,6 +10,7 @@ import queue
 import subprocess
 import threading
 from dataclasses import dataclass
+from typing import cast
 
 logger = logging.getLogger(__name__)
 
