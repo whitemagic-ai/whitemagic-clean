@@ -63,40 +63,63 @@ impl PySQLiteBackend {
         }
     }
 
-    fn batch_insert(&self, table: String, rows: Vec<Vec<String>>) -> PyResult<usize> {
+    #[pyo3(signature = (id, content, memory_type, created_at, updated_at, accessed_at, access_count, emotional_valence, importance, neuro_score, novelty_score, recall_count, half_life_days, is_protected, metadata, title, galactic_distance, retention_score, last_retention_sweep=None, content_hash=None, event_time=None, ingestion_time=String::new(), is_private=0, model_exclude=0))]
+    fn store_memory(
+        &self,
+        id: String,
+        content: String,
+        memory_type: String,
+        created_at: String,
+        updated_at: String,
+        accessed_at: String,
+        access_count: i64,
+        emotional_valence: f64,
+        importance: f64,
+        neuro_score: f64,
+        novelty_score: f64,
+        recall_count: i64,
+        half_life_days: f64,
+        is_protected: i64,
+        metadata: String,
+        title: String,
+        galactic_distance: f64,
+        retention_score: f64,
+        last_retention_sweep: Option<String>,
+        content_hash: Option<String>,
+        event_time: Option<String>,
+        ingestion_time: String,
+        is_private: i64,
+        model_exclude: i64,
+    ) -> PyResult<bool> {
         let conn = self.conn.lock()
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
                 format!("Lock error: {}", e)
             ))?;
-        
-        let tx = conn.unchecked_transaction()
-            .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
-                format!("Transaction failed: {}", e)
-            ))?;
-        
-        let mut count = 0;
-        for row in rows {
-            let placeholders = vec!["?"; row.len()].join(", ");
-            let sql = format!("INSERT INTO {} VALUES ({})", table, placeholders);
-            
-            let params_refs: Vec<&dyn rusqlite::ToSql> = row
-                .iter()
-                .map(|s| s as &dyn rusqlite::ToSql)
-                .collect();
-            
-            tx.execute(&sql, params_refs.as_slice())
-                .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
-                    format!("Insert failed: {}", e)
-                ))?;
-            count += 1;
-        }
-        
-        tx.commit()
-            .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
-                format!("Commit failed: {}", e)
-            ))?;
-        
-        Ok(count)
+
+        conn.execute(
+            "INSERT OR REPLACE INTO memories (
+                id, content, memory_type, created_at, updated_at, accessed_at,
+                access_count, emotional_valence, importance,
+                neuro_score, novelty_score, recall_count, half_life_days, is_protected,
+                metadata, title,
+                galactic_distance, retention_score, last_retention_sweep,
+                content_hash, event_time, ingestion_time,
+                is_private, model_exclude
+            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24)",
+            params![
+                id, content, memory_type, created_at, updated_at, accessed_at,
+                access_count, emotional_valence, importance,
+                neuro_score, novelty_score, recall_count, half_life_days, is_protected,
+                metadata, title,
+                galactic_distance, retention_score, last_retention_sweep,
+                content_hash, event_time, ingestion_time,
+                is_private, model_exclude
+            ],
+        ).map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
+            format!("Store failed: {}", e)
+        ))?;
+
+        Ok(true)
     }
 }
 
@@ -167,4 +190,14 @@ mod tests {
         
         assert_eq!(count, 1000);
     }
+}
+
+// ---------------------------------------------------------------------------
+// PyO3 module registration
+// ---------------------------------------------------------------------------
+
+#[cfg(feature = "python")]
+pub fn register_sqlite_backend(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<PySQLiteBackend>()?;
+    Ok(())
 }

@@ -332,7 +332,7 @@ impl GanaGhost {
         print(f"Total lines: {total_lines:,}")
         print(f"Duration: {duration:.2f}s")
         
-        print(f"\n✅ PSR campaigns ready for final compilation!")
+        print("\n✅ PSR campaigns ready for final compilation!")
 
 def main():
     """Run final wave generator"""

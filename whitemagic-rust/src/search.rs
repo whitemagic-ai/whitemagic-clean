@@ -20,16 +20,14 @@ use std::sync::{Arc, RwLock};
 // ---------------------------------------------------------------------------
 
 const STOPWORDS: &[&str] = &[
-    "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
-    "have", "has", "had", "do", "does", "did", "will", "would", "could",
-    "should", "may", "might", "shall", "can", "to", "of", "in", "for",
-    "on", "with", "at", "by", "from", "as", "into", "through", "during",
-    "before", "after", "above", "below", "between", "out", "off", "over",
-    "under", "again", "further", "then", "once", "and", "but", "or", "nor",
-    "not", "no", "so", "than", "too", "very", "just", "about", "up",
-    "it", "its", "this", "that", "these", "those", "i", "me", "my",
-    "we", "our", "you", "your", "he", "him", "his", "she", "her",
-    "they", "them", "their", "what", "which", "who", "whom",
+    "a", "an", "the", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
+    "do", "does", "did", "will", "would", "could", "should", "may", "might", "shall", "can", "to",
+    "of", "in", "for", "on", "with", "at", "by", "from", "as", "into", "through", "during",
+    "before", "after", "above", "below", "between", "out", "off", "over", "under", "again",
+    "further", "then", "once", "and", "but", "or", "nor", "not", "no", "so", "than", "too", "very",
+    "just", "about", "up", "it", "its", "this", "that", "these", "those", "i", "me", "my", "we",
+    "our", "you", "your", "he", "him", "his", "she", "her", "they", "them", "their", "what",
+    "which", "who", "whom",
 ];
 
 /// Tokenize text into lowercase terms, stripping punctuation and stopwords.
@@ -60,11 +58,19 @@ fn edit_distance(a: &str, b: &str) -> usize {
     let m = a_chars.len();
     let n = b_chars.len();
     let mut dp = vec![vec![0usize; n + 1]; m + 1];
-    for i in 0..=m { dp[i][0] = i; }
-    for j in 0..=n { dp[0][j] = j; }
+    for (i, row) in dp.iter_mut().enumerate().take(m + 1) {
+        row[0] = i;
+    }
+    for (j, val) in dp[0].iter_mut().enumerate().take(n + 1) {
+        *val = j;
+    }
     for i in 1..=m {
         for j in 1..=n {
-            let cost = if a_chars[i - 1] == b_chars[j - 1] { 0 } else { 1 };
+            let cost = if a_chars[i - 1] == b_chars[j - 1] {
+                0
+            } else {
+                1
+            };
             dp[i][j] = (dp[i - 1][j] + 1)
                 .min(dp[i][j - 1] + 1)
                 .min(dp[i - 1][j - 1] + cost);
@@ -143,17 +149,19 @@ impl InvertedIndex {
                 *term_freqs.entry(t.as_str()).or_insert(0) += 1;
             }
             for (term, freq) in term_freqs {
-                postings
-                    .entry(term.to_string())
-                    .or_default()
-                    .push(Posting {
-                        doc_idx: *doc_idx,
-                        term_freq: freq,
-                    });
+                postings.entry(term.to_string()).or_default().push(Posting {
+                    doc_idx: *doc_idx,
+                    term_freq: freq,
+                });
             }
         }
 
-        InvertedIndex { docs, postings, avg_doc_len, total_docs }
+        InvertedIndex {
+            docs,
+            postings,
+            avg_doc_len,
+            total_docs,
+        }
     }
 
     /// BM25 score for a single term in a single document.
@@ -284,10 +292,14 @@ impl InvertedIndex {
     }
 
     /// Get document count.
-    pub fn doc_count(&self) -> usize { self.total_docs }
+    pub fn doc_count(&self) -> usize {
+        self.total_docs
+    }
 
     /// Get vocabulary size.
-    pub fn vocab_size(&self) -> usize { self.postings.len() }
+    pub fn vocab_size(&self) -> usize {
+        self.postings.len()
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -311,11 +323,13 @@ pub fn search_build_index(docs_json: &str) -> PyResult<(usize, usize)> {
 
     let documents: Vec<(String, String, String)> = raw
         .into_iter()
-        .map(|v| (
-            v["id"].as_str().unwrap_or("").to_string(),
-            v["title"].as_str().unwrap_or("").to_string(),
-            v["content"].as_str().unwrap_or("").to_string(),
-        ))
+        .map(|v| {
+            (
+                v["id"].as_str().unwrap_or("").to_string(),
+                v["title"].as_str().unwrap_or("").to_string(),
+                v["content"].as_str().unwrap_or("").to_string(),
+            )
+        })
         .collect();
 
     let index = InvertedIndex::build(documents);
@@ -333,7 +347,9 @@ pub fn search_build_index(docs_json: &str) -> PyResult<(usize, usize)> {
 pub fn search_query(query: &str, limit: usize) -> PyResult<String> {
     let guard = GLOBAL_INDEX.read().unwrap();
     let index = guard.as_ref().ok_or_else(|| {
-        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>("Index not built. Call search_build_index first.")
+        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
+            "Index not built. Call search_build_index first.",
+        )
     })?;
     let results = index.search(query, limit);
     let json: Vec<serde_json::Value> = results
@@ -348,9 +364,9 @@ pub fn search_query(query: &str, limit: usize) -> PyResult<String> {
 #[pyfunction]
 pub fn search_fuzzy(query: &str, limit: usize, max_edit: usize) -> PyResult<String> {
     let guard = GLOBAL_INDEX.read().unwrap();
-    let index = guard.as_ref().ok_or_else(|| {
-        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>("Index not built.")
-    })?;
+    let index = guard
+        .as_ref()
+        .ok_or_else(|| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>("Index not built."))?;
     let results = index.fuzzy_search(query, limit, max_edit);
     let json: Vec<serde_json::Value> = results
         .into_iter()
@@ -364,9 +380,9 @@ pub fn search_fuzzy(query: &str, limit: usize, max_edit: usize) -> PyResult<Stri
 #[pyfunction]
 pub fn search_and_query(query: &str, limit: usize) -> PyResult<String> {
     let guard = GLOBAL_INDEX.read().unwrap();
-    let index = guard.as_ref().ok_or_else(|| {
-        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>("Index not built.")
-    })?;
+    let index = guard
+        .as_ref()
+        .ok_or_else(|| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>("Index not built."))?;
     let results = index.search_and(query, limit);
     let json: Vec<serde_json::Value> = results
         .into_iter()

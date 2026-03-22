@@ -16,13 +16,13 @@ impl MonteCarloEngine {
         // Simulated fast approximation
         let mut sim = 0.0;
         let step = self.dimensions / self.sample_size;
-        
+
         let mut i = 0;
         while i < self.dimensions {
             sim += v1[i] * v2[i];
             i += step;
         }
-        
+
         sim
     }
 }

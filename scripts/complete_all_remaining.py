@@ -51,14 +51,14 @@ class RemainingTasksCompletion:
         
         initial_coverage = (initial_embedded / active * 100) if active > 0 else 0
         
-        print(f"\n📊 Initial Status:")
+        print("\n📊 Initial Status:")
         print(f"   Active memories: {active:,}")
         print(f"   Already embedded: {initial_embedded:,}")
         print(f"   Coverage: {initial_coverage:.1f}%")
         print(f"   Time limit: {max_minutes} minutes")
         
         # Load embedding engine
-        print(f"\n🔧 Loading embedding engine...")
+        print("\n🔧 Loading embedding engine...")
         try:
             from whitemagic.core.memory.embeddings import get_embedding_engine
             engine = get_embedding_engine()
@@ -80,7 +80,7 @@ class RemainingTasksCompletion:
             }
         
         # Smart batching: embed in small batches with time limit
-        print(f"\n🚀 Starting smart batch embedding...")
+        print("\n🚀 Starting smart batch embedding...")
         start_time = time.time()
         end_time = start_time + (max_minutes * 60)
         
@@ -101,7 +101,7 @@ class RemainingTasksCompletion:
                 
                 indexed = result.get("indexed", 0)
                 if indexed == 0:
-                    print(f"\n✅ All memories embedded!")
+                    print("\n✅ All memories embedded!")
                     break
                 
                 total_embedded += indexed
@@ -138,7 +138,7 @@ class RemainingTasksCompletion:
         final_coverage = (final_embedded / active * 100) if active > 0 else 0
         duration = time.time() - start_time
         
-        print(f"\n📊 Embedding Results:")
+        print("\n📊 Embedding Results:")
         print(f"   Initial: {initial_embedded:,} ({initial_coverage:.1f}%)")
         print(f"   Final: {final_embedded:,} ({final_coverage:.1f}%)")
         print(f"   Embedded: {total_embedded:,} memories")
@@ -199,7 +199,7 @@ class RemainingTasksCompletion:
             campaign_file.write_text(content)
             marked += 1
         
-        print(f"\n📊 Campaign Results:")
+        print("\n📊 Campaign Results:")
         print(f"   Already complete: {already_complete}")
         print(f"   Newly marked: {marked}")
         print(f"   Total: {len(supernatural_campaigns)}")
@@ -234,7 +234,7 @@ class RemainingTasksCompletion:
         campaign_dir = PROJECT_ROOT / "campaigns"
         total_campaigns = len(list(campaign_dir.glob("*.md"))) if campaign_dir.exists() else 0
         
-        print(f"\n📊 Overall Status:")
+        print("\n📊 Overall Status:")
         print(f"   Embedding coverage: {coverage:.1f}%")
         print(f"   Total campaigns: {total_campaigns}")
         print(f"   Active memories: {active:,}")
@@ -290,10 +290,10 @@ All remaining tasks have been completed using shadow clone army deployment.
     
     def execute_all(self) -> dict:
         """Execute all remaining tasks."""
-        print(f"\n🎯 Execution Plan:")
-        print(f"   1. Smart batch embedding (5 min limit)")
-        print(f"   2. Mark supernatural campaigns complete")
-        print(f"   3. Document completion status")
+        print("\n🎯 Execution Plan:")
+        print("   1. Smart batch embedding (5 min limit)")
+        print("   2. Mark supernatural campaigns complete")
+        print("   3. Document completion status")
         
         self.results['task_1'] = self.task_1_smart_batch_embedding(max_minutes=5)
         self.results['task_2'] = self.task_2_mark_supernatural_campaigns()
@@ -310,12 +310,12 @@ All remaining tasks have been completed using shadow clone army deployment.
         print("✅ ALL REMAINING TASKS COMPLETE")
         print("=" * 80)
         
-        print(f"\n⏰ Time:")
+        print("\n⏰ Time:")
         print(f"   Start: {self.start_time.strftime('%H:%M:%S')}")
         print(f"   End: {end_time.strftime('%H:%M:%S')}")
         print(f"   Duration: {duration:.1f}s ({duration/60:.1f} min)")
         
-        print(f"\n📊 Task Results:")
+        print("\n📊 Task Results:")
         for key, result in self.results.items():
             status = result.get('status', 'unknown')
             print(f"   • {key}: {status}")
@@ -323,18 +323,18 @@ All remaining tasks have been completed using shadow clone army deployment.
         # Embedding summary
         if 'task_1' in self.results and self.results['task_1'].get('status') == 'complete':
             t1 = self.results['task_1']
-            print(f"\n📈 Embedding Progress:")
+            print("\n📈 Embedding Progress:")
             print(f"   Coverage: {t1['initial_coverage']:.1f}% → {t1['final_coverage']:.1f}%")
             print(f"   Embedded: {t1['embedded']:,} memories")
         
         # Campaign summary
         if 'task_2' in self.results and self.results['task_2'].get('status') == 'complete':
             t2 = self.results['task_2']
-            print(f"\n📁 Campaign Completion:")
+            print("\n📁 Campaign Completion:")
             print(f"   Marked complete: {t2['marked']}")
             print(f"   Total campaigns: {t2['total']}")
         
-        print(f"\n🌟 Mission Complete!")
+        print("\n🌟 Mission Complete!")
         print()
 
 def main():

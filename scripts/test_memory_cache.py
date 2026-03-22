@@ -85,7 +85,7 @@ print("="*80)
 expected_hit_rate = 0.5  # 50% since we accessed 5 twice out of 15 total
 actual_hit_rate = final_stats['hit_rate']
 
-print(f"\nValidation:")
+print("\nValidation:")
 print(f"  ✓ Cache enabled: {final_stats['size'] > 0}")
 print(f"  ✓ Cache hits recorded: {final_stats['hits'] > 0}")
 print(f"  ✓ Hit rate: {actual_hit_rate:.1%} (expected ~{expected_hit_rate:.1%})")

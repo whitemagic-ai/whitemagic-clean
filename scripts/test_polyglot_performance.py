@@ -239,7 +239,7 @@ class PerformanceTester:
                 status = '✅' if json_result.get('meets_target') else '⚠️'
                 f.write(f"| JSON Serialization | {target}x | {actual:.1f}x | {status} |\n")
             else:
-                f.write(f"| JSON Serialization | 4.5x | N/A | ⚠️ |\n")
+                f.write("| JSON Serialization | 4.5x | N/A | ⚠️ |\n")
                 
             f.write("\n## Conclusion\n\n")
             if report_data['overall_status'] == 'PASS':

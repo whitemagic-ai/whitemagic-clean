@@ -5,7 +5,6 @@ Test Rust-Accelerated Ingestion
 Extract one dense Windsurf session and benchmark Python vs Rust
 """
 
-import json
 import time
 import sys
 from pathlib import Path

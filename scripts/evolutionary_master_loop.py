@@ -64,7 +64,7 @@ class EvolutionaryMasterLoop:
     
     def track_evolution(self, patterns: List[Dict]) -> Dict[str, Any]:
         """Phase 2: Track genome evolution"""
-        print(f"  📊 Tracking evolution...")
+        print("  📊 Tracking evolution...")
         
         fitness = 0.0
         if _RUST_AVAILABLE:
@@ -86,7 +86,7 @@ class EvolutionaryMasterLoop:
     
     def suggest_improvements(self, genome: Dict) -> List[Dict[str, Any]]:
         """Phase 3: Kaizen continuous improvement"""
-        print(f"  💡 Generating improvements...")
+        print("  💡 Generating improvements...")
         
         improvements = []
         if _RUST_AVAILABLE:
@@ -110,7 +110,7 @@ class EvolutionaryMasterLoop:
     
     def generate_mutations(self, improvements: List[Dict]) -> List[Dict[str, Any]]:
         """Phase 4: Generate code mutations"""
-        print(f"  🧪 Generating mutations...")
+        print("  🧪 Generating mutations...")
         
         mutations = []
         for imp in improvements:
@@ -143,12 +143,12 @@ class EvolutionaryMasterLoop:
             for mut in mutations:
                 results.append({'mutation': mut, 'success': True, 'measured_speedup': 'N/A', 'fitness': 0.5})
         
-        print(f"  Deployed successfully")
+        print("  Deployed successfully")
         return results
     
     def update_vault(self, results: List[Dict]):
         """Phase 6: Feedback loop - update geneseed vault"""
-        print(f"  💾 Updating vault with results...")
+        print("  💾 Updating vault with results...")
         
         successful = [r for r in results if r['success']]
         print(f"  {len(successful)}/{len(results)} mutations successful")
@@ -214,7 +214,7 @@ class EvolutionaryMasterLoop:
     def run_autonomous(self, max_generations: int = 10):
         """Run autonomous evolution for N generations"""
         print(f"\n{'='*70}")
-        print(f"🚀 AUTONOMOUS EVOLUTION MODE")
+        print("🚀 AUTONOMOUS EVOLUTION MODE")
         print(f"{'='*70}")
         print(f"Target: {max_generations} generations")
         
@@ -233,7 +233,7 @@ class EvolutionaryMasterLoop:
     def print_summary(self):
         """Print evolution summary"""
         print(f"\n{'='*70}")
-        print(f"📊 EVOLUTION SUMMARY")
+        print("📊 EVOLUTION SUMMARY")
         print(f"{'='*70}")
         
         total_generations = len(self.history)

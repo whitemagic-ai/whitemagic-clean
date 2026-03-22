@@ -81,7 +81,7 @@ def main():
     print(f"Rust MinHash:        {rust_time*1000:.2f}ms avg ({len(rust_results)} duplicates)")
     print(f"Python Cosine:       {python_time*1000:.2f}ms avg ({len(python_results)} duplicates)")
     print(f"Speedup:             {speedup:.1f}×")
-    print(f"Target:              50.0×")
+    print("Target:              50.0×")
     print(f"Achievement:         {(speedup/50.0)*100:.1f}% of target")
     
     # Note on methodology
@@ -92,8 +92,8 @@ def main():
     print("• Python uses cosine similarity on 384-dim embeddings")
     print("• Different similarity metrics may find different duplicate pairs")
     print(f"• Corpus size: {len(ids):,} memories")
-    print(f"• Rust is using parallel LSH with 128 hash functions")
-    print(f"• Python is using O(N²) pairwise cosine similarity")
+    print("• Rust is using parallel LSH with 128 hash functions")
+    print("• Python is using O(N²) pairwise cosine similarity")
     
     print("\n" + "=" * 70)
 

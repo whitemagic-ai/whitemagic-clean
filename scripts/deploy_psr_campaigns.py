@@ -5,7 +5,6 @@ Uses existing deploy_grand_army.py infrastructure with PSR campaign files
 """
 
 import sys
-import subprocess
 from pathlib import Path
 
 def main():
@@ -26,7 +25,7 @@ def main():
         return 1
     
     print(f"✅ Found PSR campaign file: {psr_file}")
-    print(f"   Contains 10 PSR campaigns (PSR-001 through PSR-010)")
+    print("   Contains 10 PSR campaigns (PSR-001 through PSR-010)")
     
     # Note: The PSR campaigns are documented in POLYGLOT_SYNTHESIS_REFACTOR_FRONT.md
     # but not yet in individual campaign files that deploy_grand_army.py can load.
@@ -68,8 +67,8 @@ def main():
     for code, name, priority, clones, langs in campaigns:
         print(f"| {code} | {name} | {priority} | {clones} | {langs} |")
     
-    print(f"\n📊 Total: 10 campaigns, 4,000,000 clones")
-    print(f"🎯 Target: 100x effectiveness, 10% LOC (595K → 250K)")
+    print("\n📊 Total: 10 campaigns, 4,000,000 clones")
+    print("🎯 Target: 100x effectiveness, 10% LOC (595K → 250K)")
     
     return 0
 

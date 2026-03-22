@@ -4,7 +4,6 @@ Shadow Army Deployment - Active Code Migration
 Deploys clones to migrate 335 Python files to polyglot languages
 """
 
-import shutil
 from pathlib import Path
 from datetime import datetime
 import json
@@ -325,7 +324,7 @@ class ShadowArmyDeployer:
         print(f"✅ Markdown Report: {md_report}")
         print()
         print("=" * 80)
-        print(f"🎉 SHADOW ARMY DEPLOYMENT COMPLETE")
+        print("🎉 SHADOW ARMY DEPLOYMENT COMPLETE")
         print(f"   Total: {total_files} files ({total_loc:,} LOC)")
         print(f"   Clones: {total_clones} across {len(self.results)} languages")
         print("=" * 80)

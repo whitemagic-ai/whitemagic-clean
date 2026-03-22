@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 use serde::{Deserialize, Serialize};
-use sha2::{Sha256, Digest};
+use sha2::{Digest, Sha256};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -32,15 +32,30 @@ impl ZodiacLedger {
         }
     }
 
-    pub fn record_action(&mut self, action_type: &str, payload: &str, guna: &str, karma: f32) -> String {
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
+    pub fn record_action(
+        &mut self,
+        action_type: &str,
+        payload: &str,
+        guna: &str,
+        karma: f32,
+    ) -> String {
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+
         let mut hasher = Sha256::new();
         hasher.update(payload.as_bytes());
         let payload_hash = format!("{:x}", hasher.finalize());
 
         let mut sig_hasher = Sha256::new();
-        sig_hasher.update(format!("{}{}{}{}", self.current_hash, action_type, payload_hash, timestamp).as_bytes());
+        sig_hasher.update(
+            format!(
+                "{}{}{}{}",
+                self.current_hash, action_type, payload_hash, timestamp
+            )
+            .as_bytes(),
+        );
         let signature = format!("{:x}", sig_hasher.finalize());
 
         let entry = LedgerEntry {
@@ -56,7 +71,7 @@ impl ZodiacLedger {
 
         self.current_hash = signature.clone();
         self.entries.push(entry);
-        
+
         signature
     }
 }

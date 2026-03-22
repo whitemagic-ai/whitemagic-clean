@@ -7,16 +7,16 @@
 #![allow(dead_code)]
 
 use pyo3::prelude::*;
-use std::collections::{HashMap, HashSet, BTreeSet};
-use std::cmp::Ordering;
 use rand::Rng;
+use std::cmp::Ordering;
+use std::collections::{BTreeSet, HashMap, HashSet};
 
 /// Node in the HNSW graph
 #[derive(Clone, Debug)]
 struct Node {
     vector: Vec<f32>,
     level: usize,
-    neighbors: HashMap<usize, Vec<String>>,  // level -> neighbor IDs
+    neighbors: HashMap<usize, Vec<String>>, // level -> neighbor IDs
 }
 
 /// Priority queue entry for search
@@ -36,26 +36,29 @@ impl Eq for PQEntry {}
 
 impl PartialOrd for PQEntry {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        // Reverse order for min-heap behavior
-        other.distance.partial_cmp(&self.distance)
+        Some(self.cmp(other))
     }
 }
 
 impl Ord for PQEntry {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap_or(Ordering::Equal)
+        // Reverse order for min-heap behavior
+        other
+            .distance
+            .partial_cmp(&self.distance)
+            .unwrap_or(Ordering::Equal)
     }
 }
 
 #[pyclass]
 pub struct HNSWIndex {
     dim: usize,
-    m: usize,                    // Max neighbors per layer
-    ef_construction: usize,      // Search width during construction
+    m: usize,               // Max neighbors per layer
+    ef_construction: usize, // Search width during construction
     max_level: usize,
     nodes: HashMap<String, Node>,
     entry_point: Option<String>,
-    level_mult: f64,             // Level multiplier (1/ln(M))
+    level_mult: f64, // Level multiplier (1/ln(M))
 }
 
 #[pymethods]
@@ -78,13 +81,15 @@ impl HNSWIndex {
     /// Add a vector to the index
     fn add_item(&mut self, memory_id: String, vector: Vec<f32>) -> PyResult<()> {
         if vector.len() != self.dim {
-            return Err(pyo3::exceptions::PyValueError::new_err(
-                format!("Vector dimension mismatch: expected {}, got {}", self.dim, vector.len())
-            ));
+            return Err(pyo3::exceptions::PyValueError::new_err(format!(
+                "Vector dimension mismatch: expected {}, got {}",
+                self.dim,
+                vector.len()
+            )));
         }
 
         let level = self.get_random_level();
-        
+
         let node = Node {
             vector,
             level,
@@ -100,10 +105,13 @@ impl HNSWIndex {
         }
 
         let entry = self.entry_point.clone().unwrap();
-        
+
         // Find entry point at the same level
         let mut curr_node = entry.clone();
-        let mut curr_dist = self.distance(&self.nodes.get(&curr_node).unwrap().vector, &self.nodes.get(&memory_id).unwrap().vector);
+        let mut curr_dist = self.distance(
+            &self.nodes.get(&curr_node).unwrap().vector,
+            &self.nodes.get(&memory_id).unwrap().vector,
+        );
 
         // Traverse from top level to the new node's level
         for l in (level + 1..=self.max_level).rev() {
@@ -113,7 +121,7 @@ impl HNSWIndex {
         // For each level from new node's level down to 0
         for l in (0..=level.min(self.max_level)).rev() {
             let neighbors = self.search_layer(&memory_id, &curr_node, self.m * 2, l);
-            
+
             // Connect to M nearest neighbors
             if let Some(node) = self.nodes.get_mut(&memory_id) {
                 if let Some(neighbor_list) = node.neighbors.get_mut(&l) {
@@ -123,16 +131,24 @@ impl HNSWIndex {
             }
 
             // Bidirectional connections - collect first to avoid borrow issues
-            let neighbor_connections: Vec<(String, Vec<String>)> = self.nodes.get(&memory_id)
+            let neighbor_connections: Vec<(String, Vec<String>)> = self
+                .nodes
+                .get(&memory_id)
                 .and_then(|n| n.neighbors.get(&l).cloned())
                 .map(|neighbors| {
-                    neighbors.into_iter().map(|neighbor_id| {
-                        let neighbor_list = self.nodes.get(&neighbor_id)
-                            .and_then(|n| n.neighbors.get(&l).cloned())
-                            .unwrap_or_default();
-                        (neighbor_id, neighbor_list)
-                    }).collect()
-                }).unwrap_or_default();
+                    neighbors
+                        .into_iter()
+                        .map(|neighbor_id| {
+                            let neighbor_list = self
+                                .nodes
+                                .get(&neighbor_id)
+                                .and_then(|n| n.neighbors.get(&l).cloned())
+                                .unwrap_or_default();
+                            (neighbor_id, neighbor_list)
+                        })
+                        .collect()
+                })
+                .unwrap_or_default();
 
             for (neighbor_id, mut neighbor_list) in neighbor_connections {
                 neighbor_list.push(memory_id.clone());
@@ -141,7 +157,8 @@ impl HNSWIndex {
                     // Prune to keep closest neighbors
                     let neighbor_vec = self.nodes.get(&neighbor_id).map(|n| n.vector.clone());
                     if let Some(neighbor_vec) = neighbor_vec {
-                        let mut dists: Vec<(f64, String)> = neighbor_list.iter()
+                        let mut dists: Vec<(f64, String)> = neighbor_list
+                            .iter()
                             .filter_map(|n| {
                                 self.nodes.get(n).map(|node| {
                                     (self.distance(&neighbor_vec, &node.vector), n.clone())
@@ -172,11 +189,13 @@ impl HNSWIndex {
     /// Search for k nearest neighbors
     fn search(&self, query: Vec<f32>, k: usize, ef: Option<usize>) -> PyResult<Vec<(String, f64)>> {
         let ef = ef.unwrap_or(50);
-        
+
         if query.len() != self.dim {
-            return Err(pyo3::exceptions::PyValueError::new_err(
-                format!("Query dimension mismatch: expected {}, got {}", self.dim, query.len())
-            ));
+            return Err(pyo3::exceptions::PyValueError::new_err(format!(
+                "Query dimension mismatch: expected {}, got {}",
+                self.dim,
+                query.len()
+            )));
         }
 
         let entry = match &self.entry_point {
@@ -196,12 +215,13 @@ impl HNSWIndex {
         let results = self.search_layer_query(&query, &curr_node, ef, 0);
 
         // Return top k results as (id, similarity)
-        let mut sorted_results: Vec<(String, f64)> = results.into_iter()
-            .map(|(dist, id)| (id, 1.0 - dist))  // Convert distance to similarity
+        let mut sorted_results: Vec<(String, f64)> = results
+            .into_iter()
+            .map(|(dist, id)| (id, 1.0 - dist)) // Convert distance to similarity
             .collect();
         sorted_results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(Ordering::Equal));
         sorted_results.truncate(k);
-        
+
         Ok(sorted_results)
     }
 
@@ -237,15 +257,21 @@ impl HNSWIndex {
 
     /// Get node neighbors at level
     fn get_neighbors(&self, node_id: String, level: usize) -> Vec<String> {
-        self.nodes.get(&node_id)
+        self.nodes
+            .get(&node_id)
             .and_then(|n| n.neighbors.get(&level))
             .cloned()
             .unwrap_or_default()
     }
 
     /// Batch cosine similarity calculation
-    fn batch_cosine_similarity(&self, query: Vec<f32>, node_ids: Vec<String>) -> Vec<(String, f64)> {
-        let mut results: Vec<(String, f64)> = node_ids.iter()
+    fn batch_cosine_similarity(
+        &self,
+        query: Vec<f32>,
+        node_ids: Vec<String>,
+    ) -> Vec<(String, f64)> {
+        let mut results: Vec<(String, f64)> = node_ids
+            .iter()
             .filter_map(|id| {
                 self.nodes.get(id).map(|node| {
                     let dist = self.distance(&query, &node.vector);
@@ -261,10 +287,14 @@ impl HNSWIndex {
 impl HNSWIndex {
     /// Cosine distance (1 - cosine similarity)
     fn distance(&self, a: &[f32], b: &[f32]) -> f64 {
-        let dot: f64 = a.iter().zip(b.iter()).map(|(x, y)| (*x as f64) * (*y as f64)).sum();
+        let dot: f64 = a
+            .iter()
+            .zip(b.iter())
+            .map(|(x, y)| (*x as f64) * (*y as f64))
+            .sum();
         let norm_a: f64 = a.iter().map(|x| (*x as f64).powi(2)).sum::<f64>().sqrt();
         let norm_b: f64 = b.iter().map(|x| (*x as f64).powi(2)).sum::<f64>().sqrt();
-        
+
         if norm_a > 0.0 && norm_b > 0.0 {
             1.0 - dot / (norm_a * norm_b)
         } else {
@@ -283,13 +313,25 @@ impl HNSWIndex {
     }
 
     /// Greedy search at a specific level
-    fn greedy_search(&self, query_id: &str, curr_node: &mut String, curr_dist: &mut f64, level: usize) -> bool {
+    fn greedy_search(
+        &self,
+        query_id: &str,
+        curr_node: &mut String,
+        curr_dist: &mut f64,
+        level: usize,
+    ) -> bool {
         let query = self.nodes.get(query_id).unwrap().vector.clone();
         self.greedy_search_query(&query, curr_node, curr_dist, level)
     }
 
     /// Greedy search with query vector
-    fn greedy_search_query(&self, query: &[f32], curr_node: &mut String, curr_dist: &mut f64, level: usize) -> bool {
+    fn greedy_search_query(
+        &self,
+        query: &[f32],
+        curr_node: &mut String,
+        curr_dist: &mut f64,
+        level: usize,
+    ) -> bool {
         let mut changed = true;
         while changed {
             changed = false;
@@ -315,21 +357,27 @@ impl HNSWIndex {
     fn search_layer(&self, query_id: &str, entry: &str, ef: usize, level: usize) -> Vec<String> {
         let query = self.nodes.get(query_id).unwrap().vector.clone();
         let entry_dist = self.distance(&query, &self.nodes.get(entry).unwrap().vector);
-        
+
         let mut visited: HashSet<String> = HashSet::new();
         visited.insert(entry.to_string());
-        
+
         let mut candidates: BTreeSet<PQEntry> = BTreeSet::new();
-        candidates.insert(PQEntry { distance: entry_dist, node_id: entry.to_string() });
-        
-        let mut results: Vec<PQEntry> = vec![PQEntry { distance: entry_dist, node_id: entry.to_string() }];
+        candidates.insert(PQEntry {
+            distance: entry_dist,
+            node_id: entry.to_string(),
+        });
+
+        let mut results: Vec<PQEntry> = vec![PQEntry {
+            distance: entry_dist,
+            node_id: entry.to_string(),
+        }];
 
         while !candidates.is_empty() {
             let candidate = candidates.iter().next().unwrap().clone();
             candidates.remove(&candidate);
-            
+
             let furthest = results.last().map(|e| e.distance).unwrap_or(f64::MAX);
-            
+
             if candidate.distance > furthest && results.len() >= ef {
                 break;
             }
@@ -341,17 +389,27 @@ impl HNSWIndex {
                             continue;
                         }
                         visited.insert(neighbor_id.clone());
-                        
+
                         if let Some(neighbor) = self.nodes.get(neighbor_id) {
                             let dist = self.distance(&query, &neighbor.vector);
-                            
+
                             if dist < furthest || results.len() < ef {
-                                candidates.insert(PQEntry { distance: dist, node_id: neighbor_id.clone() });
-                                results.push(PQEntry { distance: dist, node_id: neighbor_id.clone() });
-                                results.sort_by(|a, b| a.distance.partial_cmp(&b.distance).unwrap_or(Ordering::Equal));
-                                
+                                candidates.insert(PQEntry {
+                                    distance: dist,
+                                    node_id: neighbor_id.clone(),
+                                });
+                                results.push(PQEntry {
+                                    distance: dist,
+                                    node_id: neighbor_id.clone(),
+                                });
+                                results.sort_by(|a, b| {
+                                    a.distance
+                                        .partial_cmp(&b.distance)
+                                        .unwrap_or(Ordering::Equal)
+                                });
+
                                 if results.len() > ef {
-                                    results.pop();  // Remove furthest (last after sort)
+                                    results.pop(); // Remove furthest (last after sort)
                                 }
                             }
                         }
@@ -364,23 +422,35 @@ impl HNSWIndex {
     }
 
     /// Search layer with query vector
-    fn search_layer_query(&self, query: &[f32], entry: &str, ef: usize, level: usize) -> Vec<(f64, String)> {
+    fn search_layer_query(
+        &self,
+        query: &[f32],
+        entry: &str,
+        ef: usize,
+        level: usize,
+    ) -> Vec<(f64, String)> {
         let entry_dist = self.distance(query, &self.nodes.get(entry).unwrap().vector);
-        
+
         let mut visited: HashSet<String> = HashSet::new();
         visited.insert(entry.to_string());
-        
+
         let mut candidates: BTreeSet<PQEntry> = BTreeSet::new();
-        candidates.insert(PQEntry { distance: entry_dist, node_id: entry.to_string() });
-        
-        let mut results: Vec<PQEntry> = vec![PQEntry { distance: entry_dist, node_id: entry.to_string() }];
+        candidates.insert(PQEntry {
+            distance: entry_dist,
+            node_id: entry.to_string(),
+        });
+
+        let mut results: Vec<PQEntry> = vec![PQEntry {
+            distance: entry_dist,
+            node_id: entry.to_string(),
+        }];
 
         while !candidates.is_empty() {
             let candidate = candidates.iter().next().unwrap().clone();
             candidates.remove(&candidate);
-            
+
             let furthest = results.last().map(|e| e.distance).unwrap_or(f64::MAX);
-            
+
             if candidate.distance > furthest && results.len() >= ef {
                 break;
             }
@@ -392,17 +462,27 @@ impl HNSWIndex {
                             continue;
                         }
                         visited.insert(neighbor_id.clone());
-                        
+
                         if let Some(neighbor) = self.nodes.get(neighbor_id) {
                             let dist = self.distance(query, &neighbor.vector);
-                            
+
                             if dist < furthest || results.len() < ef {
-                                candidates.insert(PQEntry { distance: dist, node_id: neighbor_id.clone() });
-                                results.push(PQEntry { distance: dist, node_id: neighbor_id.clone() });
-                                results.sort_by(|a, b| a.distance.partial_cmp(&b.distance).unwrap_or(Ordering::Equal));
-                                
+                                candidates.insert(PQEntry {
+                                    distance: dist,
+                                    node_id: neighbor_id.clone(),
+                                });
+                                results.push(PQEntry {
+                                    distance: dist,
+                                    node_id: neighbor_id.clone(),
+                                });
+                                results.sort_by(|a, b| {
+                                    a.distance
+                                        .partial_cmp(&b.distance)
+                                        .unwrap_or(Ordering::Equal)
+                                });
+
                                 if results.len() > ef {
-                                    results.pop();  // Remove furthest (last after sort)
+                                    results.pop(); // Remove furthest (last after sort)
                                 }
                             }
                         }
@@ -411,7 +491,10 @@ impl HNSWIndex {
             }
         }
 
-        results.into_iter().map(|e| (e.distance, e.node_id)).collect()
+        results
+            .into_iter()
+            .map(|e| (e.distance, e.node_id))
+            .collect()
     }
 }
 

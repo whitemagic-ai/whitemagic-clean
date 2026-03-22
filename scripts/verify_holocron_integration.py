@@ -8,7 +8,6 @@ Checks if the Holocron (Golden Rules) is correctly integrated into:
 """
 
 import sys
-import os
 import logging
 from pathlib import Path
 

@@ -1,6 +1,6 @@
 {
   "name": "@whitemagic/sdk",
-  "version": "0.1.0",
+  "version": "20.0.0",
   "description": "TypeScript client SDK for WhiteMagic — memory, governance, and orchestration for AI agents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

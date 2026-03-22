@@ -131,3 +131,4 @@ venv/
 Thumbs.db
 _unsafe_maintenance/
 *.onnx
+bge-small-en-v1.5.onnx

@@ -13,16 +13,15 @@
 
 import sys
 import time
-import json
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Any
+from typing import Dict, Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from whitemagic.core.nervous_system import get_nervous_system
-from whitemagic.core.resonance.gan_ying import emit_event, EventType, get_bus
+from whitemagic.core.resonance.gan_ying import get_bus
 
 CAMPAIGNS_DIR = PROJECT_ROOT / "campaigns"
 REPORTS_DIR = PROJECT_ROOT / "reports"
@@ -68,17 +67,17 @@ class EvolutionaryExecutor:
             except Exception:
                 pass
         
-        print(f"\n📊 Campaign Status:")
+        print("\n📊 Campaign Status:")
         print(f"  Incomplete Campaigns: {len(incomplete)}")
         
         if incomplete:
-            print(f"\n  Campaigns to Complete:")
+            print("\n  Campaigns to Complete:")
             for c in incomplete:
                 print(f"    - {c['name']}: {c['remaining']} VCs remaining")
         
         # Deploy clones to complete campaigns
         if RUST_OK and incomplete:
-            print(f"\n🔷 Deploying clones to complete campaigns...")
+            print("\n🔷 Deploying clones to complete campaigns...")
             for campaign in incomplete[:3]:  # Top 3
                 clones = campaign['remaining'] * 1000
                 result = rs.tokio_deploy_clones(
@@ -95,7 +94,7 @@ class EvolutionaryExecutor:
             "status": "complete" if len(incomplete) == 0 else "in_progress"
         }
         
-        print(f"\n✅ Step 1 Complete")
+        print("\n✅ Step 1 Complete")
         print(f"   Status: {result['status']}")
         
         self.results['step1'] = result
@@ -138,7 +137,7 @@ class EvolutionaryExecutor:
                     except:
                         pass
         
-        print(f"\n📊 Polyglot Status:")
+        print("\n📊 Polyglot Status:")
         for lang, stats in polyglot_status.items():
             print(f"  {lang}: {stats['files']} files, {stats['lines']:,} lines")
         
@@ -151,7 +150,7 @@ class EvolutionaryExecutor:
             "whitemagic/core/memory/consolidation.py"
         ]
         
-        print(f"\n🔥 Hot Paths for Rust Acceleration:")
+        print("\n🔥 Hot Paths for Rust Acceleration:")
         for path in hot_paths:
             full_path = PROJECT_ROOT / path
             if full_path.exists():
@@ -176,7 +175,7 @@ class EvolutionaryExecutor:
             "clones_deployed": 50000 if RUST_OK else 0
         }
         
-        print(f"\n✅ Step 5 Complete")
+        print("\n✅ Step 5 Complete")
         
         self.results['step5'] = result
         return result
@@ -197,7 +196,7 @@ class EvolutionaryExecutor:
             "Mojo": {"clones": 30000, "specialty": "AI/ML, Python-compatible"}
         }
         
-        print(f"\n🔷 Polyglot Shadow Armies:")
+        print("\n🔷 Polyglot Shadow Armies:")
         total_army_clones = 0
         
         for lang, config in armies.items():
@@ -225,7 +224,7 @@ class EvolutionaryExecutor:
             "status": "ready"
         }
         
-        print(f"\n✅ Step 6 Complete")
+        print("\n✅ Step 6 Complete")
         print(f"   Total Army Clones: {total_army_clones:,}")
         
         self.results['step6'] = result
@@ -267,7 +266,7 @@ class EvolutionaryExecutor:
         if rust_bridge.exists():
             integration_points["cross_language_bridges"] += len(list(rust_bridge.glob("*.rs")))
         
-        print(f"\n📊 Integration Status:")
+        print("\n📊 Integration Status:")
         for key, value in integration_points.items():
             print(f"  {key.replace('_', ' ').title()}: {value}")
         
@@ -289,7 +288,7 @@ class EvolutionaryExecutor:
             "status": "integrated"
         }
         
-        print(f"\n✅ Step 4 Complete")
+        print("\n✅ Step 4 Complete")
         
         self.results['step4'] = result
         return result
@@ -305,7 +304,7 @@ class EvolutionaryExecutor:
         integrated = 15   # From grand integration sprint
         remaining = candidates - integrated
         
-        print(f"\n📊 Biological Integration Status:")
+        print("\n📊 Biological Integration Status:")
         print(f"  Total Candidates: {candidates}")
         print(f"  Already Integrated: {integrated}")
         print(f"  Remaining: {remaining}")
@@ -329,7 +328,7 @@ class EvolutionaryExecutor:
             "self_healing": "+241%"  # 482 systems * 0.5%
         }
         
-        print(f"\n📈 Expected Improvements:")
+        print("\n📈 Expected Improvements:")
         for metric, value in improvements.items():
             print(f"  {metric.replace('_', ' ').title()}: {value}")
         
@@ -341,7 +340,7 @@ class EvolutionaryExecutor:
             "status": "complete"
         }
         
-        print(f"\n✅ Step 2 Complete")
+        print("\n✅ Step 2 Complete")
         print(f"   All {candidates} systems integrated")
         
         self.results['step2'] = result
@@ -376,7 +375,7 @@ class EvolutionaryExecutor:
             }
         }
         
-        print(f"\n📊 Autonomous Capabilities:")
+        print("\n📊 Autonomous Capabilities:")
         for capability, config in capabilities.items():
             print(f"\n  {capability.replace('_', ' ').title()}:")
             for key, value in config.items():
@@ -399,8 +398,8 @@ class EvolutionaryExecutor:
             "clones_deployed": 50000 if RUST_OK else 0
         }
         
-        print(f"\n✅ Step 7 Complete")
-        print(f"   Organism is fully autonomous")
+        print("\n✅ Step 7 Complete")
+        print("   Organism is fully autonomous")
         
         self.results['step7'] = result
         return result
@@ -434,7 +433,7 @@ class EvolutionaryExecutor:
             }
         }
         
-        print(f"\n📊 Metacognitive Capabilities:")
+        print("\n📊 Metacognitive Capabilities:")
         for capability, features in metacognitive_capabilities.items():
             print(f"\n  {capability.replace('_', ' ').title()}:")
             for feature, enabled in features.items():
@@ -459,8 +458,8 @@ class EvolutionaryExecutor:
             "status": "metacognitive"
         }
         
-        print(f"\n✅ Step 8 Complete")
-        print(f"   Organism is metacognitive")
+        print("\n✅ Step 8 Complete")
+        print("   Organism is metacognitive")
         
         self.results['step8'] = result
         return result
@@ -506,11 +505,11 @@ class EvolutionaryExecutor:
             }
         }
         
-        print(f"\n📊 Emergent Intelligence Behaviors:")
+        print("\n📊 Emergent Intelligence Behaviors:")
         for behavior, details in emergent_behaviors.items():
             print(f"\n  {behavior.replace('_', ' ').title()}:")
             print(f"    {details['description']}")
-            print(f"    Examples:")
+            print("    Examples:")
             for example in details['examples']:
                 print(f"      - {example}")
         
@@ -532,8 +531,8 @@ class EvolutionaryExecutor:
             "status": "emergent"
         }
         
-        print(f"\n✅ Step 9 Complete")
-        print(f"   Emergent intelligence demonstrated")
+        print("\n✅ Step 9 Complete")
+        print("   Emergent intelligence demonstrated")
         
         self.results['step9'] = result
         return result

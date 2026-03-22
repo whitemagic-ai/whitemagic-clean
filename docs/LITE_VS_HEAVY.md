@@ -1,6 +1,6 @@
 # WhiteMagic Lite vs Heavy — Capability Comparison
 
-**Version**: 15.0.0 | **Last Updated**: February 2026
+**Version**: 18.1.0 | **Last Updated**: March 2026
 
 ---
 
@@ -15,7 +15,7 @@ WhiteMagic ships in three tiers. Each tier speaks the same MCP protocol over std
 | Install | `curl` + `chmod +x` | `pip install whitemagic[mcp]` | `docker pull` |
 | Time | <3 seconds | ~60 seconds | ~30 seconds |
 | Dependencies | **Zero** | Python 3.10+ | Docker only |
-| Tools | 19 | 313 | 313 + polyglot accelerators |
+| Tools | 19 | 28 Gana MCP contract + broader internal surface | 28 Gana MCP contract + polyglot accelerators |
 | Languages | Rust only | Python + optional Rust | Python + Rust + Go + 8 more |
 
 ---
@@ -124,7 +124,7 @@ An agent equipped with Heavy gets everything in Standard, plus:
 | **Metrics** | harmony_vector |
 | **Audit** | karma_report |
 
-### Standard/Heavy (313 tools across 28 Gana meta-tools)
+### Standard/Heavy (28 Gana MCP contract with broader internal tool surfaces)
 
 Everything in Lite, plus:
 
@@ -173,14 +173,14 @@ Everything in Lite, plus:
 ├─────────────────────────────────────────────────────┤
 │  Standard (pip install)                             │
 │  pip install whitemagic[mcp] → python -m ...        │
-│  313 tools, ~25MB, Python 3.10+, ~60s               │
+│  28 Gana MCP contract, ~25MB, Python 3.11+, ~60s      │
 │  Same state directory, same memories                │
 │                                                     │
 │  Agent decides it needs polyglot acceleration →     │
 ├─────────────────────────────────────────────────────┤
 │  Heavy (Docker)                                     │
 │  docker pull whitemagic-ai/whitemagic:heavy         │
-│  313 tools + 11 polyglot cores, ~200-800MB, ~30s    │
+│  28 Gana MCP contract + polyglot cores, ~200-800MB, ~30s │
 │  Mount state directory: -v ~/.whitemagic:/data/...  │
 │  10-200× faster on compute-heavy operations         │
 └─────────────────────────────────────────────────────┘

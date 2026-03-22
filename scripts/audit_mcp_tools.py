@@ -8,7 +8,6 @@ import sys
 import os
 import time
 import traceback
-from typing import Any
 
 # Ensure we use the venv python
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev/.venv/lib/python3.12/site-packages')
@@ -18,7 +17,7 @@ os.chdir('/home/lucas/Desktop/whitemagicdev')
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
 from whitemagic.tools.dispatch_table import DISPATCH_TABLE
-from whitemagic.tools.prat_router import GANA_TO_TOOLS, TOOL_TO_GANA
+from whitemagic.tools.prat_router import TOOL_TO_GANA
 
 # Stats
 results = {
@@ -244,10 +243,10 @@ def main():
             print(f"✅ ({result.get('latency', 0):.2f}s)")
             results["passed"].append({"tool": tool_name, **result})
         elif result["status"] == "not_implemented":
-            print(f"⚠️ (not implemented)")
+            print("⚠️ (not implemented)")
             results["not_implemented"].append({"tool": tool_name, **result})
         elif result["status"] == "skipped":
-            print(f"⏭️ (no handler)")
+            print("⏭️ (no handler)")
             results["skipped"].append({"tool": tool_name, **result})
         else:
             print(f"❌ {result['error'][:60]}")

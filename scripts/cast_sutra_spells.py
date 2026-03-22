@@ -4,9 +4,7 @@ Grimoire Spell Casting
 ======================
 Uses the WhiteMagic MCP Grimoire to systematically execute auto-repair, code-generation, and self-reflection sutras.
 """
-import sys
 import subprocess
-from pathlib import Path
 
 def main():
     print("Casting Grimoire Sutras for autonomous self-improvement...")

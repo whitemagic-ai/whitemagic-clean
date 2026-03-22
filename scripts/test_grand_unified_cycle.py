@@ -11,7 +11,6 @@ Tests:
 """
 
 import sys
-import time
 from pathlib import Path
 
 # Add project root to path
@@ -115,11 +114,11 @@ def test_system_status():
     
     print(f"Cycle count: {stat['cycle_count']}")
     print(f"Phase history: {stat['phase_history_count']} states recorded")
-    print(f"\nCurrent state:")
+    print("\nCurrent state:")
     for key, value in stat['current_state'].items():
         print(f"  {key}: {value}")
     
-    print(f"\nSystems connected:")
+    print("\nSystems connected:")
     for system, connected in stat['systems_connected'].items():
         status_icon = "✅" if connected else "⚠️"
         print(f"  {status_icon} {system}")

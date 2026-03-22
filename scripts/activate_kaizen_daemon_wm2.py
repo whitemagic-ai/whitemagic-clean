@@ -6,9 +6,7 @@ Launch the kaizen daemon to let WM2 evolve autonomously
 """
 
 import subprocess
-import time
 from pathlib import Path
-from datetime import datetime, timezone
 
 WM2_ROOT = Path.home() / "Desktop" / "WM2"
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -176,7 +174,7 @@ if __name__ == "__main__":
     print(f"   ✅ Created: {kaizen_daemon}")
     print()
 
-print(f"🚀 Launching kaizen daemon (5 test cycles)...")
+print("🚀 Launching kaizen daemon (5 test cycles)...")
 print()
 
 try:

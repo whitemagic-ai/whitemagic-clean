@@ -1,0 +1,156 @@
+module interface whitemagic-koka/src/shm_consumer
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/vector = std/core/vector pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/core = std/core = "";
+import std/os/readline = std/os/readline = "";
+import std/num/float64 = std/num/float64 = "";
+import std/num/int64 = std/num/int64 = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+// The `:io` effect is used for functions that perform arbitrary I/O operations.
+local alias std/core/io[78,1,78,29] :: E = <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,((std/core/io-noexn :: E) == 3 <(std/core/types/div :: X),((std/core/io-total :: E) == 2 <(std/core/types/ndet :: X),(std/core/console/console :: X),(std/core/net :: X),(std/core/fsys :: X),(std/core/ui :: X),((std/core/types/st :: H -> E)<(std/core/types/global :: H)> == 1 <(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/types/write :: H -> X)<(std/core/types/global :: H)>,(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>>)>)>)> = 4;
+ 
+//------------------------------
+//#kki: type declarations
+ 
+type shm-header[51,1,57,15] {
+  con Shm-header[51,8,51,17](magic: std/core/types/int, version: std/core/types/int, capacity: std/core/types/int, count: std/core/types/int, write-pos: std/core/types/int, read-pos: std/core/types/int){0,6,8} : (magic : std/core/types/int, version : std/core/types/int, capacity : std/core/types/int, count : std/core/types/int, write-pos : std/core/types/int, read-pos : std/core/types/int) -> shm-header = 1;
+};
+ 
+//------------------------------
+//#kki: declarations
+ 
+fun flush-stdout[11,8,11,19] : () -> <(std/core/console/console :: X)> ();
+// Open and map shared memory, returns pointer (0 on error)
+fun shm-open-map[21,8,21,19] : (name : std/core/types/string, size : std/core/types/int) -> std/core/types/int64;
+// Unmap shared memory
+fun shm-unmap[25,8,25,16] : (addr : std/core/types/int64, size : std/core/types/int) -> std/core/types/int;
+// Read int32 at offset
+fun shm-read-int[29,8,29,19] : (addr : std/core/types/int64, offset : std/core/types/int) -> std/core/types/int;
+// Read int64 at offset  
+fun shm-read-int64[33,8,33,21] : (addr : std/core/types/int64, offset : std/core/types/int) -> std/core/types/int64;
+// Read double at offset
+fun shm-read-double[37,8,37,22] : (addr : std/core/types/int64, offset : std/core/types/int) -> std/core/types/float64;
+val shm-name[42,5,42,12] : std/core/types/string;
+val segment-size[43,5,43,16] : std/core/types/int;
+val header-size[44,5,44,15] : std/core/types/int;
+val slot-size[45,5,45,13] : std/core/types/int;
+val embedding-dim[46,5,46,17] : std/core/types/int;
+val magic-number[47,5,47,16] : std/core/types/int;
+// Automatically generated. Retrieves the `magic` constructor field of the `:shm-header` type.
+fun shm-header/magic[52,3,52,7] : (^ @this : shm-header) -> std/core/types/int;
+// Automatically generated. Retrieves the `version` constructor field of the `:shm-header` type.
+fun shm-header/version[53,3,53,9] : (^ @this : shm-header) -> std/core/types/int;
+// Automatically generated. Retrieves the `capacity` constructor field of the `:shm-header` type.
+fun shm-header/capacity[54,3,54,10] : (^ @this : shm-header) -> std/core/types/int;
+// Automatically generated. Retrieves the `count` constructor field of the `:shm-header` type.
+fun shm-header/count[55,3,55,7] : (^ @this : shm-header) -> std/core/types/int;
+// Automatically generated. Retrieves the `write-pos` constructor field of the `:shm-header` type.
+fun shm-header/write-pos[56,3,56,11] : (^ @this : shm-header) -> std/core/types/int;
+// Automatically generated. Retrieves the `read-pos` constructor field of the `:shm-header` type.
+fun shm-header/read-pos[57,3,57,10] : (^ @this : shm-header) -> std/core/types/int;
+fun shm-header/@copy[51,8,51,17] : (@this : shm-header, magic : (std/core/types/@optional :: V -> V)<std/core/types/int>, version : (std/core/types/@optional :: V -> V)<std/core/types/int>, capacity : (std/core/types/@optional :: V -> V)<std/core/types/int>, count : (std/core/types/@optional :: V -> V)<std/core/types/int>, write-pos : (std/core/types/@optional :: V -> V)<std/core/types/int>, read-pos : (std/core/types/@optional :: V -> V)<std/core/types/int>) -> shm-header;
+fun read-header[59,5,59,15] : (addr : std/core/types/int64) -> shm-header;
+fun json-header[71,5,71,15] : (h : shm-header) -> std/core/types/string;
+fun extract-op[79,5,79,14] : (line : std/core/types/string) -> std/core/types/string;
+// monadic lift
+fun @mlift-server-loop@10063[1,0,1,0] : (addr : std/core/types/int64, op : std/core/types/string, @c-x10014 : std/core/types/string) -> ();
+// monadic lift
+fun @mlift-server-loop@10064[1,0,1,0] : (addr : std/core/types/int64, line : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>> ();
+fun server-loop[86,5,86,15] : (addr : std/core/types/int64) -> <(std/core/io :: E)> ();
+fun main[118,5,118,8] : () -> <(std/core/io :: E)> ();
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+inline val shm-name // inline size: 0
+  = "whitemagic_embed_bridge";
+inline val segment-size // inline size: 0
+  = 1544704;
+inline val header-size // inline size: 0
+  = 64;
+inline val slot-size // inline size: 0
+  = 1544;
+inline val embedding-dim // inline size: 0
+  = 384;
+inline val magic-number // inline size: 0
+  = 1464683339;
+inline borrow "^" fun shm-header/magic // inline size: 0
+  = fn(@this: shm-header){
+    match (@this) {
+      ((@skip whitemagic-koka/src/shm_consumer/Shm-header((@x: std/core/types/int) : std/core/types/int, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/int) : std/core/types/int, (@pat@4: std/core/types/int) : std/core/types/int) : shm-header ) as @pat: shm-header)
+         -> @x;
+    };
+  };
+inline borrow "^" fun shm-header/version // inline size: 0
+  = fn(@this: shm-header){
+    match (@this) {
+      ((@skip whitemagic-koka/src/shm_consumer/Shm-header((@pat@0: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/int) : std/core/types/int, (@pat@4: std/core/types/int) : std/core/types/int) : shm-header ) as @pat: shm-header)
+         -> @x;
+    };
+  };
+inline borrow "^" fun shm-header/capacity // inline size: 0
+  = fn(@this: shm-header){
+    match (@this) {
+      ((@skip whitemagic-koka/src/shm_consumer/Shm-header((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/int) : std/core/types/int, (@pat@4: std/core/types/int) : std/core/types/int) : shm-header ) as @pat: shm-header)
+         -> @x;
+    };
+  };
+inline borrow "^" fun shm-header/count // inline size: 0
+  = fn(@this: shm-header){
+    match (@this) {
+      ((@skip whitemagic-koka/src/shm_consumer/Shm-header((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/int) : std/core/types/int, (@pat@4: std/core/types/int) : std/core/types/int) : shm-header ) as @pat: shm-header)
+         -> @x;
+    };
+  };
+inline borrow "^" fun shm-header/write-pos // inline size: 0
+  = fn(@this: shm-header){
+    match (@this) {
+      ((@skip whitemagic-koka/src/shm_consumer/Shm-header((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@4: std/core/types/int) : std/core/types/int) : shm-header ) as @pat: shm-header)
+         -> @x;
+    };
+  };
+inline borrow "^" fun shm-header/read-pos // inline size: 0
+  = fn(@this: shm-header){
+    match (@this) {
+      ((@skip whitemagic-koka/src/shm_consumer/Shm-header((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/int) : std/core/types/int, (@pat@4: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int) : shm-header ) as @pat: shm-header)
+         -> @x;
+    };
+  };

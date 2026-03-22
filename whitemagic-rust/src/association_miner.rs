@@ -69,8 +69,10 @@ impl AssociationMiner {
     /// Create a new association miner with minimum support threshold
     #[new]
     fn new(min_support: f64) -> Self {
-        let mut config = MiningConfig::default();
-        config.min_support = min_support;
+        let config = MiningConfig {
+            min_support,
+            ..MiningConfig::default()
+        };
         Self {
             min_support,
             config,
@@ -78,14 +80,16 @@ impl AssociationMiner {
             rules: Vec::new(),
         }
     }
-    
+
     /// Create miner with full configuration
     #[staticmethod]
     fn with_config(min_support: f64, min_confidence: f64, min_lift: f64) -> Self {
-        let mut config = MiningConfig::default();
-        config.min_support = min_support;
-        config.min_confidence = min_confidence;
-        config.min_lift = min_lift;
+        let config = MiningConfig {
+            min_support,
+            min_confidence,
+            min_lift,
+            ..MiningConfig::default()
+        };
         Self {
             min_support,
             config,
@@ -93,18 +97,18 @@ impl AssociationMiner {
             rules: Vec::new(),
         }
     }
-    
+
     /// Mine frequent itemsets from transactions
     /// Each transaction is a set of items (tags, entities, etc.)
     fn mine_frequent_itemsets(&mut self, transactions: Vec<Vec<String>>) -> Vec<Vec<String>> {
         self.frequent_itemsets.clear();
         let n_transactions = transactions.len() as f64;
         let min_count = (self.config.min_support * n_transactions).ceil() as usize;
-        
+
         if transactions.is_empty() || min_count == 0 {
             return vec![];
         }
-        
+
         // Count individual items
         let mut item_counts: HashMap<String, usize> = HashMap::new();
         for tx in &transactions {
@@ -112,28 +116,29 @@ impl AssociationMiner {
                 *item_counts.entry(item.clone()).or_default() += 1;
             }
         }
-        
+
         // Filter by minimum support
-        let frequent_1: HashSet<String> = item_counts.iter()
+        let frequent_1: HashSet<String> = item_counts
+            .iter()
             .filter(|(_, &count)| count >= min_count)
             .map(|(item, _)| item.clone())
             .collect();
-        
+
         // Store 1-itemsets
         for item in &frequent_1 {
-            self.frequent_itemsets.insert(vec![item.clone()], item_counts[item]);
+            self.frequent_itemsets
+                .insert(vec![item.clone()], item_counts[item]);
         }
-        
+
         // Generate k-itemsets
         let mut k = 2;
-        let mut prev_frequent: Vec<Vec<String>> = frequent_1.iter()
-            .map(|s| vec![s.clone()])
-            .collect();
-        
+        let mut prev_frequent: Vec<Vec<String>> =
+            frequent_1.iter().map(|s| vec![s.clone()]).collect();
+
         while !prev_frequent.is_empty() && k <= self.config.max_itemset_size {
             // Generate candidates
             let candidates = generate_candidates_impl(&prev_frequent);
-            
+
             // Count candidates
             let mut candidate_counts: HashMap<Vec<String>, usize> = HashMap::new();
             for tx in &transactions {
@@ -144,63 +149,73 @@ impl AssociationMiner {
                     }
                 }
             }
-            
+
             // Filter by minimum support
-            prev_frequent = candidate_counts.iter()
+            prev_frequent = candidate_counts
+                .iter()
                 .filter(|(_, &count)| count >= min_count)
                 .map(|(itemset, &count)| {
                     self.frequent_itemsets.insert(itemset.clone(), count);
                     itemset.clone()
                 })
                 .collect();
-            
+
             k += 1;
         }
-        
+
         self.frequent_itemsets.keys().cloned().collect()
     }
-    
+
     /// Extract association rules from frequent itemsets
     fn extract_rules(&mut self, transactions: Vec<Vec<String>>) -> Vec<PyObject> {
         self.rules.clear();
         let n_transactions = transactions.len() as f64;
-        
+
         for (itemset, &support_count) in &self.frequent_itemsets {
             if itemset.len() < 2 {
                 continue; // Need at least 2 items for a rule
             }
-            
+
             // Generate all possible rules
             for i in 1..itemset.len() {
                 for antecedent_indices in combinations_impl(itemset.len(), i) {
-                    let mut antecedent: Vec<String> = antecedent_indices.iter()
+                    let mut antecedent: Vec<String> = antecedent_indices
+                        .iter()
                         .map(|&idx| itemset[idx].clone())
                         .collect();
                     antecedent.sort();
-                    
+
                     let mut consequent: Vec<String> = (0..itemset.len())
                         .filter(|idx| !antecedent_indices.contains(idx))
                         .map(|idx| itemset[idx].clone())
                         .collect();
                     consequent.sort();
-                    
+
                     // Calculate confidence
-                    let antecedent_support = self.frequent_itemsets.get(&antecedent).copied().unwrap_or(0);
+                    let antecedent_support = self
+                        .frequent_itemsets
+                        .get(&antecedent)
+                        .copied()
+                        .unwrap_or(0);
                     if antecedent_support == 0 {
                         continue;
                     }
-                    
+
                     let confidence = support_count as f64 / antecedent_support as f64;
-                    
+
                     // Calculate lift
-                    let consequent_support = self.frequent_itemsets.get(&consequent).copied().unwrap_or(0);
+                    let consequent_support = self
+                        .frequent_itemsets
+                        .get(&consequent)
+                        .copied()
+                        .unwrap_or(0);
                     let expected_confidence = consequent_support as f64 / n_transactions;
                     let lift = if expected_confidence > 0.0 {
                         confidence / expected_confidence
                     } else {
                         0.0
                     };
-                    
+
                     // Filter by thresholds
                     if confidence >= self.config.min_confidence && lift >= self.config.min_lift {
                         self.rules.push(AssociationRule {
@@ -214,51 +229,57 @@ impl AssociationMiner {
                 }
             }
         }
-        
+
         // Sort by confidence descending
-        self.rules.sort_by(|a, b| b.confidence.partial_cmp(&a.confidence).unwrap());
-        
+        self.rules
+            .sort_by(|a, b| b.confidence.partial_cmp(&a.confidence).unwrap());
+
         // Convert to PyObjects
         Python::with_gil(|py| {
-            self.rules.iter().map(|rule| {
-                let dict = pyo3::types::PyDict::new_bound(py);
-                dict.set_item("antecedent", rule.antecedent.clone()).unwrap();
-                dict.set_item("consequent", rule.consequent.clone()).unwrap();
-                dict.set_item("support", rule.support).unwrap();
-                dict.set_item("confidence", rule.confidence).unwrap();
-                dict.set_item("lift", rule.lift).unwrap();
-                dict.into()
-            }).collect()
+            self.rules
+                .iter()
+                .map(|rule| {
+                    let dict = pyo3::types::PyDict::new_bound(py);
+                    dict.set_item("antecedent", rule.antecedent.clone())
+                        .unwrap();
+                    dict.set_item("consequent", rule.consequent.clone())
+                        .unwrap();
+                    dict.set_item("support", rule.support).unwrap();
+                    dict.set_item("confidence", rule.confidence).unwrap();
+                    dict.set_item("lift", rule.lift).unwrap();
+                    dict.into()
+                })
+                .collect()
         })
     }
-    
+
     /// Mine associations from transactions and return rules
     fn mine(&mut self, transactions: Vec<Vec<String>>) -> PyResult<Vec<PyObject>> {
         self.mine_frequent_itemsets(transactions.clone());
         let rules = self.extract_rules(transactions);
         Ok(rules)
     }
-    
+
     /// Get number of frequent itemsets found
     fn itemset_count(&self) -> usize {
         self.frequent_itemsets.len()
     }
-    
+
     /// Get number of rules extracted
     fn rule_count(&self) -> usize {
         self.rules.len()
     }
-    
+
     /// Get minimum support threshold
     fn get_min_support(&self) -> f64 {
         self.min_support
     }
-    
+
     /// Set minimum confidence threshold
     fn set_min_confidence(&mut self, confidence: f64) {
         self.config.min_confidence = confidence;
     }
-    
+
     /// Get configuration
     fn get_config(&self, py: Python<'_>) -> PyResult<PyObject> {
         let dict = pyo3::types::PyDict::new_bound(py);
@@ -274,12 +295,12 @@ impl AssociationMiner {
 fn generate_candidates_impl(itemsets: &[Vec<String>]) -> Vec<Vec<String>> {
     let mut candidates = Vec::new();
     let n = itemsets.len();
-    
+
     for i in 0..n {
         for j in (i + 1)..n {
             let a = &itemsets[i];
             let b = &itemsets[j];
-            
+
             if a.len() > 1 && b.len() > 1 {
                 let prefix_match = a[..a.len() - 1] == b[..b.len() - 1];
                 if prefix_match {
@@ -295,7 +316,7 @@ fn generate_candidates_impl(itemsets: &[Vec<String>]) -> Vec<Vec<String>> {
             }
         }
     }
-    
+
     candidates
 }
 
@@ -307,7 +328,7 @@ fn combinations_impl(n: usize, k: usize) -> Vec<Vec<usize>> {
     if k == 1 {
         return (0..n).map(|i| vec![i]).collect();
     }
-    
+
     let mut result = Vec::new();
     let mut current = vec![0; k];
     combinations_helper_impl(n, k, &mut current, 0, 0, &mut result);
@@ -326,7 +347,7 @@ fn combinations_helper_impl(
         result.push(current.clone());
         return;
     }
-    
+
     for i in start..n {
         current[pos] = i;
         combinations_helper_impl(n, k, current, pos + 1, i + 1, result);
@@ -336,13 +357,13 @@ fn combinations_helper_impl(
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_miner_creation() {
         let miner = AssociationMiner::new(0.1);
         assert_eq!(miner.get_min_support(), 0.1);
     }
-    
+
     #[test]
     fn test_frequent_itemsets() {
         let mut miner = AssociationMiner::new(0.5);
@@ -351,11 +372,11 @@ mod tests {
             vec!["a".to_string(), "c".to_string()],
             vec!["a".to_string(), "b".to_string()],
         ];
-        
+
         let itemsets = miner.mine_frequent_itemsets(transactions);
         assert!(itemsets.iter().any(|i| i == &vec!["a".to_string()]));
     }
-    
+
     #[test]
     fn test_combinations() {
         let combs = combinations_impl(3, 2);

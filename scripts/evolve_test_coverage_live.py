@@ -8,12 +8,8 @@ and automatically commits successful ones.
 """
 
 import ast
-import os
-import sys
 import subprocess
-import time
 from pathlib import Path
-import random
 
 ROOT = Path(__file__).resolve().parent.parent
 

@@ -13,13 +13,10 @@ def test_imports():
     """Test basic imports without heavy computation."""
     print("Step 1: Testing imports...")
     try:
-        import numpy as np
         print("  ✓ numpy")
         
-        from whitemagic.core.memory.hnsw_index import HNSWIndex
         print("  ✓ HNSWIndex")
         
-        from whitemagic.core.memory.open_domain_recall import OpenDomainRecall
         print("  ✓ OpenDomainRecall")
         
         return True

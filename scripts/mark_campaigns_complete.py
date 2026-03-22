@@ -134,7 +134,7 @@ def main():
     print("=" * 70)
     print(f"\n  Campaigns Marked Complete: {len(completed)}")
     print(f"  Campaign Codes: {', '.join(completed)}")
-    print(f"\n  Starting: 16/40 (40.0%)")
+    print("\n  Starting: 16/40 (40.0%)")
     print(f"  Current: {16 + len(completed)}/40 ({(16 + len(completed))/40*100:.1f}%)")
     print(f"\n  {'✅ PAST 50%!' if (16 + len(completed)) >= 21 else '⏳ Continue push...'}")
     print()

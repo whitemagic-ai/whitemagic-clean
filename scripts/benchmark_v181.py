@@ -8,7 +8,7 @@ import time
 import sys
 from pathlib import Path
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import List
 import statistics
 
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
@@ -57,7 +57,7 @@ class V181BenchmarkSuite:
         print("-" * 50)
         
         try:
-            from whitemagic.core.memory.hnsw_index import HNSWIndex, get_hnsw_index
+            from whitemagic.core.memory.hnsw_index import get_hnsw_index
             import numpy as np
             
             index = get_hnsw_index()
@@ -86,8 +86,8 @@ class V181BenchmarkSuite:
             
             print(f"   HNSW search (k=10): {hnsw_time:.2f}ms")
             print(f"   Linear scan equiv:  ~{linear_time:.2f}ms")
-            print(f"   Speedup: ~50x")
-            print(f"   ✅ Target: 1000x for 100K+ vectors")
+            print("   Speedup: ~50x")
+            print("   ✅ Target: 1000x for 100K+ vectors")
             
             self.results.append(BenchmarkResult(
                 name="HNSW Search Latency",
@@ -111,23 +111,23 @@ class V181BenchmarkSuite:
         
         print(f"   Python Gan Ying:    {python_throughput:,} evt/s")
         print(f"   Elixir OTP target:  {elixir_projected:,} evt/s")
-        print(f"   Expected speedup:    5.0x")
+        print("   Expected speedup:    5.0x")
         
         # Check if Elixir modules are present
         lane_pools_path = Path("/home/lucas/Desktop/whitemagicdev/elixir/lib/whitemagic_core/gan_ying/lane_pools.ex")
         if lane_pools_path.exists():
-            print(f"   ✅ FAST lane pools implemented")
+            print("   ✅ FAST lane pools implemented")
         else:
-            print(f"   ⚠️  Lane pools not found")
+            print("   ⚠️  Lane pools not found")
         
         # Check supervisor updates
         supervisor_path = Path("/home/lucas/Desktop/whitemagicdev/elixir/lib/whitemagic_core/gan_ying/supervisor.ex")
         if supervisor_path.exists():
             content = supervisor_path.read_text()
             if "FastLanePool" in content:
-                print(f"   ✅ Supervisor updated with pools")
+                print("   ✅ Supervisor updated with pools")
             else:
-                print(f"   ⚠️  Supervisor needs FastLanePool")
+                print("   ⚠️  Supervisor needs FastLanePool")
         
         self.results.append(BenchmarkResult(
             name="Event Throughput (FAST lane)",
@@ -152,10 +152,10 @@ class V181BenchmarkSuite:
         # Check if client is implemented
         client_path = Path("/home/lucas/Desktop/whitemagicdev/whitemagic/core/bridge/julia_client.py")
         if client_path.exists():
-            print(f"   ✅ Julia client implemented")
-            print(f"   Features: RRF fusion, PageRank, path scoring, gravity")
+            print("   ✅ Julia client implemented")
+            print("   Features: RRF fusion, PageRank, path scoring, gravity")
         else:
-            print(f"   ⚠️  Julia client not found")
+            print("   ⚠️  Julia client not found")
         
         self.results.append(BenchmarkResult(
             name="Julia Call Latency",
@@ -180,13 +180,13 @@ class V181BenchmarkSuite:
         # Check implementation
         recall_path = Path("/home/lucas/Desktop/whitemagicdev/whitemagic/core/memory/open_domain_recall.py")
         if recall_path.exists():
-            print(f"   ✅ OpenDomainRecall implemented")
-            print(f"   Features:")
-            print(f"     - Title-boosted scoring (2x weight)")
-            print(f"     - Vector + keyword fusion")
-            print(f"     - Hybrid RRF search")
+            print("   ✅ OpenDomainRecall implemented")
+            print("   Features:")
+            print("     - Title-boosted scoring (2x weight)")
+            print("     - Vector + keyword fusion")
+            print("     - Hybrid RRF search")
         else:
-            print(f"   ⚠️  OpenDomainRecall not found")
+            print("   ⚠️  OpenDomainRecall not found")
         
         self.results.append(BenchmarkResult(
             name="Open-Domain Recall",

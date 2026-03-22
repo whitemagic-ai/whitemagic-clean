@@ -1,6 +1,5 @@
 import os
 import subprocess
-import json
 
 def setup_sutracode_kernel():
     print("=== P001: Implementing SutraCode Kernel & Zodiac Ledger ===")

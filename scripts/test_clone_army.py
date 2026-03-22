@@ -36,7 +36,7 @@ def test_clone_army_basic():
         print("\n[Test 4] Completing clones...")
         for i, clone_id in enumerate(clone_ids[:10]):
             army.complete_clone(clone_id, f"result-{i}")
-        print(f"✓ Completed 10 clones")
+        print("✓ Completed 10 clones")
         
         # Test 5: Collect results
         print("\n[Test 5] Collecting results...")
@@ -106,9 +106,9 @@ def test_clone_army_stress():
             print(f"  Throughput: {throughput:,.0f} clones/sec")
             
             if throughput < 100000:
-                print(f"  ⚠️  Below target (100K clones/sec)")
+                print("  ⚠️  Below target (100K clones/sec)")
             else:
-                print(f"  ✅ Above target!")
+                print("  ✅ Above target!")
         
         print("\n" + "=" * 60)
         print("✅ Stress Test Complete")

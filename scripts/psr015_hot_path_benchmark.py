@@ -74,7 +74,7 @@ def bench(label: str, py_fn, rs_fn, iterations: int = 100):
         print(f"  Speedup: {speedup:>6.1f}× {'✅' if speedup >= 10 else '⚠️'}")
         return speedup
     else:
-        print(f"  Rust:    NOT AVAILABLE")
+        print("  Rust:    NOT AVAILABLE")
         return 0.0
 
 

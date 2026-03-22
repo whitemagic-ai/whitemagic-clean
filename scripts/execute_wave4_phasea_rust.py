@@ -7,7 +7,6 @@ Integrates remaining 88 Rust variants from monte_carlo_output/
 import shutil
 from pathlib import Path
 from datetime import datetime
-import re
 
 # Map of source variants to destination modules
 # These are the remaining 88 variants after Wave 2's top 10

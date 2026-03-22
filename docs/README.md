@@ -1,6 +1,6 @@
 # WhiteMagic Documentation Index
 
-> **Canonical system overview**: [`/SYSTEM_MAP.md`](../SYSTEM_MAP.md) · **For AI agents**: [`/AI_PRIMARY.md`](../AI_PRIMARY.md)
+> **Canonical introduction**: [`../whitemagic/grimoire/00_PROLOGUE.md`](../whitemagic/grimoire/00_PROLOGUE.md) · **Canonical repo map**: [`/SYSTEM_MAP.md`](../SYSTEM_MAP.md) · **For AI agents**: [`/AI_PRIMARY.md`](../AI_PRIMARY.md)
 
 ## Core Documentation
 

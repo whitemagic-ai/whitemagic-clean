@@ -159,7 +159,7 @@ def main():
         warm_speedup = v1_time / v2_warm
         hit_rate = stats['hit_rate'] * 100 if stats else 0
         
-        print(f"\n  H002: 20× speedup target")
+        print("\n  H002: 20× speedup target")
         if cold_speedup >= 20:
             print(f"    ✅ ACHIEVED: {cold_speedup:.1f}× speedup (cold)")
         elif warm_speedup >= 20:
@@ -167,13 +167,13 @@ def main():
         else:
             print(f"    ⚠️  PARTIAL: {cold_speedup:.1f}× cold, {warm_speedup:.1f}× warm")
         
-        print(f"\n  H002: 80%+ cache hit rate target")
+        print("\n  H002: 80%+ cache hit rate target")
         if hit_rate >= 80:
             print(f"    ✅ ACHIEVED: {hit_rate:.1f}% hit rate")
         else:
             print(f"    ⚠️  PARTIAL: {hit_rate:.1f}% hit rate")
         
-        print(f"\n  Overall assessment:")
+        print("\n  Overall assessment:")
         if cold_speedup >= 20 and hit_rate >= 80:
             print("    ✅ H002 COMPLETE - All victory conditions met!")
         elif cold_speedup >= 10 or warm_speedup >= 20:

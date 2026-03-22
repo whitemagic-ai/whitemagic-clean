@@ -5,7 +5,6 @@ Provides granular progress bars, checkpoint logs, and metrics for shadow clone d
 """
 
 import json
-import sys
 import time
 from collections import defaultdict
 from datetime import datetime

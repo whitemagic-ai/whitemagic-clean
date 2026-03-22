@@ -69,7 +69,7 @@ def bench_vector_search() -> dict:
                 return idx.search(query, 10)
             rust_ms = bench("rust_cosine", rust_search, n=200)
             rust_speedup = py_ms / rust_ms if rust_ms > 0 else None
-    except Exception as e:
+    except Exception:
         rust_ms = None
         rust_speedup = None
 
@@ -130,7 +130,7 @@ def bench_bm25() -> dict:
                 return idx.search(query, 10)
             rust_ms = bench("rust_bm25", rust_bm25, n=100)
             rust_speedup = py_ms / rust_ms if rust_ms > 0 else None
-    except Exception as e:
+    except Exception:
         rust_ms = None
 
     return {

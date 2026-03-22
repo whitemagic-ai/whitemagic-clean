@@ -29,7 +29,7 @@ comparison = json.loads(comparison_path.read_text())
 missing_classes = comparison["differences"]["classes"]["missing_from_wm2"]
 missing_functions = comparison["differences"]["functions"]["missing_from_wm2"]
 
-print(f"📊 Analysis:")
+print("📊 Analysis:")
 print(f"   Missing classes: {len(missing_classes)}")
 print(f"   Missing functions: {len(missing_functions)}")
 print()
@@ -263,7 +263,7 @@ print("SYNTHESIS COMPLETE")
 print("=" * 80)
 print(f"Subsystems synthesized: {synthesized_count}")
 print(f"Total classes: {len(missing_classes)}")
-print(f"Master integration: ✅ Created")
+print("Master integration: ✅ Created")
 print(f"Report: {report_path}")
 print()
 print("✅ All missing capabilities synthesized to WM2!")

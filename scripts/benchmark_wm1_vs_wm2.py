@@ -65,7 +65,7 @@ def benchmark_serialization():
         }
     except ImportError:
         print(f"   WM1 (stdlib): {wm1_avg:.2f} μs")
-        print(f"   WM2: Not available (orjson not installed)")
+        print("   WM2: Not available (orjson not installed)")
         print()
         return {"wm1_us": wm1_avg, "wm2_us": None, "speedup": None}
 

@@ -91,11 +91,11 @@ def main():
     clone_count = 14000  # Conservative for stability
     max_iterations = 200  # Increased from 50
     
-    logger.info(f"\nDeployment Configuration:")
+    logger.info("\nDeployment Configuration:")
     logger.info(f"  Clones: {clone_count:,}")
     logger.info(f"  Max Iterations: {max_iterations}")
-    logger.info(f"  Dashboard: Enabled")
-    logger.info(f"  Auto-Completion: Enabled")
+    logger.info("  Dashboard: Enabled")
+    logger.info("  Auto-Completion: Enabled")
     
     # Confirm
     logger.info("\n" + "=" * 80)

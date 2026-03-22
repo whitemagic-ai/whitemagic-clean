@@ -38,10 +38,10 @@ def deploy_1m_clones():
             if scale == 1_000_000:
                 print(f"\n🎯 What 1M clones at {throughput:,.0f} clones/sec enables:")
                 print(f"  • Deploy time: {duration:.6f}s")
-                print(f"  • 1M parallel experiments")
-                print(f"  • 1M code variants generated")
-                print(f"  • 1M solution attempts simultaneously")
-                print(f"  • Genetic algorithm: 1M population in <1s")
+                print("  • 1M parallel experiments")
+                print("  • 1M code variants generated")
+                print("  • 1M solution attempts simultaneously")
+                print("  • Genetic algorithm: 1M population in <1s")
         
         return True
         

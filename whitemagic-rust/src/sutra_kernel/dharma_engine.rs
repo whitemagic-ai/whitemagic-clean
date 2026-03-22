@@ -30,7 +30,8 @@ impl DharmaEngine {
         // Sutra 1: Harmlessness (Ahimsa)
         if action_type == "delete_system_file" || action_type.starts_with("destructive_") {
             if self.strict_mode {
-                return "Panic: VIOLATION_AHIMSA: Destructive action attempted in strict mode.".to_string();
+                return "Panic: VIOLATION_AHIMSA: Destructive action attempted in strict mode."
+                    .to_string();
             } else if self.maturity_level < 4 {
                 return "Intervene: Maturity level too low for destructive actions.".to_string();
             }
@@ -43,7 +44,7 @@ impl DharmaEngine {
 
         // Harmony Vector Thresholds (Tiferet Loop)
         let total_health = intent_score - (karma_debt * 0.1);
-        
+
         if total_health < 0.3 {
             "Intervene: Critical karmic debt. Action blocked.".to_string()
         } else if total_health < 0.5 {

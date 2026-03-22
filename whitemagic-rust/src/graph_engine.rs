@@ -7,8 +7,8 @@
 //! - Community internal edge counting
 
 use pyo3::prelude::*;
-use std::collections::{HashMap, HashSet, VecDeque};
 use rayon::prelude::*;
+use std::collections::{HashMap, HashSet, VecDeque};
 
 #[derive(Clone, Debug)]
 #[pyclass]
@@ -55,12 +55,12 @@ impl PyGraphEngine {
     fn add_edge(&mut self, edge: GraphEdge) {
         self.adjacency
             .entry(edge.source.clone())
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(edge.clone());
-        
+
         self.reverse_adjacency
             .entry(edge.target.clone())
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(edge);
     }
 
@@ -69,26 +69,29 @@ impl PyGraphEngine {
     }
 
     fn get_predecessors(&self, node: String) -> Vec<GraphEdge> {
-        self.reverse_adjacency.get(&node).cloned().unwrap_or_default()
+        self.reverse_adjacency
+            .get(&node)
+            .cloned()
+            .unwrap_or_default()
     }
 
     fn bfs(&self, start: String, max_depth: Option<usize>) -> Vec<String> {
         let mut visited = HashSet::new();
         let mut queue = VecDeque::new();
         let mut result = Vec::new();
-        
+
         queue.push_back((start.clone(), 0));
         visited.insert(start);
-        
+
         let depth_limit = max_depth.unwrap_or(usize::MAX);
-        
+
         while let Some((node, depth)) = queue.pop_front() {
             if depth > depth_limit {
                 break;
             }
-            
+
             result.push(node.clone());
-            
+
             if let Some(edges) = self.adjacency.get(&node) {
                 for edge in edges {
                     if !visited.contains(&edge.target) {
@@ -98,7 +101,7 @@ impl PyGraphEngine {
                 }
             }
         }
-        
+
         result
     }
 
@@ -106,19 +109,19 @@ impl PyGraphEngine {
         let mut visited = HashSet::new();
         let mut stack = Vec::new();
         let mut result = Vec::new();
-        
+
         stack.push((start.clone(), 0));
-        
+
         let depth_limit = max_depth.unwrap_or(usize::MAX);
-        
+
         while let Some((node, depth)) = stack.pop() {
             if depth > depth_limit || visited.contains(&node) {
                 continue;
             }
-            
+
             visited.insert(node.clone());
             result.push(node.clone());
-            
+
             if let Some(edges) = self.adjacency.get(&node) {
                 for edge in edges.iter().rev() {
                     if !visited.contains(&edge.target) {
@@ -127,7 +130,7 @@ impl PyGraphEngine {
                 }
             }
         }
-        
+
         result
     }
 
@@ -135,24 +138,24 @@ impl PyGraphEngine {
         let mut visited = HashSet::new();
         let mut queue = VecDeque::new();
         let mut parent: HashMap<String, String> = HashMap::new();
-        
+
         queue.push_back(start.clone());
         visited.insert(start.clone());
-        
+
         while let Some(node) = queue.pop_front() {
             if node == end {
                 let mut path = vec![end.clone()];
                 let mut current = end;
-                
+
                 while let Some(p) = parent.get(&current) {
                     path.push(p.clone());
                     current = p.clone();
                 }
-                
+
                 path.reverse();
                 return Some(path);
             }
-            
+
             if let Some(edges) = self.adjacency.get(&node) {
                 for edge in edges {
                     if !visited.contains(&edge.target) {
@@ -163,7 +166,7 @@ impl PyGraphEngine {
                 }
             }
         }
-        
+
         None
     }
 
@@ -187,7 +190,10 @@ impl PyGraphEngine {
     }
 
     fn in_degree(&self, node: String) -> usize {
-        self.reverse_adjacency.get(&node).map(|v| v.len()).unwrap_or(0)
+        self.reverse_adjacency
+            .get(&node)
+            .map(|v| v.len())
+            .unwrap_or(0)
     }
 
     fn get_connected_component(&self, start: String) -> Vec<String> {
@@ -216,7 +222,7 @@ mod tests {
     fn test_add_edge() {
         let mut engine = PyGraphEngine::new();
         let edge = GraphEdge::new("a".to_string(), "b".to_string(), 1.0, "link".to_string());
-        
+
         engine.add_edge(edge);
         assert_eq!(engine.edge_count(), 1);
     }
@@ -224,9 +230,19 @@ mod tests {
     #[test]
     fn test_bfs() {
         let mut engine = PyGraphEngine::new();
-        engine.add_edge(GraphEdge::new("a".to_string(), "b".to_string(), 1.0, "link".to_string()));
-        engine.add_edge(GraphEdge::new("b".to_string(), "c".to_string(), 1.0, "link".to_string()));
-        
+        engine.add_edge(GraphEdge::new(
+            "a".to_string(),
+            "b".to_string(),
+            1.0,
+            "link".to_string(),
+        ));
+        engine.add_edge(GraphEdge::new(
+            "b".to_string(),
+            "c".to_string(),
+            1.0,
+            "link".to_string(),
+        ));
+
         let visited = engine.bfs("a".to_string(), None);
         assert!(visited.len() >= 2);
     }
@@ -234,9 +250,19 @@ mod tests {
     #[test]
     fn test_shortest_path() {
         let mut engine = PyGraphEngine::new();
-        engine.add_edge(GraphEdge::new("a".to_string(), "b".to_string(), 1.0, "link".to_string()));
-        engine.add_edge(GraphEdge::new("b".to_string(), "c".to_string(), 1.0, "link".to_string()));
-        
+        engine.add_edge(GraphEdge::new(
+            "a".to_string(),
+            "b".to_string(),
+            1.0,
+            "link".to_string(),
+        ));
+        engine.add_edge(GraphEdge::new(
+            "b".to_string(),
+            "c".to_string(),
+            1.0,
+            "link".to_string(),
+        ));
+
         let path = engine.shortest_path("a".to_string(), "c".to_string());
         assert!(path.is_some());
         assert_eq!(path.unwrap().len(), 3);
@@ -245,9 +271,19 @@ mod tests {
     #[test]
     fn test_degree() {
         let mut engine = PyGraphEngine::new();
-        engine.add_edge(GraphEdge::new("a".to_string(), "b".to_string(), 1.0, "link".to_string()));
-        engine.add_edge(GraphEdge::new("a".to_string(), "c".to_string(), 1.0, "link".to_string()));
-        
+        engine.add_edge(GraphEdge::new(
+            "a".to_string(),
+            "b".to_string(),
+            1.0,
+            "link".to_string(),
+        ));
+        engine.add_edge(GraphEdge::new(
+            "a".to_string(),
+            "c".to_string(),
+            1.0,
+            "link".to_string(),
+        ));
+
         assert_eq!(engine.degree("a".to_string()), 2);
         assert_eq!(engine.in_degree("b".to_string()), 1);
     }
@@ -268,44 +304,39 @@ pub fn py_bridging_centrality(
     top_n: usize,
 ) -> Vec<(String, f64, f64, f64, usize)> {
     let mut results: Vec<(String, f64, f64, f64, usize)> = Vec::new();
-    
+
     for (node_id, bc) in &betweenness {
         // Get neighbors from adjacency list
         let neighbors = match adjacencies.get(node_id) {
             Some(n) => n,
             None => continue,
         };
-        
+
         let degree = neighbors.len();
         if degree < 2 {
             continue;
         }
-        
+
         // Calculate bridging coefficient
         let inv_degree = 1.0 / degree as f64;
-        let sum_inv: f64 = neighbors.iter()
+        let sum_inv: f64 = neighbors
+            .iter()
             .map(|neighbor| {
                 let neighbor_degree = adjacencies.get(neighbor).map(|n| n.len()).unwrap_or(1);
                 1.0 / neighbor_degree.max(1) as f64
             })
             .sum();
-        
+
         if sum_inv <= 0.0 {
             continue;
         }
-        
+
         let bridging_coeff = inv_degree / sum_inv;
         let bridging_score = bc * bridging_coeff;
-        
-        results.push((
-            node_id.clone(),
-            bridging_score,
-            *bc,
-            bridging_coeff,
-            degree,
-        ));
+
+        results.push((node_id.clone(), bridging_score, *bc, bridging_coeff, degree));
     }
-    
+
     // Sort by bridging centrality descending
     results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
     results.truncate(top_n);
@@ -323,38 +354,38 @@ pub fn py_detect_echo_chambers(
     sigma_threshold: f64,
 ) -> Vec<(String, f64, f64, f64, bool)> {
     // Find common nodes
-    let common_nodes: Vec<&String> = prev_centrality.keys()
+    let common_nodes: Vec<&String> = prev_centrality
+        .keys()
         .filter(|k| curr_centrality.contains_key(*k))
         .collect();
-    
+
     if common_nodes.len() < 10 {
         return Vec::new();
     }
-    
+
     // Compute deltas
-    let deltas: Vec<f64> = common_nodes.iter()
+    let deltas: Vec<f64> = common_nodes
+        .iter()
         .map(|n| curr_centrality[*n] - prev_centrality[*n])
         .collect();
-    
+
     // Mean and std
     let n = deltas.len() as f64;
     let mean_delta: f64 = deltas.iter().sum::<f64>() / n;
-    let variance: f64 = deltas.iter()
-        .map(|d| (d - mean_delta).powi(2))
-        .sum::<f64>() / n;
+    let variance: f64 = deltas.iter().map(|d| (d - mean_delta).powi(2)).sum::<f64>() / n;
     let std_delta = variance.sqrt();
-    
+
     if std_delta < 1e-10 {
         return Vec::new();
     }
-    
+
     // Find spikes
     let mut echo_chambers: Vec<(String, f64, f64, f64, bool)> = Vec::new();
-    
+
     for node_id in common_nodes {
         let delta = curr_centrality[node_id] - prev_centrality[node_id];
         let z_score = (delta - mean_delta) / std_delta;
-        
+
         if z_score > sigma_threshold {
             let has_new_data = nodes_with_new_edges.contains(node_id);
             if !has_new_data {
@@ -368,7 +399,7 @@ pub fn py_detect_echo_chambers(
             }
         }
     }
-    
+
     // Sort by z-score descending
     echo_chambers.sort_by(|a, b| b.3.partial_cmp(&a.3).unwrap_or(std::cmp::Ordering::Equal));
     echo_chambers
@@ -384,23 +415,24 @@ pub fn py_count_community_edges(
     communities: Vec<Vec<String>>,
 ) -> Vec<(usize, usize, f64)> {
     let mut results: Vec<(usize, usize, f64)> = Vec::new();
-    
+
     for members in communities {
         if members.len() < 2 {
             continue;
         }
-        
+
         let member_set: HashSet<&String> = members.iter().collect();
         let mut internal_edges = 0usize;
         let mut total_strength = 0.0f64;
-        
+
         for u in &members {
             if let Some(neighbors) = adjacencies.get(u) {
                 for v in neighbors {
                     if member_set.contains(v) {
                         internal_edges += 1;
                         // Look up edge weight (try both directions for undirected)
-                        let weight = edge_weights.get(&(u.clone(), v.clone()))
+                        let weight = edge_weights
+                            .get(&(u.clone(), v.clone()))
                             .or_else(|| edge_weights.get(&(v.clone(), u.clone())))
                             .copied()
                             .unwrap_or(0.5);
@@ -409,7 +441,7 @@ pub fn py_count_community_edges(
                 }
             }
         }
-        
+
         // Undirected: each edge counted twice
         internal_edges /= 2;
         let avg_strength = if internal_edges > 0 {
@@ -417,10 +449,10 @@ pub fn py_count_community_edges(
         } else {
             0.0
         };
-        
+
         results.push((members.len(), internal_edges, avg_strength));
     }
-    
+
     results
 }
 
@@ -435,8 +467,9 @@ pub fn py_batch_node_distances(
         Some(e) => e,
         None => return Vec::new(),
     };
-    
-    let mut distances: Vec<(String, f64)> = node_embeddings.iter()
+
+    let mut distances: Vec<(String, f64)> = node_embeddings
+        .iter()
         .filter(|(id, _)| *id != &query_node)
         .map(|(id, emb)| {
             // Cosine similarity
@@ -451,7 +484,7 @@ pub fn py_batch_node_distances(
             (id.clone(), similarity)
         })
         .collect();
-    
+
     distances.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
     distances.truncate(limit);
     distances

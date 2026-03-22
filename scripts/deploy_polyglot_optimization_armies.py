@@ -688,7 +688,7 @@ class PolyglotOptimizationCampaign:
         output_path.write_text(json.dumps(output, indent=2))
         
         print(f"\n{'='*80}")
-        print(f"CAMPAIGN COMPLETE")
+        print("CAMPAIGN COMPLETE")
         print(f"{'='*80}")
         print(f"\nDuration: {elapsed:.1f}s")
         print(f"Results saved to: {output_path}")
@@ -712,15 +712,15 @@ def generate_markdown_report(results: Dict[str, Any]):
         "",
         f"**Timestamp**: {results['timestamp']}  ",
         f"**Duration**: {results['duration_seconds']:.1f}s  ",
-        f"**Operation**: PERFORMANCE SUPREMACY  ",
+        "**Operation**: PERFORMANCE SUPREMACY  ",
         "",
         "---",
         "",
         "## Executive Summary",
         "",
-        f"Deployed **150K shadow clones** across 8 language-specific armies to analyze WhiteMagic's polyglot core and identify optimization opportunities.",
+        "Deployed **150K shadow clones** across 8 language-specific armies to analyze WhiteMagic's polyglot core and identify optimization opportunities.",
         "",
-        f"**Key Findings**:",
+        "**Key Findings**:",
         f"- **{results['strategy']['total_candidates']} optimization candidates** identified",
         f"- **{results['strategy']['by_priority'][5]} critical priority** optimizations",
         f"- **{results['strategy']['estimated_impact']:.0f}x estimated performance impact** (weighted)",

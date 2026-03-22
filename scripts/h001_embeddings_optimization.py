@@ -175,7 +175,7 @@ async def main():
     total_victories = sum(d.victories for d in all_results)
     avg_synergy = sum(d.synergy_score for d in all_results) / len(all_results)
     
-    print(f"\n🎯 OVERALL STATISTICS")
+    print("\n🎯 OVERALL STATISTICS")
     print(f"   Total VCs Deployed: {len(all_results)}/19")
     print(f"   Total Clones: {total_clones:,}")
     print(f"   Total Victories: {total_victories:,}/{total_clones:,} ({total_victories/total_clones*100:.1f}%)")
@@ -183,14 +183,14 @@ async def main():
     print(f"   Total Duration: {elapsed:.2f}s")
     print(f"   Throughput: {total_clones/elapsed:.1f} clones/sec")
     
-    print(f"\n📋 PHASE BREAKDOWN")
+    print("\n📋 PHASE BREAKDOWN")
     print(f"   Phase 1 (Profiling): {len(phase1_results)} VCs, {sum(d.total_clones for d in phase1_results):,} clones")
     print(f"   Phase 2 (Rust Optimization): {len(phase2_results)} VCs, {sum(d.total_clones for d in phase2_results):,} clones")
     print(f"   Phase 3 (Integration): {len(phase3_results)} VCs, {sum(d.total_clones for d in phase3_results):,} clones")
     print(f"   Phase 4 (Expansion): {len(phase4_results)} VCs, {sum(d.total_clones for d in phase4_results):,} clones")
     
     # Army distribution
-    print(f"\n🏆 ARMY DEPLOYMENT ANALYSIS")
+    print("\n🏆 ARMY DEPLOYMENT ANALYSIS")
     army_counts = {}
     for deployment in all_results:
         for army in deployment.armies_deployed:
@@ -200,7 +200,7 @@ async def main():
         print(f"   {army.upper():<15}: {count} VCs")
     
     # Zodiac distribution
-    print(f"\n🌟 ZODIAC DISTRIBUTION")
+    print("\n🌟 ZODIAC DISTRIBUTION")
     zodiac_counts = {}
     for deployment in all_results:
         for result in deployment.results:

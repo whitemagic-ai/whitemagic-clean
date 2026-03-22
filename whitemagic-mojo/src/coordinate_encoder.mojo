@@ -46,10 +46,9 @@ struct CoordinateEncoder:
         return count
 
     fn encode(self, memory: MemoryData) -> String:
-        # X: Logic vs Emotion
-        var valence: Float64 = 0.0  # Placeholder
-        var x_score: Float64 = -0.5 * valence
-
+        # X: Logic vs Emotion (-1.0 to 1.0)
+        var x_score: Float64 = 0.0
+        
         var logic_tags = List[String]()
         logic_tags.append("logic")
         logic_tags.append("strategy")
@@ -79,25 +78,33 @@ struct CoordinateEncoder:
         var emotion_count = self._count_intersections(memory.tags, emotion_tags)
 
         if logic_count > emotion_count:
-            x_score += 0.4 + (0.1 * Float64(min(logic_count, 5)))
+            x_score = 0.4 + (0.1 * Float64(min(logic_count, 6)))
         elif emotion_count > logic_count:
-            x_score -= 0.4 + (0.1 * Float64(min(emotion_count, 5)))
+            x_score = -0.4 - (0.1 * Float64(min(emotion_count, 6)))
 
-        # Y: Micro vs Macro
+        # Y: Micro vs Macro (-1.0 to 1.0)
         var y_score: Float64 = 0.0
-        if memory.content.find("pattern") != -1 or memory.content.find("wisdom") != -1:
-            y_score = 0.6
-        elif memory.content.find("error") != -1 or memory.content.find("debug") != -1:
-            y_score = -0.6
+        if memory.content.find("pattern") != -1 or memory.content.find("wisdom") != -1 or memory.content.find("principle") != -1:
+            y_score = 0.7
+        elif memory.content.find("error") != -1 or memory.content.find("debug") != -1 or memory.content.find("log") != -1:
+            y_score = -0.7
 
-        # Z: Time (Chronos)
-        var z_score: Float64 = -0.5
+        # Z: Time (Chronos) (-1.0 to 1.0)
+        # Simplified time decay simulation for Mojo kernel
+        var z_score: Float64 = 0.0
+        if memory.created_timestamp > 0:
+             # Just a placeholder for relative time logic
+             z_score = 0.1 
 
-        # W: Importance (Gravity)
-        var w_score: Float64 = (memory.importance * 0.4) + 0.6
+        # W: Importance (Gravity) (0.0 to 1.0+)
+        var w_score: Float64 = (memory.importance * 0.5) + 0.5
+
+        # V: Vitality (Galactic Distance) (0.0 to 1.0)
+        # v = 1.0 - galactic_distance
+        var v_score: Float64 = 0.5 # Default mid-band
 
         return (
-            String(x_score) + "," + String(y_score) + "," + String(z_score) + "," + String(w_score)
+            String(x_score) + "," + String(y_score) + "," + String(z_score) + "," + String(w_score) + "," + String(v_score)
         )
 
 

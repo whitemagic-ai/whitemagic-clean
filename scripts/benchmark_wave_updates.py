@@ -1,11 +1,8 @@
 import sys
-import os
 sys.path.insert(0, "/home/lucas/Desktop/whitemagicdev")
 
 import time
 import asyncio
-from whitemagic.core.cyberbrain.nervous_system import UnifiedNervousSystem
-from whitemagic.core.cyberbrain.multi_timescale_sync import TimescaleSync
 from whitemagic.core.cyberbrain.global_workspace import GlobalWorkspace
 from whitemagic.core.evolution.thought_galaxy import ThoughtGalaxy, CognitiveEpisode
 

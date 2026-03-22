@@ -1,0 +1,34 @@
+load("//bazel:api.bzl", "lit_tests")
+
+package(default_visibility = ["//max:consumers"])
+
+lit_tests(
+    name = "test",
+    srcs = glob(["**/*.mojo"]),
+    env = select({
+        "//:nvidia_gpu": {
+            "MODULAR_SHMEM_LIB_DIR": "../+http_archive+nvshmem_prebuilt",
+        },
+        "//:amd_gpu": {
+            "MODULAR_SHMEM_LIB_DIR": "../+http_archive+rocshmem/lib",
+            # 8GB symmetric heap for large buffer tests
+            "ROCSHMEM_HEAP_SIZE": "8589934592",
+        },
+        "//conditions:default": {},
+    }),
+    exec_properties = {
+        "test.resources:gpu-memory": "20",
+    },
+    gpu_constraints = [
+        "//:has_4_gpus",
+    ],
+    mojo_deps = [
+        "//max:layout",
+        "//max:shmem",
+        "@mojo//:std",
+    ],
+    tags = [
+        "gpu",
+        "requires-network",
+    ],
+)

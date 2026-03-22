@@ -21,7 +21,7 @@ from typing import Any
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from whitemagic.agents.grand_unified_cycle import get_grand_cycle, UnifiedState
+from whitemagic.agents.grand_unified_cycle import get_grand_cycle
 
 
 @dataclass
@@ -446,9 +446,9 @@ def main():
     total_victories = sum(p.total_victories for p in phase_reports)
     
     print(f"\n{'='*70}")
-    print(f"  🎉 DEPLOYMENT COMPLETE!")
+    print("  🎉 DEPLOYMENT COMPLETE!")
     print(f"{'='*70}")
-    print(f"\n  📊 Final Stats:")
+    print("\n  📊 Final Stats:")
     print(f"     Phases: {len(phases)}")
     print(f"     Campaigns: {total_campaigns}")
     print(f"     Victories: +{total_victories}")

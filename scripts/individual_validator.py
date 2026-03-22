@@ -4,9 +4,8 @@ Individual Code Validator
 Validates each generated implementation individually with detailed analysis
 """
 
-import re
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, Any
 
 class DetailedValidator:
     """Detailed validation of individual implementations"""
@@ -199,7 +198,7 @@ def main():
     print(f"Total lines: {total_lines:,}")
     print(f"Average score: {avg_score:.1f}/100")
     
-    print(f"\nGrade Distribution:")
+    print("\nGrade Distribution:")
     for grade in ['A', 'B+', 'B', 'C+', 'C', 'D']:
         count = grade_counts.get(grade, 0)
         if count > 0:
@@ -212,14 +211,14 @@ def main():
     acceptable = sum(1 for r in results if 60 <= r['score'] < 70)
     needs_work = sum(1 for r in results if r['score'] < 60)
     
-    print(f"\nQuality Tiers:")
+    print("\nQuality Tiers:")
     print(f"  Excellent (≥90): {excellent}")
     print(f"  Good (70-89): {good}")
     print(f"  Acceptable (60-69): {acceptable}")
     print(f"  Needs work (<60): {needs_work}")
     
     # Top performers
-    print(f"\n🌟 Top 5 Implementations:")
+    print("\n🌟 Top 5 Implementations:")
     top_5 = sorted(results, key=lambda r: r['score'], reverse=True)[:5]
     for i, result in enumerate(top_5, 1):
         print(f"  {i}. {result['file']}: {result['score']}/100 ({result['grade']})")
@@ -233,7 +232,7 @@ def main():
             if result['issues']:
                 print(f"    Issues: {', '.join(result['issues'])}")
     
-    print(f"\n✅ Validation complete!")
+    print("\n✅ Validation complete!")
 
 if __name__ == '__main__':
     main()

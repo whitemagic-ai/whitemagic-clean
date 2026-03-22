@@ -16,7 +16,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from whitemagic.core.evolution.optimizers import (
     get_memory_optimizer,
     get_pattern_optimizer,
-    get_all_optimization_metrics,
 )
 
 
@@ -52,7 +51,7 @@ def test_memory_workflow_without_optimization():
     
     elapsed_ms = (time.time() - start) * 1000
     
-    print(f"✓ Processed 20 memories")
+    print("✓ Processed 20 memories")
     print(f"  Total time: {elapsed_ms:.2f}ms")
     print(f"  Avg per memory: {elapsed_ms/20:.2f}ms")
     
@@ -103,7 +102,7 @@ def test_memory_workflow_with_optimization():
     
     metrics = optimizer.get_metrics()
     
-    print(f"✓ Processed 20 memories")
+    print("✓ Processed 20 memories")
     print(f"  Total time: {elapsed_ms:.2f}ms")
     print(f"  Avg per memory: {elapsed_ms/20:.2f}ms")
     print(f"  Cache hit rate: {metrics['cache_hit_rate']:.1%}")
@@ -132,7 +131,7 @@ def test_pattern_workflow_without_optimization():
     
     elapsed_ms = (time.time() - start) * 1000
     
-    print(f"✓ Processed 15 patterns")
+    print("✓ Processed 15 patterns")
     print(f"  Total time: {elapsed_ms:.2f}ms")
     print(f"  Avg per pattern: {elapsed_ms/15:.2f}ms")
     
@@ -181,7 +180,7 @@ def test_pattern_workflow_with_optimization():
     
     metrics = optimizer.get_metrics()
     
-    print(f"✓ Processed 15 patterns")
+    print("✓ Processed 15 patterns")
     print(f"  Total time: {elapsed_ms:.2f}ms")
     print(f"  Avg per pattern: {elapsed_ms/15:.2f}ms")
     print(f"  Cache hit rate: {metrics['cache_hit_rate']:.1%}")

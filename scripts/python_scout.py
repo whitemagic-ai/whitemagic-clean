@@ -6,13 +6,10 @@ Scouts the Python codebase to find:
 2. Polyglot migration candidates by language specialization
 """
 
-import os
 import ast
-import re
 from pathlib import Path
-from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import List, Dict, Set
+from typing import List
 
 @dataclass
 class FileAnalysis:

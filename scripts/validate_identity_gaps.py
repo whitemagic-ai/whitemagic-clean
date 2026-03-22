@@ -72,7 +72,7 @@ def test_gap3_apotheosis_engine():
     print("-" * 50)
     
     from whitemagic.core.autonomous.apotheosis_engine import (
-        get_apotheosis_engine, HealthStatus
+        get_apotheosis_engine
     )
     
     engine = get_apotheosis_engine()
@@ -120,7 +120,7 @@ def test_gap5_telepathy():
     print("-" * 50)
     
     from whitemagic.core.memory.galactic_telepathy import (
-        SyncWatermark, GalacticTelepathyEngine
+        GalacticTelepathyEngine
     )
     
     # Create a mock galaxy_manager for testing

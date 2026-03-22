@@ -1,5 +1,4 @@
 import subprocess
-import time
 
 proc = subprocess.Popen(
     ['stdbuf', '-o0', '-i0', '/home/lucas/Desktop/whitemagicdev/whitemagic-koka/batch_ipc'],

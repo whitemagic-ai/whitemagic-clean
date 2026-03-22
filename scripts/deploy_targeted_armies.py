@@ -9,7 +9,7 @@ import sqlite3
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -17,7 +17,6 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from whitemagic.agents.campaign_metrics import CampaignMetricsTracker
 
 # Import audit functionality
-from audit_campaigns import audit_all_campaigns, generate_deployment_targets, get_grade
 
 
 def load_audit_results() -> Dict:
@@ -46,7 +45,7 @@ def verify_s_grade_campaign(campaign_id: str, tracker: CampaignMetricsTracker) -
                                  lieutenant="verification_scout", phases_total=3) as obj:
         
         # Phase 1: Load campaign and check VCs
-        print(f"  [1/3] Loading campaign Victory Conditions...")
+        print("  [1/3] Loading campaign Victory Conditions...")
         campaign_path = PROJECT_ROOT / "campaigns" / f"{campaign_id}.md"
         content = campaign_path.read_text()
         
@@ -64,7 +63,7 @@ def verify_s_grade_campaign(campaign_id: str, tracker: CampaignMetricsTracker) -
         obj.phases_completed = 1
         
         # Phase 2: Deploy verification clones
-        print(f"  [2/3] Deploying 10K verification clones...")
+        print("  [2/3] Deploying 10K verification clones...")
         
         verification_results = []
         for idx, (_, vc_desc) in enumerate(vcs):
@@ -90,7 +89,7 @@ def verify_s_grade_campaign(campaign_id: str, tracker: CampaignMetricsTracker) -
         obj.phases_completed = 2
         
         # Phase 3: Consensus
-        print(f"  [3/3] Generating verification consensus...")
+        print("  [3/3] Generating verification consensus...")
         
         avg_confidence = sum(v["confidence"] for v in verification_results) / len(verification_results)
         verified_count = sum(1 for v in verification_results if v["confidence"] >= 0.85)
@@ -125,7 +124,7 @@ def complete_campaign_vc(campaign_id: str, vc_description: str,
                                  lieutenant="completion_squad", phases_total=2) as obj:
         
         # Phase 1: Analyze what's needed
-        print(f"    [1/2] Analyzing requirements...")
+        print("    [1/2] Analyzing requirements...")
         
         from whitemagic.agents.shadow_clones import deploy_clones
         analysis = deploy_clones(
@@ -138,7 +137,7 @@ def complete_campaign_vc(campaign_id: str, vc_description: str,
         obj.phases_completed = 1
         
         # Phase 2: Execute
-        print(f"    [2/2] Deploying execution clones...")
+        print("    [2/2] Deploying execution clones...")
         
         execution = deploy_clones(
             f"Execute the work needed to complete: {vc_description}",
@@ -150,7 +149,7 @@ def complete_campaign_vc(campaign_id: str, vc_description: str,
         obj.phases_completed = 2
         
         obj.record_finding(
-            f"Attempted completion of VC",
+            "Attempted completion of VC",
             severity="info",
             category="vc_completion",
             details={

@@ -69,7 +69,7 @@ class CodebaseScout:
                     'opportunity': 'Heavy computation - good Rust candidate'
                 })
             
-        except Exception as e:
+        except Exception:
             pass
         
         return findings

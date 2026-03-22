@@ -268,7 +268,7 @@ def main():
     print("=" * 80)
     print(f"\n⏱️  End: {end_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}")
     print(f"⏱️  Duration: {duration:.3f} seconds")
-    print(f"\n📊 Summary:")
+    print("\n📊 Summary:")
     print(f"   Total campaigns: {len(campaigns)}")
     print(f"   New files created: {created}")
     print(f"   Total clone budget: {total_clones:,}")

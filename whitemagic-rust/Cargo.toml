@@ -9,18 +9,11 @@ name = "whitemagic_rust"
 crate-type = ["cdylib", "rlib"]
 
 [features]
-default = ["python", "arrow", "iceoryx2", "sqlite"]
-sqlite = ["rusqlite"]
+default = ["python", "arrow", "iceoryx2"]
 iceoryx2 = ["dep:iceoryx2"]
 python = ["pyo3", "numpy", "pyo3-build-config", "tokio"]
 arrow = ["dep:arrow"]
-wasm = ["wasm-bindgen", "js-sys", "web-sys", "console_error_panic_hook", "getrandom"]
-# Note: rusqlite with 'bundled' requires a C toolchain (stdio.h) which is not 
-# available in standard wasm32-unknown-unknown. 
-# For WASM, we should either use a virtual filesystem or disable rusqlite.
-# Since this is a seed/lite binary for edge, we will use 'bundled-sqlcipher-vendored-openssl' 
-# or similar if needed, but for now we'll try to use 'wasm32-wasi' or a no-std approach.
-# Actually, the quickest fix for WASM builds is to make rusqlite optional for the wasm feature.
+wasm = ["wasm-bindgen", "js-sys", "web-sys", "console_error_panic_hook"]
 
 [dependencies]
 iceoryx2 = { version = "0.8.1", optional = true }
@@ -30,19 +23,18 @@ numpy = { version = "0.21", optional = true }
 arrow = { version = "53.0", optional = true }
 
 # WASM bindings (optional)
-getrandom = { version = "0.2", features = ["js"], optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 js-sys = { version = "0.3", optional = true }
 web-sys = { version = "0.3", optional = true }
 console_error_panic_hook = { version = "0.1", optional = true }
 
-# Core dependencies (always included in native)
+# Core dependencies (always included)
 rayon = "1.8"
 ndarray = "0.15"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 rand = "0.8"
-rusqlite = { version = "0.31", features = ["bundled"], optional = true }
+rusqlite = { version = "0.31", features = ["bundled"] }
 tokio = { version = "1.35", features = ["full"], optional = true }
 tracing = { version = "0.1", optional = true }
 metrics = { version = "0.22", optional = true }

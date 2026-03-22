@@ -293,7 +293,7 @@ async def main(dry_run: bool = False, specific_wave: int | None = None):
     """Main deployment orchestration."""
     start_time = time.time()
     print(f"\n{'='*70}")
-    print(f"  TOTAL VICTORY DEPLOYMENT")
+    print("  TOTAL VICTORY DEPLOYMENT")
     print(f"  Start Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z')}")
     print(f"{'='*70}\n")
     
@@ -454,19 +454,19 @@ async def main(dry_run: bool = False, specific_wave: int | None = None):
         wave_clones = sum(c['clone_count'] for c in wave)
         md_summary += f"- **Wave {i}**: {len(wave)} campaigns, {wave_clones:,} clones\n"
     
-    md_summary += f"\n## Victory Status\n\n"
+    md_summary += "\n## Victory Status\n\n"
     md_summary += f"✅ **{verified_vcs}/{total_vcs} Victory Conditions Verified**\n\n"
     md_summary += f"**Total Victory Percentage**: {verified_vcs/total_vcs*100:.1f}%\n"
     
     md_report_path = PROJECT_ROOT / "reports/TOTAL_VICTORY_ACHIEVED.md"
     atomic_write(str(md_report_path), md_summary)
     
-    print(f"\n✅ Total Victory Achieved!")
+    print("\n✅ Total Victory Achieved!")
     print(f"   Campaigns: {len(campaigns)}")
     print(f"   Clones: {total_clones:,}")
     print(f"   Duration: {total_duration:.2f}s")
     print(f"   Victory: {verified_vcs}/{total_vcs} ({verified_vcs/total_vcs*100:.1f}%)")
-    print(f"\n📊 Reports written to:")
+    print("\n📊 Reports written to:")
     print(f"   - {final_report_path}")
     print(f"   - {md_report_path}")
 

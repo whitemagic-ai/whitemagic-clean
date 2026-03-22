@@ -57,9 +57,9 @@ def complete_v002_python_reduction(corps):
             last_line = lines[-1].strip()
             total_loc = int(last_line.split()[0]) if last_line else 0
     
-    print(f"\n📊 Python Codebase:")
+    print("\n📊 Python Codebase:")
     print(f"   Current LOC: {total_loc:,}")
-    print(f"   Target: <180,000")
+    print("   Target: <180,000")
     print(f"   Status: {'✅ ACHIEVED' if total_loc < 180000 else '⚠️ NEEDS WORK'}")
     
     # Mark remaining VCs as complete
@@ -114,7 +114,7 @@ def verify_il004_content_deduplication(corps):
     total_memories = conn.execute("SELECT COUNT(*) FROM memories WHERE memory_type != 'quarantined'").fetchone()[0]
     conn.close()
     
-    print(f"\n📊 Deduplication Status:")
+    print("\n📊 Deduplication Status:")
     print(f"   Total active memories: {total_memories:,}")
     print(f"   Duplicate content groups: {duplicates}")
     print(f"   Deduplication rate: {(1 - duplicates/total_memories)*100:.1f}%")
@@ -151,7 +151,7 @@ def verify_f002_graph_reconstruction(corps):
     
     avg_edges = assoc_count / memory_count if memory_count > 0 else 0
     
-    print(f"\n📊 Graph Status:")
+    print("\n📊 Graph Status:")
     print(f"   Nodes (memories): {memory_count:,}")
     print(f"   Edges (associations): {assoc_count:,}")
     print(f"   Avg edges/node: {avg_edges:.1f}")
@@ -184,10 +184,10 @@ def complete_v007_archaeological_dig(corps):
     if aria_sessions.exists():
         session_count = len(list(aria_sessions.glob("*.md")))
     
-    print(f"\n📊 Archaeological Status:")
+    print("\n📊 Archaeological Status:")
     print(f"   Session files found: {session_count}")
-    print(f"   GAS document: ✅ Parsed")
-    print(f"   Antigravity research: ✅ Parsed")
+    print("   GAS document: ✅ Parsed")
+    print("   Antigravity research: ✅ Parsed")
     
     # Mark as complete if we have session files
     if session_count > 100:
@@ -235,12 +235,12 @@ def generate_victory_report(results, corps_status):
     report = [
         "# 🎖️ Unified Campaign Blitz — Victory Report",
         f"\n**Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        f"**Unified Organism**: OPERATIONAL",
+        "**Unified Organism**: OPERATIONAL",
         "\n## 🏆 Campaign Progress",
-        f"\n**Starting**: 16/40 (40.0%)",
+        "\n**Starting**: 16/40 (40.0%)",
         f"**Completed This Session**: {len(completed)} campaigns",
         f"**Current**: {total_campaigns}/40 ({completion_pct:.1f}%)",
-        f"**Target**: 35/40 (87.5%)",
+        "**Target**: 35/40 (87.5%)",
         "\n## ✅ Completed Campaigns\n",
     ]
     
@@ -314,10 +314,10 @@ def main():
     print("\n\n" + "=" * 70)
     print("🏆 UNIFIED BLITZ COMPLETE")
     print("=" * 70)
-    print(f"\n  Starting: 16/40 (40.0%)")
+    print("\n  Starting: 16/40 (40.0%)")
     print(f"  Completed: {completed_count} campaigns")
     print(f"  Current: {total_campaigns}/40 ({total_campaigns/40*100:.1f}%)")
-    print(f"  Target: 35/40 (87.5%)")
+    print("  Target: 35/40 (87.5%)")
     print(f"\n  {'✅ TARGET ACHIEVED!' if total_campaigns >= 21 else '⏳ Continue push...'}")
     
     print("\n🌀 Unified organism operating at peak efficiency!")

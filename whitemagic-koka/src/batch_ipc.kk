@@ -40,7 +40,7 @@ fun batch-response(n: int): string
   else "{\"request_id\":\"batch\",\"results\":[{\"id\":1,\"status\":\"ok\",\"result\":{\"pong\":true}},{\"id\":2,\"status\":\"ok\",\"result\":{\"pong\":true}},{\"id\":3,\"status\":\"ok\",\"result\":{\"pong\":true}},{\"id\":4,\"status\":\"ok\",\"result\":{\"pong\":true}},{\"id\":5,\"status\":\"ok\",\"result\":{\"pong\":true}}],\"commands_processed\":5}"
 
 // Main loop - handles both single commands and batches
-fun main-loop(): io ()
+fun main-loop(): <transaction,io> ()
   val line = readline()
   if line == "" then ()
   else if line.contains("\"quit\"") then
@@ -48,10 +48,10 @@ fun main-loop(): io ()
   else
     val response = if is-batch(line)
       then batch-response(count-cmds(line))
-      else execute-cmd(extract-op(line))
+      else execute-cmd(extract-op(line), extract-args(line))
     println(response)
     main-loop()
 
-fun main(): io ()
-  println("{\"status\":\"started\",\"batch_ipc\":true,\"version\":\"1.0\"}")
-  main-loop()
+fun main(): <io> ()
+  println("{\"status\":\"started\",\"batch_ipc\":true,\"version\":\"1.1\"}")
+  handle-transactions(main-loop)

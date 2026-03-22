@@ -30,7 +30,7 @@ def benchmark():
     end = time.time()
     
     ms = (end - start) * 1000
-    print(f"Python Results:")
+    print("Python Results:")
     print(f"{num_vecs} vectors, {dim} dimensions")
     print(f"Time: {ms:.2f} ms")
     print(f"Throughput: {num_vecs / (ms/1000):.0f} vectors/sec")

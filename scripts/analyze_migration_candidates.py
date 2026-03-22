@@ -7,7 +7,6 @@ Identifies Python files best suited for Rust/Zig/Go migration
 import os
 import ast
 from pathlib import Path
-from collections import defaultdict
 
 # Keywords indicating performance-critical code
 HOT_PATH_INDICATORS = [

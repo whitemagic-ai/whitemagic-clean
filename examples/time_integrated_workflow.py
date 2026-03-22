@@ -7,7 +7,7 @@ for tracking phase timing at beginning, during, and end of operations.
 import sys
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
-from whitemagic.tools.time_tracking import WorkflowTimer, timed, get_current_time
+from whitemagic.tools.time_tracking import WorkflowTimer, get_current_time
 from whitemagic.tools.time_tracking import get_local_time  # For timezone conversion
 
 
@@ -47,7 +47,7 @@ def run_timed_campaign_demo():
     
     # Store timing report to WhiteMagic memory (optional)
     report = workflow.get_report()
-    print(f"\n💾 Report ready for memory storage:")
+    print("\n💾 Report ready for memory storage:")
     print(f"   Title: campaign_timing_{report['workflow_name']}")
     print(f"   Duration: {report['total_seconds']:.1f}s")
     
@@ -56,7 +56,7 @@ def run_timed_campaign_demo():
 
 def quick_time_check():
     """Quick time display - can be called at any workflow point."""
-    print(f"\n🕐 Current Times:")
+    print("\n🕐 Current Times:")
     print(f"   UTC:   {get_current_time()}")
     print(f"   Local: {get_local_time('America/New_York')}")
     print(f"   Pacific: {get_local_time('America/Los_Angeles')}")

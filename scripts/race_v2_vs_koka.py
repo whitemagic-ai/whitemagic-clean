@@ -12,7 +12,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import Dict, List
+from typing import List
 
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
@@ -316,25 +316,25 @@ def print_results(python_results: List[RaceResult], koka_results: List[RaceResul
     py = comparison['python_v2']
     kk = comparison['koka']
     
-    print(f"  Total Duration:")
+    print("  Total Duration:")
     print(f"    Python v2: {py['total_duration']:.2f}s")
     print(f"    Koka:      {kk['total_duration']:.2f}s")
     
-    print(f"\n  Average Duration per Campaign:")
+    print("\n  Average Duration per Campaign:")
     print(f"    Python v2: {py['avg_duration']:.2f}s")
     print(f"    Koka:      {kk['avg_duration']:.2f}s")
     
-    print(f"\n  Average Throughput:")
+    print("\n  Average Throughput:")
     print(f"    Python v2: {py['avg_throughput']:.1f} clones/sec")
     print(f"    Koka:      {kk['avg_throughput']:.1f} clones/sec")
     
-    print(f"\n  Total VCs Met:")
+    print("\n  Total VCs Met:")
     print(f"    Python v2: {py['total_vcs_met']}")
     print(f"    Koka:      {kk['total_vcs_met']}")
     
     if 'speedup' in comparison:
         speedup = comparison['speedup']
-        print(f"\n  🚀 SPEEDUP:")
+        print("\n  🚀 SPEEDUP:")
         print(f"    Duration: {speedup['duration']:.2f}× faster" if speedup['duration'] > 1 else f"    Duration: {1/speedup['duration']:.2f}× slower")
         print(f"    Throughput: {speedup['throughput']:.2f}× faster" if speedup['throughput'] > 1 else f"    Throughput: {1/speedup['throughput']:.2f}× slower")
     
@@ -347,8 +347,8 @@ def main():
     print("🏁 IMMORTAL CLONE RACE: Python v2 vs Koka")
     print("="*80)
     print(f"Campaigns: {len(FRONT_TWO_CAMPAIGNS)}")
-    print(f"Clones per campaign: 10 (test size)")
-    print(f"Max iterations: 20")
+    print("Clones per campaign: 10 (test size)")
+    print("Max iterations: 20")
     print("="*80)
     
     # Configuration

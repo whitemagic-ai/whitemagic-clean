@@ -30,7 +30,6 @@ def run_cycle(cycle_num):
     subprocess.run(["python3", "scripts/auto_transmute_hotpaths.py"], capture_output=False)
     
     log("PHASE 3: RALPH EVOLUTION METRICS UPDATE")
-    import json
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     from whitemagic.core.evolution.continuous_evolution import ContinuousEvolutionEngine, SelfDirectedEvolution
     

@@ -2,7 +2,6 @@
 """Deploy Shadow Clone Armies for POLYGLOT_GRAND_CAMPAIGN"""
 
 import time
-from pathlib import Path
 
 def deploy_phase1_optimization():
     """Phase 1: Wire Rust functions, benchmark, achieve 60% native usage"""

@@ -12,7 +12,6 @@ Tests MCP server features added in v14.1:
 """
 
 import asyncio
-import json
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -46,9 +45,9 @@ def bench(label: str, fn, section_results=None):
 
 
 def section(title):
-    print(f"\u2500" * 60)
+    print("\u2500" * 60)
     print(f"  {title}")
-    print(f"\u2500" * 60)
+    print("\u2500" * 60)
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -106,7 +105,7 @@ def bench_schema():
         sample = with_icons[0].icons[0]
         assert sample.src.startswith("data:image/svg+xml,")
         assert sample.mimeType == "image/svg+xml"
-        return f"28/28 with SVG data-URI icons"
+        return "28/28 with SVG data-URI icons"
 
     def test_task_optional_tools():
         from whitemagic.run_mcp_lean import list_tools, _SLOW_GANAS
@@ -329,9 +328,6 @@ def bench_http():
     section("6. HTTP TRANSPORT")
 
     def test_http_import():
-        from mcp.server.streamable_http import StreamableHTTPServerTransport
-        from starlette.applications import Starlette
-        import uvicorn
         return "StreamableHTTPServerTransport + Starlette + Uvicorn available"
 
     def test_http_transport_creation():
@@ -381,7 +377,7 @@ def main():
         print(f"  Avg tool call: {avg:.0f}ms")
 
     if FAILED:
-        print(f"\n  Failed benchmarks:")
+        print("\n  Failed benchmarks:")
         for label, ok, _, msg in RESULTS:
             if not ok:
                 print(f"    \u274c {label}: {msg}")

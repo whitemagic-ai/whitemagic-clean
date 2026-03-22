@@ -5,8 +5,7 @@ Uses Tree-Sitter, Arrow, and Iceoryx2 for advanced search capabilities
 """
 
 import time
-from pathlib import Path
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 class ScoutArmy:
     """Base class for specialized scout armies"""

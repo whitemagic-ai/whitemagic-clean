@@ -7,7 +7,7 @@ Deploy millions of clones across PSR-002 through PSR-010 simultaneously
 import time
 import json
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, Any
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # PSR Campaign Definitions from POLYGLOT_SYNTHESIS_REFACTOR_FRONT.md
@@ -322,10 +322,10 @@ def main():
     print("🌟 PARALLEL PSR DEPLOYMENT: PSR-002 THROUGH PSR-010")
     print("="*70)
     print(f"Start time: {time.strftime('%H:%M:%S')}")
-    print(f"Target: Complete by 9:00 PM")
-    print(f"Campaigns: 8")
+    print("Target: Complete by 9:00 PM")
+    print("Campaigns: 8")
     print(f"Total clones: {sum(c['clones'] for c in PSR_CAMPAIGNS.values()):,}")
-    print(f"Strategy: Parallel deployment with ThreadPoolExecutor")
+    print("Strategy: Parallel deployment with ThreadPoolExecutor")
     
     # Deploy all campaigns in parallel
     all_results = {}

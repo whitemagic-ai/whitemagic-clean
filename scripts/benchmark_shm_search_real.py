@@ -4,7 +4,6 @@ import struct
 import time
 import subprocess
 import os
-import json
 import numpy as np
 
 import sys

@@ -29,6 +29,10 @@ defmodule WhitemagicCore.Brain do
     GenServer.call(__MODULE__, {:cmd, %{op: "consolidate", args: %{dir: memory_dir, context: context}}}, 300_000)
   end
 
+  def execute_phase(phase, args \\ %{}) do
+    GenServer.call(__MODULE__, {:cmd, %{op: "execute_phase", args: Map.put(args, "phase", phase)}}, 300_000)
+  end
+
   # Server Callbacks
 
   @impl true

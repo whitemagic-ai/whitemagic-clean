@@ -1,5 +1,4 @@
 import os
-import json
 
 def setup_g001_funnel():
     print("=== G001: Funnel Architecture Implementation ===")

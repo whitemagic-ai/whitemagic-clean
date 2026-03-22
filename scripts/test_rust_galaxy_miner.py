@@ -100,7 +100,7 @@ print("\n" + "="*80)
 print("RUST GALAXY MINING RESULTS")
 print("="*80)
 
-print(f"\nPerformance:")
+print("\nPerformance:")
 print(f"  Total time: {total_time:.2f}s")
 print(f"  Stats: {stats_time:.2f}s")
 print(f"  Access patterns: {access_time:.2f}s")
@@ -111,20 +111,20 @@ print(f"\nGalaxies Analyzed: {len(all_stats)}")
 for name, stats in all_stats.items():
     print(f"  {name}: {stats.get('total_memories', 0):,} memories")
 
-print(f"\nPatterns Discovered:")
+print("\nPatterns Discovered:")
 print(f"  Access patterns: {len(all_access_patterns)}")
 print(f"  Cache candidates: {len(all_cache_patterns)}")
 print(f"  Semantic clusters: {len(all_clusters)}")
 
 if all_access_patterns:
-    print(f"\n📊 Top Access Patterns:")
+    print("\n📊 Top Access Patterns:")
     for i, pattern in enumerate(all_access_patterns[:3], 1):
         print(f"  {i}. {pattern.pattern_id}")
         print(f"     Frequency: {pattern.frequency}, Confidence: {pattern.confidence:.1%}")
         print(f"     Memories: {len(pattern.memory_ids)}")
 
 if all_cache_patterns:
-    print(f"\n💾 Top Cache Candidates:")
+    print("\n💾 Top Cache Candidates:")
     for i, pattern in enumerate(all_cache_patterns[:3], 1):
         print(f"  {i}. {pattern.pattern_id}")
         print(f"     Memories: {len(pattern.memory_ids)}")
@@ -132,7 +132,7 @@ if all_cache_patterns:
         print(f"     Confidence: {pattern.confidence:.1%}")
 
 if all_clusters:
-    print(f"\n🌐 Top Semantic Clusters:")
+    print("\n🌐 Top Semantic Clusters:")
     for i, cluster in enumerate(all_clusters[:5], 1):
         print(f"  {i}. {cluster.cluster_id}")
         print(f"     Size: {cluster.size} memories")

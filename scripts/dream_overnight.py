@@ -224,11 +224,11 @@ def run(args: argparse.Namespace) -> None:
     # Final summary
     full_cycles = total_cycles // len(phases)
     print(f"\n{'━'*60}")
-    print(f"  ☀️  Dream session complete")
+    print("  ☀️  Dream session complete")
     print(f"{'━'*60}")
     print(f"  Total phases run:  {total_cycles}")
     print(f"  Full cycles:       {full_cycles}")
-    print(f"  Phase breakdown:")
+    print("  Phase breakdown:")
     for phase_name, count in phase_stats.items():
         print(f"    {phase_name:15s}: {count}")
     print(f"  Log file:          {log_path}")

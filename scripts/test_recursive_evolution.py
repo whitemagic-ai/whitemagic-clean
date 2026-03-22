@@ -14,7 +14,6 @@ Tests the complete recursive intelligence system:
 
 import sys
 import time
-import asyncio
 from pathlib import Path
 from datetime import datetime
 

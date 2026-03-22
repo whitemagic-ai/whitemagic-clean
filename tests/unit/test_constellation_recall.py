@@ -71,6 +71,15 @@ class TestConstellationMembershipTable:
             ).fetchall()
             assert len(indexes) == 1
 
+    def test_composite_primary_key(self, tmp_db):
+        with tmp_db.pool.connection() as conn:
+            cursor = conn.execute("PRAGMA table_info(constellation_membership)")
+            pk_columns = [
+                row[1]
+                for row in sorted((row for row in cursor.fetchall() if row[5]), key=lambda row: row[5])
+            ]
+            assert pk_columns == ["memory_id", "constellation_name"]
+
 
 # ---------------------------------------------------------------------------
 # CRUD Tests
@@ -116,6 +125,44 @@ class TestConstellationMembershipCRUD:
         result = tmp_db.get_constellation_membership("mem1")
         assert result["constellation_name"] == "New"
         assert abs(result["membership_confidence"] - 0.9) < 0.001
+
+    def test_get_all_memberships(self, tmp_db):
+        _insert_stub_memories(tmp_db, ["mem1"])
+        tmp_db.update_constellation_membership([("mem1", "Nebula Rust Performance", 0.85)])
+        with tmp_db.pool.connection() as conn:
+            conn.execute(
+                """INSERT INTO constellation_membership
+                   (memory_id, constellation_name, membership_confidence, updated_at)
+                   VALUES (?, ?, ?, ?)""",
+                ("mem1", "Gana_Jiao_Sharp_initiation", 0.8, "2026-03-22T00:00:00"),
+            )
+
+        memberships = tmp_db.get_constellation_memberships("mem1")
+        assert [m["constellation_name"] for m in memberships] == [
+            "Nebula Rust Performance",
+            "Gana_Jiao_Sharp_initiation",
+        ]
+
+    def test_semantic_refresh_preserves_gana_membership(self, tmp_db):
+        _insert_stub_memories(tmp_db, ["mem1"])
+        with tmp_db.pool.connection() as conn:
+            conn.execute(
+                """INSERT INTO constellation_membership
+                   (memory_id, constellation_name, membership_confidence, updated_at)
+                   VALUES (?, ?, ?, ?)""",
+                ("mem1", "Gana_Jiao_Sharp_initiation", 0.8, "2026-03-22T00:00:00"),
+            )
+            conn.execute(
+                """INSERT INTO constellation_membership
+                   (memory_id, constellation_name, membership_confidence, updated_at)
+                   VALUES (?, ?, ?, ?)""",
+                ("mem1", "Old Semantic", 0.4, "2026-03-22T00:00:00"),
+            )
+
+        tmp_db.update_constellation_membership([("mem1", "New Semantic", 0.9)])
+        memberships = tmp_db.get_constellation_memberships("mem1")
+        names = {m["constellation_name"] for m in memberships}
+        assert names == {"Gana_Jiao_Sharp_initiation", "New Semantic"}
 
     def test_empty_update(self, tmp_db):
         count = tmp_db.update_constellation_membership([])

@@ -8,7 +8,6 @@ import sqlite3
 import re
 import os
 from pathlib import Path
-from typing import List, Tuple
 
 # Configuration
 ROOT = Path.home() / "Desktop/whitemagicdev"
@@ -38,7 +37,7 @@ def check_sql_injection():
                     content = path.read_text()
                     if pattern.search(content):
                         suspicious.append(str(path.relative_to(ROOT)))
-                except:
+                except Exception:
                     pass
     
     if not suspicious:
@@ -105,19 +104,19 @@ def check_embeddings():
         emb_count = cursor.fetchone()[0]
         print(f"  ℹ️  memory_embeddings count: {emb_count}")
         has_embedding = emb_count
-    except:
+    except Exception:
         # Check for vss_memories (sqlite-vss)
         try:
             cursor.execute("SELECT COUNT(*) FROM vss_memories")
             vss_count = cursor.fetchone()[0]
             print(f"  ℹ️  vss_memories count: {vss_count}")
             has_embedding = vss_count
-        except:
+        except Exception:
             # Check for embeddings table (older)
             try:
                 cursor.execute("SELECT COUNT(*) FROM embeddings")
                 has_embedding = cursor.fetchone()[0]
-            except:
+            except Exception:
                 print("  ⚠️  WARNING: Could not find memory_embeddings, vss_memories or embeddings table.")
                 conn.close()
                 return False

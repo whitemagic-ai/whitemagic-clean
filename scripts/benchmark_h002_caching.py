@@ -62,7 +62,7 @@ def benchmark_caching(queries: list[str], iterations: int = 3):
     print(f"Warm (cached):          {avg_warm*1000:.1f}ms avg")
     print(f"Verify (cached):        {avg_verify*1000:.1f}ms avg")
     print(f"Speedup:                {speedup:.1f}×")
-    print(f"Target:                 20.0×")
+    print("Target:                 20.0×")
     print(f"Achievement:            {(speedup/20.0)*100:.1f}% of target")
     
     # Get cache stats
@@ -78,7 +78,7 @@ def benchmark_caching(queries: list[str], iterations: int = 3):
         print(f"Hits:          {query_stats['hits']}")
         print(f"Misses:        {query_stats['misses']}")
         print(f"Hit rate:      {query_stats['hit_rate']*100:.1f}%")
-        print(f"Target:        80.0%")
+        print("Target:        80.0%")
         print(f"Achievement:   {(query_stats['hit_rate']/0.8)*100:.1f}% of target")
     except Exception as e:
         print(f"\n⚠️  Cache stats unavailable: {e}")

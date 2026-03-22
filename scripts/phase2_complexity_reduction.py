@@ -5,7 +5,6 @@ PHASE 2: COMPLEXITY REDUCTION
 Simplify the top 10 most complex modules
 """
 
-import shutil
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent

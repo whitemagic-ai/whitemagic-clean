@@ -7,7 +7,6 @@ with shadow clone armies for bidirectional communication.
 
 import sys
 import time
-import threading
 from pathlib import Path
 from datetime import datetime
 from typing import Any, Dict, List
@@ -16,9 +15,9 @@ import statistics
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from whitemagic.core.nervous_system import NervousSystem, OrganType, get_nervous_system
+from whitemagic.core.nervous_system import OrganType, get_nervous_system
 from whitemagic.core.resonance.gan_ying import (
-    EventType, ResonanceEvent, get_bus, emit_event, get_active_bus
+    EventType, ResonanceEvent, get_bus, emit_event
 )
 
 REPORTS_DIR = PROJECT_ROOT / "reports"
@@ -538,7 +537,7 @@ def integrate_bidirectional_feedback(results: TestResults):
         )
         
         print(f"✅ SUCCESS: {len(adaptive.patterns_detected)} patterns → {len(adaptive.adaptations)} adaptations")
-        print(f"✅ Feedback loop operational")
+        print("✅ Feedback loop operational")
         print(f"✅ Duration: {duration:.2f}ms")
         
     except Exception as e:

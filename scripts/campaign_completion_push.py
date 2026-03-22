@@ -7,7 +7,6 @@ MCP-integrated lieutenant officers with real-time metrics tracking.
 Target: 15/40 → 21/40 (52.5%) in this session
 """
 
-import json
 import os
 import sqlite3
 import subprocess
@@ -63,9 +62,9 @@ def check_system_health():
     # Check Rust bridge
     try:
         import whitemagic_rs
-        print(f"  ✅ Rust bridge: Available")
+        print("  ✅ Rust bridge: Available")
     except ImportError:
-        print(f"  ⚠️  Rust bridge: Not available (will use Python fallback)")
+        print("  ⚠️  Rust bridge: Not available (will use Python fallback)")
     
     # Check polyglot armies
     polyglot_armies = ["rust", "zig", "mojo", "go", "elixir", "haskell", "julia"]
@@ -143,18 +142,18 @@ def complete_f001_batch_embeddings(corps):
     coverage = (embedding_count / active_memories * 100) if active_memories > 0 else 0
     conn.close()
     
-    print(f"\n📊 Embedding Coverage:")
+    print("\n📊 Embedding Coverage:")
     print(f"   Active memories: {active_memories:,}")
     print(f"   Embeddings: {embedding_count:,}")
     print(f"   Coverage: {coverage:.1f}%")
     
     if coverage >= 95:
-        print(f"\n✅ Coverage exceeds 95% threshold")
-        print(f"✅ F001 COMPLETE (7/7)")
+        print("\n✅ Coverage exceeds 95% threshold")
+        print("✅ F001 COMPLETE (7/7)")
         lt.record_deployment(clones=85_000, findings=1, victory=True)
         return {"campaign": "F001", "status": "complete", "vcs": "7/7"}
     else:
-        print(f"\n⚠️  Coverage below 95% threshold")
+        print("\n⚠️  Coverage below 95% threshold")
         print(f"   Need to embed {active_memories - embedding_count:,} more memories")
         return {"campaign": "F001", "status": "incomplete", "vcs": "6/7", "reason": "coverage_below_95"}
 
@@ -180,9 +179,9 @@ def complete_v002_python_reduction(corps):
     
     py_files = len(result.stdout.strip().split('\n')) if result.stdout.strip() else 0
     
-    print(f"\n📊 Python Codebase Status:")
+    print("\n📊 Python Codebase Status:")
     print(f"   Python files: {py_files}")
-    print(f"   Target: <180K LOC (already achieved at ~140K)")
+    print("   Target: <180K LOC (already achieved at ~140K)")
     
     print("\n💡 Remaining VCs:")
     print("   [x] LOC reduction target met")
@@ -208,7 +207,7 @@ def generate_completion_report(results):
     report = [
         "# Campaign Completion Report",
         f"\n**Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        f"**MCP-Integrated Armies**: Operational",
+        "**MCP-Integrated Armies**: Operational",
         "\n## Summary",
         f"\n- **Completed**: {len(completed)} campaigns",
         f"- **Partial**: {len(partial)} campaigns",
@@ -247,7 +246,7 @@ def main():
     print("\n" + "=" * 70)
     print("🚀 CAMPAIGN COMPLETION PUSH — MCP-INTEGRATED ARMIES")
     print("=" * 70)
-    print(f"\n**Target**: 15/40 → 21/40 (52.5%)")
+    print("\n**Target**: 15/40 → 21/40 (52.5%)")
     print(f"**Campaigns**: {len(CAMPAIGNS_TO_COMPLETE)}")
     print(f"**Total Clones**: {sum(c.get('clone_count', 0) for c in CAMPAIGNS_TO_COMPLETE if 'clone_count' in c):,}")
     
@@ -264,7 +263,7 @@ def main():
     status = corps.corps_status_with_mcp()
     print(f"\n  Lieutenants: {status['total_lieutenants']}")
     print(f"  Gana Coverage: {len(status['gana_coverage'])} Ganas")
-    print(f"  MCP Tools: 374 distributed across lieutenants")
+    print("  MCP Tools: 374 distributed across lieutenants")
     
     # Execute campaign completions
     results = []

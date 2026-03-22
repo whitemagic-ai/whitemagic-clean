@@ -8,7 +8,7 @@
 
 ## Current State (February 12, 2026)
 
-- **whitemagic.dev** — Squarespace landing page (needs content refresh for v15)
+- **whitemagic.dev** — Squarespace landing page (needs content refresh for v18)
 - **Railway** — Redis + PostgreSQL provisioned, prototype deployments exist
 - **GitHub** — ✅ [whitemagic-ai/whitemagic](https://github.com/whitemagic-ai/whitemagic) organization created
 - **PyPI** — Token configured, ready for `whitemagic` package publish
@@ -39,15 +39,15 @@ registry.whitemagic.dev → GitHub Pages (CNAME)
 
 ### Hero Section
 ```
-WhiteMagic v15.0.0
+WhiteMagic v18.1.0
 The Tool Substrate for Agentic AI
 
-313 MCP tools · 28 Gana meta-tools · 11 languages
+28 Gana MCP contract · broader internal tool surface · polyglot accelerators
 Persistent memory · Ethical governance · Local-first
 
 # 3 ways to start:
 curl -L .../wm-seed -o wm && chmod +x wm    # Lite: 2.4MB, 3 seconds
-pip install whitemagic[mcp]                   # Standard: 313 tools
+pip install whitemagic[mcp]                   # Standard: 28 Gana MCP contract
 docker pull whitemagic-ai/whitemagic:heavy    # Heavy: all polyglot cores
 ```
 
@@ -76,7 +76,7 @@ docker pull whitemagic-ai/whitemagic:heavy    # Heavy: all polyglot cores
 5. **Quick Start** — 3-step install + configure + run
 
 6. **Stats Bar**:
-   - 313 tools | 195K LOC | 11 languages | 1,955 tests | MIT License
+   - 28 Gana MCP contract | 195K LOC | polyglot accelerators | CI-backed | MIT License
 
 7. **Links**: GitHub | PyPI | Docker Hub | AI Primary Spec | Grimoire | Contact
 
@@ -168,7 +168,7 @@ Lightweight page serving:
 
 ### Week 1
 1. ~~Create GitHub repo (whitemagic-ai/whitemagic)~~ ✅ Done
-2. Push v15.0.0 to GitHub + publish to PyPI
+2. Push v18.1.0 to GitHub + publish to PyPI
 3. Update Squarespace landing page content
 4. Set up DNS for subdomains
 

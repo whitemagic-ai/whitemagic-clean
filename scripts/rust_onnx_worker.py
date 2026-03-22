@@ -4,7 +4,6 @@
 import sys
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
-import json
 import time
 import signal
 from typing import Optional
@@ -56,7 +55,6 @@ class RustONNXWorker:
     
     def run(self):
         """Main worker loop."""
-        import os
         
         print("🚀 Rust ONNX Worker starting...")
         
@@ -71,9 +69,9 @@ class RustONNXWorker:
         # Load embedder
         rs = self._load_embedder()
         
-        print(f"📡 Worker ready - waiting for requests via IPC...")
-        print(f"   Subscribe to: wm/commands for embed_requests")
-        print(f"   Publish to: wm/memories for embed_results")
+        print("📡 Worker ready - waiting for requests via IPC...")
+        print("   Subscribe to: wm/commands for embed_requests")
+        print("   Publish to: wm/memories for embed_results")
         
         # Main loop - poll for IPC messages
         while self.running:

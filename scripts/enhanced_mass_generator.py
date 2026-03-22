@@ -5,12 +5,10 @@ Integrates with Koka/Elixir pattern miners for superior code generation
 Generates all remaining PSR implementations with quality validation
 """
 
-import ast
-import json
 import time
 from pathlib import Path
-from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, field
+from typing import Dict, List, Any
+from dataclasses import dataclass
 
 @dataclass
 class EnhancedPattern:
@@ -1197,12 +1195,12 @@ impl TestSuite {
         medium_quality = sum(1 for v in self.validated if 60 <= v['quality_score'] < 80)
         low_quality = sum(1 for v in self.validated if v['quality_score'] < 60)
         
-        print(f"\nQuality Breakdown:")
+        print("\nQuality Breakdown:")
         print(f"  High (≥80): {high_quality}")
         print(f"  Medium (60-79): {medium_quality}")
         print(f"  Low (<60): {low_quality}")
         
-        print(f"\n✅ All implementations ready for compilation!")
+        print("\n✅ All implementations ready for compilation!")
 
 def main():
     """Run enhanced mass generator"""

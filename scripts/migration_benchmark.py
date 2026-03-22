@@ -25,7 +25,6 @@ def run_migration_benchmark():
     test_data = {"test": "data", "array": [1, 2, 3] * 100}
     
     start = time.perf_counter()
-    import json
     for _ in range(10000):
         json.dumps(test_data)
     python_time = (time.perf_counter() - start) * 1000
@@ -73,7 +72,7 @@ def run_migration_benchmark():
     print("=" * 80)
     print("🎯 BENCHMARK SUMMARY")
     print("=" * 80)
-    print(f"JSON Speedup: ~4.5x projected")
+    print("JSON Speedup: ~4.5x projected")
     print(f"Structure Validation: {sum(1 for v in results.values() if v == True)}/5 passed")
     print(f"Migration Progress: {results.get('migration', {}).get('files', 0)} files")
     print()

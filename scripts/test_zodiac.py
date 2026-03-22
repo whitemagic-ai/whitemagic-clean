@@ -2,7 +2,6 @@ from whitemagic.security.zodiac.ledger import get_ledger
 from whitemagic.core.memory.sqlite_backend import SQLiteBackend
 from whitemagic.core.memory.unified_types import Memory, MemoryType
 from pathlib import Path
-from datetime import datetime
 import uuid
 
 # Initialize the ledger

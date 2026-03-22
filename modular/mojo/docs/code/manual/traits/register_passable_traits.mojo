@@ -1,0 +1,79 @@
+# ===----------------------------------------------------------------------=== #
+# Copyright (c) 2026, Modular Inc. All rights reserved.
+#
+# Licensed under the Apache License v2.0 with LLVM Exceptions:
+# https://llvm.org/LICENSE.txt
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ===----------------------------------------------------------------------=== #
+
+
+# Note: this code doesn't appear in the doc; it tests the assertions
+# in the doc.
+trait RegPassableTrait(RegisterPassable):
+    fn __init__(out self):
+        ...
+
+    fn say_hello(self):
+        ...
+
+
+struct RegPassableType(RegPassableTrait):
+    fn __init__(out self):
+        pass
+
+    fn say_hello(self):
+        print("Hello from a register passable type!")
+
+
+fn test_register_passable_type():
+    var a: RegPassableType = RegPassableType()
+    # Ensure that the value is movable
+    var b = a^
+    b.say_hello()
+
+
+# Ensure that we can define a register-passable trivial type that conforms to a
+# register-passable trait
+struct RegPassableType2(RegPassableTrait, TrivialRegisterPassable):
+    fn __init__(out self):
+        pass
+
+    fn say_hello(self):
+        print("Hello from a register passable type!")
+
+
+trait RegPassableTrivialTrait(TrivialRegisterPassable):
+    fn __init__(out self, value: Int = 0):
+        ...
+
+    fn say_hello(self):
+        ...
+
+
+struct RegPassableTrivialType(RegPassableTrivialTrait, TrivialRegisterPassable):
+    var value: Int
+
+    fn __init__(out self, value: Int = 0):
+        self.value = value
+
+    fn say_hello(self):
+        print("Hello from a register passable trivial type!")
+
+
+fn test_register_passable_trivial_type():
+    # Type is copyable and movable
+    var a_list = List[RegPassableTrivialType]()
+    a_list.append(RegPassableTrivialType())
+    a_list.append(RegPassableTrivialType())
+    for item in a_list:
+        item.say_hello()
+
+
+def main():
+    test_register_passable_type()
+    test_register_passable_trivial_type()

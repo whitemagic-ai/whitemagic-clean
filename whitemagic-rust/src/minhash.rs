@@ -80,7 +80,12 @@ pub fn compute_signature(keywords: &HashSet<String>) -> MinHashSignature {
 /// Estimate Jaccard similarity from two MinHash signatures
 #[inline]
 pub fn estimate_jaccard(a: &MinHashSignature, b: &MinHashSignature) -> f64 {
-    let matches = a.values.iter().zip(b.values.iter()).filter(|(x, y)| x == y).count();
+    let matches = a
+        .values
+        .iter()
+        .zip(b.values.iter())
+        .filter(|(x, y)| x == y)
+        .count();
     matches as f64 / NUM_HASHES as f64
 }
 
@@ -105,10 +110,8 @@ pub fn find_near_duplicates(
     }
 
     // Compute all signatures in parallel
-    let signatures: Vec<MinHashSignature> = keyword_sets
-        .par_iter()
-        .map(|ks| compute_signature(ks))
-        .collect();
+    let signatures: Vec<MinHashSignature> =
+        keyword_sets.par_iter().map(compute_signature).collect();
 
     // Compare all pairs (parallelized outer loop)
     let mut candidates: Vec<DuplicateCandidate> = (0..n)
@@ -129,7 +132,11 @@ pub fn find_near_duplicates(
         })
         .collect();
 
-    candidates.sort_by(|a, b| b.estimated_jaccard.partial_cmp(&a.estimated_jaccard).unwrap());
+    candidates.sort_by(|a, b| {
+        b.estimated_jaccard
+            .partial_cmp(&a.estimated_jaccard)
+            .unwrap()
+    });
     candidates.truncate(max_results);
     candidates
 }
@@ -147,8 +154,9 @@ pub fn minhash_find_duplicates(
     threshold: f64,
     max_results: usize,
 ) -> PyResult<String> {
-    let keyword_lists: Vec<Vec<String>> = serde_json::from_str(keywords_json)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e)))?;
+    let keyword_lists: Vec<Vec<String>> = serde_json::from_str(keywords_json).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e))
+    })?;
 
     let sets: Vec<HashSet<String>> = keyword_lists
         .into_iter()
@@ -157,8 +165,9 @@ pub fn minhash_find_duplicates(
 
     let candidates = find_near_duplicates(&sets, threshold, max_results);
 
-    serde_json::to_string(&candidates)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e)))
+    serde_json::to_string(&candidates).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e))
+    })
 }
 
 /// Compute MinHash signatures for a batch of keyword sets.
@@ -166,8 +175,9 @@ pub fn minhash_find_duplicates(
 /// Output: JSON array of signature value arrays.
 #[pyfunction]
 pub fn minhash_signatures(keywords_json: &str) -> PyResult<String> {
-    let keyword_lists: Vec<Vec<String>> = serde_json::from_str(keywords_json)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e)))?;
+    let keyword_lists: Vec<Vec<String>> = serde_json::from_str(keywords_json).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e))
+    })?;
 
     let signatures: Vec<MinHashSignature> = keyword_lists
         .par_iter()
@@ -177,8 +187,9 @@ pub fn minhash_signatures(keywords_json: &str) -> PyResult<String> {
         })
         .collect();
 
-    serde_json::to_string(&signatures)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e)))
+    serde_json::to_string(&signatures).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e))
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -192,45 +203,76 @@ mod tests {
     #[test]
     fn test_identical_sets() {
         let set: HashSet<String> = ["python", "rust", "memory"]
-            .iter().map(|s| s.to_string()).collect();
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         let sig_a = compute_signature(&set);
         let sig_b = compute_signature(&set);
         let est = estimate_jaccard(&sig_a, &sig_b);
-        assert!((est - 1.0).abs() < 1e-10, "Identical sets should have Jaccard=1.0, got {}", est);
+        assert!(
+            (est - 1.0).abs() < 1e-10,
+            "Identical sets should have Jaccard=1.0, got {}",
+            est
+        );
     }
 
     #[test]
     fn test_disjoint_sets() {
         let set_a: HashSet<String> = ["alpha", "beta", "gamma", "delta", "epsilon"]
-            .iter().map(|s| s.to_string()).collect();
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         let set_b: HashSet<String> = ["one", "two", "three", "four", "five"]
-            .iter().map(|s| s.to_string()).collect();
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         let sig_a = compute_signature(&set_a);
         let sig_b = compute_signature(&set_b);
         let est = estimate_jaccard(&sig_a, &sig_b);
         // Should be close to 0 (with some noise from hash collisions)
-        assert!(est < 0.2, "Disjoint sets should have low Jaccard, got {}", est);
+        assert!(
+            est < 0.2,
+            "Disjoint sets should have low Jaccard, got {}",
+            est
+        );
     }
 
     #[test]
     fn test_overlapping_sets() {
         let set_a: HashSet<String> = ["python", "rust", "memory", "tools", "mcp"]
-            .iter().map(|s| s.to_string()).collect();
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         let set_b: HashSet<String> = ["python", "memory", "mcp", "galactic", "hologram"]
-            .iter().map(|s| s.to_string()).collect();
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         let sig_a = compute_signature(&set_a);
         let sig_b = compute_signature(&set_b);
         let est = estimate_jaccard(&sig_a, &sig_b);
         // True Jaccard = 3/7 ≈ 0.43. Estimate should be in [0.2, 0.7]
-        assert!(est > 0.15 && est < 0.75, "Overlapping sets should have moderate Jaccard, got {}", est);
+        assert!(
+            est > 0.15 && est < 0.75,
+            "Overlapping sets should have moderate Jaccard, got {}",
+            est
+        );
     }
 
     #[test]
     fn test_find_near_duplicates() {
         let sets: Vec<HashSet<String>> = vec![
-            ["python", "rust", "memory"].iter().map(|s| s.to_string()).collect(),
-            ["python", "rust", "memory"].iter().map(|s| s.to_string()).collect(), // exact dup
-            ["elixir", "haskell", "zig"].iter().map(|s| s.to_string()).collect(),
+            ["python", "rust", "memory"]
+                .iter()
+                .map(|s| s.to_string())
+                .collect(),
+            ["python", "rust", "memory"]
+                .iter()
+                .map(|s| s.to_string())
+                .collect(), // exact dup
+            ["elixir", "haskell", "zig"]
+                .iter()
+                .map(|s| s.to_string())
+                .collect(),
         ];
         let candidates = find_near_duplicates(&sets, 0.5, 100);
         assert!(!candidates.is_empty(), "Should find the duplicate pair");

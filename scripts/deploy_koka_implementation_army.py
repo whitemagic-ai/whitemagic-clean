@@ -13,7 +13,6 @@ Objectives:
 """
 
 import json
-import subprocess
 import time
 from pathlib import Path
 from dataclasses import dataclass
@@ -369,7 +368,6 @@ class KokaMetricsExporter:
 
 def main():
     """Deploy implementation armies."""
-    import time
     
     root_dir = Path(__file__).parent.parent
     army = KokaImplementationArmy(root_dir)

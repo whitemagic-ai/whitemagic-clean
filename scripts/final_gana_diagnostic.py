@@ -238,7 +238,7 @@ def main():
     print(f"Pass Rate: {overall_pass_rate:.1f}%")
     
     # Gana-level summary
-    print(f"\nGana-level Results:")
+    print("\nGana-level Results:")
     for result in all_results:
         total = result["passed"] + result["failed"]
         rate = (result["passed"] / total * 100) if total > 0 else 0

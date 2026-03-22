@@ -1,6 +1,4 @@
 import subprocess
-import time
-import sys
 
 proc = subprocess.Popen(
     ['/home/lucas/Desktop/whitemagicdev/whitemagic-koka/batch_ipc'],

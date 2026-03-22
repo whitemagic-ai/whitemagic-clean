@@ -1,15 +1,15 @@
 //! Massive Clone Army Deployer - Rust Implementation
 //! Target: 10-100× faster than Python version
-//! 
+//!
 //! Python baseline: ~700K clones/sec
 //! Rust target: 10M+ clones/sec with parallel execution
 
 use pyo3::prelude::*;
+use rayon::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::time::Instant;
-use rayon::prelude::*;
-use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[pyclass]
@@ -34,6 +34,7 @@ pub struct CampaignTask {
 
 #[pymethods]
 impl CampaignTask {
+    #[allow(clippy::too_many_arguments)]
     #[new]
     fn new(
         campaign_id: String,
@@ -170,7 +171,7 @@ impl MassiveDeployer {
             .into_par_iter()
             .map(|(campaign_id, tasks, clone_count)| {
                 let task_start = Instant::now();
-                
+
                 // Parallel task processing
                 let completed_tasks: Vec<_> = tasks
                     .par_iter()
@@ -255,17 +256,17 @@ impl MassiveDeployer {
 
         for count in clone_counts {
             let start = Instant::now();
-            
+
             // Simulate deployment
             let _tasks: Vec<_> = (0..count)
                 .into_par_iter()
                 .map(|i| format!("task-{}", i))
                 .collect();
-            
+
             let duration = start.elapsed().as_secs_f64();
             let throughput = count as f64 / duration;
             benchmarks.push((count, throughput));
-            
+
             println!(
                 "Benchmark: {} clones in {:.6}s = {:.0} clones/sec",
                 count, duration, throughput

@@ -1,5 +1,4 @@
 import pytest
-import json
 from unittest.mock import AsyncMock, patch, MagicMock
 from whitemagic.autonomous.executor.continuous_executor import (
     ContinuousExecutor, ExecutorConfig, Objective, ExecutionResult

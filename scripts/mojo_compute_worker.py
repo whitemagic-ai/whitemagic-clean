@@ -4,7 +4,6 @@
 import sys
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
-import json
 import time
 import os
 
@@ -60,11 +59,11 @@ class MojoComputeWorker:
         else:
             print("ℹ️ Running in Python fallback mode")
         
-        print(f"📡 Worker ready - handles:")
-        print(f"   - cosine_batch: Batch cosine similarity")
-        print(f"   - vector_add: SIMD vector addition")
-        print(f"   - vector_norm: SIMD vector normalization")
-        print(f"   Channels: wm/commands (requests) → wm/memories (results)")
+        print("📡 Worker ready - handles:")
+        print("   - cosine_batch: Batch cosine similarity")
+        print("   - vector_add: SIMD vector addition")
+        print("   - vector_norm: SIMD vector normalization")
+        print("   Channels: wm/commands (requests) → wm/memories (results)")
         
         while self.running:
             time.sleep(0.1)

@@ -34,9 +34,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from whitemagic.agents.unified_zodiac_army import (
-    UnifiedZodiacCommander,
     ArmyType,
-    ZodiacSign,
     ZODIAC_ARMY_MAPPINGS,
     get_unified_commander,
 )
@@ -108,7 +106,7 @@ async def deploy_all_armies(clones_per_army: int = 10):
         clones_per_army=clones_per_army
     )
     
-    print(f"\n✅ Deployment Complete!")
+    print("\n✅ Deployment Complete!")
     print(f"   Total Clones: {deployment.total_clones:,}")
     print(f"   Duration: {deployment.total_duration_ms}ms")
     print(f"   Throughput: {deployment.total_clones / (deployment.total_duration_ms / 1000):.1f} clones/sec" if deployment.total_duration_ms > 0 else "")
@@ -146,7 +144,7 @@ async def deploy_objective(objective: str, clones_per_army: int = 10):
         clones_per_army=clones_per_army
     )
     
-    print(f"\n✅ Deployment Complete!")
+    print("\n✅ Deployment Complete!")
     print(f"   Armies Deployed: {', '.join(a.value for a in deployment.armies_deployed)}")
     print(f"   Total Clones: {deployment.total_clones:,}")
     print(f"   Duration: {deployment.total_duration_ms}ms")
@@ -155,7 +153,7 @@ async def deploy_objective(objective: str, clones_per_army: int = 10):
     print(f"   Synergy Score: {deployment.synergy_score:.0%}")
     
     # Show zodiac distribution
-    print(f"\n📊 Zodiac Distribution:")
+    print("\n📊 Zodiac Distribution:")
     zodiac_counts = {}
     for result in deployment.results:
         zodiac_counts[result.zodiac_sign] = zodiac_counts.get(result.zodiac_sign, 0) + 1
@@ -187,7 +185,7 @@ async def deploy_specific_armies(army_names: list[str], clones_per_army: int = 1
         clones_per_army=clones_per_army
     )
     
-    print(f"\n✅ Deployment Complete!")
+    print("\n✅ Deployment Complete!")
     print(f"   Total Clones: {deployment.total_clones:,}")
     print(f"   Duration: {deployment.total_duration_ms}ms")
     print(f"   Victories: {deployment.victories}/{deployment.total_clones}")

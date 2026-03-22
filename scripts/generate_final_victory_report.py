@@ -106,19 +106,19 @@ def generate_final_report():
     migrated = total_loc
     after_python = before_python - archived - migrated
     
-    print(f"  Before Campaign:")
+    print("  Before Campaign:")
     print(f"    Python: {before_python:,} LOC (79.7%)")
-    print(f"    Polyglot: ~72,000 LOC (20.3%)")
-    print(f"    Total: ~354,000 LOC")
+    print("    Polyglot: ~72,000 LOC (20.3%)")
+    print("    Total: ~354,000 LOC")
     print()
-    print(f"  Changes:")
+    print("  Changes:")
     print(f"    Archived: -{archived:,} LOC")
     print(f"    Migrated: -{migrated:,} LOC → Polyglot")
     print()
-    print(f"  After Campaign:")
+    print("  After Campaign:")
     print(f"    Python: ~{after_python:,} LOC (21.2%)")
     print(f"    Polyglot: ~{72_000 + migrated:,} LOC (78.8%)")
-    print(f"    Total: ~354,000 LOC")
+    print("    Total: ~354,000 LOC")
     print()
     print(f"  🎯 NET REDUCTION: {archived + migrated:,} Python LOC ({((archived + migrated)/before_python)*100:.1f}% reduction)")
     
@@ -198,8 +198,8 @@ def generate_final_report():
     with open(report_file, 'w') as f:
         f.write("# 🏆 POLYGLOT CAMPAIGN - VICTORY REPORT\n\n")
         f.write(f"**Date**: {datetime.now().isoformat()}\n")
-        f.write(f"**Status**: ✅ ALL WAVES COMPLETE\n")
-        f.write(f"**Duration**: Waves 1-4 Executed\n\n")
+        f.write("**Status**: ✅ ALL WAVES COMPLETE\n")
+        f.write("**Duration**: Waves 1-4 Executed\n\n")
         
         f.write("---\n\n")
         f.write("## Executive Summary\n\n")
@@ -212,7 +212,7 @@ def generate_final_report():
         f.write(f"- ✅ **{archived + migrated:,} LOC** net Python reduction ({((archived + migrated)/before_python)*100:.1f}%)\n")
         f.write(f"- ✅ **{total_vcs} Victory Conditions** achieved\n")
         f.write(f"- ✅ **{total_clones} Shadow Clones** deployed\n")
-        f.write(f"- ✅ **50x-100x** performance gains projected\n\n")
+        f.write("- ✅ **50x-100x** performance gains projected\n\n")
         
         f.write("### Language Portfolio\n\n")
         f.write("| Campaign | Targets | LOC | VCs | Clones | Focus |\n")

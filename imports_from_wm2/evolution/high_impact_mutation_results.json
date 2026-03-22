@@ -1,0 +1,107 @@
+{
+  "total_tested": 3,
+  "results": [
+    {
+      "mutation_id": "baseline_test_1",
+      "mutation_name": "Baseline Run 1",
+      "baseline": {
+        "test_id": "baseline_50000x50",
+        "mutation_name": "baseline",
+        "duration": 23.394302368164062,
+        "throughput": 108398.14532478235,
+        "best_fitness": 0.6603705483271644,
+        "avg_fitness": 0.18762087365978708,
+        "diversity": 0.91172,
+        "memory_mb": 990.859375
+      },
+      "mutated": {
+        "test_id": "Baseline Run 1_50000x50",
+        "mutation_name": "Baseline Run 1",
+        "duration": 21.172894716262817,
+        "throughput": 119929.09717514909,
+        "best_fitness": 0.6666808043528174,
+        "avg_fitness": 0.18939800963769568,
+        "diversity": 0.91042,
+        "memory_mb": 57.921875
+      },
+      "comparison": {
+        "improvements": {
+          "throughput": 10.637591460460616,
+          "duration": 10.491752222217364,
+          "best_fitness": 0.9555629095873597,
+          "diversity": -0.14258763655508044
+        },
+        "recommendation": "KEEP",
+        "reason": "2 metric(s) improved >5%"
+      }
+    },
+    {
+      "mutation_id": "baseline_test_2",
+      "mutation_name": "Baseline Run 2",
+      "baseline": {
+        "test_id": "baseline_50000x50",
+        "mutation_name": "baseline",
+        "duration": 21.155078411102295,
+        "throughput": 120063.72395788303,
+        "best_fitness": 0.6600561718528247,
+        "avg_fitness": 0.18893723027484516,
+        "diversity": 0.9106,
+        "memory_mb": 8.984375
+      },
+      "mutated": {
+        "test_id": "Baseline Run 2_50000x50",
+        "mutation_name": "Baseline Run 2",
+        "duration": 22.359758377075195,
+        "throughput": 113502.72116261201,
+        "best_fitness": 0.6683878969986388,
+        "avg_fitness": 0.18752869647750411,
+        "diversity": 0.91222,
+        "memory_mb": 10.53125
+      },
+      "comparison": {
+        "improvements": {
+          "throughput": -5.464600446320111,
+          "duration": -5.38771459716677,
+          "best_fitness": 1.2622751670401389,
+          "diversity": 0.17790467823413092
+        },
+        "recommendation": "DISCARD",
+        "reason": "2 metrics regressed >5%"
+      }
+    },
+    {
+      "mutation_id": "baseline_test_3",
+      "mutation_name": "Baseline Run 3",
+      "baseline": {
+        "test_id": "baseline_50000x50",
+        "mutation_name": "baseline",
+        "duration": 21.339418649673462,
+        "throughput": 118941.86195902496,
+        "best_fitness": 0.6647824339387436,
+        "avg_fitness": 0.1900237154533837,
+        "diversity": 0.91046,
+        "memory_mb": -1.98046875
+      },
+      "mutated": {
+        "test_id": "Baseline Run 3_50000x50",
+        "mutation_name": "Baseline Run 3",
+        "duration": 21.516955375671387,
+        "throughput": 118009.18221101175,
+        "best_fitness": 0.6649824827253241,
+        "avg_fitness": 0.18872799770428805,
+        "diversity": 0.91048,
+        "memory_mb": 16.1796875
+      },
+      "comparison": {
+        "improvements": {
+          "throughput": -0.7841475933296871,
+          "duration": -0.8251015206299117,
+          "best_fitness": 0.03009236952837835,
+          "diversity": 0.00219669178216364
+        },
+        "recommendation": "NEUTRAL",
+        "reason": "No significant improvements"
+      }
+    }
+  ]
+}

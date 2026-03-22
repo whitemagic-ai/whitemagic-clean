@@ -315,24 +315,24 @@ class GanaAnalyzer:
         print("="*80)
         
         # Performance patterns
-        print(f"\n📊 Performance Distribution:")
+        print("\n📊 Performance Distribution:")
         print(f"  Fast (<100ms):      {len(self.patterns['fast_tools'])} tools")
         print(f"  Medium (100ms-1s):  {len(self.patterns['medium_tools'])} tools")
         print(f"  Slow (1-5s):        {len(self.patterns['slow_tools'])} tools")
         print(f"  Very Slow (>5s):    {len(self.patterns['very_slow_tools'])} tools")
         
         if self.patterns['very_slow_tools']:
-            print(f"\n⚠️  Very Slow Tools (>5s):")
+            print("\n⚠️  Very Slow Tools (>5s):")
             for gana, tool, latency in sorted(self.patterns['very_slow_tools'], key=lambda x: x[2], reverse=True)[:5]:
                 print(f"    {gana}.{tool}: {latency:.0f}ms")
         
         # Token efficiency
-        print(f"\n💬 Token Efficiency:")
+        print("\n💬 Token Efficiency:")
         print(f"  Light (<500 chars):  {len(self.patterns['token_light'])} tools")
         print(f"  Heavy (>5000 chars): {len(self.patterns['token_heavy'])} tools")
         
         if self.patterns['token_heavy']:
-            print(f"\n📦 Token-Heavy Tools (>5000 chars):")
+            print("\n📦 Token-Heavy Tools (>5000 chars):")
             for gana, tool, size in sorted(self.patterns['token_heavy'], key=lambda x: x[2], reverse=True)[:5]:
                 print(f"    {gana}.{tool}: {size:,} chars")
         
@@ -353,7 +353,7 @@ class GanaAnalyzer:
             if result["success"]:
                 gana_success[gana]["passed"] += 1
         
-        print(f"\n✅ Success Rate by Gana:")
+        print("\n✅ Success Rate by Gana:")
         for gana in sorted(gana_success.keys()):
             stats = gana_success[gana]
             rate = (stats["passed"] / stats["total"] * 100) if stats["total"] > 0 else 0

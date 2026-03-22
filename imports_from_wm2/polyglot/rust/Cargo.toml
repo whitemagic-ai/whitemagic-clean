@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "wm2-search_ops",
+    "wm2-crypto_ops",
+    "wm2-compression",
+]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

@@ -3,10 +3,7 @@ import mmap
 import struct
 import time
 import subprocess
-import os
-import json
 import numpy as np
-import random
 
 HEADER_SIZE = 64
 MAGIC = 0x574D4B4B # "WMKK"

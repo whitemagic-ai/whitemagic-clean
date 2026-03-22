@@ -114,7 +114,7 @@ def main():
     print("Reduction:")
     print(f"   LOC Reduced: {reduction:,}")
     print(f"   Percentage: {reduction_pct:.2f}%")
-    print(f"   Target: 90.0%")
+    print("   Target: 90.0%")
     print(f"   Status: {'✅ ACHIEVED' if metrics['reduction']['achieved'] else '⚠️ IN PROGRESS'}")
     print()
     

@@ -14,7 +14,7 @@ import sys
 import json
 import time
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any
 from collections import defaultdict
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -240,12 +240,12 @@ class DeepIntelligenceScout:
         wm1_modules = len(wm1_analysis.get("modules", []))
         wm2_structure = len(wm2_analysis.get("structure", {}))
         
-        report.append(f"**WM1 (whitemagicdev)**\n")
+        report.append("**WM1 (whitemagicdev)**\n")
         report.append(f"- Python Modules: {wm1_modules}\n")
         report.append(f"- MCP Tools: {mcp_comparison.get('wm1_tools', 0)}\n")
         report.append(f"- Biological Systems: {len(wm1_analysis.get('biological_systems', {}))}\n\n")
         
-        report.append(f"**WM2 (Next Generation)**\n")
+        report.append("**WM2 (Next Generation)**\n")
         report.append(f"- Structure Directories: {wm2_structure}\n")
         report.append(f"- Integration Status: {len(wm2_analysis.get('integration_status', {}))}\n\n")
         

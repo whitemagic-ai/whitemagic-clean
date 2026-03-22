@@ -55,12 +55,12 @@ try:
     for p in patterns:
         by_type.setdefault(p.pattern_type, []).append(p)
     
-    print(f"\n📊 Patterns by Type:")
+    print("\n📊 Patterns by Type:")
     for ptype, plist in sorted(by_type.items(), key=lambda x: len(x[1]), reverse=True):
         print(f"  {ptype:15s}: {len(plist):3d} patterns")
     
     # Show top 10 by confidence
-    print(f"\n🏆 TOP 10 PATTERNS BY CONFIDENCE:")
+    print("\n🏆 TOP 10 PATTERNS BY CONFIDENCE:")
     sorted_patterns = sorted(patterns, key=lambda p: p.confidence, reverse=True)
     for i, p in enumerate(sorted_patterns[:10], 1):
         print(f"\n  {i}. {p.pattern_id}")
@@ -72,7 +72,7 @@ try:
         print(f"     Message: {p.commit_message[:80]}...")
     
     # Show oldest patterns (most proven)
-    print(f"\n⏰ TOP 5 OLDEST PATTERNS (Most Proven):")
+    print("\n⏰ TOP 5 OLDEST PATTERNS (Most Proven):")
     sorted_by_age = sorted(patterns, key=lambda p: p.longevity_days, reverse=True)
     for i, p in enumerate(sorted_by_age[:5], 1):
         print(f"\n  {i}. {p.pattern_id}")

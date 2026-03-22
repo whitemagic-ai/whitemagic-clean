@@ -259,7 +259,7 @@ def generate_integration_strategy(candidates: List[IntegrationCandidate], catego
     print()
     
     # Phase 3: Category completion (fill out each category)
-    print(f"Phase 3 - Category Completion:")
+    print("Phase 3 - Category Completion:")
     print("  Ensure all categories have biological integration")
     for category, cat_candidates in sorted(categorized.items(), key=lambda x: len(x[1]), reverse=True):
         if cat_candidates:

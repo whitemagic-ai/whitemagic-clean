@@ -319,9 +319,9 @@ class TestEmergenceDetector:
         print(f"\nGenerated: {len(self.generated)} test files")
         print(f"Total lines: {total_lines}")
         
-        print(f"\n✅ Integration tests ready!")
-        print(f"\nTo run tests:")
-        print(f"  pytest tests/integration/ -v")
+        print("\n✅ Integration tests ready!")
+        print("\nTo run tests:")
+        print("  pytest tests/integration/ -v")
 
 def main():
     """Generate integration tests"""

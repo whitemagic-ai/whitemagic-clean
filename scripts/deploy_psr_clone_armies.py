@@ -35,7 +35,7 @@ def deploy_clone_armies():
         ]
         
         total_clones = sum(c[3] for c in campaigns)
-        print(f"📊 Deployment Plan:")
+        print("📊 Deployment Plan:")
         print(f"   Campaigns: {len(campaigns)}")
         print(f"   Total Clones: {total_clones:,}")
         print(f"   Total Remaining VCs: {sum(c[2] for c in campaigns)}")
@@ -74,7 +74,7 @@ def deploy_clone_armies():
         deployment_time = time.time() - start_time
         
         print("=" * 70)
-        print(f"✅ DEPLOYMENT COMPLETE")
+        print("✅ DEPLOYMENT COMPLETE")
         print(f"   Total Clones Deployed: {total_deployed:,}")
         print(f"   Deployment Time: {deployment_time:.2f}s")
         print(f"   Average Throughput: {total_deployed / deployment_time:,.0f} clones/sec")
@@ -134,7 +134,7 @@ def deploy_clone_armies():
         print("🎉 CLONE ARMY DEPLOYMENT SUCCESS!")
         print("=" * 70)
         print()
-        print(f"📈 Final Statistics:")
+        print("📈 Final Statistics:")
         print(f"   Total Clones Deployed: {total_deployed:,}")
         print(f"   Total Tasks Executed: {executed:,}")
         print(f"   Total Completed: {total_completed:,}")

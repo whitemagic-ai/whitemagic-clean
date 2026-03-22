@@ -28,7 +28,7 @@ def quick_codebase_stats():
         ).strip().split('\n')
         py_count = len([f for f in py_files if f])
         print(f"\n   Python files: {py_count}")
-    except:
+    except Exception:
         print("\n   Python files: Unable to count")
     
     # Count Rust files
@@ -39,7 +39,7 @@ def quick_codebase_stats():
         ).strip().split('\n')
         rs_count = len([f for f in rs_files if f])
         print(f"   Rust files: {rs_count}")
-    except:
+    except Exception:
         print("   Rust files: Unable to count")
     
     # Count campaign files
@@ -81,7 +81,7 @@ def analyze_active_database():
         ORDER BY COUNT(*) DESC
     """).fetchall()
     
-    print(f"\n   Memory types:")
+    print("\n   Memory types:")
     for mem_type, count in types[:5]:
         print(f"      {mem_type}: {count:,}")
     
@@ -95,11 +95,11 @@ def analyze_active_database():
             LIMIT 5
         """).fetchall()
         
-        print(f"\n   Top tags:")
+        print("\n   Top tags:")
         for tag, count in tags:
             print(f"      {tag}: {count:,}")
     except sqlite3.OperationalError:
-        print(f"\n   Top tags: Schema varies")
+        print("\n   Top tags: Schema varies")
     
     conn.close()
     

@@ -103,14 +103,14 @@ def main():
     with open(insights_file, 'w') as f:
         json.dump(insights, f, indent=2, default=str)
     
-    print(f"✓ Exported to reports/\n")
+    print("✓ Exported to reports/\n")
     
     # Summary
     print("="*80)
     print("TEST RESULTS")
     print("="*80)
     print(f"Status: {'✓ PASS' if pattern_count > 0 else '✗ FAIL'}")
-    print(f"\nThe recursive intelligence engine successfully:")
+    print("\nThe recursive intelligence engine successfully:")
     print(f"  ✓ Accumulated {total_events} events")
     print(f"  ✓ Discovered {pattern_count} patterns")
     print(f"  ✓ Proposed {len(adaptations)} optimizations")

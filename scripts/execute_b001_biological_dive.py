@@ -85,7 +85,7 @@ def scan_codebase_for_biological_keywords():
                 if output.returncode == 0:
                     files = output.stdout.strip().split("\n")
                     results[category].extend([(keyword, f) for f in files if f])
-            except Exception as e:
+            except Exception:
                 pass  # Silently skip failed searches
     
     # Deduplicate and count

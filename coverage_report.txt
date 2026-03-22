@@ -1,0 +1,639 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0
+rootdir: /home/lucas/Desktop/whitemagicdev
+configfile: pyproject.toml
+plugins: anyio-4.12.1, cov-7.0.0, asyncio-1.3.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 1428 items
+
+tests/unit/test_bhishma_governance.py .................................. [  2%]
+.........................                                                [  4%]
+tests/unit/test_boundary_engine.py ......                                [  4%]
+tests/unit/test_causal_miner.py ....................                     [  5%]
+tests/unit/test_community_maintenance.py ...........                     [  6%]
+tests/unit/test_config_paths.py ......                                   [  7%]
+tests/unit/test_constellation_recall.py ...............                  [  8%]
+tests/unit/test_core_intelligence_wiring.py ............................ [ 10%]
+.......                                                                  [ 10%]
+tests/unit/test_critical_paths.py ..........                             [ 11%]
+tests/unit/test_cyberbrain_modules.py .................................. [ 13%]
+......                                                                   [ 14%]
+tests/unit/test_dispatch_bridge.py ....................                  [ 15%]
+tests/unit/test_dispatcher.py .............                              [ 16%]
+tests/unit/test_engine_registry.py ....................................  [ 18%]
+tests/unit/test_entropy_scorer.py ...............                        [ 20%]
+tests/unit/test_envelope.py ....................                         [ 21%]
+tests/unit/test_event_ring_bridge.py ....................                [ 22%]
+tests/unit/test_fusions.py ..................                            [ 24%]
+tests/unit/test_galactic_improvements.py ......................          [ 25%]
+tests/unit/test_galactic_map.py .....................                    [ 27%]
+tests/unit/test_handlers_batch1.py ..................................... [ 29%]
+....                                                                     [ 29%]
+tests/unit/test_handlers_batch2.py ........................              [ 31%]
+tests/unit/test_handlers_batch3.py ..........s........                   [ 32%]
+tests/unit/test_holographic_encoding.py .......                          [ 33%]
+tests/unit/test_idempotency.py ....                                      [ 33%]
+tests/unit/test_karma_anchor.py ..............                           [ 34%]
+tests/unit/test_living_graph.py ........................................ [ 37%]
+...                                                                      [ 37%]
+tests/unit/test_living_memory_v2.py .................................... [ 40%]
+............                                                             [ 41%]
+tests/unit/test_mandala_subsystems.py .................................. [ 43%]
+.......                                                                  [ 43%]
+tests/unit/test_mcp_registration_surface.py ...                          [ 44%]
+tests/unit/test_memory_ops.py ............                               [ 45%]
+tests/unit/test_nurturing_engine.py .....                                [ 45%]
+tests/unit/test_p0_regressions.py s...                                   [ 45%]
+tests/unit/test_patterns.py s                                            [ 45%]
+tests/unit/test_phylogenetics_geneseed.py ....                           [ 46%]
+tests/unit/test_polyglot_bridges.py ...........ssss...........           [ 47%]
+tests/unit/test_prat_resonance.py ...............................        [ 50%]
+tests/unit/test_prat_router.py ........................                  [ 51%]
+tests/unit/test_psr_modules.py .....                                     [ 52%]
+tests/unit/test_reconsolidation.py ............                          [ 52%]
+tests/unit/test_reranker.py .......                                      [ 53%]
+tests/unit/test_round5_features.py ..................................... [ 55%]
+..................                                                       [ 57%]
+tests/unit/test_runtime_status.py ...                                    [ 57%]
+tests/unit/test_rust_fallbacks.py ...x............                       [ 58%]
+tests/unit/test_rust_memory_core.py sssssssssss                          [ 59%]
+tests/unit/test_scratchpad.py ..                                         [ 59%]
+tests/unit/test_scratchpad_legacy.py ..                                  [ 59%]
+tests/unit/test_semantic_memory.py .....................                 [ 61%]
+tests/unit/test_state_board_bridge.py ...................                [ 62%]
+tests/unit/test_surface_consistency.py ..                                [ 62%]
+tests/unit/test_synthesis_gap_closures.py ...............                [ 63%]
+tests/unit/test_synthesis_gaps.py ...................................... [ 66%]
+.....                                                                    [ 66%]
+tests/unit/test_telemetry.py ..                                          [ 66%]
+tests/unit/test_tool_consolidation.py .................................. [ 69%]
+....                                                                     [ 69%]
+tests/unit/test_tool_contract.py ....                                    [ 69%]
+tests/unit/test_tools_copy_integration.py .............................. [ 71%]
+...............ss........                                                [ 73%]
+tests/unit/test_umap_projection.py ...........                           [ 74%]
+tests/unit/test_v11_3_modules.py ....................................... [ 77%]
+.....                                                                    [ 77%]
+tests/unit/test_v12_7_fusions.py ....................................... [ 80%]
+.......                                                                  [ 80%]
+tests/unit/test_v12_8_fusions.py ......................................  [ 83%]
+tests/unit/test_v14_2_features.py ...................................... [ 85%]
+...............................                                          [ 88%]
+tests/unit/test_v14_3_features.py ..............                         [ 89%]
+tests/unit/test_v14_improvements.py ........................             [ 90%]
+tests/unit/test_violet_security.py ..................................... [ 93%]
+....................................                                     [ 95%]
+tests/unit/test_web_research.py ...............................sss       [ 98%]
+tests/unit/test_working_memory.py .............                          [ 99%]
+tests/unit/test_zodiac.py ......                                         [ 99%]
+tests/unit/test_zodiac_legacy.py ......                                  [100%]
+
+=============================== warnings summary ===============================
+tests/unit/test_core_intelligence_wiring.py::TestInsightPipeline::test_generate_briefing_empty
+tests/unit/test_core_intelligence_wiring.py::TestInsightPipeline::test_generate_briefing_with_items
+tests/unit/test_critical_paths.py::TestCriticalPathMemoryStorage::test_store_and_retrieve_memory
+tests/unit/test_critical_paths.py::TestCriticalPathMemoryStorage::test_batch_store_retrieve
+tests/unit/test_critical_paths.py::TestCriticalPathIntegration::test_full_memory_workflow
+tests/unit/test_v11_3_modules.py::TestMemoryConsolidation::test_clustering_with_shared_tags
+  /home/lucas/Desktop/whitemagicdev/whitemagic/core/memory/unified.py:235: RuntimeWarning: coroutine 'EmbeddingEngine.cache_embedding_async' was never awaited
+    engine.cache_embedding(memory.id, embedding)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                                                                        Stmts   Miss  Cover   Missing
+---------------------------------------------------------------------------------------------------------
+whitemagic/__init__.py                                                         32     20    38%   26-29, 60-75, 80-81, 85
+whitemagic/agents/swarm.py                                                    183    125    32%   57, 78-79, 101-104, 112-175, 181-235, 245-263, 268-273, 278-312, 316-318, 321-323, 326-328, 342-346
+whitemagic/agents/worker_daemon.py                                            189    143    24%   41-47, 51-53, 57-61, 92-124, 128, 136-148, 152-201, 205-218, 224, 229-234, 237, 244-267, 271-276, 284-293, 297-305, 309-313, 336-350, 354
+whitemagic/ai/context_optimizer.py                                            136     97    29%   39, 56, 70, 79-120, 136-163, 172-192, 202-248, 255-267, 271, 274, 290-294
+whitemagic/alchemy/__init__.py                                                  0      0   100%
+whitemagic/alchemy/albedo.py                                                   38     38     0%   14-88
+whitemagic/alchemy/holocron.py                                                 41     41     0%   13-76
+whitemagic/alchemy/nigredo.py                                                  28     28     0%   14-71
+whitemagic/alchemy/rubedo.py                                                   43     43     0%   13-84
+whitemagic/alchemy/transmutation_pipeline.py                                   69     69     0%   11-112
+whitemagic/archaeology/__init__.py                                             25      0   100%
+whitemagic/archaeology/dig.py                                                 118    118     0%   1-253
+whitemagic/automation/__init__.py                                               2      2     0%   8-17
+whitemagic/automation/consolidator.py                                         124    124     0%   9-322
+whitemagic/automation/daemon.py                                               317    317     0%   14-703
+whitemagic/autonomous/__init__.py                                              12     11     8%   26-49
+whitemagic/autonomous/executor/__init__.py                                      6      6     0%   11-18
+whitemagic/autonomous/executor/assessor.py                                     64     64     0%   6-149
+whitemagic/autonomous/executor/continuous_executor.py                         409    409     0%   7-694
+whitemagic/autonomous/executor/limits.py                                       53     53     0%   11-90
+whitemagic/autonomous/executor/local_model_integration.py                       4      4     0%   11-17
+whitemagic/autonomous/executor/objective_generator.py                         243    243     0%   6-424
+whitemagic/autonomous/supervisor.py                                            56     56     0%   9-110
+whitemagic/cache/__init__.py                                                    2      2     0%   8-15
+whitemagic/cli/cli_app.py                                                     911    578    37%   22-23, 26, 40, 42, 48, 53, 56, 69-71, 82-84, 90-91, 98-99, 104, 111, 118, 126-127, 132-133, 138-139, 144-145, 150-151, 155, 163-164, 171-172, 207, 213, 215, 228-230, 240-271, 276-284, 298-399, 409-447, 455-479, 489-491, 508-534, 539-566, 573-586, 592-601, 623-651, 664-670, 687, 691-692, 695-696, 703, 724, 726, 728, 738-739, 746-765, 771-772, 777-790, 796-797, 833-884, 891-954, 964-980, 986-1014, 1019-1030, 1035-1036, 1041-1052, 1059-1072, 1085-1101, 1106-1111, 1116-1122, 1137-1200, 1212-1216, 1220-1226, 1230-1236, 1244-1253, 1257-1263, 1269-1273, 1280-1284, 1290-1294, 1302, 1308-1309, 1315-1316, 1324-1327, 1333-1334, 1339, 1344-1349, 1360, 1366-1367, 1373-1377, 1386
+whitemagic/cli/cli_archaeology.py                                             123     80    35%   24-32, 39-53, 62-73, 80-89, 95-98, 105-112, 119-126, 139-148, 156-160, 167-175, 181-192
+whitemagic/cli/cli_autonomous_execution.py                                     88     63    28%   27-46, 52-71, 80-122, 128-162
+whitemagic/cli/cli_cache.py                                                    62     50    19%   18-38, 45-59, 65-83, 87
+whitemagic/cli/cli_commands_gardens.py                                         97     78    20%   19-34, 41-65, 71-89, 95-113, 120-131, 135-140, 145-146, 151-170
+whitemagic/cli/cli_commands_intelligence.py                                    92     72    22%   19-38, 44-58, 65-77, 83-104, 110-120, 128-151
+whitemagic/cli/cli_commands_optimization.py                                    18      9    50%   15, 22-30
+whitemagic/cli/cli_commands_supervisor.py                                      32     30     6%   10-50
+whitemagic/cli/cli_commands_symbolic.py                                        65     48    26%   20-42, 49-61, 72-91, 97-100, 105-110
+whitemagic/cli/cli_commands_thought.py                                         38     24    37%   15, 18-21, 26-34, 40-51, 58
+whitemagic/cli/cli_local.py                                                     4      0   100%
+whitemagic/cli/cli_prat.py                                                     87     68    22%   24-51, 67-105, 112-131, 137-162, 166
+whitemagic/cli/cli_rust.py                                                    107     73    32%   16-24, 36-58, 63-74, 84-111, 116-127, 148-149, 156, 165, 170
+whitemagic/cli/cli_sangha.py                                                  143     69    52%   27-35, 43-50, 55-57, 68-75, 87-101, 109-123, 130-135, 163-176, 196-211, 219-228, 243-249
+whitemagic/cli/cli_scratchpad.py                                               22     10    55%   18-20, 25-29, 34-35
+whitemagic/cli/cli_watcher.py                                                 139    113    19%   29-51, 58-66, 72-86, 92-127, 133-146, 152-177, 184-215, 221-236
+whitemagic/cli/cli_zodiac.py                                                   96     72    25%   14-16, 27-46, 55-72, 80-95, 101-117, 123-143, 147
+whitemagic/cli/commands/__init__.py                                             0      0   100%
+whitemagic/cli/commands/army_commands.py                                       46     26    43%   14, 25-29, 35-39, 49-63, 70-74
+whitemagic/cli/commands/balance_commands.py                                    42     33    21%   19-35, 42-66
+whitemagic/cli/commands/conductor_commands.py                                 169    132    22%   20-59, 69-102, 112-116, 124-134, 143-183, 189-193, 199-225
+whitemagic/cli/commands/dharma_commands.py                                     91     69    24%   15-17, 30-73, 80-102, 109-137
+whitemagic/cli/commands/diagnostics_commands.py                               213    191    10%   13-16, 25-59, 66-142, 147-254, 262-309
+whitemagic/cli/commands/dream_commands.py                                      27     14    48%   12-14, 27-37, 43-46
+whitemagic/cli/commands/gana_commands.py                                       85     65    24%   17-22, 38-67, 75-110, 116-151
+whitemagic/cli/commands/health_commands.py                                    168    138    18%   14-27, 33-46, 52-105, 111-126, 132-144, 151-161, 168-178, 185-196
+whitemagic/cli/commands/maintenance_commands.py                                38     26    32%   16-18, 29-57
+whitemagic/cli/commands/scratchpad_commands.py                                113     88    22%   22-40, 50-71, 79-120, 140-174
+whitemagic/cli/commands/vault_commands.py                                      61     35    43%   18-22, 31-36, 44-50, 57-64, 72-77, 85-88
+whitemagic/cli/commands/wisdom_commands.py                                     53     37    30%   13-15, 33-60, 67-92
+whitemagic/cli/init_command.py                                                 56     39    30%   485-541, 546
+whitemagic/config/__init__.py                                                  45     30    33%   37-40, 66-67, 71-76, 80-88, 93-103
+whitemagic/config/concurrency.py                                               37     37     0%   6-74
+whitemagic/config/manager.py                                                  213    213     0%   8-464
+whitemagic/config/paths.py                                                     66     18    73%   50, 55-56, 60-65, 85-89, 98, 106, 112-113, 117-118, 120
+whitemagic/config/validator.py                                                115     76    34%   53, 62-95, 104, 118-131, 146, 151, 161-168, 177-205, 214, 228-232, 241-246, 268-280
+whitemagic/core/__init__.py                                                     4      0   100%
+whitemagic/core/acceleration/__init__.py                                       60     39    35%   14, 17, 20, 29-40, 49-60, 69-80, 89-100
+whitemagic/core/acceleration/dispatch_bridge.py                               130     15    88%   123, 157-160, 189-190, 197-200, 214-217, 236-237
+whitemagic/core/acceleration/elixir_bridge.py                                  78     54    31%   42-63, 68-103, 122, 146-148, 170, 179, 195, 205, 214, 219, 228-229
+whitemagic/core/acceleration/event_ring_bridge.py                             141     35    75%   164-167, 184-190, 193, 199-205, 208, 214-229, 232, 249-255, 258
+whitemagic/core/acceleration/go_mesh_bridge.py                                 76     54    29%   39-55, 60-92, 110, 119, 132, 140, 149, 166, 174-179, 188-189
+whitemagic/core/acceleration/graph_transitions.py                              73     73     0%   12-187
+whitemagic/core/acceleration/haskell_bridge.py                                136     97    29%   39, 46-48, 68, 75-86, 99-119, 129-146, 181, 188-206, 226-250, 262-279, 288-303
+whitemagic/core/acceleration/haskell_interface.py                              49     49     0%   3-82
+whitemagic/core/acceleration/hybrid_dispatcher.py                             201    201     0%   14-363
+whitemagic/core/acceleration/hybrid_dispatcher_v2.py                          504    504     0%   11-819
+whitemagic/core/acceleration/julia_bridge.py                                  111     52    53%   54-55, 65, 71, 78, 82-83, 106-113, 127, 144, 156, 169, 182, 203, 217, 228, 252-277, 295, 318, 339, 356, 370-377
+whitemagic/core/acceleration/julia_interface.py                                43     43     0%   2-76
+whitemagic/core/acceleration/koka_batch_client.py                             236    236     0%   27-492
+whitemagic/core/acceleration/koka_bridge.py                                    89     89     0%   6-152
+whitemagic/core/acceleration/koka_native_bridge.py                            258    117    55%   62-67, 73-74, 80-86, 133-137, 148-151, 156, 160, 166, 181-183, 192-194, 204-216, 221, 228-229, 239-240, 267-268, 273-274, 296-299, 307-319, 326-335, 380-396, 413-415, 423, 435-438, 450-453, 472-498
+whitemagic/core/acceleration/mojo_bridge.py                                    95     74    22%   43-71, 77-87, 106-120, 141-154, 173-189, 198-226, 235-236
+whitemagic/core/acceleration/polyglot_accelerator.py                          197    134    32%   59-62, 71-72, 79-82, 85, 97, 103-111, 121-128, 135-169, 180-198, 205-223, 235-256, 265-270, 275-288, 293-298, 304-311, 319-322, 355
+whitemagic/core/acceleration/shared_memory_bridge.py                          197    197     0%   10-300
+whitemagic/core/acceleration/simd_cosine.py                                   100     25    75%   45, 55, 58-59, 90-92, 105, 108-113, 122-127, 147, 155, 173, 183-184
+whitemagic/core/acceleration/simd_distance.py                                 113    113     0%   22-232
+whitemagic/core/acceleration/simd_holographic.py                               81     81     0%   18-175
+whitemagic/core/acceleration/simd_keywords.py                                  83     83     0%   17-175
+whitemagic/core/acceleration/simd_unified.py                                  158    110    30%   36-39, 54, 70-74, 87-98, 107-114, 125-126, 143-149, 158-165, 174-188, 201-223, 236-250, 263-276, 285-298, 307-311, 320-321, 337, 340, 343, 346, 349, 352
+whitemagic/core/acceleration/simd_vector_batch.py                             103    103     0%   17-195
+whitemagic/core/acceleration/sorting_bridge.py                                 64     64     0%   5-137
+whitemagic/core/acceleration/state_board_bridge.py                            218     85    61%   120-122, 128, 132-136, 143-149, 161-174, 181-182, 187-199, 205-206, 218-226, 231, 236-241, 246-248, 272-280, 285-291, 304-312, 317-322, 327-332, 337-338, 343-344, 346-347
+whitemagic/core/acceleration/unified_bridge.py                                 76     76     0%   5-155
+whitemagic/core/acceleration/zig_graph_bridge.py                              115    115     0%   21-219
+whitemagic/core/alignment/__init__.py                                           0      0   100%
+whitemagic/core/alignment/grimoire_audit.py                                    49     49     0%   7-100
+whitemagic/core/async_layer.py                                                 85     57    33%   22-27, 32-34, 47-72, 85-94, 101-106, 112, 115, 119-125, 129-131, 148-155
+whitemagic/core/automation/__init__.py                                          0      0   100%
+whitemagic/core/automation/consolidation.py                                   277    277     0%   1-529
+whitemagic/core/automation/orchestra.py                                       131    131     0%   13-302
+whitemagic/core/automation/scratchpad.py                                       59     45    24%   21-25, 28-34, 37-38, 42-49, 53-91, 95-100, 105-106
+whitemagic/core/automation/triggers.py                                         50     50     0%   10-104
+whitemagic/core/autonomous/unified_nervous_system.py                          154     74    52%   91-97, 101-103, 125, 136-139, 145-152, 160-166, 170, 179-187, 191, 208-218, 231-241, 259-277, 294-305, 322-340, 357-365, 391-433
+whitemagic/core/bootstrap_organs.py                                            58     58     0%   9-104
+whitemagic/core/boundaries/__init__.py                                          2      0   100%
+whitemagic/core/boundaries/boundary_engine.py                                 107     23    79%   49, 54, 59, 161-162, 167, 187, 235, 258-270, 319-324, 332, 350, 357, 362-363, 368-369
+whitemagic/core/bridge/adaptive.py                                             12      7    42%   10-16, 21-27
+whitemagic/core/bridge/gana.py                                                 59     18    69%   34, 38, 49-51, 70-71, 95-98, 119-125
+whitemagic/core/bridge/haskell.py                                              17      1    94%   24
+whitemagic/core/bridge/optimization.py                                         62     51    18%   9, 25, 42-121, 138-150, 167-169
+whitemagic/core/bridge/sutra_bridge.py                                         27      7    74%   14-18, 31-32
+whitemagic/core/bridge/tools.py                                               182    179     2%   12-556
+whitemagic/core/bridge/utils.py                                                24     17    29%   13-20, 24-25, 28-35
+whitemagic/core/consciousness/stillness.py                                     41     20    51%   38-47, 60-70, 83-86
+whitemagic/core/continuity.py                                                 131     96    27%   19-20, 45-46, 50-70, 74-80, 84-86, 90-93, 102-114, 120-122, 126, 130-140, 148-178, 187-202, 206-224, 228-234
+whitemagic/core/dreaming/__init__.py                                            1      0   100%
+whitemagic/core/dreaming/background_dreamer.py                                 42     29    31%   20-29, 33-40, 43-72, 75, 80-82
+whitemagic/core/dreaming/daemon.py                                            106    106     0%   6-168
+whitemagic/core/dreaming/dream_cycle.py                                       464    257    45%   119, 140-141, 154-156, 159-162, 180-197, 222-223, 262, 264, 266, 268, 270, 272, 274, 277-285, 288, 312-322, 335-340, 368-369, 373-378, 380-386, 396-398, 404-430, 453-462, 485-486, 495-500, 513-576, 585-591, 601-679, 685-721, 725-734, 744-765, 773-781, 789-798, 806-821, 868-869, 889-890
+whitemagic/core/dreaming/narrative_compressor.py                              217    121    44%   48, 121-167, 188-211, 215-240, 266, 280, 284, 299, 328-375, 392-421, 435-452
+whitemagic/core/ecology/__init__.py                                            16     16     0%   3-36
+whitemagic/core/embodiment.py                                                  65     34    48%   15, 43-44, 80-82, 92-101, 112-121, 140-144, 154-170
+whitemagic/core/engines/__init__.py                                             2      0   100%
+whitemagic/core/engines/registry.py                                            69     12    83%   346-379
+whitemagic/core/evolution/__init__.py                                           2      2     0%   6-8
+whitemagic/core/evolution/adaptive_integration.py                              66     66     0%   7-193
+whitemagic/core/evolution/adaptive_system.py                                  119    119     0%   8-265
+whitemagic/core/evolution/autodidactic_loop.py                                135    135     0%   12-365
+whitemagic/core/evolution/benchmark_tracker.py                                152    152     0%   8-279
+whitemagic/core/evolution/continuous_evolution.py                             131    131     0%   14-359
+whitemagic/core/evolution/galaxy_miner.py                                     185    185     0%   12-435
+whitemagic/core/evolution/meta_learning.py                                    129    129     0%   8-361
+whitemagic/core/evolution/ml_recommender.py                                   117    117     0%   9-325
+whitemagic/core/evolution/optimizers.py                                       148    148     0%   9-334
+whitemagic/core/evolution/thought_galaxy.py                                    25     25     0%   2-34
+whitemagic/core/fusions.py                                                    443    118    73%   89-93, 100-101, 187-188, 205-217, 305-306, 328-329, 358-406, 449, 500-501, 532-533, 550-551, 553-554, 567-568, 633-634, 696-698, 721-722, 753, 756, 762-766, 771-778, 792-793, 915-917, 958-965, 980-981, 992-998, 1056-1058, 1099-1100, 1104, 1201-1209, 1243-1245
+whitemagic/core/ganas/__init__.py                                               4      0   100%
+whitemagic/core/ganas/base.py                                                 155     34    78%   68-75, 79-80, 125, 146, 176, 181, 190, 203, 216, 230, 247-256, 277, 291, 327-328, 339, 348, 365-366
+whitemagic/core/ganas/chain.py                                                 47     38    19%   32-42, 67-125, 152-159, 163
+whitemagic/core/ganas/eastern_quadrant.py                                     196    163    17%   36, 39, 52-77, 98, 101, 114-134, 151, 154, 166-209, 221, 224, 237-257, 275, 278, 290-344, 362, 365, 377-425, 443, 446, 459-611
+whitemagic/core/ganas/examples.py                                              81     81     0%   13-300
+whitemagic/core/ganas/karma.py                                                 49     33    33%   26-37, 51-80, 86-87, 91-108, 115-117
+whitemagic/core/ganas/lunar.py                                                 53     30    43%   13-14, 29-48, 54-84
+whitemagic/core/ganas/northern_quadrant.py                                    223    193    13%   24, 27, 41-151, 168, 171, 186-239, 257, 260, 272-299, 318, 321, 334-400, 418, 421, 433-457, 475, 478, 492-548, 567, 570, 584-659
+whitemagic/core/ganas/registry.py                                              15      2    87%   92, 96
+whitemagic/core/ganas/southern_quadrant.py                                    230    189    18%   42-47, 56-60, 70-89, 92-118, 121-137, 158, 161, 173, 191, 194, 207-251, 270, 273, 287-384, 394-457, 473, 476, 490-538, 556, 559, 571-600, 619, 622, 635-700
+whitemagic/core/ganas/swarm.py                                                111     96    14%   39-54, 62-98, 105-163, 167-184, 194-231, 235-236
+whitemagic/core/ganas/western_quadrant.py                                     190    160    16%   22, 25, 37-52, 70, 73, 85-110, 128, 131, 143-159, 177, 180, 192-216, 234, 237, 255-394, 407, 410, 424-482, 500, 503, 515-564
+whitemagic/core/garden_directory.py                                           160    160     0%   12-516
+whitemagic/core/garden_function_registry.py                                   158    158     0%   7-302
+whitemagic/core/garden_virtual_fs.py                                          161    161     0%   13-304
+whitemagic/core/gardens/__init__.py                                             1      1     0%   8
+whitemagic/core/governance/maturity_gates.py                                  174     39    78%   133-134, 142-143, 157-158, 165-166, 180-181, 188-189, 196-197, 222-223, 236-237, 244-265, 270-277, 346, 350-351, 399
+whitemagic/core/governance/zodiac_council.py                                   82     54    34%   34, 37-45, 49-62, 71-127, 133-135
+whitemagic/core/governor.py                                                   242    158    35%   49, 68, 91, 95-96, 100-101, 105-108, 112-113, 117, 271-340, 356-425, 439-464, 476-477, 493-564, 583-588, 592-610, 618, 622, 639-675, 687, 698-700, 723-724, 734-735, 740-741
+whitemagic/core/health_monitor.py                                              88     88     0%   5-169
+whitemagic/core/homeostasis.py                                                 87     54    38%   62-63, 69-118, 127-154, 161-164
+whitemagic/core/intake/__init__.py                                            195    157    19%   42-56, 60-80, 84-90, 94-99, 103-108, 112, 116-119, 123-145, 149-165, 169-240, 244-258, 262, 266-290, 294-297, 301, 321-323, 327-339
+whitemagic/core/intake/holographic_intake.py                                  321    257    20%   75, 113-114, 117-135, 139-144, 148-153, 157-173, 177-182, 186-212, 216-220, 228-236, 240-245, 249, 257-302, 306-309, 317-414, 418-428, 436-439, 443, 447-451, 455-459, 467-482, 486-493, 497-504, 508, 514-517, 522-570
+whitemagic/core/intake/media_processor.py                                     281    177    37%   83, 86, 93-132, 151-159, 162-188, 207-216, 219-257, 261-285, 291-292, 315-328, 331-359, 364-382, 404-412, 415-423, 426-437, 446-469, 496-502, 516-519
+whitemagic/core/intelligence/agentic/__init__.py                               17      5    71%   18-36
+whitemagic/core/intelligence/agentic/anti_loop.py                             127     91    28%   59-72, 76-86, 90-101, 105-117, 122, 138-171, 175-185, 189-192, 202-214, 218, 222, 232, 246-252, 262-264, 268-277
+whitemagic/core/intelligence/agentic/auto_activation.py                        67     53    21%   22-26, 32-97, 101-103, 107-112, 116, 129-131, 135
+whitemagic/core/intelligence/agentic/coherence_persistence.py                  60     33    45%   34-38, 52-59, 65-68, 82-104, 114-115, 119, 130-132
+whitemagic/core/intelligence/agentic/emergence_engine.py                      121     67    45%   74-78, 82-87, 91-102, 106-137, 155-176, 180-222, 226-262, 270, 275, 325-327
+whitemagic/core/intelligence/agentic/joy_router.py                             26     17    35%   7-9, 12-16, 19-30, 33, 36, 41-43
+whitemagic/core/intelligence/agentic/multi_substrate.py                        25     15    40%   8-19, 23-24, 28-36, 41, 45-47, 56-58
+whitemagic/core/intelligence/agentic/parallel_first.py                         71     52    27%   28-33, 44-57, 61-92, 96-126, 130-133, 148-150, 155
+whitemagic/core/intelligence/agentic/pattern_weather.py                        26     16    38%   9-11, 14-16, 19-25, 33, 36-37, 42-44
+whitemagic/core/intelligence/agentic/resonance_amp.py                          22     14    36%   7-9, 13-19, 29-35, 38, 47-49
+whitemagic/core/intelligence/agentic/token_optimizer.py                       192    127    34%   50, 54-55, 60-66, 70, 73, 76, 80-85, 88, 91-92, 115-116, 123-126, 129, 132-144, 147-157, 160-165, 168-175, 178-180, 193, 198-206, 211-218, 227-247, 258-260, 267-311, 315, 319-320, 337-339, 344, 348-366
+whitemagic/core/intelligence/bicameral.py                                     196      9    95%   192, 351-352, 405, 410-411, 446, 470-471
+whitemagic/core/intelligence/cognitive_modes.py                               128      7    95%   256, 258, 260, 264-265, 284, 331
+whitemagic/core/intelligence/community_maintenance.py                         132      9    93%   161, 221, 225, 243, 250-251, 278, 280, 284
+whitemagic/core/intelligence/core_access.py                                   376    117    69%   167-175, 194-245, 254-255, 298-313, 330-331, 361-362, 380-381, 424-425, 444-445, 465-466, 513-514, 568-569, 617-619, 654-655, 676-687, 727-728, 755-815, 849
+whitemagic/core/intelligence/dream/dream_phases.py                             12      0   100%
+whitemagic/core/intelligence/emotion_drive.py                                 100      6    94%   190, 291-295
+whitemagic/core/intelligence/entity_extractor.py                              147     42    71%   58, 133-135, 155-161, 173-225, 275, 295-333
+whitemagic/core/intelligence/heart.py                                          82     37    55%   65-116, 119-121, 138
+whitemagic/core/intelligence/hologram/encoder.py                              266     97    64%   54-57, 96-106, 119, 139-156, 165-199, 203-215, 219-245, 250-261, 344, 394-399, 407-416, 421, 423, 428, 430, 483, 485, 522-523
+whitemagic/core/intelligence/hologram/engine.py                                59     40    32%   28, 36-48, 52-60, 64-82, 86-87, 95-99, 103-112, 116, 123-125
+whitemagic/core/intelligence/hologram/mojo_bridge.py                           80     66    18%   29-32, 37-74, 79-81, 86-140, 145-147
+whitemagic/core/intelligence/insight_pipeline.py                              253    100    60%   96, 128-132, 136-139, 203-216, 306-334, 338-363, 367-391, 395-435, 442-446, 451-457, 461-465, 470-478, 523-524
+whitemagic/core/intelligence/knowledge_graph.py                               165     89    46%   35, 42-52, 63, 80, 127-174, 186-196, 213, 223-233, 242-244, 247-248, 257-266, 271-290, 294
+whitemagic/core/intelligence/knowledge_graph_v2.py                            183     98    46%   43, 62, 121-131, 144, 166, 189-233, 274-320, 333-365, 377-413, 417, 429, 443-444
+whitemagic/core/intelligence/lightweight_ner.py                               101     17    83%   43, 211, 223, 226, 247-250, 282, 284, 309, 323, 327-331
+whitemagic/core/intelligence/reconsolidation.py                               127     13    90%   157, 170-171, 187, 205, 217-225, 271-272, 277
+whitemagic/core/intelligence/reranker.py                                      108     38    65%   57-58, 65-77, 89, 182-220, 242, 245
+whitemagic/core/intelligence/researcher.py                                    209     23    89%   49, 234, 295-326, 349, 407, 429-431, 456
+whitemagic/core/intelligence/self_model.py                                    142     18    87%   154, 192-195, 201-204, 208-211, 262-263, 269-271
+whitemagic/core/intelligence/synthesis/__init__.py                              7      0   100%
+whitemagic/core/intelligence/synthesis/kaizen_engine.py                       241    194    20%   45-50, 64-70, 74-78, 81-85, 89-125, 133-144, 158-170, 184-195, 208-237, 241-272, 276-306, 310-374, 378-422, 426-434, 452-502, 506-529, 533-555, 562-564
+whitemagic/core/intelligence/synthesis/serendipity_engine.py                  197    163    17%   43-52, 55-67, 73-91, 95-120, 133-150, 163-180, 193-207, 220-245, 249-265, 269-275, 283-344, 352-395, 399-404, 409, 416-418
+whitemagic/core/intelligence/synthesis/solution_library.py                    102     71    30%   35-36, 42-45, 49-64, 68-88, 92-109, 113-121, 127-162, 166-188, 195-197
+whitemagic/core/intelligence/synthesis/solver_engine.py                        60     58     3%   5-118
+whitemagic/core/intelligence/synthesis/sub_clustering.py                       79     58    27%   34-41, 44-56, 60-74, 78-115, 120-131, 135-151, 165-167
+whitemagic/core/intelligence/synthesis/tag_normalizer.py                      132    117    11%   27-31, 34-39, 43-80, 84-93, 97-141, 145-171, 175-209, 213-242, 249-251
+whitemagic/core/intelligence/synthesis/title_generator.py                     108     92    15%   19-23, 26-30, 34-58, 62-93, 97-111, 115-131, 135-150, 154-182, 189-191
+whitemagic/core/intelligence/synthesis/unified_patterns.py                    189    153    19%   42-46, 50-69, 76-108, 113-164, 169-202, 207-226, 230-253, 257-301, 305-326, 330-341, 351-370, 377-379
+whitemagic/core/intelligence/working_memory.py                                113      5    96%   169, 244, 247-248, 253
+whitemagic/core/ipc_bridge.py                                                  58     18    69%   27-28, 36, 44, 51-53, 62, 66, 76-83, 88, 93
+whitemagic/core/learning/__init__.py                                            2      0   100%
+whitemagic/core/learning/cross_session.py                                     125     55    56%   98-99, 115-121, 125-155, 172-178, 185-196, 202-213, 216-217
+whitemagic/core/memory/association_miner.py                                   278     80    71%   148-156, 165-170, 187, 213-215, 255-257, 260, 268-269, 291, 304-305, 309-347, 388-391, 431, 447-448, 482-484, 527-528, 547, 558-596
+whitemagic/core/memory/bridge_synthesizer.py                                  128     70    45%   89-90, 95-96, 102-104, 107-136, 140, 147, 159-175, 188-206, 215-240, 244-271
+whitemagic/core/memory/causal_miner.py                                        212    134    37%   151, 193-379, 394-448
+whitemagic/core/memory/cognitive_episode.py                                    26      6    77%   38, 55-57, 61-63
+whitemagic/core/memory/consolidation.py                                       327    102    69%   127, 188-194, 211-224, 255-261, 269-272, 278-343, 350, 377, 426, 433, 464-465, 496-497, 531-532, 565-566, 570, 577-578, 595, 633-634, 648, 663-664, 666-668, 686-687, 723-724
+whitemagic/core/memory/consolidation_strategies.py                              8      0   100%
+whitemagic/core/memory/constellations.py                                      517    331    36%   38, 46-48, 53-55, 62-64, 88, 167-170, 177, 188-204, 227-229, 247-345, 359-389, 403-441, 451-479, 484-510, 518-548, 562-598, 611-628, 649-665, 698-700, 707, 714, 724, 732, 740-742, 745-746, 780-886, 976-987, 1027, 1044, 1049-1079, 1086-1103
+whitemagic/core/memory/db_manager.py                                          140     66    53%   25-33, 49-63, 67, 89-94, 129, 135-138, 151-154, 162-173, 179-184, 189-193, 214-217, 228-232
+whitemagic/core/memory/embeddings.py                                          560    381    32%   59-66, 106-107, 113-120, 125, 130-131, 175-178, 184-186, 195, 197, 204-210, 218-221, 226-251, 256, 261-277, 281-310, 314-351, 357, 362, 364, 366-368, 372-383, 387-399, 403, 407-419, 427-433, 441, 454-461, 467-485, 489-507, 512-520, 532-582, 594-651, 680, 688-693, 698-707, 711-738, 774-776, 822-845, 866-897, 901-930, 934
+whitemagic/core/memory/entropy_scorer.py                                      136     44    68%   165, 184-186, 229-284
+whitemagic/core/memory/galactic_map.py                                        291    138    53%   188-190, 197-199, 217-218, 256, 264, 266, 268, 272-286, 290-292, 337-339, 350-366, 421-425, 439-441, 448, 458-564, 568-590
+whitemagic/core/memory/graph_engine.py                                        365    194    47%   46-48, 55-57, 145, 210-211, 237-239, 271, 289-290, 301-303, 332-349, 355, 360-362, 368, 371-373, 380-400, 412-442, 452, 460-514, 527, 539-548, 556-574, 585-587, 591-605, 627-703, 707-722, 737-739, 746
+whitemagic/core/memory/graph_walker.py                                        315    107    66%   175-177, 189-191, 195-210, 218, 230-231, 273-274, 285-291, 311-312, 317, 365-368, 400, 402, 405, 411, 422, 436, 518-520, 530-619, 629-639, 649-651, 665-666
+whitemagic/core/memory/holographic.py                                         136    112    18%   28-60, 65, 71-77, 89-106, 112-123, 128-147, 152-171, 174-185, 191-208, 215-217
+whitemagic/core/memory/hrr.py                                                 100      5    95%   91, 97, 162, 244, 246
+whitemagic/core/memory/lifecycle.py                                           196     77    61%   96, 110-112, 148-150, 160-161, 169-170, 178-179, 254-255, 274-275, 295-397, 425-429
+whitemagic/core/memory/manager.py                                             164    136    17%   26-36, 42-43, 54-86, 100-149, 158-168, 187-212, 216-233, 237-250, 254, 258, 261-264, 268-293, 297-304, 313-321, 325-326, 335, 343-357, 360-361
+whitemagic/core/memory/memory_matrix/__init__.py                                5      0   100%
+whitemagic/core/memory/memory_matrix/embedding_index.py                       117     79    32%   29-30, 66-71, 75-92, 96-115, 119-126, 130, 140-153, 172-192, 211-230, 234, 238-243, 247, 256-259, 265-268
+whitemagic/core/memory/memory_matrix/matrix.py                                136     95    30%   66-76, 80-94, 98-107, 115-133, 151-184, 188, 192, 196, 204-205, 209-210, 214-219, 233-252, 269, 286-327, 339, 350-353
+whitemagic/core/memory/memory_matrix/seen_registry.py                         127     80    37%   54, 58, 69-74, 78-87, 91-98, 102-106, 110-130, 134-137, 153-181, 185-186, 190-192, 196-197, 201-206, 210-213, 217, 221, 225-232, 236-242, 251-252, 258-261
+whitemagic/core/memory/memory_matrix/timeline.py                              125     87    30%   44, 48, 62-66, 70-80, 84-92, 113-123, 140-152, 156, 160, 164-165, 169-170, 177-186, 190-206, 216-231, 235-243, 253-255, 261-264
+whitemagic/core/memory/mindful_forgetting.py                                  165     26    84%   71, 137-142, 152, 154, 191, 235-236, 241, 257-258, 293-295, 303-304, 320-325, 346, 349-350
+whitemagic/core/memory/no_hiding.py                                            42     11    74%   30-45, 55-56, 64, 68, 85-87
+whitemagic/core/memory/query_cache.py                                         107     70    35%   52-55, 59-76, 80-98, 104, 108-114, 118-123, 127-131, 144-157, 183-205
+whitemagic/core/memory/sqlite_backend.py                                      568    228    60%   38-48, 62, 69-72, 78-79, 143-144, 153-154, 219, 221-222, 227-228, 234-241, 328-330, 401, 418-419, 426-456, 460-483, 515-518, 527, 540-543, 572-583, 600, 623-624, 627-630, 645-646, 649-652, 662-668, 672-675, 700-701, 719-736, 811, 843, 871-872, 883-884, 894-895, 926-927, 939-940, 964, 973-977, 981-982, 1035-1038, 1090, 1095-1096, 1112-1113, 1130-1131, 1206-1268, 1272-1276, 1280-1300, 1304-1307, 1327-1328, 1344-1361, 1365-1380, 1398-1423
+whitemagic/core/memory/sqlite_queries.py                                        4      0   100%
+whitemagic/core/memory/surprise_gate.py                                       113     38    66%   113-119, 132-134, 148-149, 167-198, 235-251
+whitemagic/core/memory/thought_galaxy.py                                       60     44    27%   24-25, 29-45, 49-69, 73-113, 117-129, 133, 147-159
+whitemagic/core/memory/umap_projection.py                                     125     16    87%   119, 147, 158-160, 190-192, 203-210, 232-233, 272, 276-278
+whitemagic/core/memory/unified.py                                             498    278    44%   29-37, 48-49, 68-70, 82-83, 90-127, 155-165, 178-191, 198-199, 223-225, 236-237, 258-261, 271-277, 295-296, 324-450, 512-513, 521, 544, 547-548, 570, 575-587, 605, 616-617, 645-649, 662-669, 673-676, 687-722, 737-771, 782-822, 826, 830, 838, 842, 846, 856, 877
+whitemagic/core/memory/unified_types.py                                       162     40    75%   58-61, 65, 126, 128, 130, 137, 142-143, 154-156, 160-171, 176, 180-182, 192-194, 198, 202-205, 209, 213, 217, 221, 302-310
+whitemagic/core/memory/vector_search.py                                       204    156    24%   30-32, 36-37, 42-59, 66-74, 77-87, 99-105, 108-110, 113-121, 124-127, 130-147, 150-228, 233, 247-267, 284-288
+whitemagic/core/monitoring/__init__.py                                          2      0   100%
+whitemagic/core/monitoring/green_score.py                                     104      2    98%   147, 181
+whitemagic/core/monitoring/otel_export.py                                     128     40    69%   42-43, 49, 95, 99-116, 140, 144-157, 169, 174, 179-189, 193-195, 230
+whitemagic/core/monitoring/prometheus_export.py                               108     63    42%   38-39, 61, 65-117, 121-134, 141-148, 152-158, 162-168, 172-178, 182-189, 193, 221, 226
+whitemagic/core/monitoring/system_monitor.py                                   61     46    25%   21-29, 34-105, 109, 125-127, 131-133
+whitemagic/core/monitoring/telemetry.py                                        56      3    95%   43, 82-83
+whitemagic/core/nervous_system.py                                              76     76     0%   9-121
+whitemagic/core/nurturing/__init__.py                                           2      0   100%
+whitemagic/core/nurturing/nurturing_engine.py                                 132     31    77%   91, 184, 212-221, 267, 271, 290, 293, 305-312, 316-332, 339-340, 345-346
+whitemagic/core/orchestration/__init__.py                                       4      4     0%   14-36
+whitemagic/core/orchestration/consciousness.py                                134    134     0%   21-248
+whitemagic/core/orchestration/council.py                                       34     34     0%   7-60
+whitemagic/core/orchestration/session_startup.py                              412    412     0%   16-711
+whitemagic/core/orchestration/unified_orchestrator.py                         327    327     0%   17-713
+whitemagic/core/orchestration/zodiacal_procession.py                          113    113     0%   12-334
+whitemagic/core/patterns/__init__.py                                            2      2     0%   3-5
+whitemagic/core/patterns/emergence/__init__.py                                  3      3     0%   3-12
+whitemagic/core/patterns/emergence/detector.py                                 49     49     0%   3-97
+whitemagic/core/patterns/emergence/dream_state.py                             162    162     0%   7-303
+whitemagic/core/patterns/emergence/guideline_evolution.py                      57     57     0%   9-156
+whitemagic/core/patterns/emergence/novelty_detector.py                         74     74     0%   6-151
+whitemagic/core/patterns/pattern_consciousness/__init__.py                     18     18     0%   13-55
+whitemagic/core/patterns/pattern_consciousness/autonomous_learner.py           29     29     0%   1-80
+whitemagic/core/patterns/pattern_consciousness/gan_ying_integration.py        135    135     0%   12-287
+whitemagic/core/patterns/pattern_consciousness/pattern_engine_enhanced.py     120    120     0%   9-267
+whitemagic/core/patterns/pattern_consciousness/resonance_cascade.py            82     82     0%   1-159
+whitemagic/core/plugin/__init__.py                                              9      9     0%   6-18
+whitemagic/core/polyglot/__init__.py                                            2      2     0%   3-10
+whitemagic/core/polyglot/bittensor_bridge.py                                   39     39     0%   1-76
+whitemagic/core/resonance/gan_ying.py                                          68     30    56%   44-52, 75-78, 83, 103-106, 111, 115, 119, 123, 127, 132-133, 138-139, 143, 147-149, 159
+whitemagic/core/resonance/gan_ying_enhanced.py                                410     81    80%   16-18, 369, 421-427, 435-443, 457-458, 470-471, 482-485, 498-499, 503-504, 508-509, 514-535, 551, 561-564, 571-575, 581-618, 622-623, 634-638, 668-669, 674-702
+whitemagic/core/resonance/integration_helpers.py                               69     34    51%   61-62, 73-95, 131-132, 137-138, 143-159
+whitemagic/core/resonance/salience_arbiter.py                                 116     12    90%   106, 123, 189, 198-201, 245, 253, 288-289, 309
+whitemagic/core/resonance/temporal_scheduler.py                               151     11    93%   214, 239, 315, 332-333, 339-340, 345-348
+whitemagic/core/scoring/__init__.py                                             2      2     0%   3-10
+whitemagic/core/semantic_fs.py                                                272    206    24%   65, 91, 121-135, 139-143, 147-153, 157-162, 189-210, 214-226, 230, 241-265, 269-285, 290-356, 364-469, 473-486, 490, 498, 502-505, 513, 524, 528-533, 544-547, 556, 561, 566, 571
+whitemagic/core/streaming.py                                                  107    107     0%   9-340
+whitemagic/core/temporal/__init__.py                                            2      2     0%   6-15
+whitemagic/core/temporal/chronos_guard.py                                      64     64     0%   8-119
+whitemagic/core/token_economy.py                                               41     41     0%   8-89
+whitemagic/core/update_checker.py                                              66     15    77%   46-48, 60-61, 73-74, 81-82, 93, 97-98, 105, 114, 119
+whitemagic/core/user.py                                                        46     46     0%   7-78
+whitemagic/core/wuxing_scheduler.py                                            67     67     0%   9-125
+whitemagic/cycle_engine.py                                                    208    208     0%   25-410
+whitemagic/db/__init__.py                                                       0      0   100%
+whitemagic/dharma/__init__.py                                                 200    140    30%   50-51, 137-143, 156-193, 200-222, 230-254, 259-291, 296-313, 318-341, 345-367, 375-376, 380-381, 402-408, 417-418, 423-424
+whitemagic/dharma/gan_ying_integration.py                                      33     33     0%   6-113
+whitemagic/dharma/governor.py                                                  46     46     0%   7-103
+whitemagic/dharma/karma_anchor.py                                             189     89    53%   46-53, 119-120, 137-138, 154-155, 157-159, 197-198, 233-237, 266-315, 349-427, 444-445, 448-450, 463-474
+whitemagic/dharma/karma_ledger.py                                             223     22    90%   51, 177, 187-188, 230, 247-248, 313-314, 333-334, 365-367, 386, 395, 405-406, 408-409, 429-430
+whitemagic/dharma/rules.py                                                    262     32    88%   57, 62, 64, 72-75, 121-122, 144, 149, 358, 368, 378-379, 392-394, 411, 489, 501-502, 526-527, 581-582, 590-591, 605-607, 629
+whitemagic/edge/inference.py                                                  134     93    31%   58-79, 86-98, 102-141, 144, 343-345, 349-355, 359, 363-429, 438-439, 453-455, 459
+whitemagic/edge/thought_clones_async.py                                       192     96    50%   28-30, 95-121, 132-134, 174-175, 194-197, 241-247, 257-275, 329, 331, 333, 340, 351, 366-367, 389-446, 473-485, 507-517, 522-541
+whitemagic/execution/__init__.py                                                0      0   100%
+whitemagic/execution/safe_executor.py                                          84     84     0%   12-311
+whitemagic/execution/sandbox.py                                               147    147     0%   13-375
+whitemagic/gardens/__init__.py                                                132     58    56%   85-89, 105-158, 167-170, 248, 264, 273, 279, 282, 285, 288, 333-335, 341-342, 352, 356
+whitemagic/gardens/air/__init__.py                                              8      2    75%   32-37
+whitemagic/gardens/air/agentic/__init__.py                                      2      0   100%
+whitemagic/gardens/air/agentic/terminal_scratchpad.py                          93     10    89%   80, 110, 143-144, 148-153
+whitemagic/gardens/awe/__init__.py                                             82     36    56%   66, 69, 77-82, 90-91, 100-103, 113-124, 128-129, 138-146, 153-156, 159-161, 168-177, 181, 185
+whitemagic/gardens/base_garden.py                                              77     47    39%   76, 81, 108-123, 136-137, 141-147, 151-163, 176, 191-213
+whitemagic/gardens/browser/__init__.py                                          7      0   100%
+whitemagic/gardens/browser/actions.py                                         273    215    21%   39, 62-63, 67-71, 75-78, 91-122, 131-144, 156-199, 218-271, 290-339, 358-375, 384-419, 443-479, 489-502, 506-519, 550-555, 559-569, 573-574, 577-578, 581, 587-589, 593-597, 605-609, 617-621, 631-633, 637-639, 643-645, 649-651, 655-657, 666-680, 684, 688, 692, 698-700, 704-706, 712-720, 724-732, 736-742
+whitemagic/gardens/browser/cdp.py                                             156    106    32%   26-27, 33-34, 47, 50, 67, 92-101, 105-107, 111-119, 122-123, 126, 139-163, 167-199, 203-208, 218-220, 224-228, 234, 238, 242, 246, 250, 254, 261, 265, 272-275, 289-297, 316-327
+whitemagic/gardens/browser/distiller.py                                       143    104    27%   52, 67-84, 136-138, 151-206, 217-235, 239-247, 264-284, 288-296, 303-313, 320-328, 335-342
+whitemagic/gardens/browser/screenshot.py                                       85     65    24%   23, 42-43, 47, 75-101, 130-188, 199-206, 232-239
+whitemagic/gardens/browser/web_research.py                                    347    172    50%   36-37, 41, 48-49, 121, 194-203, 212-215, 261-304, 325-368, 390-481, 522-584, 681-700, 731-742, 746-752, 772-777, 782-783, 788-789, 794-795
+whitemagic/gardens/connection/__init__.py                                      38     32    16%   19-100
+whitemagic/gardens/connection/zodiac_cores.py                                 177    177     0%   9-480
+whitemagic/gardens/cross_pollination.py                                        35     35     0%   9-161
+whitemagic/gardens/dharma/__init__.py                                          36      8    78%   46, 54, 63-68, 72-73, 77
+whitemagic/gardens/dharma/boundaries.py                                        49     28    43%   64-96, 115-116, 120-121
+whitemagic/gardens/dharma/consent.py                                           32     11    66%   46-70, 88-100, 110
+whitemagic/gardens/dharma/core.py                                              62     37    40%   17, 36-53, 57-66, 70-84, 99-118, 122-127
+whitemagic/gardens/gan_ying_wiring.py                                          12      4    67%   21-26, 33-38
+whitemagic/gardens/garden_resonance.py                                         85     85     0%   9-316
+whitemagic/gardens/garden_state.py                                             81     81     0%   7-157
+whitemagic/gardens/grief/__init__.py                                          152     86    43%   92-103, 107-115, 133-193, 197-222, 246, 248, 250, 252, 269-270, 280-289, 293-294, 320-321, 329-330
+whitemagic/gardens/joy/__init__.py                                             19     11    42%   16-22, 37-40
+whitemagic/gardens/love/__init__.py                                            86     38    56%   63, 71, 81-85, 94, 103-105, 113-121, 125-131, 135-138, 148-153, 157-168, 175, 184-186, 190, 208-210, 215-217
+whitemagic/gardens/metal/__init__.py                                            9      2    78%   38-43
+whitemagic/gardens/metal/zodiac/__init__.py                                   121     81    33%   33-34, 43-51, 56, 60-74, 78-92, 96-110, 123-143, 153-166, 171-186, 190-205, 215-220, 227-236, 255-262, 270-309, 313, 317-318, 322-323, 327, 331, 347-350, 355-356, 361-363
+whitemagic/gardens/metal/zodiac/api.py                                         58     18    69%   49, 53, 70, 93-114
+whitemagic/gardens/metal/zodiac/zodiac_cores.py                                 1      0   100%
+whitemagic/gardens/play/__init__.py                                            29      7    76%   41, 49, 58-61, 66
+whitemagic/gardens/practice/__init__.py                                        39     15    62%   42, 50, 59-63, 67-69, 74, 90-93
+whitemagic/gardens/practice/ritual_conductor.py                                58     58     0%   4-193
+whitemagic/gardens/practice/zodiac/__init__.py                                121     81    33%   33-34, 43-51, 56, 60-74, 78-92, 96-110, 123-143, 153-166, 171-186, 190-205, 215-220, 227-236, 255-262, 270-309, 313, 317-318, 322-323, 327, 331, 347-350, 355-356, 361-363
+whitemagic/gardens/practice/zodiac/api.py                                      58     58     0%   3-114
+whitemagic/gardens/practice/zodiac/zodiac_cores.py                              1      1     0%   7
+whitemagic/gardens/sangha/__init__.py                                          42     11    74%   52, 60, 69-72, 76-78, 83, 88
+whitemagic/gardens/sangha/chat.py                                             327    246    25%   33-42, 49-50, 56-57, 76-89, 93, 105, 135-154, 158-162, 177, 202-216, 220-230, 234-240, 250-254, 264-267, 277-286, 290-296, 306-331, 339-365, 369, 375, 379-401, 405-420, 424-463, 467-490, 494-531, 535-539, 547-549
+whitemagic/gardens/sangha/collective_memory.py                                116     81    30%   42-47, 51-56, 68-103, 113-145, 162-182, 192-197, 207-223, 227-232, 236-243, 252-265, 274-283, 298-300
+whitemagic/gardens/sangha/community_dharma.py                                 118     87    26%   39-44, 48-53, 73-111, 138-215, 224-239, 252-259, 263-268, 272-277, 292-306, 316-318
+whitemagic/gardens/sangha/pattern_federation.py                               137    100    27%   44-49, 53-58, 83-121, 137-162, 181-210, 222-228, 232-247, 251-276, 280-286, 290-311, 321-323, 328-342
+whitemagic/gardens/sangha/resources.py                                        129     93    28%   27-36, 57-63, 67-78, 82-83, 93-125, 129-141, 145-160, 164-176, 180-197, 201-209, 217-219
+whitemagic/gardens/sangha/session_handoff.py                                  158    111    30%   60-63, 81-106, 120-129, 139-149, 159-166, 182-201, 205-207, 211-213, 235-258, 262-308, 336-349, 368-389, 398-411, 420-423, 427-430, 440-442
+whitemagic/gardens/sangha/workspace.py                                         19     13    32%   19, 32-43, 51-63
+whitemagic/gardens/truth/__init__.py                                          130     56    57%   91, 98, 105, 112, 128-160, 168-198, 206-227, 240-243, 247, 251
+whitemagic/gardens/voice/__init__.py                                           91     47    48%   56, 64, 73, 78-101, 105-113, 117-122, 126-137, 141, 152, 160-161, 166, 171, 176-178, 187-190, 198-201
+whitemagic/gardens/voice/agentic/terminal_scratchpad.py                        93     58    38%   41-45, 48-51, 54-64, 68, 72, 76, 80, 83-89, 93-144, 148-153
+whitemagic/gardens/voice/narrative.py                                         187     93    50%   32, 42, 62, 93, 149-154, 163-168, 177-182, 186-201, 209-216, 220-232, 236-245, 256-282, 294-305, 310-321, 325, 329-331, 335, 339-350
+whitemagic/gardens/voice/narrative_engine.py                                   98     98     0%   7-207
+whitemagic/gardens/voice/narrator.py                                           48     13    73%   36, 39, 44, 81-101, 105-132
+whitemagic/gardens/voice/templates.py                                          10      7    30%   46-54
+whitemagic/gardens/voice/voice_synthesis.py                                   161    116    28%   24-27, 34-37, 41-42, 73-87, 91-105, 109-122, 126-136, 140-156, 161-172, 180-200, 211-220, 227-254, 258-285, 289-308, 317-334, 338-342, 346
+whitemagic/grimoire/__init__.py                                                 4      0   100%
+whitemagic/grimoire/auto_cast.py                                              135     47    65%   36, 88, 110-111, 141, 149, 153, 169-190, 197, 199, 201, 207-209, 213-227, 237-252, 258-262
+whitemagic/grimoire/chapters.py                                                64      6    91%   35, 740, 778, 781, 787-788
+whitemagic/grimoire/core.py                                                   148     61    59%   40, 44, 48, 95-96, 188-247, 251-265, 269-283, 287-307, 311-312, 317-320
+whitemagic/grimoire/spells.py                                                  89     11    88%   55-65, 68, 260, 264
+whitemagic/harmony/__init__.py                                                  4      0   100%
+whitemagic/harmony/anomaly_detector.py                                        112     46    59%   43-44, 47, 97, 106-131, 135-136, 142-155, 164-176, 193-194, 198-212
+whitemagic/harmony/compat.py                                                   60     44    27%   23-30, 33-40, 44-50, 54-88, 92-98, 106
+whitemagic/harmony/homeostatic_loop.py                                        201     56    72%   112, 143-144, 160-161, 174-176, 181-182, 189-190, 196, 198, 204, 206, 212, 224, 251-253, 275-276, 285-286, 307-308, 331-332, 341-349, 357-366, 374-396
+whitemagic/harmony/vector.py                                                  203     20    90%   257-258, 272-273, 297-298, 321, 333, 340-341, 354, 388, 412-413, 507-523
+whitemagic/harmony/yin_yang_tracker.py                                        147     74    50%   94-95, 101-112, 125-148, 160-202, 217-243, 247-249, 277-281
+whitemagic/inference/local_embedder.py                                         53     29    45%   37-42, 46-48, 59-74, 78-81, 90-94
+whitemagic/integration/__init__.py                                              2      2     0%   17-19
+whitemagic/integration/garden_weaver.py                                       121    121     0%   8-279
+whitemagic/interfaces/api/__init__.py                                           0      0   100%
+whitemagic/interfaces/api/routes/__init__.py                                    5      1    80%   5
+whitemagic/interfaces/api/routes/dashboard_api.py                              84     78     7%   24-172
+whitemagic/local_ml/__init__.py                                                26     26     0%   19-71
+whitemagic/local_ml/engine.py                                                  10     10     0%   8-47
+whitemagic/logging_config.py                                                  124    124     0%   7-290
+whitemagic/maintenance/__init__.py                                              6      6     0%   6-22
+whitemagic/maintenance/capability_harness.py                                  146    146     0%   14-346
+whitemagic/mcp_api_bridge.py                                                   34     34     0%   10-50
+whitemagic/mesh/awareness.py                                                   67     15    78%   63, 69-70, 86-96, 104-105
+whitemagic/mesh/client.py                                                     114     63    45%   40, 53, 93, 97-112, 120-161, 171-187, 191-208, 212-213
+whitemagic/metrics/__init__.py                                                 30     19    37%   19-21, 26-50
+whitemagic/metrics/collector.py                                                19      9    53%   16, 20, 24, 28, 32, 39-47
+whitemagic/oms/__init__.py                                                      2      2     0%   24-26
+whitemagic/oms/manager.py                                                     243    243     0%   10-572
+whitemagic/optimization/_rust_fallbacks.py                                    102      3    97%   51, 103, 107
+whitemagic/optimization/polyglot_router.py                                    405    278    31%   58, 62-63, 68-76, 102-107, 119-120, 124, 131, 145-146, 149, 155-162, 186, 189-193, 196-200, 203-207, 212-218, 221-227, 230-236, 251-263, 268-299, 311-376, 380-409, 414-434, 440-448, 452-468, 479-521, 531-553, 558-577, 581-598, 602-611, 614, 638-641, 644
+whitemagic/optimization/rust_accelerators.py                                  499    358    28%   48-53, 61, 65, 69-70, 109-112, 126-130, 161-169, 180-181, 203-204, 219-246, 273-283, 296-306, 327-338, 361-370, 385-394, 415-424, 438-446, 461-469, 481-489, 504-512, 524-525, 546, 551-553, 568, 572-574, 590, 594-596, 610-617, 628-635, 643-646, 661-674, 684-691, 701-715, 729-747, 757-760, 789-807, 817-820, 825, 835-842, 850-857, 867-870, 875, 892-894, 908-910, 923-925, 937-939, 957-959, 971-973, 983-989, 997-1003, 1008-1014, 1022-1028, 1038-1041, 1066-1073, 1078-1084, 1089-1095, 1105-1108, 1113, 1118-1124
+whitemagic/optimization/skeletonizer.py                                        58     44    24%   21, 25-35, 39-53, 63-74, 78-86, 91-100, 104, 108
+whitemagic/oracle/__init__.py                                                   0      0   100%
+whitemagic/oracle/hexagram_data.py                                              1      1     0%   7
+whitemagic/oracle/quantum_iching.py                                           295    295     0%   3-576
+whitemagic/parallel/__init__.py                                                52     52     0%   3-110
+whitemagic/payments/__init__.py                                                 2      2     0%   21-23
+whitemagic/payments/ilp_manager.py                                            165    165     0%   15-399
+whitemagic/plugins/__init__.py                                                129     90    30%   33, 59-65, 69-77, 88, 91-99, 106-132, 137, 142, 147-154, 159-167, 175-199, 204-208, 213-217
+whitemagic/plugins/examples/__init__.py                                         0      0   100%
+whitemagic/prompts/__init__.py                                                  2      2     0%   3-5
+whitemagic/run_mcp.py                                                         161     94    42%   27-29, 44-47, 57-94, 106-110, 116, 155, 166, 213-303, 306-309
+whitemagic/run_mcp_lean.py                                                    225    225     0%   19-497
+whitemagic/runtime_status.py                                                   30      3    90%   27, 29, 39
+whitemagic/rust/__init__.py                                                     2      2     0%   6-12
+whitemagic/rust_bridge.py                                                      37     37     0%   6-68
+whitemagic/safety/__init__.py                                                   5      5     0%   7-16
+whitemagic/search/__init__.py                                                   7      7     0%   3-10
+whitemagic/security/__init__.py                                                17      7    59%   59-77
+whitemagic/security/engagement_tokens.py                                      176     17    90%   53, 59, 64-65, 327, 345-346, 350, 354-371, 391-392
+whitemagic/security/hermit_crab.py                                            234     24    90%   142-143, 186, 208, 255-257, 407-408, 432-433, 447, 458, 483-484, 504-505, 519-520, 563-567
+whitemagic/security/mcp_integrity.py                                          127     20    84%   146, 168-179, 223-224, 228, 232-246, 266-267
+whitemagic/security/model_signing.py                                          132     21    84%   211-223, 249, 270-271, 275, 279-294, 314-315
+whitemagic/security/security_breaker.py                                       114      3    97%   112, 191, 250
+whitemagic/security/tool_gating.py                                            160     69    57%   128-130, 141-142, 150, 157-160, 165-169, 205-206, 230-247, 251-261, 284-285, 293-297, 303-313, 317-327, 332-388, 398-411, 436-440, 451
+whitemagic/security/vault.py                                                  129    129     0%   13-239
+whitemagic/security/zodiac/ledger.py                                           67     15    78%   55, 117-119, 125-138
+whitemagic/shelter/__init__.py                                                  2      2     0%   25-30
+whitemagic/shelter/manager.py                                                 316    316     0%   14-611
+whitemagic/tools/agent_trust.py                                                50     25    50%   40-41, 52-86, 99-101
+whitemagic/tools/audit_export.py                                               74     24    68%   54-58, 69, 74-75, 83-96, 103-113, 136-138, 143-158, 184, 203, 205, 207
+whitemagic/tools/capability_matrix.py                                          82     55    33%   231, 254-255, 268-293, 302-319, 335-338, 342-344, 348-351, 355-359, 366-368, 372-375, 380-382
+whitemagic/tools/circuit_breaker.py                                           135      9    93%   90, 178-190, 248, 327-328
+whitemagic/tools/compact_response.py                                           48      5    90%   75, 84, 90, 96, 99
+whitemagic/tools/contract.py                                                   10      0   100%
+whitemagic/tools/dependency_graph.py                                           91      2    98%   176, 190
+whitemagic/tools/dispatch_table.py                                             84     15    82%   30-33, 668-669, 675, 690-691, 701-706
+whitemagic/tools/envelope.py                                                   90      9    90%   50-51, 71, 73-76, 87, 264
+whitemagic/tools/errors.py                                                     27      0   100%
+whitemagic/tools/explain_this.py                                              168     45    73%   86-87, 113-114, 140-141, 143-144, 146-147, 149-150, 153-154, 179-180, 193-194, 203-206, 238, 240-241, 244-245, 254, 256-257, 266, 273-274, 285, 290, 295, 300, 304, 309, 314, 319-321, 324, 326
+whitemagic/tools/gana_forge.py                                                141     68    52%   52-60, 65-66, 68-70, 79, 87, 97, 101, 118-129, 161-195, 218-239, 259-260, 292-294
+whitemagic/tools/gana_native_contract.py                                       22      2    91%   74-75
+whitemagic/tools/gana_sabha.py                                                100     13    87%   66-67, 197-204, 230, 245, 263-264, 278, 280, 292-293
+whitemagic/tools/gana_vitality.py                                             114      7    94%   71, 139, 191-196
+whitemagic/tools/gnosis.py                                                    253     42    83%   45-46, 52, 58, 171-173, 178-179, 184-187, 197, 201, 213, 221, 226, 231-232, 275-282, 358-361, 423-424, 526-527, 534-535, 542-543, 550-551
+whitemagic/tools/handlers/__init__.py                                           0      0   100%
+whitemagic/tools/handlers/agent_ergonomics.py                                  59     19    68%   15, 33-34, 43, 54, 75-80, 92-93, 98-103
+whitemagic/tools/handlers/agent_registry.py                                   125     88    30%   19-23, 35, 39-45, 49-50, 54-58, 65-68, 78-87, 96-138, 152-178, 197, 200, 232-240, 257-267
+whitemagic/tools/handlers/anomaly.py                                           22      8    64%   16, 34-37, 45-47
+whitemagic/tools/handlers/archaeology.py                                       62     34    45%   31, 38, 42-52, 66-72, 76-81, 85-86, 90-94, 98-99, 103-104, 121, 125-126, 130-135, 139-141
+whitemagic/tools/handlers/balance.py                                           18      0   100%
+whitemagic/tools/handlers/broker.py                                           170     98    42%   20-24, 36-37, 79-81, 84-98, 101-113, 117, 120, 151-153, 162-209, 214-251, 268-269, 282, 289
+whitemagic/tools/handlers/context_optimizer.py                                 18      1    94%   20
+whitemagic/tools/handlers/cyberbrain.py                                        94     50    47%   10-15, 41-89, 98-108, 130, 158-161, 194-195, 200-212
+whitemagic/tools/handlers/dharma.py                                            67     21    69%   6-10, 20-21, 25-26, 30-34, 43-44, 111-116, 127-129
+whitemagic/tools/handlers/dreaming.py                                          34     20    41%   17, 23-33, 43-48, 61-70
+whitemagic/tools/handlers/edge.py                                              32     10    69%   30-39, 46-60
+whitemagic/tools/handlers/ensemble.py                                         147     83    44%   41, 46-50, 62-68, 77-113, 167, 205-278, 307-315, 329-341
+whitemagic/tools/handlers/ganying.py                                           39     17    56%   6-7, 36-37, 49-50, 54-77
+whitemagic/tools/handlers/garden.py                                           159    133    16%   6-7, 25-39, 61-87, 97-125, 136-184, 194-257, 266-322, 334-360, 369-395, 404-431
+whitemagic/tools/handlers/governance.py                                        76     11    86%   16, 22-24, 38, 87-88, 95-98
+whitemagic/tools/handlers/governor.py                                          28      9    68%   12-17, 36-38, 42-47
+whitemagic/tools/handlers/grimoire.py                                          74     16    78%   50-54, 66, 81-91, 151, 153
+whitemagic/tools/handlers/introspection.py                                    158     35    78%   76-81, 122, 131, 142, 167-168, 180-181, 186-187, 192-193, 198-199, 204-205, 210-211, 216-217, 222-223, 247-248, 259-263, 268-269
+whitemagic/tools/handlers/knowledge_graph.py                                   72     38    47%   47-54, 59-63, 68-73, 78-80, 87-90, 95-98, 103-105, 110-114
+whitemagic/tools/handlers/learning.py                                          16      0   100%
+whitemagic/tools/handlers/memory.py                                           164    100    39%   9-10, 14-15, 36-37, 42, 51-58, 87-88, 92-132, 151-202, 221, 242-243
+whitemagic/tools/handlers/misc.py                                             190    128    33%   19-20, 27, 70-91, 95-105, 110-125, 129-141, 146-147, 151-155, 166-167, 171-186, 190-198, 202-214, 218-224, 229-235, 239-255, 267-287, 298, 300-308, 310-318, 325, 357, 362
+whitemagic/tools/handlers/ollama.py                                           251    224    11%   28-32, 40-46, 50-51, 55-61, 65-71, 75-88, 92-107, 126-177, 191-208, 216-223, 232-244, 255-265, 279-314, 336-378, 391-469
+whitemagic/tools/handlers/otel.py                                              21      8    62%   16, 22-26, 39-42
+whitemagic/tools/handlers/pipeline.py                                         187    128    32%   28, 33-37, 48, 52-61, 65-66, 81-117, 131-132, 141, 148-155, 188-227, 232-292, 308-316, 343-358
+whitemagic/tools/handlers/rust_bridge.py                                       41     29    29%   11-21, 25-32, 36-47, 53
+whitemagic/tools/handlers/sandbox.py                                           18      0   100%
+whitemagic/tools/handlers/sangha.py                                            23     11    52%   6-7, 11-12, 26, 30-31, 35-36, 40-41
+whitemagic/tools/handlers/scratchpad.py                                       124    105    15%   15-16, 20-21, 35, 39-50, 57-69, 73-90, 105-172
+whitemagic/tools/handlers/session.py                                          196    151    23%   19-21, 25, 29-32, 36-37, 41-42, 46-81, 86-88, 92-99, 103-123, 127-142, 146-171, 186-196, 211-269, 288-317, 334-350, 361-378
+whitemagic/tools/handlers/simd.py                                              20      0   100%
+whitemagic/tools/handlers/solver.py                                            20     17    15%   10-56
+whitemagic/tools/handlers/swarm.py                                             57     16    72%   24, 34-36, 47-48, 57-62, 71-74
+whitemagic/tools/handlers/synthesis.py                                         68     44    35%   9-10, 31-60, 64-71, 75-81, 85-86, 90-95, 99-100
+whitemagic/tools/handlers/task_dist.py                                        196    134    32%   22-26, 42-44, 48, 55-58, 62, 66-67, 71, 75-81, 85-88, 92-98, 124-169, 187-203, 213-215, 231-246, 260-308, 325-333, 352-353, 358-384, 404, 408, 421
+whitemagic/tools/handlers/vector_search.py                                     23      0   100%
+whitemagic/tools/handlers/violet_security.py                                   73      6    92%   46, 63, 82, 104, 119, 132
+whitemagic/tools/handlers/voting.py                                           167    137    18%   19-23, 35-37, 41-44, 48-50, 59-71, 76-102, 117-141, 155-198, 212-245, 264-308, 329-348
+whitemagic/tools/handlers/web_research.py                                      92     65    29%   11-12, 16-21, 30-53, 62-73, 86-127, 140-171
+whitemagic/tools/idempotency.py                                                47      4    91%   66, 69, 76-77
+whitemagic/tools/input_sanitizer.py                                           101     18    82%   89-92, 112-118, 139, 150, 157, 162-166, 199
+whitemagic/tools/introspection.py                                             206    124    40%   113, 118, 121-122, 173, 190-218, 230-234, 263-281, 285-299, 303-317, 347, 385-462
+whitemagic/tools/manifest.py                                                  223    126    43%   37-38, 90-92, 112-121, 130-144, 153-156, 162-244, 263, 280-325, 350-385, 394-395, 409-411, 428-434, 447, 488, 495-497, 502-512, 526, 576, 583-589, 616-624
+whitemagic/tools/maturity_check.py                                             43      9    79%   64-65, 84-86, 96, 100, 128-129
+whitemagic/tools/middleware.py                                                258     68    74%   67-68, 72-73, 77-78, 82-83, 87-88, 92-93, 97-98, 102-103, 107-108, 112-113, 195-196, 227, 245-246, 259-261, 273-274, 299-300, 306-307, 321-323, 335-336, 349-351, 364, 371-378, 390-403, 414-447
+whitemagic/tools/prat_resonance.py                                            181     19    90%   198-200, 221-222, 251-256, 344-351, 387-389, 434-436
+whitemagic/tools/prat_router.py                                               209     39    81%   683-685, 699, 701-702, 711, 800, 808-809, 844-852, 859, 866-877, 887-888, 912-918, 927-928, 935-936, 958-959, 978-979, 986-987
+whitemagic/tools/rate_limiter.py                                              119     15    87%   44-46, 147-160, 228-231, 238
+whitemagic/tools/registry.py                                                   64     19    70%   36-37, 40-41, 44-45, 48-50, 64, 69, 75-76, 89, 94, 99, 104, 109, 114
+whitemagic/tools/registry_defs/__init__.py                                     25      3    88%   39, 46-47
+whitemagic/tools/registry_defs/acceleration.py                                  2      0   100%
+whitemagic/tools/registry_defs/agent.py                                         2      0   100%
+whitemagic/tools/registry_defs/aliases.py                                       2      0   100%
+whitemagic/tools/registry_defs/archaeology.py                                   2      0   100%
+whitemagic/tools/registry_defs/audit.py                                         2      0   100%
+whitemagic/tools/registry_defs/browser.py                                       2      0   100%
+whitemagic/tools/registry_defs/cognitive_extensions.py                          2      0   100%
+whitemagic/tools/registry_defs/coordination.py                                  2      0   100%
+whitemagic/tools/registry_defs/dharma.py                                        2      0   100%
+whitemagic/tools/registry_defs/dreaming.py                                      2      0   100%
+whitemagic/tools/registry_defs/edge.py                                          2      0   100%
+whitemagic/tools/registry_defs/galaxy.py                                        2      0   100%
+whitemagic/tools/registry_defs/gana.py                                          6      0   100%
+whitemagic/tools/registry_defs/garden.py                                        2      0   100%
+whitemagic/tools/registry_defs/governance.py                                    2      0   100%
+whitemagic/tools/registry_defs/governor.py                                      2      0   100%
+whitemagic/tools/registry_defs/gratitude.py                                     2      0   100%
+whitemagic/tools/registry_defs/grimoire.py                                      2      0   100%
+whitemagic/tools/registry_defs/homeostasis.py                                   2      0   100%
+whitemagic/tools/registry_defs/intelligence.py                                  2      0   100%
+whitemagic/tools/registry_defs/introspection.py                                 2      0   100%
+whitemagic/tools/registry_defs/knowledge.py                                     2      0   100%
+whitemagic/tools/registry_defs/learning.py                                      2      0   100%
+whitemagic/tools/registry_defs/living_graph.py                                  2      0   100%
+whitemagic/tools/registry_defs/memory.py                                        2      0   100%
+whitemagic/tools/registry_defs/metrics.py                                       2      0   100%
+whitemagic/tools/registry_defs/ollama_agent.py                                  2      0   100%
+whitemagic/tools/registry_defs/orchestration.py                                 2      0   100%
+whitemagic/tools/registry_defs/pipeline.py                                      2      0   100%
+whitemagic/tools/registry_defs/sandbox.py                                       2      0   100%
+whitemagic/tools/registry_defs/sangha.py                                        2      0   100%
+whitemagic/tools/registry_defs/security.py                                      2      0   100%
+whitemagic/tools/registry_defs/session.py                                       2      0   100%
+whitemagic/tools/registry_defs/synthesis.py                                     2      0   100%
+whitemagic/tools/registry_defs/tools_copy.py                                    2      0   100%
+whitemagic/tools/registry_defs/trust.py                                         2      0   100%
+whitemagic/tools/registry_defs/v14_2.py                                         2      0   100%
+whitemagic/tools/registry_defs/v15_2_economy.py                                 3      0   100%
+whitemagic/tools/registry_defs/v15_backfill.py                                  3      0   100%
+whitemagic/tools/sandbox.py                                                   120     78    35%   34-35, 67-74, 96-101, 105-106, 110-113, 123-193, 197-198, 202-203, 218-222
+whitemagic/tools/schema.py                                                     63     29    54%   19, 24-26, 37, 59-60, 62-67, 77-92
+whitemagic/tools/schema_adapter.py                                             37     25    32%   23-26, 31-44, 49, 54, 59, 64, 86-94
+whitemagic/tools/speculative_prefetch.py                                      141     54    62%   65-68, 76-93, 112-113, 117-128, 132-136, 139-140, 161, 168-169, 193, 223-224, 242-269, 273, 277, 281
+whitemagic/tools/starter_packs.py                                              20      0   100%
+whitemagic/tools/tool_catalog.py                                               46      4    91%   89-90, 127-160
+whitemagic/tools/tool_permissions.py                                           99     19    81%   83-87, 108-109, 120-121, 133-135, 138-139, 194-196, 221-222
+whitemagic/tools/tool_surface.py                                               33      6    82%   16, 21, 52-53, 65, 69
+whitemagic/tools/tool_types.py                                                 60      6    90%   64, 68, 72, 83, 94-95
+whitemagic/tools/unified_api.py                                               301    111    63%   68, 70, 72-74, 96-97, 108-109, 114-120, 127-128, 140-159, 163-165, 169, 173-176, 180-181, 185-191, 195, 205-220, 225-231, 248-290, 300-301, 308-309, 312, 419-420, 426-427, 437-438, 442-443, 445, 466-467, 476-477, 506, 543, 564, 567-590, 625-627, 656, 665
+whitemagic/utils/__init__.py                                                   29     21    28%   26-46
+whitemagic/utils/async_batch.py                                                20     16    20%   7-17, 21-25
+whitemagic/utils/core.py                                                       97     75    23%   14, 19-22, 26-28, 32, 36-39, 43-52, 56-61, 65-67, 71-74, 78-82, 86-91, 95-106, 110-116, 120-123, 127-132
+whitemagic/utils/fast_json.py                                                  30     11    63%   52-70
+whitemagic/utils/fast_regex.py                                                 38     17    55%   21, 30-33, 37-44, 48, 52, 56, 60, 64, 78
+whitemagic/utils/fileio.py                                                     52     12    77%   18-21, 26-27, 87, 103-108
+whitemagic/utils/rust_helper.py                                                38     27    29%   23-33, 39-43, 59-65, 80-87
+whitemagic/utils/simhash_fast.py                                               26      6    77%   6, 22-26
+whitemagic/utils/time.py                                                       37      5    86%   41, 46-50
+whitemagic/wu_xing/__init__.py                                                146     99    32%   74, 85-98, 107-148, 153-172, 180-187, 191-198, 206-230, 247-276, 281-292, 296-302, 306-319, 323-331, 336-346, 356-359, 364-365, 370-371
+whitemagic/zodiac/__init__.py                                                   8      2    75%   11-12
+whitemagic/zodiac/enums.py                                                     35      6    83%   29, 33, 37, 41, 45, 50
+whitemagic/zodiac/zodiac_cores.py                                             301     90    70%   100-103, 122, 130, 172, 174, 187-190, 198-204, 216-218, 221-224, 232-238, 250-252, 255-258, 266-272, 275-281, 293-295, 332-335, 343, 351-357, 369-371, 374-377, 386, 389-395, 407-409, 426, 452-454, 490-492, 495-498, 506, 513-514, 517-523, 535-537, 540-543, 551, 554-555, 558-564, 576-578, 581-584, 592-598, 601-604, 607-613, 660, 664, 672-682
+whitemagic/zodiac/zodiac_round_cycle.py                                       158    103    35%   63-89, 92-95, 99-114, 118-129, 133-161, 165-175, 181-186, 190-195, 199-204, 208-213, 217-234, 238-243, 247-252, 256-261, 265-270, 274-279, 283-288, 292-298, 306-327, 331, 348-350, 356-357, 362-387
+---------------------------------------------------------------------------------------------------------
+TOTAL                                                                       53290  32644    39%
+===== 1404 passed, 23 skipped, 1 xfailed, 6 warnings in 133.56s (0:02:13) ======

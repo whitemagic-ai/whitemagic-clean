@@ -4,15 +4,13 @@ use pyo3::prelude::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use crate::conductor::{
-    ResonanceConductor, SubsystemConfig,
-    EventType, CircuitBreakerConfig,
-    CircuitBreakerRegistry, CircuitState,
-};
 use crate::conductor::nervous_system::{
-    NervousSystem, NervousSystemConfig,
-    ZodiacalCycle, ZodiacPhase, GardenRegistry, HarmonyVector,
-    CoherenceMonitor,
+    CoherenceMonitor, GardenRegistry, HarmonyVector, NervousSystem, NervousSystemConfig,
+    ZodiacPhase, ZodiacalCycle,
+};
+use crate::conductor::{
+    CircuitBreakerConfig, CircuitBreakerRegistry, CircuitState, EventType, ResonanceConductor,
+    SubsystemConfig,
 };
 
 /// Python wrapper for ResonanceConductor
@@ -30,7 +28,7 @@ impl PyResonanceConductor {
             inner: Arc::new(ResonanceConductor::new()),
         }
     }
-    
+
     /// Get global singleton
     #[staticmethod]
     fn global() -> Self {
@@ -38,7 +36,7 @@ impl PyResonanceConductor {
             inner: ResonanceConductor::global(),
         }
     }
-    
+
     /// Register a subsystem
     fn register_subsystem(&self, name: &str, description: &str, dependencies: Vec<u32>) -> u32 {
         let config = SubsystemConfig {
@@ -48,66 +46,71 @@ impl PyResonanceConductor {
         };
         self.inner.register_subsystem(config)
     }
-    
+
     /// Unregister a subsystem
     fn unregister_subsystem(&self, id: u32) -> bool {
         self.inner.unregister_subsystem(id)
     }
-    
+
     /// Start the conductor
     fn start(&self) -> PyResult<()> {
-        self.inner.start()
+        self.inner
+            .start()
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))
     }
-    
+
     /// Shutdown the conductor
     fn shutdown(&self) -> PyResult<()> {
-        self.inner.shutdown()
+        self.inner
+            .shutdown()
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))
     }
-    
+
     /// Get system state
     fn get_state(&self) -> String {
         self.inner.get_state().as_str().to_string()
     }
-    
+
     /// Check if resonant
     fn is_resonant(&self) -> bool {
         self.inner.is_resonant()
     }
-    
+
     /// Get uptime in seconds
     fn uptime(&self) -> Option<f64> {
         self.inner.uptime().map(|d| d.as_secs_f64())
     }
-    
+
     /// Get subsystem count
     fn get_subsystem_count(&self) -> usize {
         self.inner.list_subsystems().len()
     }
-    
+
     /// List all subsystems
     fn list_subsystems(&self) -> Vec<(u32, String, bool)> {
-        self.inner.list_subsystems()
+        self.inner
+            .list_subsystems()
             .into_iter()
             .map(|(id, handle)| (id, handle.name().to_string(), handle.is_active()))
             .collect()
     }
-    
+
     /// Get health status
     fn get_health(&self) -> HashMap<u32, HashMap<String, PyObject>> {
         Python::with_gil(|py| {
-            self.inner.get_health()
+            self.inner
+                .get_health()
                 .into_iter()
                 .map(|(id, status)| {
                     let mut info = HashMap::new();
-                    info.insert("state".to_string(), 
+                    info.insert(
+                        "state".to_string(),
                         match status.state {
                             crate::conductor::HealthState::Healthy => "healthy".to_object(py),
                             crate::conductor::HealthState::Degraded => "degraded".to_object(py),
                             crate::conductor::HealthState::Failed => "failed".to_object(py),
                             crate::conductor::HealthState::Unknown => "unknown".to_object(py),
-                        }
+                        },
                     );
                     info.insert("error_count".to_string(), status.error_count.to_object(py));
                     (id, info)
@@ -115,12 +118,20 @@ impl PyResonanceConductor {
                 .collect()
         })
     }
-    
+
     /// Emit event
     #[pyo3(signature = (event_type, source=None, target=None, payload=None))]
-    fn emit_event(&self, event_type: u16, source: Option<u32>, target: Option<u32>, payload: Option<HashMap<String, String>>) -> u64 {
+    fn emit_event(
+        &self,
+        event_type: u16,
+        source: Option<u32>,
+        target: Option<u32>,
+        payload: Option<HashMap<String, String>>,
+    ) -> u64 {
         let event_type = EventType::from_u16(event_type).unwrap_or(EventType::UserDefined);
-        let payload = payload.unwrap_or_default().into_iter()
+        let payload = payload
+            .unwrap_or_default()
+            .into_iter()
             .map(|(k, v)| (k, serde_json::json!(v)))
             .collect();
         self.inner.emit_event(event_type, source, target, payload)
@@ -141,28 +152,35 @@ impl PyCircuitBreakerRegistry {
             inner: Arc::new(CircuitBreakerRegistry::new()),
         }
     }
-    
+
     /// Get or create circuit breaker
-    fn get_or_create(&self, name: &str, failure_threshold: u32, success_threshold: u32, timeout_seconds: u64) -> PyCircuitBreaker {
+    fn get_or_create(
+        &self,
+        name: &str,
+        failure_threshold: u32,
+        success_threshold: u32,
+        timeout_seconds: u64,
+    ) -> PyCircuitBreaker {
         let config = CircuitBreakerConfig {
             failure_threshold,
             success_threshold,
             timeout_duration: std::time::Duration::from_secs(timeout_seconds),
         };
-        
+
         PyCircuitBreaker {
             inner: self.inner.get_or_create(name, config),
         }
     }
-    
+
     /// Get circuit breaker
     fn get(&self, name: &str) -> Option<PyCircuitBreaker> {
         self.inner.get(name).map(|inner| PyCircuitBreaker { inner })
     }
-    
+
     /// Get all circuit breakers
     fn get_all(&self) -> Vec<PyCircuitBreaker> {
-        self.inner.get_all()
+        self.inner
+            .get_all()
             .into_iter()
             .map(|inner| PyCircuitBreaker { inner })
             .collect()
@@ -185,22 +203,22 @@ impl PyCircuitBreaker {
             CircuitState::HalfOpen => "half_open".to_string(),
         }
     }
-    
+
     /// Check if can execute
     fn can_execute(&self) -> bool {
         self.inner.can_execute()
     }
-    
+
     /// Record success
     fn record_success(&self) {
         self.inner.record_success();
     }
-    
+
     /// Record failure
     fn record_failure(&self) {
         self.inner.record_failure();
     }
-    
+
     /// Get statistics
     fn get_stats(&self, py: Python<'_>) -> PyResult<PyObject> {
         let stats = self.inner.get_stats();
@@ -235,13 +253,14 @@ impl PyNervousSystem {
             )),
         }
     }
-    
+
     /// Bootstrap biological subsystems
     fn bootstrap(&self) -> PyResult<()> {
-        self.inner.bootstrap()
+        self.inner
+            .bootstrap()
             .map_err(PyErr::new::<pyo3::exceptions::PyRuntimeError, _>)
     }
-    
+
     /// Get subsystem status
     fn get_subsystem_status(&self, py: Python<'_>) -> PyResult<PyObject> {
         let status = self.inner.get_subsystem_status();
@@ -255,22 +274,22 @@ impl PyNervousSystem {
         }
         Ok(outer.into())
     }
-    
+
     /// Update coherence
     fn update_coherence(&self, coherence: f64) {
         self.inner.update_coherence(coherence);
     }
-    
+
     /// Get current coherence
     fn get_coherence(&self) -> f64 {
         self.inner.get_coherence()
     }
-    
+
     /// Health check
     fn health_check(&self) -> bool {
         self.inner.health_check()
     }
-    
+
     /// Shutdown
     fn shutdown(&self) {
         self.inner.shutdown();
@@ -291,7 +310,7 @@ impl PyZodiacalCycle {
             inner: Arc::new(ZodiacalCycle::new(conductor.inner.event_bus.clone())),
         }
     }
-    
+
     /// Get current phase
     fn get_phase(&self) -> String {
         match self.inner.get_phase() {
@@ -299,12 +318,12 @@ impl PyZodiacalCycle {
             ZodiacPhase::Yin => "yin".to_string(),
         }
     }
-    
+
     /// Transition phase
     fn transition(&self) {
         self.inner.transition();
     }
-    
+
     /// Get cycle count
     fn get_cycle_count(&self) -> u32 {
         self.inner.get_cycle_count()
@@ -325,22 +344,22 @@ impl PyGardenRegistry {
             inner: Arc::new(GardenRegistry::new()),
         }
     }
-    
+
     /// Activate a garden
     fn activate(&self, name: &str) -> bool {
         self.inner.activate(name)
     }
-    
+
     /// Get active gardens
     fn get_active_gardens(&self) -> Vec<String> {
         self.inner.get_active_gardens()
     }
-    
+
     /// Get all gardens
     fn get_all_gardens(&self) -> Vec<String> {
         self.inner.get_all_gardens()
     }
-    
+
     /// Activate all gardens
     fn activate_all(&self) -> usize {
         self.inner.activate_all()
@@ -381,22 +400,28 @@ impl PyHarmonyVector {
             genetic: 1.0,
         }
     }
-    
+
     /// Calculate composite score
     fn composite(&self) -> f64 {
-        (self.coherence + self.resonance + self.emergence + self.metabolism +
-         self.consciousness + self.immune + self.genetic) / 7.0
+        (self.coherence
+            + self.resonance
+            + self.emergence
+            + self.metabolism
+            + self.consciousness
+            + self.immune
+            + self.genetic)
+            / 7.0
     }
-    
+
     /// Check if healthy
     fn is_healthy(&self, threshold: f64) -> bool {
-        self.coherence >= threshold &&
-        self.resonance >= threshold &&
-        self.emergence >= threshold &&
-        self.metabolism >= threshold &&
-        self.consciousness >= threshold &&
-        self.immune >= threshold &&
-        self.genetic >= threshold
+        self.coherence >= threshold
+            && self.resonance >= threshold
+            && self.emergence >= threshold
+            && self.metabolism >= threshold
+            && self.consciousness >= threshold
+            && self.immune >= threshold
+            && self.genetic >= threshold
     }
 }
 
@@ -414,7 +439,7 @@ impl PyCoherenceMonitor {
             inner: Arc::new(CoherenceMonitor::new()),
         }
     }
-    
+
     /// Update harmony vector
     fn update(&self, vector: &PyHarmonyVector) {
         let hv = HarmonyVector {
@@ -428,7 +453,7 @@ impl PyCoherenceMonitor {
         };
         self.inner.update(hv);
     }
-    
+
     /// Get current vector
     fn get_vector(&self) -> PyHarmonyVector {
         let hv = self.inner.get_vector();
@@ -455,7 +480,7 @@ pub fn conductor(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyGardenRegistry>()?;
     m.add_class::<PyHarmonyVector>()?;
     m.add_class::<PyCoherenceMonitor>()?;
-    
+
     // Add constants for event types
     m.add("EVENT_BOOTSTRAP", 1u16)?;
     m.add("EVENT_HEALTH_CHECK", 2u16)?;
@@ -465,6 +490,6 @@ pub fn conductor(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("EVENT_COHERENCE_RESTORE", 11u16)?;
     m.add("EVENT_PHASE_TRANSITION", 60u16)?;
     m.add("EVENT_TRANSCENDENCE", 100u16)?;
-    
+
     Ok(())
 }

@@ -8,7 +8,7 @@ import json
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 SCRIPT_DIR = Path(__file__).parent
 ARMIES = {
@@ -59,7 +59,7 @@ def test_army(language: str, script_path: Path, clone_count: int) -> Tuple[bool,
 def run_benchmark(clone_count: int = 10000) -> Dict:
     """Run benchmark across all polyglot armies"""
     print(f"\n{'='*70}")
-    print(f"  POLYGLOT ARMY AGGREGATE THROUGHPUT BENCHMARK")
+    print("  POLYGLOT ARMY AGGREGATE THROUGHPUT BENCHMARK")
     print(f"{'='*70}\n")
     print(f"  Clone count per army: {clone_count:,}")
     print(f"  Total armies: {len(ARMIES)}")
@@ -74,7 +74,7 @@ def run_benchmark(clone_count: int = 10000) -> Dict:
         print(f"  [{language.upper():>8}] ", end="", flush=True)
         
         if not script_path.exists():
-            print(f"❌ Script not found")
+            print("❌ Script not found")
             results[language] = {"status": "missing", "throughput": 0}
             continue
         
@@ -104,13 +104,13 @@ def run_benchmark(clone_count: int = 10000) -> Dict:
     aggregate_throughput = total_clones / total_time if total_time > 0 else 0
     
     print(f"\n{'='*70}")
-    print(f"  AGGREGATE RESULTS")
+    print("  AGGREGATE RESULTS")
     print(f"{'='*70}\n")
     print(f"  Successful armies: {successful_armies}/{len(ARMIES)}")
     print(f"  Total clones processed: {total_clones:,}")
     print(f"  Total time: {total_time:.3f}s")
     print(f"  Aggregate throughput: {aggregate_throughput:,.0f} clones/sec")
-    print(f"\n  Target: 2,000,000 clones/sec")
+    print("\n  Target: 2,000,000 clones/sec")
     print(f"  Achievement: {(aggregate_throughput / 2_000_000 * 100):.1f}%")
     print(f"\n{'='*70}\n")
     

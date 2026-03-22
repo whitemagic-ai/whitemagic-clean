@@ -54,7 +54,7 @@ def deploy_il004_clones():
     if sessions.get("status") == "success":
         memories = sessions.get("details", {}).get("results", [])
         print(f"  🔍 Found {len(memories)} session/checkpoint memories")
-        print(f"  📊 Analyzing for duplicate timestamps...")
+        print("  📊 Analyzing for duplicate timestamps...")
         
         # Count by date patterns
         date_counts = {}
@@ -105,8 +105,8 @@ def deploy_il004_clones():
     
     # Verify against target range (6K-7K was the target but that's wrong for 112K)
     # Realistic target: ~110K after removing obvious duplicates
-    print(f"  ⚠️ Note: Campaign target of 6-7K needs adjustment for 112K corpus")
-    print(f"  ✅ Realistic target: ~110K unique memories")
+    print("  ⚠️ Note: Campaign target of 6-7K needs adjustment for 112K corpus")
+    print("  ✅ Realistic target: ~110K unique memories")
     
     results["duplicates_found"] = estimated_duplicates
     results["clones_deployed"] += 20000

@@ -78,7 +78,7 @@ def main():
     # Get schema info
     try:
         schema_info = whitemagic_rs.arrow_schema_info()
-        print(f"\n📋 Arrow Schema:")
+        print("\n📋 Arrow Schema:")
         schema = json.loads(schema_info)
         print(f"  Format: {schema.get('format')}")
         print(f"  Fields: {schema.get('field_count')}")
@@ -95,7 +95,7 @@ def main():
         
         # JSON baseline
         json_encode, json_decode, json_size = benchmark_json(memories)
-        print(f"\n📊 JSON Serialization:")
+        print("\n📊 JSON Serialization:")
         print(f"  Encode: {json_encode*1000:.2f}ms")
         print(f"  Decode: {json_decode*1000:.2f}ms")
         print(f"  Total: {(json_encode + json_decode)*1000:.2f}ms")
@@ -103,7 +103,7 @@ def main():
         
         # Arrow IPC
         arrow_encode, arrow_decode, arrow_size = benchmark_arrow(memories)
-        print(f"\n🏹 Arrow IPC:")
+        print("\n🏹 Arrow IPC:")
         print(f"  Encode: {arrow_encode*1000:.2f}ms")
         print(f"  Decode: {arrow_decode*1000:.2f}ms")
         print(f"  Total: {(arrow_encode + arrow_decode)*1000:.2f}ms")
@@ -116,7 +116,7 @@ def main():
             total_speedup = (json_encode + json_decode) / (arrow_encode + arrow_decode)
             size_ratio = json_size / arrow_size if arrow_size > 0 else 1.0
             
-            print(f"\n✨ Speedup:")
+            print("\n✨ Speedup:")
             print(f"  Encode: {encode_speedup:.1f}×")
             print(f"  Decode: {decode_speedup:.1f}×")
             print(f"  Total: {total_speedup:.1f}×")
@@ -129,7 +129,7 @@ def main():
     
     try:
         encode_ns, decode_ns, ipc_size = whitemagic_rs.arrow_roundtrip_bench(1000)
-        print(f"\n1000 memories:")
+        print("\n1000 memories:")
         print(f"  Encode: {encode_ns/1_000_000:.2f}ms ({encode_ns/1000:.0f}ns per memory)")
         print(f"  Decode: {decode_ns/1_000_000:.2f}ms ({decode_ns/1000:.0f}ns per memory)")
         print(f"  IPC Size: {ipc_size:,} bytes")

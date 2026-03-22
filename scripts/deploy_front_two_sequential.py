@@ -222,7 +222,7 @@ def main():
         
         # Brief pause between campaigns
         if i < total_campaigns:
-            logger.info(f"\n⏸️  Pausing 2 seconds before next campaign...\n")
+            logger.info("\n⏸️  Pausing 2 seconds before next campaign...\n")
             time.sleep(2)
     
     overall_duration = time.time() - overall_start

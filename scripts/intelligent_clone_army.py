@@ -342,7 +342,7 @@ class IntelligentCloneArmy:
         }
         
         # Phase 1: Implementers generate code
-        print(f"\n🔨 Phase 1: Implementation")
+        print("\n🔨 Phase 1: Implementation")
         implementers = [c for c in self.clones if c.role == 'implementer']
         
         for i, stub_path in enumerate(stubs[:5]):  # Process first 5 for demo
@@ -358,7 +358,7 @@ class IntelligentCloneArmy:
             results['processed'] += 1
         
         # Phase 2: Reviewers check implementations
-        print(f"\n🔍 Phase 2: Review")
+        print("\n🔍 Phase 2: Review")
         reviewers = [c for c in self.clones if c.role == 'reviewer']
         
         for file_path, impl_data in self.blackboard.implementations.items():
@@ -419,7 +419,7 @@ def main():
         print("📊 RESULTS")
         print("="*70)
         
-        print(f"\nProcessing:")
+        print("\nProcessing:")
         print(f"  Stubs processed: {results['processed']}")
         print(f"  Implementations generated: {results['generated']}")
         print(f"  Reviews completed: {results['reviewed']}")
@@ -428,7 +428,7 @@ def main():
         
         # Blackboard summary
         bb_summary = army.get_blackboard_summary()
-        print(f"\nBlackboard:")
+        print("\nBlackboard:")
         print(f"  Findings: {bb_summary['findings']}")
         print(f"  Patterns: {bb_summary['patterns']}")
         print(f"  Implementations: {bb_summary['implementations']}")

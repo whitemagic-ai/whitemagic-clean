@@ -132,9 +132,9 @@ def deploy_polyglot_synthesis_clones():
     
     total_p0_loc = sum(loc for _, _, loc in existing if loc is not None)
     print(f"  P0 Files: {len(existing)} files, {total_p0_loc} LOC")
-    print(f"  Target: Migrate 235K → 50K Python LOC")
-    print(f"  Timeline: 6-12 months")
-    print(f"  Clones: 4,000,000 total")
+    print("  Target: Migrate 235K → 50K Python LOC")
+    print("  Timeline: 6-12 months")
+    print("  Clones: 4,000,000 total")
     
     results["findings"].append(f"P0: {len(existing)} files, {total_p0_loc} LOC")
     results["clones_deployed"] += 5000

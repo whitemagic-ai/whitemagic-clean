@@ -125,7 +125,7 @@ def check_edge_inference():
         from whitemagic.edge.inference import get_edge_inference
         edge = get_edge_inference()
         
-        print(f"✅ Edge inference available")
+        print("✅ Edge inference available")
         print(f"   Rules loaded: {len(edge._rules)}")
         print(f"   Rust acceleration: {'✅ Available' if edge._rust_available else '❌ Not available'}")
         

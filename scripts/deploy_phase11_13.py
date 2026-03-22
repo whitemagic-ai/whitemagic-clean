@@ -198,7 +198,7 @@ class Phase11_13Deployer:
             f.write(f"| **Total** | - | **{self.total_files}** | **{self.total_loc:,}** |\n\n")
             
             f.write("## Cumulative Progress\n\n")
-            f.write(f"- **Before Phase 11-13**: 2,006 files (607,600 LOC)\n")
+            f.write("- **Before Phase 11-13**: 2,006 files (607,600 LOC)\n")
             f.write(f"- **Added in 11-13**: {self.total_files} files ({self.total_loc:,} LOC)\n")
             f.write(f"- **New Total**: {cumulative:,} files ({cumulative_loc:,} LOC)\n\n")
             
@@ -212,7 +212,7 @@ class Phase11_13Deployer:
         print(f"✅ Markdown: {md_file}")
         print()
         print("=" * 80)
-        print(f"🎉 PHASE 11-13 COMPLETE")
+        print("🎉 PHASE 11-13 COMPLETE")
         print(f"   Added: {self.total_files} files ({self.total_loc:,} LOC)")
         print(f"   New Total: {cumulative:,} files ({cumulative_loc:,} LOC)")
         print("=" * 80)

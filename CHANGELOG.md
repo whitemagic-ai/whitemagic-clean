@@ -32,6 +32,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [20.0.0] — 2026-03-16
+### The Polyglot Singularity
+- **Version Unification**: Synchronized versioning across all 11 polyglot languages and SDKs.
+- **GitHub Workflow Overhaul**: Enabled manual release triggers and fixed version extraction for automated deployments.
+- **Core Stability**: Resolved version drift across server.json, mcp-registry.json, and all package manifests.
+
+## [18.1.0] — 2026-03-16
+### Re-Synchronized Release Line
+- Unified versioning across 11 languages (Python, Rust, Zig, etc.)
+- Fixed GitHub Release workflow triggers
+- Updated documentation for v18.1.0
+
 ## [15.8.0] — 2026-02-13
 
 ### Galaxy Rehydration, Full Activation & Pattern Systems Catalog

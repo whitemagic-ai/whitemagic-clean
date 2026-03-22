@@ -461,10 +461,10 @@ def main():
     print("\n" + "="*70)
     print("✅ GENERATION COMPLETE")
     print("="*70)
-    print(f"\nGenerated 2 real implementations:")
+    print("\nGenerated 2 real implementations:")
     print(f"  - search_v2.rs: {len(search_code.split(chr(10)))} lines")
     print(f"  - graph_walker_v2.rs: {len(graph_code.split(chr(10)))} lines")
-    print(f"\nNext: Compile and benchmark!")
+    print("\nNext: Compile and benchmark!")
 
 if __name__ == '__main__':
     main()

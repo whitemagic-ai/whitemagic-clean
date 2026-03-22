@@ -31,9 +31,9 @@ try:
     
     # Check if using Rust
     if hasattr(um, 'engine') and um.engine is not None:
-        print(f"   ✅ Using Rust MemoryEngine")
+        print("   ✅ Using Rust MemoryEngine")
     else:
-        print(f"   ⚠️  Fallback to Python (Rust not available)")
+        print("   ⚠️  Fallback to Python (Rust not available)")
 except Exception as e:
     print(f"   ❌ Failed: {e}")
     import traceback
@@ -59,9 +59,9 @@ try:
     print(f"   ✅ Cache stats after query: {stats}")
     
     if stats.get('query_entries', 0) > 0 or stats.get('total_misses', 0) > 0:
-        print(f"   ✅ Cache is tracking queries")
+        print("   ✅ Cache is tracking queries")
     else:
-        print(f"   ⚠️  Cache may not be active")
+        print("   ⚠️  Cache may not be active")
         
 except Exception as e:
     print(f"   ⚠️  Cache test error: {e}")
@@ -108,7 +108,7 @@ try:
         speedup = avg_old / avg_new
         print(f"   🚀 Speedup: {speedup:.1f}×")
     else:
-        print(f"   ⚠️  No speedup yet (still delegating to Python)")
+        print("   ⚠️  No speedup yet (still delegating to Python)")
         
 except Exception as e:
     print(f"   ⚠️  Performance test error: {e}")

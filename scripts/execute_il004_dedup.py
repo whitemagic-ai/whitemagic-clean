@@ -5,9 +5,7 @@ Resolves 2,181 duplicate pairs with full metadata preservation.
 """
 import json
 import sys
-import hashlib
 import sqlite3
-from datetime import datetime
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
 DB_PATH = "/home/lucas/.whitemagic/memory/whitemagic.db"
@@ -111,7 +109,7 @@ def execute_dedup():
     
     conn.close()
     
-    print(f"\n📊 Deduplication Results:")
+    print("\n📊 Deduplication Results:")
     print(f"  Duplicate groups resolved: {resolved}")
     print(f"  Memories archived: {archived}")
     print(f"  Remaining duplicates: {remaining}")

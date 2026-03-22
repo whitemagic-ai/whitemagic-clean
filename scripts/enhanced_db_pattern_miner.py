@@ -151,7 +151,7 @@ def main():
     miner.mine_all_databases()
     patterns = miner.export_patterns()
     
-    print(f"\n✅ Pattern mining complete!")
+    print("\n✅ Pattern mining complete!")
     print(f"   Total patterns: {patterns['total_patterns']}")
     print(f"   Categories: {len(patterns['categories'])}")
 

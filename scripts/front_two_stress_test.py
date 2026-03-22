@@ -83,7 +83,7 @@ async def deploy_on_campaign(campaign: dict, clones_per_army: int = 50) -> dict:
     elapsed = time.time() - start_time
     
     # Show results
-    print(f"\n✅ DEPLOYMENT COMPLETE")
+    print("\n✅ DEPLOYMENT COMPLETE")
     print(f"   Armies: {', '.join(a.value for a in deployment.armies_deployed)}")
     print(f"   Total Clones: {deployment.total_clones:,}")
     print(f"   Duration: {deployment.total_duration_ms}ms ({elapsed:.2f}s total)")
@@ -92,7 +92,7 @@ async def deploy_on_campaign(campaign: dict, clones_per_army: int = 50) -> dict:
     print(f"   Synergy Score: {deployment.synergy_score:.1%}")
     
     # Zodiac distribution
-    print(f"\n📊 Zodiac Distribution:")
+    print("\n📊 Zodiac Distribution:")
     zodiac_counts = {}
     for result in deployment.results:
         zodiac_counts[result.zodiac_sign] = zodiac_counts.get(result.zodiac_sign, 0) + 1
@@ -155,7 +155,7 @@ async def run_stress_test(clones_per_army: int = 50):
     avg_synergy = sum(r['synergy_score'] for r in results) / len(results)
     total_vcs = sum(c['total_vcs'] for c in FRONT_TWO_CAMPAIGNS)
     
-    print(f"\n🎯 OVERALL STATISTICS")
+    print("\n🎯 OVERALL STATISTICS")
     print(f"   Total Campaigns: {len(results)}")
     print(f"   Total Clones Deployed: {total_clones:,}")
     print(f"   Total Victories: {total_victories:,}/{total_clones:,} ({total_victories/total_clones*100:.1f}%)")
@@ -165,7 +165,7 @@ async def run_stress_test(clones_per_army: int = 50):
     print(f"   Total VCs to Complete: {total_vcs}")
     
     # Per-campaign summary
-    print(f"\n📋 PER-CAMPAIGN RESULTS")
+    print("\n📋 PER-CAMPAIGN RESULTS")
     print(f"{'='*100}")
     for result in results:
         print(f"\n{result['campaign_id']}: {result['campaign_name']}")
@@ -176,7 +176,7 @@ async def run_stress_test(clones_per_army: int = 50):
         print(f"   Duration: {result['elapsed_seconds']:.2f}s")
     
     # Army effectiveness analysis
-    print(f"\n🏆 ARMY EFFECTIVENESS ANALYSIS")
+    print("\n🏆 ARMY EFFECTIVENESS ANALYSIS")
     print(f"{'='*100}")
     
     army_stats = {}
@@ -193,7 +193,7 @@ async def run_stress_test(clones_per_army: int = 50):
         print(f"   {army.upper():<15}: {stats['deployments']} campaigns, ~{stats['total_clones']:,} clones")
     
     # Zodiac distribution across all campaigns
-    print(f"\n🌟 ZODIAC DISTRIBUTION (ALL CAMPAIGNS)")
+    print("\n🌟 ZODIAC DISTRIBUTION (ALL CAMPAIGNS)")
     print(f"{'='*100}")
     
     all_zodiac_counts = {}
@@ -206,7 +206,7 @@ async def run_stress_test(clones_per_army: int = 50):
         print(f"   {sign.title():<12}: {count:>5} clones ({pct:>5.1f}%)")
     
     # Recommendations
-    print(f"\n💡 RECOMMENDATIONS")
+    print("\n💡 RECOMMENDATIONS")
     print(f"{'='*100}")
     
     if avg_synergy >= 0.90:

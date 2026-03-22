@@ -299,8 +299,8 @@ class Phase4Deployer:
             f.write("## Final Statistics\n\n")
             f.write(f"- **Total Files Migrated**: {cumulative_files:,} / {target_files:,} ({file_pct:.1f}%)\n")
             f.write(f"- **Total LOC Migrated**: {cumulative_loc:,} / {target_loc:,} ({loc_pct:.1f}%)\n")
-            f.write(f"- **Languages Deployed**: 5\n")
-            f.write(f"- **Total Waves**: 4 phases\n\n")
+            f.write("- **Languages Deployed**: 5\n")
+            f.write("- **Total Waves**: 4 phases\n\n")
             
             f.write("## Migration by Phase\n\n")
             f.write("| Phase | Files | LOC | Status |\n")

@@ -2,7 +2,10 @@
 """Immortal V3 Shadow Clone Army - All Remaining Campaigns
 Targets: PSR-011, PSR-012, PSR-013, PSR-014, PSR-015, F001
 """
-import subprocess, sys, time, threading
+import subprocess
+import sys
+import time
+import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 

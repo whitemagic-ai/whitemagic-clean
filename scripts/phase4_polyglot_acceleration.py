@@ -217,7 +217,7 @@ codegen-units = 1
     print(f"Rust modules: {rust_count}")
     print(f"Mojo modules: {mojo_count}")
     print(f"Total files accelerated: {total_files}")
-    print(f"Expected speedup: 10-1000x")
+    print("Expected speedup: 10-1000x")
     print()
     print("✅ Polyglot acceleration modules created!")
 

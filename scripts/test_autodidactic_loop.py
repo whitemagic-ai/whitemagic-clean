@@ -54,10 +54,10 @@ application = PatternApplication(
 )
 
 loop.record_application(application)
-print(f"\n✅ Recorded pattern application:")
+print("\n✅ Recorded pattern application:")
 print(f"   Pattern: {pattern_id}")
 print(f"   Initial confidence: {application.initial_confidence:.2%}")
-print(f"   Context: LRU cache for UnifiedMemory")
+print("   Context: LRU cache for UnifiedMemory")
 
 # Simulate successful outcome (our actual measured result!)
 print(f"\n{'='*80}")
@@ -81,14 +81,14 @@ outcome = PatternOutcome(
 )
 
 loop.record_outcome(outcome)
-print(f"\n✅ Outcome recorded:")
+print("\n✅ Outcome recorded:")
 print(f"   Success: {outcome.success}")
 print(f"   Performance gain: {outcome.performance_gain:.2f}x")
 print(f"   Quality score: {outcome.quality_score:.2%}")
 
 # Check updated confidence
 updated_confidence = loop.get_pattern_confidence(pattern_id)
-print(f"\n📈 Confidence updated:")
+print("\n📈 Confidence updated:")
 print(f"   Original: {application.initial_confidence:.2%}")
 print(f"   Updated:  {updated_confidence:.2%}")
 print(f"   Change:   +{(updated_confidence - application.initial_confidence)*100:.1f}%")

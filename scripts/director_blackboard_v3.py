@@ -53,7 +53,7 @@ def parse_koka_output(proc):
                     
         except json.JSONDecodeError:
             pass
-        except Exception as e:
+        except Exception:
             pass
 
 def print_stderr(proc, name):

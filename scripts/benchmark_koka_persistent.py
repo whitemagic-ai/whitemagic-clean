@@ -9,8 +9,6 @@ from __future__ import annotations
 
 import subprocess
 import time
-import json
-import sys
 
 KOKA_BIN = "/home/lucas/Desktop/whitemagicdev/whitemagic-koka/prat"
 
@@ -131,7 +129,7 @@ if __name__ == "__main__":
     koka_result = benchmark_koka_chain(iterations)
     print(f"   Avg: {koka_result['avg_us']:.2f} µs, P50: {koka_result['p50_us']:.2f} µs, P95: {koka_result['p95_us']:.2f} µs")
     
-    print(f"\n3. Koka Subprocess Per-Call (worst case, 50 iterations)...")
+    print("\n3. Koka Subprocess Per-Call (worst case, 50 iterations)...")
     sub_result = benchmark_subprocess_per_call(50)
     print(f"   Avg: {sub_result['avg_us']:.2f} µs, P50: {sub_result['p50_us']:.2f} µs, P95: {sub_result['p95_us']:.2f} µs")
     
@@ -146,12 +144,12 @@ if __name__ == "__main__":
     print(f"Koka persistent:      {koka_result['avg_us']:.2f} µs ({ratio:.1f}x vs Python)")
     print(f"Koka per-call spawn:  {sub_result['avg_us']:.2f} µs ({speedup:.1f}x slower than persistent)")
     
-    print(f"\nOverhead breakdown (Koka persistent):")
-    print(f"  - JSON serialize/deserialize: ~10-15 µs")
-    print(f"  - IPC pipe communication:     ~5-10 µs")
-    print(f"  - Koka pattern matching:       ~2-5 µs")
+    print("\nOverhead breakdown (Koka persistent):")
+    print("  - JSON serialize/deserialize: ~10-15 µs")
+    print("  - IPC pipe communication:     ~5-10 µs")
+    print("  - Koka pattern matching:       ~2-5 µs")
     
-    print(f"\nKoka advantage scenarios:")
-    print(f"  - Effect handler chains (multiple operations in one process)")
-    print(f"  - Type-safe dispatch (compile-time guarantees)")
-    print(f"  - Complex state management (handler state persists across calls)")
+    print("\nKoka advantage scenarios:")
+    print("  - Effect handler chains (multiple operations in one process)")
+    print("  - Type-safe dispatch (compile-time guarantees)")
+    print("  - Complex state management (handler state persists across calls)")

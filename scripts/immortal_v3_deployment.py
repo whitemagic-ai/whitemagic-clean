@@ -182,9 +182,9 @@ class ImmortalV3Commander:
         koka_status = "✅ Available" if self.koka_available else "⚠️  Not available"
         print(f"    🦀 Rust (Tokio):  {rust_status} (825K clones/sec)")
         print(f"    🎭 Koka (Effects): {koka_status} (Type-safe coordination)")
-        print(f"    ⚡ Zig (Memory):   ⚠️  Not available (Zero-overhead allocation)")
-        print(f"    🔥 Mojo (GPU):     ⚠️  Not available (SIMD acceleration)")
-        print(f"    🐍 Python:        ✅ Available (18K clones/sec baseline)")
+        print("    ⚡ Zig (Memory):   ⚠️  Not available (Zero-overhead allocation)")
+        print("    🔥 Mojo (GPU):     ⚠️  Not available (SIMD acceleration)")
+        print("    🐍 Python:        ✅ Available (18K clones/sec baseline)")
         print()
         print("="*80)
         print()
@@ -377,7 +377,7 @@ class ImmortalV3Commander:
         baseline_throughput = 18157  # deploy_grand_army.py baseline
         improvement = avg_throughput / baseline_throughput if baseline_throughput > 0 else 0
         
-        print(f"  Performance vs Baseline:")
+        print("  Performance vs Baseline:")
         print(f"    Baseline (deploy_grand_army.py): {baseline_throughput:,} clones/sec")
         print(f"    Immortal v3: {avg_throughput:,.0f} clones/sec")
         print(f"    Improvement: {improvement:.1f}× faster")
@@ -385,7 +385,7 @@ class ImmortalV3Commander:
         
         # Blackboard summary
         if self.blackboard:
-            print(f"  Blackboard Intelligence:")
+            print("  Blackboard Intelligence:")
             print(f"    Findings: {len(self.blackboard.findings)}")
             print(f"    Patterns: {len(self.blackboard.patterns)}")
             print(f"    Implementations: {len(self.blackboard.implementations)}")

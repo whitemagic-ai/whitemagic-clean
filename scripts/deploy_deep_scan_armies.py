@@ -7,7 +7,6 @@ Deploy hundreds of thousands of clones to find EVERYTHING we missed
 """
 
 import ast
-import re
 import json
 from pathlib import Path
 from collections import defaultdict

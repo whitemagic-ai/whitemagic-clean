@@ -305,7 +305,7 @@ async def main():
         json.dump(all_results, f, indent=2, default=str)
     
     logger.info("=" * 80)
-    logger.info(f"✅ I-SERIES EXECUTION COMPLETE")
+    logger.info("✅ I-SERIES EXECUTION COMPLETE")
     logger.info(f"Duration: {duration:.1f}s")
     logger.info(f"Results saved to: {results_file}")
     logger.info("=" * 80)

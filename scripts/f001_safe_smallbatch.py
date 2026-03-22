@@ -70,7 +70,7 @@ def main():
     
     total_batches = (len(tasks) + BATCH_SIZE - 1) // BATCH_SIZE
     print(f"\n  Processing {len(tasks):,} texts in {total_batches} batches of {BATCH_SIZE}")
-    print(f"  Press Ctrl+C to stop anytime\n")
+    print("  Press Ctrl+C to stop anytime\n")
     
     # Process
     embedded_count = 0

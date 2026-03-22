@@ -1,0 +1,364 @@
+{
+  "version": "2.0.0",
+  "total_genes": 26,
+  "total_files_scanned": 25299,
+  "categories": {
+    "Design": 3,
+    "Algorithm": 6,
+    "Concurrency": 5,
+    "Domain": 7,
+    "ErrorHandling": 3,
+    "Rust": 1,
+    "Optimization": 1
+  },
+  "genes": [
+    {
+      "id": "algorithm_linear_search_optimized",
+      "name": "linear_search_optimized",
+      "category": "Algorithm",
+      "value": 0.7,
+      "frequency": 16307,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/eval/run_eval.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/legacy/verify_memory.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/legacy/test_bridge.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "design_strategy_pattern",
+      "name": "strategy_pattern",
+      "category": "Design",
+      "value": 0.75,
+      "frequency": 1448,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/test_integration_round2.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/legacy/test_bridge.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_bridge_integration.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "concurrency_async_functions",
+      "name": "async_functions",
+      "category": "Concurrency",
+      "value": 0.85,
+      "frequency": 1359,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/legacy/test_bridge.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_bridge_integration.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_mcp_e2e.py"
+      ],
+      "synergies": [
+        "async_rust_bridge"
+      ]
+    },
+    {
+      "id": "design_factory_pattern",
+      "name": "factory_pattern",
+      "category": "Design",
+      "value": 0.75,
+      "frequency": 1080,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/haskell/haskell_bridge.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/fastmcp/utilities/ui.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/fastmcp/utilities/types.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "errorhandling_fallback_chain",
+      "name": "fallback_chain",
+      "category": "ErrorHandling",
+      "value": 0.82,
+      "frequency": 838,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/legacy/verify_memory.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/legacy/test_bridge.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_bridge_integration.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "algorithm_dynamic_programming_table",
+      "name": "dynamic_programming_table",
+      "category": "Algorithm",
+      "value": 0.85,
+      "frequency": 628,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/croniter/croniter.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/joblib/__init__.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/starlette/responses.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "concurrency_thread_synchronization",
+      "name": "thread_synchronization",
+      "category": "Concurrency",
+      "value": 0.8,
+      "frequency": 519,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/fastmcp/server/context.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/fastmcp/server/middleware/rate_limiting.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/dns/resolver.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "algorithm_binary_search",
+      "name": "binary_search",
+      "category": "Algorithm",
+      "value": 0.8,
+      "frequency": 394,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/dns/btree.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/scipy/optimize/_dual_annealing.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "algorithm_memoization",
+      "name": "memoization",
+      "category": "Algorithm",
+      "value": 0.88,
+      "frequency": 384,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/fastmcp/utilities/types.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/fastmcp/server/dependencies.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/pydantic_settings/sources/providers/gcp.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "concurrency_async_context_manager",
+      "name": "async_context_manager",
+      "category": "Concurrency",
+      "value": 0.82,
+      "frequency": 351,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_mcp_e2e.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/fastmcp/utilities/inspect.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/fastmcp/utilities/tests.py"
+      ],
+      "synergies": [
+        "async_rust_bridge"
+      ]
+    },
+    {
+      "id": "domain_memory_consolidation",
+      "name": "memory_consolidation",
+      "category": "Domain",
+      "value": 0.9,
+      "frequency": 175,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_dream_cycle_e2e.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/unit/test_reconsolidation.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/unit/test_handlers_batch3.py"
+      ],
+      "synergies": [
+        "memory_dream_integration"
+      ]
+    },
+    {
+      "id": "domain_harmony_vector",
+      "name": "harmony_vector",
+      "category": "Domain",
+      "value": 0.87,
+      "frequency": 155,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_leap3_integration.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_dream_cycle_e2e.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/conftest.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "concurrency_thread_pool_pattern",
+      "name": "thread_pool_pattern",
+      "category": "Concurrency",
+      "value": 0.85,
+      "frequency": 138,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/uvicorn/middleware/wsgi.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/joblib/test/test_memmapping.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/joblib/externals/cloudpickle/cloudpickle.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "domain_galactic_positioning",
+      "name": "galactic_positioning",
+      "category": "Domain",
+      "value": 0.88,
+      "frequency": 105,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_dream_cycle_e2e.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/unit/test_core_intelligence_wiring.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/unit/test_galactic_map.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "concurrency_async_gather_pattern",
+      "name": "async_gather_pattern",
+      "category": "Concurrency",
+      "value": 0.88,
+      "frequency": 93,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/uvicorn/_compat.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/uvloop/__init__.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/aiohttp/multipart.py"
+      ],
+      "synergies": [
+        "async_rust_bridge"
+      ]
+    },
+    {
+      "id": "domain_holographic_encoding",
+      "name": "holographic_encoding",
+      "category": "Domain",
+      "value": 0.92,
+      "frequency": 92,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/verify_zig_mojo.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/benchmark_mojo.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/unit/test_holographic_encoding.py"
+      ],
+      "synergies": [
+        "holographic_galactic_system"
+      ]
+    },
+    {
+      "id": "rust_trait_implementation",
+      "name": "trait_implementation",
+      "category": "Rust",
+      "value": 0.8,
+      "frequency": 75,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic-rust/target/debug/build/target-lexicon-fe7a85c9487407a4/out/host.rs",
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic-rust/src/rate_limiter.rs",
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic-rust/src/pattern_engine.rs"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "domain_dream_cycle_pattern",
+      "name": "dream_cycle_pattern",
+      "category": "Domain",
+      "value": 0.9,
+      "frequency": 61,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/integration/test_dream_cycle_e2e.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/conftest.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/unit/test_polyglot_bridges.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "domain_resonance_detection",
+      "name": "resonance_detection",
+      "category": "Domain",
+      "value": 0.85,
+      "frequency": 55,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/scipy/stats/_continuous_distns.py",
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic/grimoire/chapters.py",
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic/optimization/polyglot_router.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "domain_serendipity_bridge",
+      "name": "serendipity_bridge",
+      "category": "Domain",
+      "value": 0.88,
+      "frequency": 52,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/tests/unit/test_polyglot_bridges.py",
+        "/home/lucas/Desktop/whitemagicpublic/tests/unit/test_v12_7_fusions.py",
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic/grimoire/chapters.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "algorithm_dfs_traversal",
+      "name": "dfs_traversal",
+      "category": "Algorithm",
+      "value": 0.85,
+      "frequency": 18,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/scipy/cluster/hierarchy.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/sklearn/cluster/_agglomerative.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/networkx/algorithms/traversal/depth_first_search.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "algorithm_bfs_traversal",
+      "name": "bfs_traversal",
+      "category": "Algorithm",
+      "value": 0.85,
+      "frequency": 17,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/networkx/algorithms/traversal/edgebfs.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/networkx/algorithms/traversal/beamsearch.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/networkx/algorithms/traversal/breadth_first_search.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "errorhandling_retry_loop",
+      "name": "retry_loop",
+      "category": "ErrorHandling",
+      "value": 0.8,
+      "frequency": 15,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/fastmcp/server/middleware/error_handling.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/redis/multidb/healthcheck.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/redis/asyncio/multidb/healthcheck.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "design_observer_pattern",
+      "name": "observer_pattern",
+      "category": "Design",
+      "value": 0.8,
+      "frequency": 8,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/pygments/lexers/_php_builtins.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/pygments/lexers/dsls.py",
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/pygments/lexers/matlab.py"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "optimization_zero_copy_slicing",
+      "name": "zero_copy_slicing",
+      "category": "Optimization",
+      "value": 0.92,
+      "frequency": 8,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic-rust/src/inference/streaming.rs",
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic-rust/src/simd_inference.rs",
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic-rust/src/ipc_bridge.rs"
+      ],
+      "synergies": []
+    },
+    {
+      "id": "errorhandling_retry_with_backoff",
+      "name": "retry_with_backoff",
+      "category": "ErrorHandling",
+      "value": 0.85,
+      "frequency": 6,
+      "examples": [
+        "/home/lucas/Desktop/whitemagicpublic/.venv/lib/python3.12/site-packages/redis/auth/token_manager.py",
+        "/home/lucas/Desktop/whitemagicpublic/whitemagic/autonomous/self_prompting.py",
+        "/home/lucas/Desktop/whitemagicdev/_archives/dead_code_v002/whitemagic/autonomous/self_prompting.py"
+      ],
+      "synergies": []
+    }
+  ]
+}

@@ -54,7 +54,6 @@ def step_db_stats():
     print(f"  Memories: {stats.get('total_memories', '?'):,}")
     print(f"  DB size: {stats.get('db_size_kb', 0) / 1024:.1f} MB")
 
-    import sqlite3
     with um.backend.pool.connection() as conn:
         assoc_count = conn.execute("SELECT COUNT(*) FROM associations").fetchone()[0]
         typed_count = conn.execute("SELECT COUNT(*) FROM associations WHERE relation_type != 'associated_with'").fetchone()[0]
@@ -96,7 +95,7 @@ def step_galactic_sweep():
 
     print(f"  Memories mapped: {report.memories_updated}/{report.total_memories}")
     print(f"  Duration: {elapsed:.1f}s")
-    print(f"  Zone distribution:")
+    print("  Zone distribution:")
     n = max(report.total_memories, 1)
     for zone_name, count in report.zone_counts.items():
         pct = count / n * 100
@@ -184,7 +183,7 @@ def step_constellation_detection():
     print(f"  Duration: {elapsed:.1f}s")
 
     if report.constellations:
-        print(f"\n  Top constellations:")
+        print("\n  Top constellations:")
         for c in report.constellations[:10]:
             print(f"    🌟 {c.name} ({len(c.member_ids)} members, zone={c.zone}, stability={c.stability:.2f})")
             if c.dominant_tags:
@@ -249,7 +248,7 @@ def step_graph_topology():
     try:
         pr = engine.pagerank()
         top_pr = sorted(pr.items(), key=lambda x: x[1], reverse=True)[:10]
-        print(f"  Top PageRank nodes:")
+        print("  Top PageRank nodes:")
         for node_id, score in top_pr[:5]:
             print(f"    📊 {node_id[:12]}... (PR={score:.6f})")
     except Exception as e:
@@ -334,7 +333,7 @@ def step_harmony_vector():
 
         h = assessment.get('harmony', '?')
         print(f"  Overall harmony: {h:.4f}" if isinstance(h, (int, float)) else f"  Overall harmony: {h}")
-        print(f"  Dimensions:")
+        print("  Dimensions:")
         for key in ["sattva", "rajas", "tamas", "karma_debt", "galactic_vitality",
                      "tool_diversity", "harmony"]:
             val = assessment.get(key)
@@ -359,7 +358,7 @@ def step_wu_xing_balance():
         engine = get_wuxing_engine()
         balance = get_elemental_balance()
         print(f"  Current phase: {balance.get('current_phase', '?')}")
-        print(f"  Elements:")
+        print("  Elements:")
         for elem, val in balance.get("elements", {}).items():
             bar = "█" * int(float(val) * 20) if isinstance(val, (int, float)) else ""
             print(f"    {elem:>8}: {val:.3f} {bar}")
@@ -378,7 +377,6 @@ def step_graph_walker_test():
     try:
         from whitemagic.core.memory.graph_walker import get_graph_walker
         from whitemagic.core.memory.unified import get_unified_memory
-        import sqlite3
 
         walker = get_graph_walker()
         um = get_unified_memory()
@@ -402,7 +400,7 @@ def step_graph_walker_test():
         seed_id = row[0]
         seed_title = row[1] or seed_id[:12]
         print(f"  Seed: {seed_title} ({seed_id[:12]}...)")
-        print(f"  Walking 3 hops, top 5 paths...")
+        print("  Walking 3 hops, top 5 paths...")
 
         result = walker.walk(
             seed_ids=[seed_id],
@@ -416,7 +414,7 @@ def step_graph_walker_test():
         print(f"  Duration: {result.duration_ms:.0f}ms")
 
         if result.paths:
-            print(f"\n  Top paths:")
+            print("\n  Top paths:")
             for i, path in enumerate(result.paths[:3]):
                 print(f"    Path {i+1}: {' → '.join(n[:8] for n in path.nodes)} "
                       f"(score={path.total_score:.6f}, depth={path.depth})")

@@ -8,54 +8,94 @@ defmodule WhitemagicCore.DreamCycle do
   "Interconnection with local models... autonomous capabilities."
   """
   
-  # 24 hours in milliseconds
-  @interval 24 * 60 * 60 * 1000
-  # For demo: 10 seconds startup delay
-  @initial_delay 10_000
+  # 5 minutes in milliseconds for the dream cycle tick
+  @interval 5 * 60 * 1000
+  # For demo: 5 seconds startup delay
+  @initial_delay 5_000
+
+  @phases [
+    "triage",
+    "consolidation",
+    "serendipity",
+    "governance",
+    "narrative",
+    "kaizen",
+    "oracle",
+    "decay",
+    "constellation",
+    "prediction",
+    "enrichment",
+    "harmonize"
+  ]
 
   def start_link(_opts) do
-    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+    GenServer.start_link(__MODULE__, %{phase_index: 0, last_activity: System.monotonic_time(:second)}, name: __MODULE__)
   end
 
   @impl true
   def init(state) do
-    Logger.info("🌙 Dream Cycle initialized. Sleeping...")
-    Process.send_after(self(), :dream, @initial_delay)
+    Logger.info("🌙 Dream Cycle initialized. Monitoring idle periods...")
+    Process.send_after(self(), :check_idle, @initial_delay)
     {:ok, state}
   end
 
   @impl true
-  def handle_info(:dream, state) do
-    Logger.info("🌌 Entering REM Sleep (Consolidating Memories)...")
-    run_consolidation()
+  def handle_info(:check_idle, state) do
+    current_time = System.monotonic_time(:second)
+    idle_seconds = current_time - state.last_activity
+    # 120s idle threshold from Python spec
+    idle_threshold = 120
 
-    # Schedule next dream
-    Process.send_after(self(), :dream, @interval)
+    if idle_seconds >= idle_threshold do
+      send(self(), :dream)
+    else
+      Process.send_after(self(), :check_idle, 30_000) # Check again in 30s
+    end
+
     {:noreply, state}
   end
 
-  # A high-importance mesh signal nudges us into an early consolidation.
-  # We honour it but do NOT reset the regular 24 h timer — that keeps ticking
-  # independently so the schedule stays stable.
   @impl true
-  def handle_call({:mesh_nudge, signal}, _from, state) do
-    importance = get_in(signal, ["data", "importance"]) || 0.0
-    Logger.info("🌌 Mesh nudge (importance=#{importance}) — running early consolidation")
-    run_consolidation()
-    {:reply, :ok, state}
+  def handle_info(:dream, state) do
+    phase = Enum.at(@phases, state.phase_index)
+    Logger.info("🌌 Entering Dream Phase: #{phase}...")
+
+    # Broadcast phase start
+    WhitemagicCore.GardenPubSub.publish("garden:center", :dream_phase_start, %{phase: phase})
+
+    results = run_phase(phase)
+
+    # Broadcast phase complete
+    WhitemagicCore.GardenPubSub.publish("garden:center", :dream_phase_complete, %{
+      phase: phase,
+      results: results
+    })
+
+    new_index = rem(state.phase_index + 1, length(@phases))
+
+    # Schedule next check
+    Process.send_after(self(), :check_idle, @interval)
+    {:noreply, %{state | phase_index: new_index}}
+  end
+
+  @impl true
+  def handle_cast(:touch, state) do
+    {:noreply, %{state | last_activity: System.monotonic_time(:second)}}
   end
 
   # ---------------------------------------------------------------------------
-  # Shared consolidation logic
+  # Phase Execution logic
   # ---------------------------------------------------------------------------
-  defp run_consolidation do
+  defp run_phase(phase) do
     memory_path = Path.expand("../../memories", File.cwd!())
 
-    case Brain.consolidate(memory_path) do
-      %{"status" => "ok", "stats" => stats} ->
-        Logger.info("✨ Consolidation Complete: #{inspect(stats)}")
+    case Brain.execute_phase(phase, %{dir: memory_path}) do
+      %{"status" => "ok", "details" => details} ->
+        Logger.info("✨ Dream Phase #{phase} Complete")
+        details
       err ->
-        Logger.warning("☁️ Dream interrupted: #{inspect(err)}")
+        Logger.warning("☁️ Dream phase #{phase} interrupted: #{inspect(err)}")
+        %{error: inspect(err)}
     end
   end
 end

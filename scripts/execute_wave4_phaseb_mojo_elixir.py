@@ -166,7 +166,7 @@ def execute_wave4_phase_b():
         f.write("5. Proceed to Phase C: KOKA mass migration\n")
     
     print("=" * 70)
-    print(f"Wave 4 Phase B complete:")
+    print("Wave 4 Phase B complete:")
     print(f"  🔥 MOJO: {len(MOJO_TARGETS)} files ({mojo_total} LOC)")
     print(f"  ⚡ ELIXIR: {len(ELIXIR_TARGETS)} files ({elixir_total} LOC)")
     print(f"  Total: {len(MOJO_TARGETS) + len(ELIXIR_TARGETS)} files ({mojo_total + elixir_total} LOC)")

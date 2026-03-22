@@ -36,7 +36,7 @@ for query, expected in test_queries:
         print(f"\n   Query: {query[:40]}")
         print(f"   Expected: {expected}")
         # Just test that it doesn't crash
-        print(f"   ✅ Router processed query")
+        print("   ✅ Router processed query")
     except Exception as e:
         print(f"   ⚠️  Error: {e}")
 

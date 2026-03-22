@@ -65,13 +65,15 @@ impl ConsolidationEngine {
             buffer: Vec::with_capacity(buffer_size),
         }
     }
-    
+
     /// Create a new consolidation engine with custom configuration
     #[staticmethod]
     fn with_config(buffer_size: usize, min_cluster_size: usize, similarity_threshold: f32) -> Self {
-        let mut config = ClusterConfig::default();
-        config.min_cluster_size = min_cluster_size;
-        config.similarity_threshold = similarity_threshold;
+        let config = ClusterConfig {
+            min_cluster_size,
+            similarity_threshold,
+            ..ClusterConfig::default()
+        };
         Self {
             buffer_size,
             config,
@@ -82,7 +84,8 @@ impl ConsolidationEngine {
     /// Detect constellations in parallel across multiple data vectors
     /// Returns cluster assignments for each input vector
     fn detect_constellations(&self, data: Vec<Vec<f32>>) -> PyResult<Vec<Vec<usize>>> {
-        let results: Vec<_> = data.into_par_iter()
+        let results: Vec<_> = data
+            .into_par_iter()
             .map(|vec| self.find_clusters(vec))
             .collect();
         Ok(results)
@@ -96,23 +99,23 @@ impl ConsolidationEngine {
         self.buffer.push(data);
         Ok(())
     }
-    
+
     /// Process buffered data and clear buffer
     fn process_buffer(&mut self) -> PyResult<Vec<Vec<usize>>> {
         let data = std::mem::take(&mut self.buffer);
         self.detect_constellations(data)
     }
-    
+
     /// Get current buffer size
     fn buffer_len(&self) -> usize {
         self.buffer.len()
     }
-    
+
     /// Clear the internal buffer
     fn clear_buffer(&mut self) {
         self.buffer.clear();
     }
-    
+
     /// Get configuration
     fn get_config(&self, py: Python<'_>) -> PyResult<PyObject> {
         let dict = pyo3::types::PyDict::new_bound(py);
@@ -128,45 +131,45 @@ impl ConsolidationEngine {
         if data.is_empty() {
             return vec![];
         }
-        
+
         // Reshape flat data into points (assuming 768-dim embeddings)
         let dim = 768usize;
-        if data.len() % dim != 0 {
+        if !data.len().is_multiple_of(dim) {
             return vec![];
         }
         let n_points = data.len() / dim;
-        
+
         if n_points < self.config.min_cluster_size {
             // Not enough points to form clusters
             return vec![0; n_points];
         }
-        
+
         // Compute pairwise distances and find neighbors
         let mut labels = vec![0usize; n_points]; // 0 = unlabeled, will assign cluster IDs
         let mut cluster_id = 1usize;
-        
+
         // For each point, find neighbors within threshold
         for i in 0..n_points {
             if labels[i] != 0 {
                 continue; // Already assigned
             }
-            
+
             let mut neighbors = Vec::new();
             let point_i = &data[i * dim..(i + 1) * dim];
-            
+
             for j in 0..n_points {
                 if i == j {
                     continue;
                 }
-                
+
                 let point_j = &data[j * dim..(j + 1) * dim];
                 let similarity = cosine_similarity_simd(point_i, point_j);
-                
+
                 if similarity >= self.config.similarity_threshold {
                     neighbors.push(j);
                 }
             }
-            
+
             // If enough neighbors, form a cluster
             if neighbors.len() >= self.config.min_cluster_size - 1 {
                 labels[i] = cluster_id;
@@ -178,23 +181,23 @@ impl ConsolidationEngine {
                 cluster_id += 1;
             }
         }
-        
+
         labels
     }
-    
+
     /// Compute similarity matrix for all points
     fn compute_similarity_matrix(&self, data: Vec<f32>) -> Vec<f32> {
         use std::sync::Arc;
-        
+
         let dim = 768usize;
-        if data.is_empty() || data.len() % dim != 0 {
+        if data.is_empty() || !data.len().is_multiple_of(dim) {
             return vec![];
         }
-        
+
         let n_points = data.len() / dim;
         let data = Arc::new(data);
         let mut matrix = vec![0.0f32; n_points * n_points];
-        
+
         // Parallel computation of similarity matrix
         let results: Vec<_> = (0..n_points)
             .into_par_iter()
@@ -207,11 +210,11 @@ impl ConsolidationEngine {
                 })
             })
             .collect();
-        
+
         for (i, j, sim) in results {
             matrix[i * n_points + j] = sim;
         }
-        
+
         matrix
     }
 }
@@ -221,17 +224,17 @@ fn cosine_similarity_simd(a: &[f32], b: &[f32]) -> f32 {
     if a.len() != b.len() || a.is_empty() {
         return 0.0;
     }
-    
+
     // Manual SIMD optimization using chunks
     // Process 8 elements at a time for SIMD efficiency
     let mut dot_product = 0.0f32;
     let mut norm_a = 0.0f32;
     let mut norm_b = 0.0f32;
-    
+
     // Process in chunks of 8 for potential SIMD
     let chunks = a.len() / 8;
     let remainder = a.len() % 8;
-    
+
     for i in 0..chunks {
         let base = i * 8;
         for j in 0..8 {
@@ -241,14 +244,14 @@ fn cosine_similarity_simd(a: &[f32], b: &[f32]) -> f32 {
             norm_b += b[idx] * b[idx];
         }
     }
-    
+
     // Process remainder
     for i in (chunks * 8)..(chunks * 8 + remainder) {
         dot_product += a[i] * b[i];
         norm_a += a[i] * a[i];
         norm_b += b[i] * b[i];
     }
-    
+
     let denom = (norm_a * norm_b).sqrt();
     if denom > 0.0 {
         dot_product / denom
@@ -260,23 +263,23 @@ fn cosine_similarity_simd(a: &[f32], b: &[f32]) -> f32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_cosine_similarity() {
         let a = vec![1.0, 0.0, 0.0];
         let b = vec![1.0, 0.0, 0.0];
         assert!((cosine_similarity_simd(&a, &b) - 1.0).abs() < 1e-6);
-        
+
         let c = vec![0.0, 1.0, 0.0];
         assert!(cosine_similarity_simd(&a, &c).abs() < 1e-6);
     }
-    
+
     #[test]
     fn test_engine_creation() {
         let engine = ConsolidationEngine::new(100);
         assert_eq!(engine.buffer_len(), 0);
     }
-    
+
     #[test]
     fn test_buffer_operations() {
         let mut engine = ConsolidationEngine::new(100);

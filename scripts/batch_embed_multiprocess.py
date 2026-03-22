@@ -215,7 +215,7 @@ def batch_embed_multiprocess(num_workers: int = 4, batch_size: int = 256, limit:
     
     logger.info("")
     logger.info("=" * 60)
-    logger.info(f"✅ Embedding complete!")
+    logger.info("✅ Embedding complete!")
     logger.info(f"  Embedded: {total_embedded:,}")
     logger.info(f"  Failed: {failed_batches}")
     logger.info(f"  Time: {elapsed_total/60:.1f} minutes")

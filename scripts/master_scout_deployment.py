@@ -8,7 +8,6 @@ import sys
 import os
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
-from whitemagic.tools.unified_api import call_tool
 
 def scout_all_campaigns():
     """Deploy scouts to all non-PSR campaigns."""
@@ -70,15 +69,15 @@ def scout_all_campaigns():
             
             # Categorize for next actions
             if progress >= 100:
-                print(f"  ✅ COMPLETE — Move to completed folder")
+                print("  ✅ COMPLETE — Move to completed folder")
             elif progress >= 80:
-                print(f"  🟡 NEAR-COMPLETE — Shadow clones can likely finish")
+                print("  🟡 NEAR-COMPLETE — Shadow clones can likely finish")
                 results["ready_for_clones"].append(campaign_name)
             elif progress >= 50:
-                print(f"  🟠 IN-PROGRESS — Clones + some direct action needed")
+                print("  🟠 IN-PROGRESS — Clones + some direct action needed")
                 results["ready_for_clones"].append(campaign_name)
             else:
-                print(f"  🔴 NEEDS_WORK — Significant direct implementation required")
+                print("  🔴 NEEDS_WORK — Significant direct implementation required")
                 results["needs_direct_action"].append(campaign_name)
                 
         except Exception as e:
@@ -95,13 +94,13 @@ def scout_all_campaigns():
     in_progress = sum(1 for c in results["scouted"] if 50 <= c["progress"] < 80)
     needs_work = sum(1 for c in results["scouted"] if c["progress"] < 50)
     
-    print(f"\nBy Status:")
+    print("\nBy Status:")
     print(f"  ✅ Complete: {complete}")
     print(f"  🟡 Near-Complete (80-99%): {near_complete}")
     print(f"  🟠 In-Progress (50-79%): {in_progress}")
     print(f"  🔴 Needs Work (<50%): {needs_work}")
     
-    print(f"\n🎯 Recommended Actions:")
+    print("\n🎯 Recommended Actions:")
     print(f"  • Shadow Clone Deployment: {len(results['ready_for_clones'])} campaigns")
     for c in results["ready_for_clones"]:
         print(f"    - {c}")

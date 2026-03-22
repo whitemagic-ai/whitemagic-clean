@@ -124,7 +124,7 @@ require (
         f.write("## Summary\n\n")
         f.write(f"- **Targets Completed**: {len(completed)}/{len(GO_NETWORK_TARGETS)}\n")
         f.write(f"- **Total LOC**: {total_loc}\n")
-        f.write(f"- **Success Rate**: 100%\n\n")
+        f.write("- **Success Rate**: 100%\n\n")
         
         f.write("## Victory Conditions Achieved\n\n")
         f.write("- ✅ VC-1: Mesh gRPC client (mesh/client.py, mesh/server.py)\n")

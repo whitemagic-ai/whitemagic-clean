@@ -17,16 +17,12 @@ Uses all available MCP tools and shadow clone parallelism to gather:
 - Polyglot distribution
 """
 
-import os
 import sys
 import json
 import time
-import subprocess
 from pathlib import Path
-from collections import defaultdict
 from dataclasses import dataclass, asdict
-from typing import Dict, List, Any, Optional
-import ast
+from typing import Dict, List, Any
 import re
 
 # Add whitemagic to path
@@ -339,7 +335,7 @@ def run_tests(codebase_path: Path, name: str) -> Dict[str, Any]:
 
 def generate_comparison_report(metrics_list: List[CodebaseMetrics], output_path: Path):
     """Generate comprehensive comparison report"""
-    print(f"\n📝 Generating comparison report...")
+    print("\n📝 Generating comparison report...")
     
     report = []
     report.append("# RECONNAISSANCE GRAND SURVEY — Three Codebase Analysis\n")

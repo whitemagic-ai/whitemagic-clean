@@ -104,7 +104,8 @@ impl CloneStrategy {
         let truncated = if prompt.len() <= 50 {
             prompt
         } else {
-            prompt.char_indices()
+            prompt
+                .char_indices()
                 .nth(50)
                 .map(|(idx, _)| &prompt[..idx])
                 .unwrap_or(prompt)
@@ -250,7 +251,10 @@ pub fn deploy_clones_sync(
             CloneStrategy::Synthesis,
         ]
     } else {
-        strategy_names.iter().map(|s| CloneStrategy::from_str(s)).collect()
+        strategy_names
+            .iter()
+            .map(|s| CloneStrategy::from_str(s))
+            .collect()
     };
 
     let rt = tokio::runtime::Builder::new_multi_thread()
@@ -259,7 +263,11 @@ pub fn deploy_clones_sync(
         .build()
         .expect("Failed to create tokio runtime");
 
-    rt.block_on(deploy_clones_async(prompt.to_string(), num_clones, strategies))
+    rt.block_on(deploy_clones_async(
+        prompt.to_string(),
+        num_clones,
+        strategies,
+    ))
 }
 
 fn num_cpus() -> usize {
@@ -332,7 +340,8 @@ pub fn tokio_clone_stats() -> PyResult<String> {
         "total_clones_spawned": TOTAL_CLONES_SPAWNED.load(Ordering::Relaxed),
         "available_cpus": num_cpus(),
         "backend": "tokio",
-    }).to_string())
+    })
+    .to_string())
 }
 
 // ---------------------------------------------------------------------------
@@ -350,7 +359,8 @@ mod tests {
             "test prompt".to_string(),
             4,
             vec![CloneStrategy::Direct, CloneStrategy::Analytical],
-        ).await;
+        )
+        .await;
         assert_eq!(result.total_clones, 4);
         assert!(result.elapsed_ms < 100.0); // Should be < 1ms
         assert!(result.avg_confidence > 0.0);
@@ -368,9 +378,14 @@ mod tests {
                 CloneStrategy::Analytical,
                 CloneStrategy::Synthesis,
             ],
-        ).await;
+        )
+        .await;
         assert_eq!(result.total_clones, 1000);
-        assert!(result.elapsed_ms < 500.0, "1000 clones took {}ms", result.elapsed_ms);
+        assert!(
+            result.elapsed_ms < 500.0,
+            "1000 clones took {}ms",
+            result.elapsed_ms
+        );
     }
 
     #[tokio::test]
@@ -379,10 +394,15 @@ mod tests {
             "massive scale test".to_string(),
             5000,
             vec![CloneStrategy::Direct, CloneStrategy::Synthesis],
-        ).await;
+        )
+        .await;
         assert_eq!(result.total_clones, 5000);
         // Should be WAY faster than Python's 1.7s
-        assert!(result.elapsed_ms < 1000.0, "5000 clones took {}ms", result.elapsed_ms);
+        assert!(
+            result.elapsed_ms < 1000.0,
+            "5000 clones took {}ms",
+            result.elapsed_ms
+        );
     }
 
     #[test]

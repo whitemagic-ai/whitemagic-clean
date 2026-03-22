@@ -4,7 +4,6 @@ Final Comprehensive Validation & Benchmark Summary
 Generates complete report of all tests and benchmarks
 """
 
-import json
 from pathlib import Path
 from datetime import datetime
 

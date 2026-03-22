@@ -81,7 +81,7 @@ def test_simhash_on_real_data():
             for i, dup in enumerate(duplicates[:5]):  # Show first 5
                 print(f"      {i+1}. {dup['source_id'][:8]} ↔ {dup['target_id'][:8]} (sim={dup['similarity']:.4f})")
         else:
-            print(f"   ⚠️  No duplicates found")
+            print("   ⚠️  No duplicates found")
     
     # Also test with synthetic identical embeddings
     print("\n🧪 Testing with synthetic identical embeddings")

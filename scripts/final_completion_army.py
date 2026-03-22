@@ -13,7 +13,7 @@ import sqlite3
 import subprocess
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -54,14 +54,14 @@ class FinalCompletionArmy:
         coverage = (active_embedded / active * 100) if active > 0 else 0
         conn.close()
         
-        print(f"\n📊 Current Status:")
+        print("\n📊 Current Status:")
         print(f"   Active memories: {active:,}")
         print(f"   Already embedded: {active_embedded:,}")
         print(f"   Remaining: {remaining:,}")
         print(f"   Coverage: {coverage:.1f}%")
         
         if remaining == 0:
-            print(f"\n✅ All memories already embedded!")
+            print("\n✅ All memories already embedded!")
             return {
                 "task": "batch_embeddings",
                 "status": "complete",
@@ -72,14 +72,14 @@ class FinalCompletionArmy:
         # Get safe batch config
         config = get_safe_batch_config("embedding")
         
-        print(f"\n🥷 Deploying Shadow Clone Army:")
-        print(f"   Clone type: Embedding specialists")
+        print("\n🥷 Deploying Shadow Clone Army:")
+        print("   Clone type: Embedding specialists")
         print(f"   Batch size: {config['batch_size']}")
         print(f"   Workers: {config['workers']}")
         print(f"   Memory limit: {config['memory_mb']} MB")
         print(f"   Estimated time: ~{remaining / 200:.0f}s ({remaining / 200 / 60:.1f} min)")
         
-        print(f"\n🚀 Executing batch embedding...")
+        print("\n🚀 Executing batch embedding...")
         
         # Run batch embedding
         try:
@@ -101,7 +101,7 @@ class FinalCompletionArmy:
                 final_coverage = (final_embedded / active * 100) if active > 0 else 0
                 conn.close()
                 
-                print(f"\n✅ Batch embedding complete!")
+                print("\n✅ Batch embedding complete!")
                 print(f"   Final embedded: {final_embedded:,}")
                 print(f"   Final coverage: {final_coverage:.1f}%")
                 
@@ -113,7 +113,7 @@ class FinalCompletionArmy:
                     "embedded": final_embedded - active_embedded,
                 }
             else:
-                print(f"\n⚠️  Batch embedding encountered issues:")
+                print("\n⚠️  Batch embedding encountered issues:")
                 print(result.stderr[-500:] if result.stderr else "No error output")
                 
                 return {
@@ -123,8 +123,8 @@ class FinalCompletionArmy:
                 }
         
         except subprocess.TimeoutExpired:
-            print(f"\n⚠️  Batch embedding timeout (10 min limit)")
-            print(f"   This is normal for large batches - embeddings continue in background")
+            print("\n⚠️  Batch embedding timeout (10 min limit)")
+            print("   This is normal for large batches - embeddings continue in background")
             
             return {
                 "task": "batch_embeddings",
@@ -175,7 +175,7 @@ class FinalCompletionArmy:
                 })
         
         # Check for TODO/FIXME comments in code
-        print(f"\n🔍 Scanning for TODO/FIXME markers...")
+        print("\n🔍 Scanning for TODO/FIXME markers...")
         todo_files = []
         for py_file in PROJECT_ROOT.glob("**/*.py"):
             if "_archives" in str(py_file) or ".venv" in str(py_file):
@@ -184,7 +184,7 @@ class FinalCompletionArmy:
                 content = py_file.read_text()
                 if "TODO" in content or "FIXME" in content:
                     todo_files.append(py_file.relative_to(PROJECT_ROOT))
-            except:
+            except Exception:
                 pass
         
         if todo_files:
@@ -201,7 +201,7 @@ class FinalCompletionArmy:
             })
         
         # Check for test failures
-        print(f"\n🧪 Checking test status...")
+        print("\n🧪 Checking test status...")
         test_dir = PROJECT_ROOT / "tests"
         if test_dir.exists():
             # Count test files
@@ -209,12 +209,12 @@ class FinalCompletionArmy:
             print(f"   Found {len(test_files)} test files")
         
         # Summary
-        print(f"\n📊 Unfinished Task Summary:")
+        print("\n📊 Unfinished Task Summary:")
         if unfinished:
             for item in unfinished:
                 print(f"   • {item['category']}: {item['count']} items")
         else:
-            print(f"   ✅ No unfinished tasks found!")
+            print("   ✅ No unfinished tasks found!")
         
         return {
             "task": "identify_unfinished",
@@ -232,7 +232,7 @@ class FinalCompletionArmy:
         verifications = []
         
         # Verify database
-        print(f"\n🗄️  Verifying database...")
+        print("\n🗄️  Verifying database...")
         try:
             conn = sqlite3.connect(self.db_path)
             tables = conn.execute(
@@ -247,7 +247,7 @@ class FinalCompletionArmy:
             verifications.append({"system": "database", "status": "error", "error": str(e)})
         
         # Verify MCP tools
-        print(f"\n🔧 Verifying MCP tools...")
+        print("\n🔧 Verifying MCP tools...")
         try:
             # Check if MCP server is accessible
             mcp_check = subprocess.run(
@@ -263,18 +263,18 @@ class FinalCompletionArmy:
                 print(f"   ✅ MCP tools accessible ({tool_count} tools)")
                 verifications.append({"system": "mcp_tools", "status": "ok", "tools": tool_count})
             else:
-                print(f"   ⚠️  MCP tools check inconclusive")
+                print("   ⚠️  MCP tools check inconclusive")
                 verifications.append({"system": "mcp_tools", "status": "unknown"})
         except Exception as e:
             print(f"   ⚠️  MCP tools check failed: {e}")
             verifications.append({"system": "mcp_tools", "status": "error", "error": str(e)})
         
         # Verify hardware monitor
-        print(f"\n🖥️  Verifying hardware monitor...")
+        print("\n🖥️  Verifying hardware monitor...")
         try:
             from whitemagic.core.system.hardware_monitor import get_hardware_profile
             hw = get_hardware_profile()
-            print(f"   ✅ Hardware monitor operational")
+            print("   ✅ Hardware monitor operational")
             print(f"      Tier: {hw.resource_tier}")
             print(f"      CPU: {hw.cpu_threads} threads")
             print(f"      RAM: {hw.available_ram_gb:.1f} GB available")
@@ -291,7 +291,7 @@ class FinalCompletionArmy:
         ok_count = sum(1 for v in verifications if v.get("status") == "ok")
         total_count = len(verifications)
         
-        print(f"\n📊 Verification Summary:")
+        print("\n📊 Verification Summary:")
         print(f"   Systems verified: {ok_count}/{total_count}")
         for v in verifications:
             status_icon = "✅" if v["status"] == "ok" else "⚠️" if v["status"] == "unknown" else "❌"
@@ -307,10 +307,10 @@ class FinalCompletionArmy:
     
     def execute_all(self) -> Dict[str, Any]:
         """Execute all completion tasks."""
-        print(f"\n🎯 Execution Plan:")
-        print(f"   1. Complete batch embeddings")
-        print(f"   2. Identify unfinished tasks")
-        print(f"   3. Verify all systems")
+        print("\n🎯 Execution Plan:")
+        print("   1. Complete batch embeddings")
+        print("   2. Identify unfinished tasks")
+        print("   3. Verify all systems")
         
         # Execute tasks
         self.results['task_1'] = self.task_1_batch_embeddings()
@@ -328,12 +328,12 @@ class FinalCompletionArmy:
         print("✅ FINAL COMPLETION ARMY — MISSION COMPLETE")
         print("=" * 80)
         
-        print(f"\n⏰ Time:")
+        print("\n⏰ Time:")
         print(f"   Start: {self.start_time.strftime('%H:%M:%S')}")
         print(f"   End: {end_time.strftime('%H:%M:%S')}")
         print(f"   Duration: {duration:.1f} seconds")
         
-        print(f"\n📊 Task Results:")
+        print("\n📊 Task Results:")
         for key, result in self.results.items():
             task_name = result.get('task', 'unknown')
             status = result.get('status', 'unknown')
@@ -343,7 +343,7 @@ class FinalCompletionArmy:
         if 'task_1' in self.results:
             t1 = self.results['task_1']
             if 'final_coverage' in t1:
-                print(f"\n📈 Embedding Progress:")
+                print("\n📈 Embedding Progress:")
                 print(f"   Initial: {t1.get('initial_coverage', 0):.1f}%")
                 print(f"   Final: {t1['final_coverage']:.1f}%")
                 print(f"   Embedded: {t1.get('embedded', 0):,} memories")
@@ -353,24 +353,24 @@ class FinalCompletionArmy:
             t2 = self.results['task_2']
             unfinished = t2.get('unfinished', [])
             if unfinished:
-                print(f"\n⚠️  Unfinished Tasks:")
+                print("\n⚠️  Unfinished Tasks:")
                 for item in unfinished:
                     print(f"   • {item['category']}: {item['count']} items")
             else:
-                print(f"\n✅ No unfinished tasks found")
+                print("\n✅ No unfinished tasks found")
         
         # System verification summary
         if 'task_3' in self.results:
             t3 = self.results['task_3']
             ok = t3.get('ok_count', 0)
             total = t3.get('total_count', 0)
-            print(f"\n🔧 System Verification:")
+            print("\n🔧 System Verification:")
             print(f"   Verified: {ok}/{total} systems operational")
         
-        print(f"\n🌟 Mission Status:")
-        print(f"   Shadow clone armies deployed successfully")
-        print(f"   All tasks executed and verified")
-        print(f"   System ready for production")
+        print("\n🌟 Mission Status:")
+        print("   Shadow clone armies deployed successfully")
+        print("   All tasks executed and verified")
+        print("   System ready for production")
         
         print()
 

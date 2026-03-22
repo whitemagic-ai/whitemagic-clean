@@ -31,7 +31,7 @@ except ImportError:
     RUST_AVAILABLE = False
     print("⚠️  Rust unavailable - using Python fallback")
 
-from whitemagic.core.memory.phylogenetics import get_phylogenetics, LineageEdge
+from whitemagic.core.memory.phylogenetics import get_phylogenetics
 
 
 @dataclass(frozen=True)
@@ -424,7 +424,7 @@ class EvolutionaryDreamEngine:
         top_10 = lineages[:10]
         
         print(f"\n✅ Evolution complete in {duration:.1f}s")
-        print(f"\n🏆 TOP 10 LINEAGES:\n")
+        print("\n🏆 TOP 10 LINEAGES:\n")
         
         for i, lineage in enumerate(top_10, 1):
             print(f"{i}. Lineage {lineage.lineage_id[:8]} (Gen {lineage.generation})")

@@ -1,0 +1,26 @@
+load("//bazel:api.bzl", "modular_py_library", "requirement")
+
+package(default_visibility = ["//max:consumers"])
+
+modular_py_library(
+    name = "graph",
+    srcs = glob(["**/*.py"]),
+    ignore_unresolved_imports = [
+        # `engine` directly depends on `graph`, this is a circular import
+        # needed just for initialization of the graph. This can be removed
+        # when GEX-1846 is fixed.
+        "max.engine.InferenceSession",
+        # Optional dependency
+        "gguf",
+    ],
+    deps = [
+        "//max/python/max:_core",
+        "//max/python/max:_mlir_context",
+        "//max/python/max/driver",
+        "//max/python/max/dtype",
+        "//max/python/max/mlir",
+        "@mojo//:python",
+        requirement("numpy"),
+        requirement("pyyaml"),
+    ],
+)

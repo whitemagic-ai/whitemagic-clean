@@ -17,12 +17,10 @@ import sys
 import time
 from collections import defaultdict
 from pathlib import Path
-from typing import Any
 
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from whitemagic.tools.prat_router import GANA_TO_TOOLS
 from whitemagic.tools.unified_api import call_tool
 
 logging.basicConfig(
@@ -281,7 +279,7 @@ class GanaDiagnostic:
         ganas_to_test = [gana_filter] if gana_filter else ALL_GANAS
 
         logger.info(f"\n{'#'*60}")
-        logger.info(f"# Shadow Clone Gana Diagnostic Army")
+        logger.info("# Shadow Clone Gana Diagnostic Army")
         logger.info(f"# Testing {len(ganas_to_test)} Ganas")
         logger.info(f"{'#'*60}\n")
 
@@ -300,7 +298,7 @@ class GanaDiagnostic:
         total_latency = (time.time() - self.start_time) * 1000
 
         logger.info(f"\n{'#'*60}")
-        logger.info(f"# DIAGNOSTIC REPORT")
+        logger.info("# DIAGNOSTIC REPORT")
         logger.info(f"{'#'*60}\n")
 
         logger.info(f"Total Tests: {self.total_tests}")

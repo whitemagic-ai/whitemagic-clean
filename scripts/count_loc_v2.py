@@ -100,7 +100,7 @@ def generate_report(stats: dict) -> str:
     lines.append("═" * 70)
     lines.append(f"  Python dominance: {python_loc/total_loc*100:.1f}% of core codebase")
     lines.append(f"  Rust potential: Only {stats.get('Rust', {}).get('loc', 0):,} LOC ({stats.get('Rust', {}).get('loc', 0)/total_loc*100:.1f}%)")
-    lines.append(f"  Target for v17: Increase Rust to 15%+ for hot paths")
+    lines.append("  Target for v17: Increase Rust to 15%+ for hot paths")
     lines.append("")
     
     # Per-language breakdown

@@ -20,8 +20,7 @@ import logging
 import random
 import sys
 import time
-from dataclasses import asdict, dataclass, field
-from pathlib import Path
+from dataclasses import dataclass
 from typing import Any
 
 logging.basicConfig(
@@ -107,7 +106,7 @@ class Tier4Commander:
         logger.info("=" * 80)
         logger.info("🎖️ TIER 4: COMMAND UNITS DEPLOYMENT")
         logger.info("=" * 80)
-        logger.info(f"Forces:")
+        logger.info("Forces:")
         logger.info(f"  War Room:      {self.war_room_units:,} strategic command units")
         logger.info(f"  Tactical YY:   {self.tactical_units:,} 7-phase coordinators")
         logger.info(f"  Intelligent:   {self.intelligent_units:,} AI synthesis nodes")

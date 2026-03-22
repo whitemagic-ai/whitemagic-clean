@@ -32,7 +32,7 @@ def verify_campaign(campaign_id: str, tracker: CampaignTracker) -> dict:
                                  lieutenant="verification_scout", phases_total=3) as obj:
         
         # Phase 1: Parse VCs
-        print(f"  [1/3] Parsing Victory Conditions...")
+        print("  [1/3] Parsing Victory Conditions...")
         import re
         vc_section = re.search(r'##\s+Victory Conditions.*?(?=##|\Z)', content, re.DOTALL | re.IGNORECASE)
         
@@ -47,7 +47,7 @@ def verify_campaign(campaign_id: str, tracker: CampaignTracker) -> dict:
         obj.phases_completed = 1
         
         # Phase 2: Deploy verification clones
-        print(f"  [2/3] Deploying 10K verification clones...")
+        print("  [2/3] Deploying 10K verification clones...")
         
         verification_results = []
         total_clones = 0
@@ -74,7 +74,7 @@ def verify_campaign(campaign_id: str, tracker: CampaignTracker) -> dict:
         obj.phases_completed = 2
         
         # Phase 3: Consensus
-        print(f"  [3/3] Generating verification consensus...")
+        print("  [3/3] Generating verification consensus...")
         
         avg_confidence = sum(v["confidence"] for v in verification_results) / len(verification_results)
         verified_count = sum(1 for v in verification_results if v["confidence"] >= 0.80)

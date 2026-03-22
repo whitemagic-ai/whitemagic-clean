@@ -1,6 +1,6 @@
 cabal-version:      3.0
 name:               whitemagic-divination
-version:            0.2.0.0
+version:            20.0.0.0
 synopsis:           Type-safe I Ching + Wu Xing + Dharma + Dependency Graph engine
 description:        Pure-functional hexagram casting, Wu Xing five-element
                     dynamics, GADT memory transforms, declarative Dharma rules

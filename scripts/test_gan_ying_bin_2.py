@@ -1,5 +1,4 @@
 import subprocess
-import json
 
 proc = subprocess.Popen(
     ['/home/lucas/Desktop/whitemagicdev/whitemagic-koka/gan_ying'],

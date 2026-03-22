@@ -6,8 +6,7 @@ Tests actual speedups vs Python implementations
 
 import time
 import statistics
-from pathlib import Path
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 class BenchmarkHarness:
     """Benchmark harness for testing speedups"""
@@ -128,7 +127,7 @@ class BenchmarkHarness:
         avg_speedup = statistics.mean([r['speedup'] for r in self.results])
         print(f"\n{'Average Speedup:':<20} {avg_speedup:>8.1f}×")
         
-        print(f"\n✅ Benchmark complete!")
+        print("\n✅ Benchmark complete!")
 
 def main():
     """Run benchmark harness"""

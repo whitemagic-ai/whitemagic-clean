@@ -6,7 +6,6 @@ Identifies and resolves exact AND near duplicates using fuzzy similarity.
 import sys
 import sqlite3
 import argparse
-from datetime import datetime
 
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 

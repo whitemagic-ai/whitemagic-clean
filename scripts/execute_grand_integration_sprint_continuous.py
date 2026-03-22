@@ -21,7 +21,6 @@ def run_cycle(cycle_num):
     subprocess.run(["python3", "scripts/evolve_test_coverage.py"], capture_output=True)
     
     log("PHASE 2: RALPH AUTONOMOUS LOOP")
-    import json
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     from whitemagic.core.evolution.continuous_evolution import ContinuousEvolutionEngine, SelfDirectedEvolution
     

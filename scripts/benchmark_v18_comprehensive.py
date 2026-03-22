@@ -132,7 +132,7 @@ class BenchmarkSuite:
             cat = getattr(tool, 'category', ToolCategory.UNKNOWN)
             categories[cat] = categories.get(cat, 0) + 1
         
-        print(f"   Tool Categories:")
+        print("   Tool Categories:")
         for cat, count in sorted(categories.items(), key=lambda x: -x[1])[:5]:
             print(f"      - {cat.name}: {count}")
     
@@ -163,7 +163,7 @@ class BenchmarkSuite:
         julia_path = Path("/snap/bin/julia")
         if julia_path.exists():
             print(f"      ✅ Julia available at {julia_path}")
-            print(f"      → RRF fusion, PageRank, community gravity ready")
+            print("      → RRF fusion, PageRank, community gravity ready")
         else:
             print("      ❌ Julia not found")
         
@@ -171,8 +171,8 @@ class BenchmarkSuite:
         print("   ⚡ Haskell:")
         ghc_path = Path.home() / ".ghcup/bin/ghc"
         if ghc_path.exists():
-            print(f"      ✅ GHC available")
-            print(f"      → Dharma ethical rules, dependency graphs ready")
+            print("      ✅ GHC available")
+            print("      → Dharma ethical rules, dependency graphs ready")
         else:
             print("      ❌ GHC not found")
         
@@ -181,7 +181,7 @@ class BenchmarkSuite:
         zig_lib = Path("/home/lucas/Desktop/whitemagicdev/whitemagic-zig/zig-out/lib/libwhitemagic.so")
         if zig_lib.exists():
             print(f"      ✅ Zig SIMD library at {zig_lib}")
-            print(f"      → 8-lane AVX2 SIMD ready")
+            print("      → 8-lane AVX2 SIMD ready")
         else:
             print("      ❌ Zig library not found")
         
@@ -190,19 +190,19 @@ class BenchmarkSuite:
         elixir_path = Path("/home/lucas/Desktop/whitemagicdev/elixir/lib/whitemagic_core/gan_ying/event_bus.ex")
         if elixir_path.exists():
             print(f"      ✅ Event Bus ready at {elixir_path}")
-            print(f"      → OTP/BEAM 3-lane temporal routing ready")
+            print("      → OTP/BEAM 3-lane temporal routing ready")
         else:
             print("      ❌ Elixir event bus not found")
     
     def benchmark_clones(self):
         """Benchmark clone army throughput"""
         print("   👥 Clone Army Metrics:")
-        print(f"      Total deployed: 220,000 across 22 campaigns")
-        print(f"      Army Alpha: 10,000 (security classification)")
-        print(f"      Army Beta: 70,000 (batch extraction)")
-        print(f"      Army Gamma: 250,000 (pattern mining)")
-        print(f"      → Target throughput: 1M clones/sec")
-        print(f"      → Achieved: 1.4M clones/sec (Python mode)")
+        print("      Total deployed: 220,000 across 22 campaigns")
+        print("      Army Alpha: 10,000 (security classification)")
+        print("      Army Beta: 70,000 (batch extraction)")
+        print("      Army Gamma: 250,000 (pattern mining)")
+        print("      → Target throughput: 1M clones/sec")
+        print("      → Achieved: 1.4M clones/sec (Python mode)")
     
     def benchmark_workflows(self):
         """Benchmark end-to-end workflows"""
@@ -224,7 +224,7 @@ class BenchmarkSuite:
         elapsed = (time.perf_counter() - start) * 1000
         print(f"      Galactic Sweep: {elapsed:.1f}ms")
         
-        print(f"\n   → All workflows healthy")
+        print("\n   → All workflows healthy")
     
     def print_summary(self):
         """Print benchmark summary"""

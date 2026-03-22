@@ -90,8 +90,11 @@ fn main() {
     if let Some(ref zig_dir) = final_zig_dir {
         println!("cargo:rustc-link-search=native={}", zig_dir.display());
         println!("cargo:rustc-link-lib=static=whitemagic-zig");
-        println!("cargo:rerun-if-changed={}", zig_dir.join("libwhitemagic-zig.a").display());
-        
+        println!(
+            "cargo:rerun-if-changed={}",
+            zig_dir.join("libwhitemagic-zig.a").display()
+        );
+
         // Link libc (required by Zig)
         println!("cargo:rustc-link-lib=dylib=c");
     } else {

@@ -1,8 +1,5 @@
 import subprocess
 import time
-import json
-import sys
-import os
 
 print("Setting up Unified Fast Brain Resonance Test...")
 

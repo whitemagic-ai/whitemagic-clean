@@ -18,7 +18,7 @@ def scout_graph_state():
     result = call_tool("cluster_stats")
     if result.get("status") == "success":
         stats = result.get("details", {})
-        print(f"\n📊 Current Cluster State:")
+        print("\n📊 Current Cluster State:")
         print(f"  Total clusters: {stats.get('total_clusters', 'N/A')}")
         print(f"  Total memories: {stats.get('total_memories', 'N/A'):,}")
         print(f"  Avg cluster size: {stats.get('avg_cluster_size', 'N/A'):.1f}")
@@ -29,12 +29,12 @@ def scout_graph_state():
     if health.get("status") == "success":
         details = health.get("details", {})
         db = details.get("db", {})
-        print(f"\n💾 Database State:")
+        print("\n💾 Database State:")
         print(f"  Memory count: {db.get('memory_count', 'N/A'):,}")
         print(f"  DB size: {db.get('size_mb', 'N/A'):.1f} MB")
     
     # Search for graph-related memories
-    print(f"\n🔎 Graph-Related Content:")
+    print("\n🔎 Graph-Related Content:")
     
     # Check for community detection results
     communities = call_tool("search_memories", query="community detection graph", limit=5)
@@ -67,5 +67,5 @@ def scout_graph_state():
 
 if __name__ == "__main__":
     result = scout_graph_state()
-    print(f"\n✅ Scout complete. JSON output:")
+    print("\n✅ Scout complete. JSON output:")
     print(json.dumps(result, indent=2))

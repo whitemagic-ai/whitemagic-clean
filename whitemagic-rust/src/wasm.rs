@@ -1,12 +1,12 @@
 //! WebAssembly bindings for WhiteMagic Edge AI
-//! 
+//!
 //! Compiles to WASM for browser execution.
 //! 10-100x faster than JavaScript implementation.
 //!
 //! Build with: wasm-pack build --target web
 
-use wasm_bindgen::prelude::*;
 use std::collections::HashMap;
+use wasm_bindgen::prelude::*;
 
 /// Edge inference rule
 #[wasm_bindgen]
@@ -105,13 +105,13 @@ impl EdgeEngine {
             stats_local: 0,
             stats_tokens_saved: 0,
         };
-        
+
         // Add default rules
         engine.add_rule(EdgeRule::new(
             "version",
             "version|what version",
             "WhiteMagic version 18.1.0",
-            1.0
+            1.0,
         ));
         engine.add_rule(EdgeRule::new(
             "gardens",
@@ -123,21 +123,21 @@ impl EdgeEngine {
             "tests",
             "test|how many test",
             "WhiteMagic has 1,955 passing tests",
-            0.95
+            0.95,
         ));
         engine.add_rule(EdgeRule::new(
             "offline",
             "offline|work offline|no internet",
             "Yes! This runs entirely locally via WebAssembly. No cloud needed.",
-            1.0
+            1.0,
         ));
         engine.add_rule(EdgeRule::new(
             "wasm",
             "wasm|webassembly|fast",
             "This is running as WebAssembly - 10-100x faster than JavaScript!",
-            1.0
+            1.0,
         ));
-        
+
         engine
     }
 
@@ -170,15 +170,15 @@ impl EdgeEngine {
         for rule in &self.rules {
             let keywords: Vec<&str> = rule.pattern.split('|').collect();
             let matches = keywords.iter().any(|kw| query_lower.contains(kw.trim()));
-            
+
             if matches {
                 self.stats_local += 1;
                 let tokens = (rule.response.len() / 4) as u32 + 100;
                 self.stats_tokens_saved += tokens;
-                
+
                 // Cache the result
                 self.cache.insert(query_lower, rule.response.clone());
-                
+
                 return InferenceResult {
                     answer: rule.response.clone(),
                     confidence: rule.confidence,
@@ -288,7 +288,11 @@ pub fn batch_similarity(query_json: &str, candidates_json: &str, top_k: usize) -
             }
             let dot: f64 = query.iter().zip(c.iter()).map(|(a, b)| a * b).sum();
             let norm_c: f64 = c.iter().map(|x| x * x).sum::<f64>().sqrt();
-            let sim = if norm_c > 0.0 { dot / (norm_q * norm_c) } else { 0.0 };
+            let sim = if norm_c > 0.0 {
+                dot / (norm_q * norm_c)
+            } else {
+                0.0
+            };
             (i, sim)
         })
         .collect();
@@ -296,9 +300,13 @@ pub fn batch_similarity(query_json: &str, candidates_json: &str, top_k: usize) -
     scores.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
     scores.truncate(top_k);
 
-    serde_json::to_string(&scores.iter().map(|(i, s)| {
-        serde_json::json!({"index": i, "score": s})
-    }).collect::<Vec<_>>()).unwrap_or_else(|_| "[]".to_string())
+    serde_json::to_string(
+        &scores
+            .iter()
+            .map(|(i, s)| serde_json::json!({"index": i, "score": s}))
+            .collect::<Vec<_>>(),
+    )
+    .unwrap_or_else(|_| "[]".to_string())
 }
 
 /// Full-text search: find substring matches in a list of texts.
@@ -388,7 +396,7 @@ mod tests {
         let query = "[1.0, 0.0, 0.0]";
         let candidates = "[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.5, 0.5, 0.0]]";
         let result = batch_similarity(query, candidates, 2);
-        assert!(result.contains("\"index\":0"));  // First candidate should be best match
+        assert!(result.contains("\"index\":0")); // First candidate should be best match
     }
 
     #[test]

@@ -4,7 +4,6 @@
 Execute all remaining biological campaigns in one comprehensive sweep.
 """
 
-import sys
 from pathlib import Path
 from datetime import datetime
 
@@ -39,7 +38,7 @@ def execute_b003_immune_integration():
             "file": "whitemagic/immune/security_integration.py",
             "lines": len(content.split("\n"))
         })
-        print(f"3. ✅ Found existing integration: security_integration.py")
+        print("3. ✅ Found existing integration: security_integration.py")
     
     # Analyze integration opportunities
     opportunities = [
@@ -52,7 +51,7 @@ def execute_b003_immune_integration():
     
     findings.extend([{"type": "opportunity", "desc": opp} for opp in opportunities])
     
-    print(f"\n✅ B003 Analysis Complete")
+    print("\n✅ B003 Analysis Complete")
     print(f"   - Immune files: {len(immune_files)}")
     print(f"   - Security files: {len(security_files)}")
     print(f"   - Integration opportunities: {len(opportunities)}")
@@ -121,7 +120,7 @@ def execute_b004_genetic_optimization():
     for point in integration_points:
         print(f"   - {point}")
     
-    print(f"\n✅ B004 Analysis Complete")
+    print("\n✅ B004 Analysis Complete")
     
     return {
         "campaign": "B004",
@@ -185,7 +184,7 @@ def execute_b005_dream_enhancement():
     for enh in enhancements:
         print(f"   - {enh}")
     
-    print(f"\n✅ B005 Analysis Complete")
+    print("\n✅ B005 Analysis Complete")
     
     return {
         "campaign": "B005",
@@ -245,7 +244,7 @@ def execute_b006_metabolism_tuning():
     for opt in optimizations:
         print(f"   - {opt}")
     
-    print(f"\n✅ B006 Analysis Complete")
+    print("\n✅ B006 Analysis Complete")
     
     return {
         "campaign": "B006",

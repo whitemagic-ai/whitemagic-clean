@@ -13,7 +13,7 @@ Analyzes:
 import json
 import sqlite3
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -139,7 +139,7 @@ class DatabaseAnalyzer:
                             if isinstance(tags_list, list):
                                 for tag in tags_list:
                                     analysis["tags"][tag] += 1
-                        except:
+                        except Exception:
                             pass
             
             conn.close()

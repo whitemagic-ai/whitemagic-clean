@@ -80,8 +80,8 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
     # Check optimizations
     rust_avail = check_rust_availability()
     
-    print(f"\n  ⚙️  Configuration:")
-    print(f"     Mode:               Single process (memory-efficient)")
+    print("\n  ⚙️  Configuration:")
+    print("     Mode:               Single process (memory-efficient)")
     print(f"     Batch size:         {batch_size} memories per batch")
     print(f"     Commit frequency:   Every {commit_every} batches")
     print(f"     Time limit:         {max_minutes} minutes")
@@ -90,7 +90,7 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
     # Get initial stats
     stats = get_stats()
     
-    print(f"\n  📊 Current Status:")
+    print("\n  📊 Current Status:")
     print(f"     Active memories:    {stats['active']:,}")
     print(f"     Already embedded:   {stats['embedded']:,}")
     print(f"     Remaining:          {stats['remaining']:,}")
@@ -100,15 +100,15 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
         print("\n  ✅ All memories already embedded!")
         return stats
     
-    print(f"\n  🎯 Optimizations:")
+    print("\n  🎯 Optimizations:")
     print(f"     1. Large batches:       {batch_size} per batch (2-3x speedup)")
     print(f"     2. Incremental commits: Every {commit_every} batches (1.5x speedup)")
-    print(f"     3. Optimized DB:        WAL mode, 128MB cache (1.3x speedup)")
-    print(f"     4. Single model:        No multiprocessing overhead")
-    print(f"\n     Expected:               3-6x speedup vs baseline")
+    print("     3. Optimized DB:        WAL mode, 128MB cache (1.3x speedup)")
+    print("     4. Single model:        No multiprocessing overhead")
+    print("\n     Expected:               3-6x speedup vs baseline")
     
     # Load model once
-    print(f"\n  🔄 Loading embedding model...")
+    print("\n  🔄 Loading embedding model...")
     t_load = time.time()
     
     try:
@@ -127,26 +127,26 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
         return stats
     
     # Optimize DB connection
-    print(f"\n  🔄 Optimizing database connection...")
+    print("\n  🔄 Optimizing database connection...")
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
     conn.execute("PRAGMA cache_size=-131072")  # 128MB
     conn.execute("PRAGMA temp_store=MEMORY")
     conn.execute("PRAGMA mmap_size=536870912")  # 512MB
-    print(f"  ✅ Database optimized")
+    print("  ✅ Database optimized")
     
     # Calculate target
     estimated_rate = 3.0  # Conservative estimate with optimizations
     target_total = int(estimated_rate * 60 * max_minutes)
     target_total = min(target_total, stats["remaining"])
     
-    print(f"\n  🎯 Target:")
+    print("\n  🎯 Target:")
     print(f"     Estimated rate:     ~{estimated_rate:.1f} embeddings/sec")
     print(f"     Target embeddings:  ~{target_total:,} in {max_minutes} min")
     
     # Fetch unembedded IDs
-    print(f"\n  🔍 Fetching unembedded memory IDs...")
+    print("\n  🔍 Fetching unembedded memory IDs...")
     memory_ids = [
         row[0] for row in conn.execute(
             """SELECT id FROM memories 
@@ -171,8 +171,8 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
     end_time = start_time + (max_minutes * 60)
     last_commit_time = start_time
     
-    print(f"\n  🚀 Starting smart batch embedding...")
-    print(f"     Press Ctrl+C to stop gracefully\n")
+    print("\n  🚀 Starting smart batch embedding...")
+    print("     Press Ctrl+C to stop gracefully\n")
     
     i = 0
     while i < len(memory_ids) and time.time() < end_time and not INTERRUPTED:
@@ -268,7 +268,7 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
     print("  ✅ SMART BATCH EMBEDDING COMPLETE")
     print("=" * 80)
     
-    print(f"\n  📊 Results:")
+    print("\n  📊 Results:")
     print(f"     Memories embedded:  {total_embedded:,}")
     print(f"     Batches processed:  {batches_processed}")
     print(f"     Total time:         {elapsed:.1f}s ({elapsed/60:.1f} min)")
@@ -281,7 +281,7 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
     actual_rate = total_embedded / max(elapsed, 1)
     speedup = actual_rate / baseline_rate
     
-    print(f"\n  🎯 Performance:")
+    print("\n  🎯 Performance:")
     print(f"     Baseline rate:      {baseline_rate:.1f} embeddings/sec")
     print(f"     Achieved rate:      {actual_rate:.1f} embeddings/sec")
     print(f"     Speedup:            {speedup:.1f}x")
@@ -297,7 +297,7 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
     
     if final_stats["remaining"] > 0:
         est_time = final_stats["remaining"] / actual_rate if actual_rate > 0 else 0
-        print(f"\n  📈 Projection:")
+        print("\n  📈 Projection:")
         print(f"     Remaining time:     ~{est_time/60:.1f} min at current rate")
         print(f"     To reach 95%:       ~{(0.95 * final_stats['active'] - final_stats['embedded']) / actual_rate / 60:.1f} min")
     

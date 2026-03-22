@@ -5,11 +5,8 @@ PHASE 1: PATTERN UNIFICATION
 Deploy shadow clones to unify 127 to_dict and 63 get_stats implementations
 """
 
-import ast
 import re
-import sys
 from pathlib import Path
-from datetime import datetime, timezone
 
 PROJECT_ROOT = Path(__file__).parent.parent
 WM2_ROOT = Path.home() / "Desktop" / "WM2"
@@ -83,7 +80,7 @@ def main():
         if metrics_analysis['can_migrate']:
             metrics_candidates.append(str(py_file.relative_to(PROJECT_ROOT)))
     
-    print(f"📊 Pattern Analysis:")
+    print("📊 Pattern Analysis:")
     print(f"   Serializable candidates: {len(serializable_candidates)}")
     print(f"   Metrics candidates: {len(metrics_candidates)}")
     print()
@@ -188,8 +185,8 @@ class {file_path.stem.title().replace('_', '')}(BaseEngine, Serializable, Metric
     print("=" * 80)
     print("PHASE 1 COMPLETE")
     print("=" * 80)
-    print(f"Serializable mixin: ✅ Created")
-    print(f"MetricCollector mixin: ✅ Created")
+    print("Serializable mixin: ✅ Created")
+    print("MetricCollector mixin: ✅ Created")
     print(f"Migration templates: {migrated_count} created")
     print(f"Serializable candidates: {len(serializable_candidates)} identified")
     print(f"Metrics candidates: {len(metrics_candidates)} identified")

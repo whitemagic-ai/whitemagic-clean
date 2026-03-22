@@ -82,7 +82,7 @@ def compile_rust_module(module_dir: Path) -> dict:
                 "output": str(lib_files[0]) if lib_files else None,
             }
         else:
-            print(f"      ❌ Failed")
+            print("      ❌ Failed")
             print(f"      Error: {result.stderr[:500]}")
             
             return {
@@ -92,7 +92,7 @@ def compile_rust_module(module_dir: Path) -> dict:
                 "error": result.stderr[:1000],
             }
     except subprocess.TimeoutExpired:
-        print(f"      ❌ Timeout (>5 minutes)")
+        print("      ❌ Timeout (>5 minutes)")
         return {
             "module": module_name,
             "status": "timeout",
@@ -131,7 +131,7 @@ def compile_mojo_module(module_file: Path) -> dict:
                 "duration": round(duration, 2),
             }
         else:
-            print(f"      ❌ Failed")
+            print("      ❌ Failed")
             print(f"      Error: {result.stderr[:500]}")
             return {
                 "module": module_name,
@@ -140,7 +140,7 @@ def compile_mojo_module(module_file: Path) -> dict:
                 "error": result.stderr[:1000],
             }
     except subprocess.TimeoutExpired:
-        print(f"      ❌ Timeout")
+        print("      ❌ Timeout")
         return {
             "module": module_name,
             "status": "timeout",

@@ -5,7 +5,6 @@ Deploys scout clones to analyze the codebase and identify where Koka
 binaries can be integrated for maximum impact.
 """
 
-import os
 import re
 import json
 from pathlib import Path
@@ -80,7 +79,7 @@ class KokaIntegrationScout:
                         targets.append(target)
                         break  # One target per file
                         
-            except Exception as e:
+            except Exception:
                 continue
         
         return targets

@@ -177,7 +177,7 @@ class RigorousCampaignValidator:
             pct = self.results[c]['percentage']
             print(f"   - {c}: {pct:.0f}%")
         
-        print(f"\n📈 Overall Status:")
+        print("\n📈 Overall Status:")
         total_campaigns = len(self.results)
         print(f"   Total campaigns: {total_campaigns}")
         print(f"   Truly complete: {len(truly_complete)} ({len(truly_complete)/total_campaigns*100:.0f}%)")

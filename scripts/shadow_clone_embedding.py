@@ -198,7 +198,7 @@ def shadow_clone_embed(max_minutes: int = 5, num_workers: int = None):
     embeddings_per_worker = int(2.5 * 60 * max_minutes)
     total_target = embeddings_per_worker * num_workers
     
-    print(f"  📊 Work Distribution:")
+    print("  📊 Work Distribution:")
     print(f"     Target per worker: ~{embeddings_per_worker} memories")
     print(f"     Total target: ~{total_target} memories")
     print()
@@ -266,7 +266,7 @@ def shadow_clone_embed(max_minutes: int = 5, num_workers: int = None):
             print(f"     Clone {worker_id}: {embedded} memories in {worker_time:.1f}s ({rate:.1f}/s)")
     
     print()
-    print(f"  📊 Overall Performance:")
+    print("  📊 Overall Performance:")
     print(f"     Total embedded:     {total_embedded:,}")
     print(f"     Total time:         {elapsed:.1f}s ({elapsed/60:.1f} min)")
     print(f"     Overall rate:       {total_rate:.1f} embeddings/sec")

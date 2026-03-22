@@ -225,7 +225,7 @@ def main():
     
     patterns = extract_exception_patterns(public_whitemagic)
     
-    print(f"✅ Extracted exception patterns:")
+    print("✅ Extracted exception patterns:")
     print(f"   Custom exception classes: {len(patterns['exception_classes']):,}")
     print(f"   Try-except blocks: {len(patterns['try_except_blocks']):,}")
     print(f"   Raise statements: {len(patterns['raise_statements']):,}")
@@ -251,7 +251,7 @@ def main():
     print("EXCEPTION SYNTHESIS COMPLETE")
     print("=" * 80)
     print(f"Exception classes: {len(patterns['exception_classes']):,}")
-    print(f"Subsystem created: ✅")
+    print("Subsystem created: ✅")
     print(f"Report: {results_path}")
     print()
     print("✅ 80K exception synthesis clones deployed!")

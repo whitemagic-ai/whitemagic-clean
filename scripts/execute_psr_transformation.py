@@ -5,10 +5,9 @@ Direct execution of all PSR campaigns with concrete implementation steps
 """
 
 import json
-import time
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict
 
 class PSRTransformationExecutor:
     """Execute PSR polyglot transformation"""
@@ -294,23 +293,23 @@ class PSRTransformationExecutor:
         total_files = sum(r['files_migrated'] for r in self.results.values())
         avg_speedup = sum(r['speedup'] for r in self.results.values()) / len(self.results)
         
-        print(f"📈 Overall Progress:")
+        print("📈 Overall Progress:")
         print(f"   Victory Conditions: {total_vcs_met}/{total_vcs} ({total_vcs_met/total_vcs*100:.1f}%)")
         print(f"   Files Migrated: {total_files}")
         print(f"   Average Speedup: {avg_speedup:.1f}x")
         
-        print(f"\n📋 Campaign Status:")
+        print("\n📋 Campaign Status:")
         for code, result in self.results.items():
             status_icon = "✅" if result['status'] == 'completed' else "⚠️" if result['status'] == 'partial' else "🎯"
             completion = result['vcs_met'] / result['vcs_total'] * 100
             print(f"   {status_icon} {code}: {completion:.1f}% ({result['vcs_met']}/{result['vcs_total']} VCs, {result['speedup']:.1f}x speedup)")
         
-        print(f"\n🎯 Next Priority Actions:")
-        print(f"   1. Set up polyglot development environments (Zig, Mojo, Koka)")
-        print(f"   2. Execute PSR-001 Week 1 quick wins (4 easiest P0 files)")
-        print(f"   3. Batch embed 4,726 active memories for vector search")
-        print(f"   4. Build unified search engine in Rust")
-        print(f"   5. Migrate pattern_engine.py to Zig (100-1000x speedup)")
+        print("\n🎯 Next Priority Actions:")
+        print("   1. Set up polyglot development environments (Zig, Mojo, Koka)")
+        print("   2. Execute PSR-001 Week 1 quick wins (4 easiest P0 files)")
+        print("   3. Batch embed 4,726 active memories for vector search")
+        print("   4. Build unified search engine in Rust")
+        print("   5. Migrate pattern_engine.py to Zig (100-1000x speedup)")
         
         # Save JSON report
         report = {

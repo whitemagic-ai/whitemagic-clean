@@ -1,7 +1,5 @@
 import subprocess
 import time
-import sys
-import os
 
 print("Setting up End-to-End SHM Ring Pipeline Test...")
 

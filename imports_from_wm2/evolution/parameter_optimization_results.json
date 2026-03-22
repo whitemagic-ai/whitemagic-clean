@@ -1,0 +1,106 @@
+{
+  "total_tests": 9,
+  "best_parameters": {
+    "mutation_rate": 0.2,
+    "selection_pressure": 0.25,
+    "elitism_rate": 0.02,
+    "crossover_rate": 0.7
+  },
+  "expected_performance": {
+    "best_fitness": 0.6758250140456331,
+    "diversity": 0.91143,
+    "throughput": 132214.42681679432
+  },
+  "all_results": [
+    {
+      "mutation_rate": 0.18,
+      "selection_pressure": 0.27,
+      "elitism_rate": 0.01,
+      "best_fitness": 0.6759580111617772,
+      "avg_fitness": 0.18682436924256396,
+      "diversity": 0.9167,
+      "throughput": 118150.65754479138,
+      "duration": 85.2593994140625
+    },
+    {
+      "mutation_rate": 0.2,
+      "selection_pressure": 0.25,
+      "elitism_rate": 0.03,
+      "best_fitness": 0.6753008153573784,
+      "avg_fitness": 0.19666362263844395,
+      "diversity": 0.90398,
+      "throughput": 123073.81612274163,
+      "duration": 81.90479683876038
+    },
+    {
+      "mutation_rate": 0.2,
+      "selection_pressure": 0.23,
+      "elitism_rate": 0.03,
+      "best_fitness": 0.6759291023548606,
+      "avg_fitness": 0.1974016169992202,
+      "diversity": 0.90382,
+      "throughput": 91621.50748553518,
+      "duration": 110.46930527687073
+    },
+    {
+      "mutation_rate": 0.2,
+      "selection_pressure": 0.23,
+      "elitism_rate": 0.01,
+      "best_fitness": 0.6747266477440684,
+      "avg_fitness": 0.1866907092701876,
+      "diversity": 0.91821,
+      "throughput": 101343.49355792611,
+      "duration": 99.29966044425964
+    },
+    {
+      "mutation_rate": 0.16,
+      "selection_pressure": 0.25,
+      "elitism_rate": 0.02,
+      "best_fitness": 0.6753862657522827,
+      "avg_fitness": 0.19108696818656767,
+      "diversity": 0.90819,
+      "throughput": 113943.46027742104,
+      "duration": 88.40528011322021
+    },
+    {
+      "mutation_rate": 0.18,
+      "selection_pressure": 0.23,
+      "elitism_rate": 0.01,
+      "best_fitness": 0.6752798679484467,
+      "avg_fitness": 0.18700655842565356,
+      "diversity": 0.91638,
+      "throughput": 109898.12851768947,
+      "duration": 91.57211780548096
+    },
+    {
+      "mutation_rate": 0.18,
+      "selection_pressure": 0.25,
+      "elitism_rate": 0.01,
+      "best_fitness": 0.6742003161239387,
+      "avg_fitness": 0.18728495541482004,
+      "diversity": 0.91605,
+      "throughput": 123851.81524199655,
+      "duration": 81.30286026000977
+    },
+    {
+      "mutation_rate": 0.2,
+      "selection_pressure": 0.25,
+      "elitism_rate": 0.02,
+      "best_fitness": 0.6758250140456331,
+      "avg_fitness": 0.1911921498723319,
+      "diversity": 0.91143,
+      "throughput": 132214.42681679432,
+      "duration": 76.26180076599121
+    },
+    {
+      "mutation_rate": 0.16,
+      "selection_pressure": 0.27,
+      "elitism_rate": 0.01,
+      "best_fitness": 0.6787154997267998,
+      "avg_fitness": 0.18854434258348807,
+      "diversity": 0.91305,
+      "throughput": 127963.54176113127,
+      "duration": 78.74836301803589
+    }
+  ]
+}

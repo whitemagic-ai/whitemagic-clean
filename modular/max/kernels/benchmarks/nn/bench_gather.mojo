@@ -1,0 +1,112 @@
+# ===----------------------------------------------------------------------=== #
+# Copyright (c) 2026, Modular Inc. All rights reserved.
+#
+# Licensed under the Apache License v2.0 with LLVM Exceptions:
+# https://llvm.org/LICENSE.txt
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ===----------------------------------------------------------------------=== #
+
+from memory import LegacyUnsafePointer
+
+comptime UnsafePointer = LegacyUnsafePointer[mut=True, ...]
+from random import rand, randint
+
+from benchmark import *
+from layout._layout import row_major
+from layout._coord import Coord
+from layout._tile_tensor import TileTensor
+from nn.gather_scatter import gather_elements
+
+from utils.index import Index
+
+
+fn bench_gather(mut m: Bench, spec: GatherSpec) raises:
+    @parameter
+    @always_inline
+    fn bench_gather_wrapper(mut b: Bencher, concrete_spec: GatherSpec) raises:
+        bench_gather(b, concrete_spec)
+
+    m.bench_with_input[GatherSpec, bench_gather_wrapper](
+        BenchId("gather", String(spec)), spec
+    )
+
+
+@parameter
+fn bench_gather(mut bencher: Bencher, spec: GatherSpec):
+    var index_rand_min = 0
+    var index_rand_max = spec.m1 - 1
+
+    var input_shape = Index(spec.m1, spec.m2)
+    var indices_shape = Index(spec.n1, spec.n2)
+
+    var data_ptr = UnsafePointer[Float32].alloc(input_shape.flattened_length())
+    rand(data_ptr, input_shape.flattened_length())
+    var data_tensor = TileTensor(data_ptr, row_major(Coord(input_shape)))
+
+    var indices_ptr = UnsafePointer[Int32].alloc(
+        indices_shape.flattened_length()
+    )
+    randint(
+        indices_ptr,
+        indices_shape.flattened_length(),
+        index_rand_min,
+        index_rand_max,
+    )
+    var indices_tensor = TileTensor(
+        indices_ptr, row_major(Coord(indices_shape))
+    )
+
+    var output_ptr = UnsafePointer[Float32].alloc(
+        indices_shape.flattened_length()
+    )
+    var output_tensor = TileTensor(output_ptr, row_major(Coord(indices_shape)))
+
+    @always_inline
+    @parameter
+    fn bench_fn():
+        try:
+            gather_elements(
+                data_tensor,
+                indices_tensor,
+                spec.axis,
+                output_tensor,
+            )
+        except e:
+            print("Err => ", e)
+
+    bencher.iter[bench_fn]()
+
+    data_tensor.ptr.free()
+    indices_tensor.ptr.free()
+    output_tensor.ptr.free()
+
+
+@fieldwise_init
+struct GatherSpec(ImplicitlyCopyable, Stringable):
+    var axis: Int
+    var m1: Int
+    var m2: Int
+    var n1: Int
+    var n2: Int
+
+    @no_inline
+    fn __str__(self) -> String:
+        # fmt: off
+        return String(
+            "axis=", self.axis,
+            ";Dim=(", self.m1, ",", self.m2, ")",
+            "(", self.n1, ",", self.n2, ")",
+        )
+        # fmt: on
+
+
+def main():
+    var m = Bench(BenchConfig(num_repetitions=2))
+    bench_gather(m, GatherSpec(axis=1, m1=400, m2=400, n1=200, n2=200))
+    bench_gather(m, GatherSpec(axis=1, m1=1000, m2=1000, n1=200, n2=200))
+    m.dump_report()

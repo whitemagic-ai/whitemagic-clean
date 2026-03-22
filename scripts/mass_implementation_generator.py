@@ -6,7 +6,6 @@ Generate real implementations for all PSR stubs using intelligent patterns
 
 import time
 from pathlib import Path
-from typing import Dict, List
 
 class MassGenerator:
     """Generate implementations for all stubs"""
@@ -666,7 +665,7 @@ def main():
     for path, lines in generator.generated:
         print(f"  {path}: {lines} lines")
     
-    print(f"\n✅ All implementations ready for compilation!")
+    print("\n✅ All implementations ready for compilation!")
 
 if __name__ == '__main__':
     main()

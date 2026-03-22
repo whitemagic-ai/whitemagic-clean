@@ -13,9 +13,9 @@ from typing import Any, Dict, List
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from whitemagic.core.nervous_system import NervousSystem, OrganType, get_nervous_system
+from whitemagic.core.nervous_system import OrganType, get_nervous_system
 from whitemagic.core.resonance.gan_ying import (
-    GanYingBus, EventType, ResonanceEvent, get_bus, emit_event, listen_to
+    EventType, ResonanceEvent, get_bus, emit_event, listen_to
 )
 
 REPORTS_DIR = PROJECT_ROOT / "reports"

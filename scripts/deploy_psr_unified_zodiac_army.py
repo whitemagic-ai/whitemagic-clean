@@ -16,12 +16,11 @@ import asyncio
 import json
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 
 # WhiteMagic imports
-from whitemagic.agents.immortal_clone_v2 import ImmortalClone
 from whitemagic.agents.campaign_loader import load_campaigns, Campaign
 from whitemagic.agents.phylogenetics import (
     GenomeTracker,
@@ -346,14 +345,14 @@ class PSRUnifiedZodiacArmy:
         completed = sum(1 for s in self.deployment.campaign_states.values() if s.status == "completed")
         partial = sum(1 for s in self.deployment.campaign_states.values() if s.status == "partial")
         
-        print(f"📈 Overall Statistics:")
+        print("📈 Overall Statistics:")
         print(f"   Campaigns Completed: {completed}/{len(self.deployment.campaigns)}")
         print(f"   Campaigns Partial: {partial}/{len(self.deployment.campaigns)}")
         print(f"   Victory Conditions: {total_vcs_met}/{total_vcs} ({total_vcs_met/total_vcs*100:.1f}%)")
         print(f"   Files Migrated: {total_files:,}")
         print(f"   Total Clones Deployed: {self.deployment.total_clones_deployed:,}")
         
-        print(f"\n📋 Campaign Results:")
+        print("\n📋 Campaign Results:")
         for campaign in self.deployment.campaigns:
             state = self.deployment.campaign_states[campaign.codename]
             status_icon = "✅" if state.status == "completed" else "⚠️" if state.status == "partial" else "❌"

@@ -1,15 +1,18 @@
 //! Orchestration primitives - circuit breaker, retry, timeout, backpressure
 
 use std::collections::HashMap;
-use std::sync::{Arc, RwLock, atomic::{AtomicU32, AtomicU64, Ordering}};
+use std::sync::{
+    atomic::{AtomicU32, AtomicU64, Ordering},
+    Arc, RwLock,
+};
 use std::time::{Duration, Instant};
 
 /// Circuit breaker states
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CircuitState {
-    Closed,      // Normal operation
-    Open,        // Failing, rejecting requests
-    HalfOpen,    // Testing if service recovered
+    Closed,   // Normal operation
+    Open,     // Failing, rejecting requests
+    HalfOpen, // Testing if service recovered
 }
 
 /// Circuit breaker configuration
@@ -38,7 +41,7 @@ pub struct CircuitBreaker {
     name: String,
     state: RwLock<CircuitState>,
     config: CircuitBreakerConfig,
-    
+
     // Statistics
     failure_count: AtomicU32,
     success_count: AtomicU32,
@@ -63,7 +66,7 @@ impl CircuitBreaker {
             total_successes: AtomicU64::new(0),
         }
     }
-    
+
     /// Get current state
     pub fn get_state(&self) -> CircuitState {
         if let Ok(state) = self.state.read() {
@@ -72,13 +75,13 @@ impl CircuitBreaker {
             CircuitState::Open // Fail safe
         }
     }
-    
+
     /// Check if request can proceed
     pub fn can_execute(&self) -> bool {
         self.total_requests.fetch_add(1, Ordering::SeqCst);
-        
+
         let state = self.get_state();
-        
+
         match state {
             CircuitState::Closed => true,
             CircuitState::Open => {
@@ -100,13 +103,13 @@ impl CircuitBreaker {
             CircuitState::HalfOpen => true,
         }
     }
-    
+
     /// Record success
     pub fn record_success(&self) {
         self.total_successes.fetch_add(1, Ordering::SeqCst);
-        
+
         let state = self.get_state();
-        
+
         match state {
             CircuitState::HalfOpen => {
                 let successes = self.success_count.fetch_add(1, Ordering::SeqCst) + 1;
@@ -124,17 +127,17 @@ impl CircuitBreaker {
             _ => {}
         }
     }
-    
+
     /// Record failure
     pub fn record_failure(&self) {
         self.total_failures.fetch_add(1, Ordering::SeqCst);
-        
+
         if let Ok(mut last) = self.last_failure_time.write() {
             *last = Some(Instant::now());
         }
-        
+
         let state = self.get_state();
-        
+
         match state {
             CircuitState::HalfOpen | CircuitState::Closed => {
                 let failures = self.failure_count.fetch_add(1, Ordering::SeqCst) + 1;
@@ -147,7 +150,7 @@ impl CircuitBreaker {
             _ => {}
         }
     }
-    
+
     /// Execute function with circuit breaker
     pub fn execute<F, T>(&self, f: F) -> Result<T, CircuitBreakerError>
     where
@@ -156,7 +159,7 @@ impl CircuitBreaker {
         if !self.can_execute() {
             return Err(CircuitBreakerError::CircuitOpen);
         }
-        
+
         match f() {
             Ok(result) => {
                 self.record_success();
@@ -168,7 +171,7 @@ impl CircuitBreaker {
             }
         }
     }
-    
+
     /// Get statistics
     pub fn get_stats(&self) -> CircuitBreakerStats {
         CircuitBreakerStats {
@@ -214,7 +217,7 @@ impl CircuitBreakerRegistry {
             breakers: RwLock::new(HashMap::new()),
         }
     }
-    
+
     /// Get or create circuit breaker
     pub fn get_or_create(&self, name: &str, config: CircuitBreakerConfig) -> Arc<CircuitBreaker> {
         if let Ok(breakers) = self.breakers.read() {
@@ -222,16 +225,19 @@ impl CircuitBreakerRegistry {
                 return breaker.clone();
             }
         }
-        
+
         if let Ok(mut breakers) = self.breakers.write() {
             let breaker = Arc::new(CircuitBreaker::new(name.to_string(), config));
             breakers.insert(name.to_string(), breaker.clone());
             breaker
         } else {
-            Arc::new(CircuitBreaker::new(name.to_string(), CircuitBreakerConfig::default()))
+            Arc::new(CircuitBreaker::new(
+                name.to_string(),
+                CircuitBreakerConfig::default(),
+            ))
         }
     }
-    
+
     /// Get circuit breaker
     pub fn get(&self, name: &str) -> Option<Arc<CircuitBreaker>> {
         if let Ok(breakers) = self.breakers.read() {
@@ -240,7 +246,7 @@ impl CircuitBreakerRegistry {
             None
         }
     }
-    
+
     /// Get all circuit breakers
     pub fn get_all(&self) -> Vec<Arc<CircuitBreaker>> {
         if let Ok(breakers) = self.breakers.read() {
@@ -292,22 +298,22 @@ impl RetryExecutor {
     {
         let mut attempts = 0;
         let mut delay = config.base_delay;
-        
+
         loop {
             attempts += 1;
-            
+
             match f() {
                 Ok(result) => return Ok(result),
                 Err(e) => {
                     if attempts >= config.max_attempts {
                         return Err(RetryError::MaxAttemptsExceeded(attempts, e));
                     }
-                    
+
                     std::thread::sleep(delay);
-                    
+
                     // Calculate next delay with exponential backoff
                     let next_delay = Duration::from_millis(
-                        (delay.as_millis() as f64 * config.backoff_multiplier) as u64
+                        (delay.as_millis() as f64 * config.backoff_multiplier) as u64,
                     );
                     delay = std::cmp::min(next_delay, config.max_delay);
                 }
@@ -373,19 +379,19 @@ impl BackpressureController {
             queued: AtomicU32::new(0),
         }
     }
-    
+
     /// Try to acquire slot
     pub fn try_acquire(&self) -> Result<BackpressureGuard<'_>, BackpressureError> {
         let concurrent = self.concurrent.load(Ordering::SeqCst);
         let queued = self.queued.load(Ordering::SeqCst);
-        
+
         if concurrent as usize >= self.config.max_concurrent {
             if queued as usize >= self.config.max_queue_size {
                 return Err(BackpressureError::QueueFull);
             }
-            
+
             self.queued.fetch_add(1, Ordering::SeqCst);
-            
+
             // Wait for slot (with timeout)
             let start = Instant::now();
             while self.concurrent.load(Ordering::SeqCst) as usize >= self.config.max_concurrent {
@@ -395,22 +401,20 @@ impl BackpressureController {
                 }
                 std::thread::sleep(Duration::from_millis(10));
             }
-            
+
             self.queued.fetch_sub(1, Ordering::SeqCst);
         }
-        
+
         self.concurrent.fetch_add(1, Ordering::SeqCst);
-        
-        Ok(BackpressureGuard {
-            controller: self,
-        })
+
+        Ok(BackpressureGuard { controller: self })
     }
-    
+
     /// Release slot
     fn release(&self) {
         self.concurrent.fetch_sub(1, Ordering::SeqCst);
     }
-    
+
     /// Get current load
     pub fn get_load(&self) -> LoadMetrics {
         LoadMetrics {
@@ -435,7 +439,7 @@ impl<'a> Drop for BackpressureGuard<'a> {
 
 impl<'a> std::ops::Deref for BackpressureGuard<'a> {
     type Target = BackpressureController;
-    
+
     fn deref(&self) -> &Self::Target {
         self.controller
     }
@@ -462,14 +466,14 @@ impl LoadMetrics {
     pub fn load_percentage(&self) -> f64 {
         let total_capacity = self.max_concurrent + self.max_queue;
         let current_load = self.concurrent + self.queued;
-        
+
         if total_capacity == 0 {
             0.0
         } else {
             (current_load as f64 / total_capacity as f64) * 100.0
         }
     }
-    
+
     /// Check if under pressure
     pub fn is_under_pressure(&self) -> bool {
         self.concurrent >= self.max_concurrent || self.queued > 0
@@ -479,22 +483,22 @@ impl LoadMetrics {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_circuit_breaker_closed() {
         let cb = CircuitBreaker::new("test".to_string(), CircuitBreakerConfig::default());
-        
+
         assert_eq!(cb.get_state(), CircuitState::Closed);
         assert!(cb.can_execute());
-        
+
         // Record successes
         for _ in 0..10 {
             cb.record_success();
         }
-        
+
         assert_eq!(cb.get_state(), CircuitState::Closed);
     }
-    
+
     #[test]
     fn test_circuit_breaker_opens() {
         let config = CircuitBreakerConfig {
@@ -502,18 +506,18 @@ mod tests {
             success_threshold: 2,
             timeout_duration: Duration::from_secs(30),
         };
-        
+
         let cb = CircuitBreaker::new("test".to_string(), config);
-        
+
         // Record failures to open circuit
         for _ in 0..3 {
             cb.record_failure();
         }
-        
+
         assert_eq!(cb.get_state(), CircuitState::Open);
         assert!(!cb.can_execute());
     }
-    
+
     #[test]
     fn test_circuit_breaker_half_open() {
         let config = CircuitBreakerConfig {
@@ -521,36 +525,36 @@ mod tests {
             success_threshold: 2,
             timeout_duration: Duration::from_millis(1),
         };
-        
+
         let cb = CircuitBreaker::new("test".to_string(), config);
-        
+
         // Open circuit
         cb.record_failure();
         cb.record_failure();
         assert_eq!(cb.get_state(), CircuitState::Open);
-        
+
         // Wait for timeout
         std::thread::sleep(Duration::from_millis(10));
-        
+
         // Should transition to half-open
         assert!(cb.can_execute());
         assert_eq!(cb.get_state(), CircuitState::HalfOpen);
     }
-    
+
     #[test]
     fn test_circuit_breaker_registry() {
         let registry = CircuitBreakerRegistry::new();
-        
+
         let cb1 = registry.get_or_create("test1", CircuitBreakerConfig::default());
         let cb2 = registry.get_or_create("test1", CircuitBreakerConfig::default());
-        
+
         // Should return same instance
         assert!(Arc::ptr_eq(&cb1, &cb2));
-        
+
         let cb3 = registry.get_or_create("test2", CircuitBreakerConfig::default());
         assert!(!Arc::ptr_eq(&cb1, &cb3));
     }
-    
+
     #[test]
     fn test_retry_executor() {
         let config = RetryConfig {
@@ -559,22 +563,22 @@ mod tests {
             max_delay: Duration::from_millis(10),
             backoff_multiplier: 2.0,
         };
-        
+
         // Test success
         let result = RetryExecutor::execute(&config, || Ok::<_, String>(42));
         assert_eq!(result, Ok(42));
-        
+
         // Test failure after max attempts
         let attempts = std::cell::Cell::new(0);
         let result = RetryExecutor::execute(&config, || -> Result<i32, String> {
             attempts.set(attempts.get() + 1);
             Err("always fails".to_string())
         });
-        
+
         assert!(result.is_err());
         assert_eq!(attempts.get(), 3);
     }
-    
+
     #[test]
     fn test_backpressure() {
         let config = BackpressureConfig {
@@ -582,26 +586,26 @@ mod tests {
             max_queue_size: 1,
             queue_timeout: Duration::from_millis(10),
         };
-        
+
         let controller = BackpressureController::new(config);
-        
+
         // Acquire first slot
         let guard1 = controller.try_acquire();
         assert!(guard1.is_ok());
-        
+
         // Second acquire should queue then timeout
         let guard2 = controller.try_acquire();
         assert!(guard2.is_err());
-        
+
         // Release first guard
         drop(guard1);
-        
+
         // Now should be able to acquire
         std::thread::sleep(Duration::from_millis(20));
         let guard3 = controller.try_acquire();
         assert!(guard3.is_ok());
     }
-    
+
     #[test]
     fn test_load_metrics() {
         let metrics = LoadMetrics {
@@ -610,7 +614,7 @@ mod tests {
             max_concurrent: 100,
             max_queue: 100,
         };
-        
+
         assert_eq!(metrics.load_percentage(), 37.5);
         assert!(metrics.is_under_pressure());
     }

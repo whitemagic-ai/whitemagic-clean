@@ -5,7 +5,7 @@ Trains a lightweight cross-encoder on the LoCoMo training set.
 import os
 import json
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from typing import List, Dict
 

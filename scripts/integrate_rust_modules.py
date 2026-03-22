@@ -42,7 +42,7 @@ def test_rust_module(lib_path: Path):
         size = lib_path.stat().st_size
         print(f"   Library size: {size:,} bytes")
         print(f"   Path: {lib_path}")
-        print(f"   ✅ Module compiled successfully")
+        print("   ✅ Module compiled successfully")
         return True
     except Exception as e:
         print(f"   ❌ Error: {e}")

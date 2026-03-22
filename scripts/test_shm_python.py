@@ -1,9 +1,7 @@
 import posix_ipc
 import mmap
 import struct
-import time
 import subprocess
-import os
 
 HEADER_SIZE = 64
 MAGIC = 0x574D4B4B # "WMKK"

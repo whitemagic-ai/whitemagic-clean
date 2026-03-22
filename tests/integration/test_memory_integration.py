@@ -4,8 +4,8 @@ import pytest
 import sys
 from pathlib import Path
 
-# Add Rust bindings to path
-sys.path.insert(0, str(Path(__file__).parent.parent / ".venv" / "lib" / "python3.12" / "site-packages"))
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).parents[2]))
 
 try:
     import whitemagic_rs

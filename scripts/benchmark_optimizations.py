@@ -9,7 +9,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import numpy as np
 
 
 def benchmark_memory_operations():
@@ -63,7 +62,7 @@ def benchmark_memory_operations():
     
     # Cache stats
     stats = cache.get_stats()
-    print(f"\n📈 Cache Statistics:")
+    print("\n📈 Cache Statistics:")
     print(f"   Hit Rate: {stats['hit_rate']:.1f}%")
     print(f"   Total Requests: {stats['total_requests']}")
     print(f"   Cache Size: {stats['size']}/{stats['max_size']}")
@@ -222,7 +221,7 @@ def generate_report(results):
     print("\n🎯 Key Improvements:")
     print(f"   1. Memory Operations: {mem_results.get('speedup', 0):.1f}x faster with cache")
     print(f"   2. MCP Handlers: {handler_results.get('average_speedup', 0):.1f}x faster with cache")
-    print(f"   3. Token Optimizer: Smart compression thresholds implemented")
+    print("   3. Token Optimizer: Smart compression thresholds implemented")
     
     print("\n📊 Detailed Metrics:")
     print(f"   Memory Cache Hit Rate: {mem_results.get('hit_rate', 0):.1f}%")
@@ -245,7 +244,7 @@ def generate_report(results):
         f.write("WhiteMagic Optimization Benchmark Results\n")
         f.write("=" * 70 + "\n")
         f.write(f"Date: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write(f"Campaigns: P002 (QueryCache), P005 (Handler Caching), P003 (Token Optimization)\n\n")
+        f.write("Campaigns: P002 (QueryCache), P005 (Handler Caching), P003 (Token Optimization)\n\n")
         f.write(f"Memory Operations Speedup: {mem_results.get('speedup', 0):.1f}x\n")
         f.write(f"MCP Handler Speedup: {handler_results.get('average_speedup', 0):.1f}x\n")
         f.write(f"Cache Hit Rate: {mem_results.get('hit_rate', 0):.1f}%\n")

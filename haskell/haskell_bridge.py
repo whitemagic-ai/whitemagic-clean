@@ -19,7 +19,7 @@ import json
 import os
 import glob
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 
 def _find_shared_lib() -> Optional[str]:

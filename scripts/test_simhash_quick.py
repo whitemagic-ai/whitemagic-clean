@@ -53,7 +53,7 @@ if results:
     b = vectors[pair['idx_b']]
     actual_sim = float(np.dot(a, b))
     estimated_sim = pair['similarity']
-    print(f"\nVerification:")
+    print("\nVerification:")
     print(f"  Actual cosine similarity: {actual_sim:.4f}")
     print(f"  SimHash estimate: {estimated_sim:.4f}")
     print(f"  Error: {abs(actual_sim - estimated_sim):.4f}")

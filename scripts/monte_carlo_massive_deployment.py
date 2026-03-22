@@ -7,9 +7,7 @@ Target: Deploy 1M-10M clones to solve complex problems via Monte Carlo explorati
 """
 
 import time
-import json
-from pathlib import Path
-from typing import List, Dict, Tuple
+from typing import List
 import random
 
 def monte_carlo_code_migration(clone_count: int = 100000):
@@ -81,7 +79,7 @@ def monte_carlo_code_migration(clone_count: int = 100000):
         total_lines = sum(r.lines_written for r in results)
         throughput = len(results) / duration if duration > 0 else 0
         
-        print(f"\n📊 Monte Carlo Results:")
+        print("\n📊 Monte Carlo Results:")
         print(f"  Total operations: {len(results):,}")
         print(f"  Successful: {successful:,} ({successful/len(results)*100:.1f}%)")
         print(f"  Total lines written: {total_lines:,}")
@@ -179,25 +177,25 @@ def project_10m_capabilities():
     peak_throughput = 697_000_000
     
     print(f"\nPeak Throughput: {peak_throughput:,} clones/sec")
-    print(f"\nWhat 10M clones can do:")
+    print("\nWhat 10M clones can do:")
     print(f"  • Deploy in: {10_000_000 / peak_throughput:.6f} seconds (14 microseconds!)")
-    print(f"  • Explore 10M solution variants simultaneously")
-    print(f"  • Write 10M code files in parallel")
-    print(f"  • Run 10M experiments in one batch")
-    print(f"  • Genetic algorithm: 10M generations in seconds")
+    print("  • Explore 10M solution variants simultaneously")
+    print("  • Write 10M code files in parallel")
+    print("  • Run 10M experiments in one batch")
+    print("  • Genetic algorithm: 10M generations in seconds")
     
-    print(f"\nMonte Carlo Problem Solving:")
-    print(f"  • NP-hard problems: Brute force with 10M parallel attempts")
-    print(f"  • Optimization: Explore 10M parameter combinations")
-    print(f"  • Code generation: Try 10M implementations, keep best")
-    print(f"  • Testing: Run 10M test scenarios simultaneously")
+    print("\nMonte Carlo Problem Solving:")
+    print("  • NP-hard problems: Brute force with 10M parallel attempts")
+    print("  • Optimization: Explore 10M parameter combinations")
+    print("  • Code generation: Try 10M implementations, keep best")
+    print("  • Testing: Run 10M test scenarios simultaneously")
     
-    print(f"\nSelf-Improvement Loop:")
-    print(f"  1. Deploy 10M clones to optimize code")
-    print(f"  2. Each clone tries different optimization")
-    print(f"  3. Best optimizations make next generation faster")
-    print(f"  4. Exponential acceleration: Each cycle faster than last")
-    print(f"  5. Theoretical limit: Hardware-bound, not algorithm-bound")
+    print("\nSelf-Improvement Loop:")
+    print("  1. Deploy 10M clones to optimize code")
+    print("  2. Each clone tries different optimization")
+    print("  3. Best optimizations make next generation faster")
+    print("  4. Exponential acceleration: Each cycle faster than last")
+    print("  5. Theoretical limit: Hardware-bound, not algorithm-bound")
 
 def main():
     """Main execution"""

@@ -5,7 +5,6 @@ Directly implements missing VCs for PSR-001 through PSR-010
 """
 
 from pathlib import Path
-import subprocess
 
 class CampaignFinisher:
     """Finishes old campaigns by implementing missing VCs"""
@@ -146,7 +145,7 @@ __all__ = [
         
         # Check if PSR modules are already exported
         if 'pub mod psr;' in content:
-            print(f"  ✅ lib.rs already exports PSR modules")
+            print("  ✅ lib.rs already exports PSR modules")
             self.completed.append("lib.rs exports")
             return
         
@@ -164,7 +163,7 @@ __all__ = [
             
             lib_rs_path.write_text('\n'.join(lines))
             
-            print(f"  ✅ Updated lib.rs to export PSR modules")
+            print("  ✅ Updated lib.rs to export PSR modules")
             self.completed.append("lib.rs exports")
     
     def _print_summary(self):
@@ -177,13 +176,13 @@ __all__ = [
         for task in self.completed:
             print(f"  ✅ {task}")
         
-        print(f"\n🎯 Next Steps to Complete VCs:")
-        print(f"  1. Build Rust bindings: cd whitemagic-rust && maturin develop")
-        print(f"  2. Run integration tests: pytest tests/integration/ -v")
-        print(f"  3. Benchmark real speedups: python3 scripts/benchmark_harness.py")
-        print(f"  4. Validate all VCs with measurements")
+        print("\n🎯 Next Steps to Complete VCs:")
+        print("  1. Build Rust bindings: cd whitemagic-rust && maturin develop")
+        print("  2. Run integration tests: pytest tests/integration/ -v")
+        print("  3. Benchmark real speedups: python3 scripts/benchmark_harness.py")
+        print("  4. Validate all VCs with measurements")
         
-        print(f"\n✅ Old campaigns ready for final integration!")
+        print("\n✅ Old campaigns ready for final integration!")
 
 def main():
     """Finish old campaigns"""

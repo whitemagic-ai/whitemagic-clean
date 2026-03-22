@@ -7,7 +7,6 @@ Tests the recursive loop with real-time event accumulation and pattern discovery
 """
 
 import sys
-import time
 from pathlib import Path
 from datetime import datetime
 

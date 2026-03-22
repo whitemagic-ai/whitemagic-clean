@@ -5,9 +5,8 @@ Deploy millions of clones to complete PSR-001 through PSR-010 in parallel
 """
 
 import time
-import sys
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, Any
 
 # PSR-001 targets from campaign file
 PSR001_TARGETS = [

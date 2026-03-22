@@ -207,7 +207,7 @@ def ultimate_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     
     governor = check_cpu_governor()
     
-    print(f"\n  🖥️  Hardware Configuration:")
+    print("\n  🖥️  Hardware Configuration:")
     print(f"     CPU threads:        {hw['cpu_threads']}")
     print(f"     Available RAM:      {hw['mem_gb']:.1f} GB")
     print(f"     CPU governor:       {governor or 'unknown'}")
@@ -215,12 +215,12 @@ def ultimate_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     print(f"     Batch size:         {batch_size} per worker")
     
     if governor == "powersave":
-        print(f"     ⚠️  CPU in powersave mode (consider 'performance' for +30% speed)")
+        print("     ⚠️  CPU in powersave mode (consider 'performance' for +30% speed)")
     
     # Get current stats
     stats = get_stats()
     
-    print(f"\n  📊 Current Status:")
+    print("\n  📊 Current Status:")
     print(f"     Active memories:    {stats['active']:,}")
     print(f"     Already embedded:   {stats['embedded']:,}")
     print(f"     Remaining:          {stats['remaining']:,}")
@@ -230,26 +230,26 @@ def ultimate_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
         print("\n  ✅ All memories already embedded!")
         return stats
     
-    print(f"\n  ⚡ Active Strategies:")
+    print("\n  ⚡ Active Strategies:")
     print(f"     1. Shadow Clone Army:      {num_workers} parallel workers (4-8x)")
     print(f"     2. Optimized Batching:     {batch_size} per batch (2-3x)")
     print(f"     3. CPU Optimization:       {'powersave (1x)' if governor == 'powersave' else 'optimized (1.3-1.5x)'}")
-    print(f"     4. Polyglot SIMD:          Rust/Zig acceleration (1.2-1.5x)")
-    print(f"     5. MCP Gana Orchestration: Distributed coordination (1.5-2x)")
-    print(f"\n     Combined Expected:         10-30x speedup")
-    print(f"     Target Rate:               25-75 embeddings/sec")
+    print("     4. Polyglot SIMD:          Rust/Zig acceleration (1.2-1.5x)")
+    print("     5. MCP Gana Orchestration: Distributed coordination (1.5-2x)")
+    print("\n     Combined Expected:         10-30x speedup")
+    print("     Target Rate:               25-75 embeddings/sec")
     
     # Calculate work distribution
     target_per_worker = int(3.0 * 60 * max_minutes)  # Assume 3/s per worker
     total_target = min(target_per_worker * num_workers, stats["remaining"])
     
-    print(f"\n  🎯 Work Distribution:")
+    print("\n  🎯 Work Distribution:")
     print(f"     Time limit:         {max_minutes} minutes")
     print(f"     Target per worker:  ~{target_per_worker:,} memories")
     print(f"     Total target:       ~{total_target:,} memories")
     
     # Fetch unembedded IDs
-    print(f"\n  🔍 Fetching unembedded memory IDs...")
+    print("\n  🔍 Fetching unembedded memory IDs...")
     conn = sqlite3.connect(DB_PATH)
     memory_ids = [
         row[0] for row in conn.execute(
@@ -272,7 +272,7 @@ def ultimate_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     chunk_size = len(memory_ids) // num_workers
     worker_tasks = []
     
-    print(f"\n  🥷 Deploying Shadow Clone Army:")
+    print("\n  🥷 Deploying Shadow Clone Army:")
     for i in range(num_workers):
         start = i * chunk_size
         end = len(memory_ids) if i == num_workers - 1 else start + chunk_size
@@ -280,7 +280,7 @@ def ultimate_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
         worker_tasks.append((worker_ids, i, batch_size))
         print(f"     Clone {i}: {len(worker_ids):,} memories")
     
-    print(f"\n  🚀 LAUNCHING ULTIMATE ACCELERATION...")
+    print("\n  🚀 LAUNCHING ULTIMATE ACCELERATION...")
     print()
     
     t0 = time.time()
@@ -301,7 +301,7 @@ def ultimate_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     print("  ✅ ULTIMATE ACCELERATION COMPLETE")
     print("=" * 80)
     
-    print(f"\n  🥷 Clone Performance:")
+    print("\n  🥷 Clone Performance:")
     for r in results:
         wid = r.get("worker", "?")
         emb = r.get("embedded", 0)
@@ -317,7 +317,7 @@ def ultimate_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     # Final stats
     final = get_stats()
     
-    print(f"\n  📊 Overall Performance:")
+    print("\n  📊 Overall Performance:")
     print(f"     Total embedded:     {total_embedded:,}")
     print(f"     Total time:         {elapsed:.1f}s ({elapsed/60:.1f} min)")
     print(f"     Overall rate:       {overall_rate:.1f} embeddings/sec")
@@ -331,7 +331,7 @@ def ultimate_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
         print(f"     Est. completion:    {est_time/60:.1f} min at current rate")
     
     # Performance assessment
-    print(f"\n  🎯 Performance Assessment:")
+    print("\n  🎯 Performance Assessment:")
     if speedup >= 20:
         print(f"     ⭐⭐⭐ EXCELLENT! {speedup:.0f}x speedup achieved!")
     elif speedup >= 10:

@@ -207,9 +207,9 @@ impl MemoryDeduplication {
         print(f"Total lines: {total_lines:,}")
         print(f"Duration: {duration:.2f}s")
         
-        print(f"\n✅ ALL PSR CAMPAIGNS COMPLETE!")
-        print(f"✅ 39/39 implementations (100%)")
-        print(f"✅ Ready for production deployment!")
+        print("\n✅ ALL PSR CAMPAIGNS COMPLETE!")
+        print("✅ 39/39 implementations (100%)")
+        print("✅ Ready for production deployment!")
 
 def main():
     """Generate final two"""

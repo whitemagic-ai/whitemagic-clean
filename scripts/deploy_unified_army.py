@@ -25,7 +25,6 @@ Usage:
 """
 
 import asyncio
-import json
 import logging
 import sys
 import time
@@ -40,7 +39,7 @@ sys.path.insert(0, str(project_root))
 # Import all army systems
 from whitemagic.agents.immortal_clone_v2 import immortal_clone_deploy
 from whitemagic.agents.lieutenants import LieutenantCorps, LieutenantDomain
-from whitemagic.agents.mcp_lieutenants import GANA_TO_LIEUTENANT, LIEUTENANT_MCP_TOOLS
+from whitemagic.agents.mcp_lieutenants import LIEUTENANT_MCP_TOOLS
 
 logging.basicConfig(
     level=logging.INFO,
@@ -489,7 +488,7 @@ async def main():
             max_clones=args.clones
         )
         
-        print(f"\n✅ Deployment Complete!")
+        print("\n✅ Deployment Complete!")
         print(f"   Objective: {deployment.objective}")
         print(f"   Armies: {', '.join(a.value for a in deployment.armies_deployed)}")
         print(f"   Total Clones: {deployment.total_clones:,}")
@@ -505,7 +504,7 @@ async def main():
             max_clones=args.clones
         )
         
-        print(f"\n✅ All Armies Deployed!")
+        print("\n✅ All Armies Deployed!")
         print(f"   Total Clones: {deployment.total_clones:,}")
         print(f"   Duration: {deployment.total_duration:.2f}s")
     

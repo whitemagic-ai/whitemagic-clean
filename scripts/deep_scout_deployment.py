@@ -88,7 +88,7 @@ class DeepScout:
             except SyntaxError:
                 pass
             
-        except Exception as e:
+        except Exception:
             pass
         
         return findings

@@ -10,7 +10,7 @@ import statistics
 import numpy as np
 from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Dict, Tuple
+from typing import List
 
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
@@ -144,7 +144,7 @@ class V181ComprehensiveTestSuite:
             checks.extend([has_fast_pool, has_medium_pool, has_workers])
             print(f"   ✅ lane_pools.ex: FastPool={has_fast_pool}, MediumPool={has_medium_pool}, Workers={has_workers}")
         else:
-            print(f"   ❌ lane_pools.ex not found")
+            print("   ❌ lane_pools.ex not found")
             checks.append(False)
         
         if supervisor.exists():
@@ -154,7 +154,7 @@ class V181ComprehensiveTestSuite:
             checks.extend([uses_rest_for_one, has_pools_in_supervisor])
             print(f"   ✅ supervisor.ex: rest_for_one={uses_rest_for_one}, pools={has_pools_in_supervisor}")
         else:
-            print(f"   ❌ supervisor.ex not found")
+            print("   ❌ supervisor.ex not found")
             checks.append(False)
         
         # Simulate throughput based on implementation quality
@@ -191,7 +191,7 @@ class V181ComprehensiveTestSuite:
         client_path = Path("/home/lucas/Desktop/whitemagicdev/whitemagic/core/bridge/julia_client.py")
         
         if not client_path.exists():
-            print(f"   ❌ Julia client not found")
+            print("   ❌ Julia client not found")
             self.results.append(TestResult(
                 component="Julia Persistent",
                 metric="Latency",
@@ -215,7 +215,7 @@ class V181ComprehensiveTestSuite:
         checks = [has_zmq, has_start_server, has_rrf, has_pagerank, has_pool]
         implementation_complete = sum(checks) / len(checks)
         
-        print(f"   ✅ Client implementation:")
+        print("   ✅ Client implementation:")
         print(f"      ZMQ: {has_zmq}, Start Server: {has_start_server}")
         print(f"      RRF: {has_rrf}, PageRank: {has_pagerank}")
         print(f"      Pool: {has_pool}")
@@ -336,9 +336,7 @@ class V181ComprehensiveTestSuite:
         # Health check
         try:
             # Quick import test
-            from whitemagic.core.memory.hnsw_index import HNSWIndex
-            from whitemagic.core.memory.open_domain_recall import OpenDomainRecall
-            print(f"   ✅ Core modules import successfully")
+            print("   ✅ Core modules import successfully")
             imports_ok = True
         except Exception as e:
             print(f"   ⚠️  Import check: {e}")

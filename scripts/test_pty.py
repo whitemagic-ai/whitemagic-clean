@@ -1,6 +1,5 @@
 import pty
 import os
-import sys
 
 master, slave = pty.openpty()
 import subprocess

@@ -62,7 +62,7 @@ def execute_archival():
     # Write manifest
     manifest = archive_dir / 'MANIFEST.md'
     with open(manifest, 'w') as f:
-        f.write(f"# Python Cleanup v17 - Archived Files\n\n")
+        f.write("# Python Cleanup v17 - Archived Files\n\n")
         f.write(f"Date: {datetime.now().isoformat()}\n\n")
         f.write(f"## Successfully Archived ({len(archived)} files)\n\n")
         for a in archived:

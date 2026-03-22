@@ -1,5 +1,4 @@
 """MAX Bridge for Python interop"""
-from typing import Optional, List
 import numpy as np
 
 class MAXBridge:

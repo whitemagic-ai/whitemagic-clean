@@ -21,6 +21,7 @@ defmodule WhitemagicCore.Application do
       # WhitemagicCore.Librarian,
       # Redix connection pool for outbound Redis publishes (Ingestor broadcasts)
       {Redix, {redis_url, [name: :redix]}},
+      WhitemagicCore.GardenPubSub,
       WhitemagicCore.Brain,
       WhitemagicCore.Zodiac.Heartbeat,
       WhitemagicCore.DreamCycle,

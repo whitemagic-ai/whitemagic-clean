@@ -1,6 +1,5 @@
 import sqlite3
 from pathlib import Path
-import os
 
 def setup_zodiac_table():
     db_path = Path("/home/lucas/.whitemagic/memory/whitemagic.db")

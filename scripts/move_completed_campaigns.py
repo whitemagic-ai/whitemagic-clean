@@ -59,7 +59,7 @@ def main():
             incomplete += 1
     
     print()
-    print(f"📊 Results:")
+    print("📊 Results:")
     print(f"  ✅ Moved: {moved} campaigns")
     print(f"  📁 Already in completed: {already_complete} campaigns")
     print(f"  🔄 Still incomplete: {incomplete} campaigns")

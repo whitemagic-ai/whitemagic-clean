@@ -75,12 +75,12 @@ except ImportError:
 # Metrics tracker
 from whitemagic.agents.campaign_metrics import new_tracker  # noqa: E402
 from whitemagic.agents.campaign_loader import (  # noqa: E402
-    load_all_campaigns, Campaign, campaign_summary_table, victory_report,
+    load_all_campaigns, Campaign, victory_report,
 )
 from whitemagic.agents.progress_tracker import (  # noqa: E402
-    ProgressTracker, CampaignProgressTracker, YinYangCycleTracker,
+    YinYangCycleTracker,
 )
-from whitemagic.tools.time_tracking import WorkflowTimer, timed, get_local_time  # noqa: E402
+from whitemagic.tools.time_tracking import WorkflowTimer  # noqa: E402
 
 tracker = new_tracker()
 
@@ -891,7 +891,7 @@ def lt_beta_rust_hot_paths(conn: sqlite3.Connection):
         print(f"         Found {len(unaccelerated)} hot paths: {dict(cat_counts)}")
 
         # Phase 2: Deploy clones per module for priority ranking
-        print_phase(2, 3, f"Deploying clones for hot path prioritization...")
+        print_phase(2, 3, "Deploying clones for hot path prioritization...")
         # Group by file
         by_file = defaultdict(list)
         for u in unaccelerated:
@@ -2929,12 +2929,12 @@ def run_yin_yang_cycle(campaigns: list[Campaign], conn: sqlite3.Connection,
 
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"\n{'='*70}")
-    print(f"  YIN-YANG AUTONOMOUS CYCLE ENGINE")
+    print("  YIN-YANG AUTONOMOUS CYCLE ENGINE")
     print(f"  Timestamp: {ts}")
     print(f"  Campaigns: {len(campaigns)} | VCs: {vc_total}")
     print(f"  Time limit: {time_limit:.0f}s ({time_limit/60:.1f} min)")
     print(f"  Columns: {columns}")
-    print(f"  Mode: recon \u2192 action \u2192 verify \u2192 repeat")
+    print("  Mode: recon \u2192 action \u2192 verify \u2192 repeat")
     print(f"{'='*70}\n")
 
     cycle_num = 0
@@ -3114,7 +3114,7 @@ def run_yin_yang_cycle(campaigns: list[Campaign], conn: sqlite3.Connection,
         if remaining <= 10:
             break
 
-        print(f"\n  \u262f YIN (verify) — re-scanning after actions...")
+        print("\n  \u262f YIN (verify) — re-scanning after actions...")
 
         for campaign in campaigns:
             _auto_verify_victory(campaign, write_conn)
@@ -3222,9 +3222,9 @@ def run_all():
     """Execute the full Grand Army Deployment across all three tiers."""
     print_header("GRAND ARMY DEPLOYMENT — OPERATION IRON LOTUS")
     print(f"  Timestamp: {datetime.now().isoformat()}")
-    print(f"  Armies: Alpha (10K), Beta (70K), Gamma (240K+)")
-    print(f"  Objectives: 12 across 3 tiers")
-    print(f"  Lieutenants: 12 sub-agents")
+    print("  Armies: Alpha (10K), Beta (70K), Gamma (240K+)")
+    print("  Objectives: 12 across 3 tiers")
+    print("  Lieutenants: 12 sub-agents")
 
     tracker.start_campaign("Operation Iron Lotus — Grand Army Deployment")
 
@@ -3259,7 +3259,7 @@ def run_all():
 
     # Also save summary to console-friendly format
     print(f"\n{'='*70}")
-    print(f"  OPERATION IRON LOTUS — COMPLETE")
+    print("  OPERATION IRON LOTUS — COMPLETE")
     print(f"{'='*70}")
 
     return tracker.after_action_report()
@@ -3366,7 +3366,7 @@ def run_campaign_mode(time_limit: float = 300.0, columns: int = 1,
     if army_filter:
         print(f"  Army filter: {army_filter}")
 
-    print(f"\n  Campaign Roster:")
+    print("\n  Campaign Roster:")
     print(f"  {'='*65}")
     for i, c in enumerate(campaigns, 1):
         vc_count = len(c.victory_conditions)

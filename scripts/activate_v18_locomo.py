@@ -89,7 +89,7 @@ async def batch_embed_locomo_memories():
     
     elapsed = time.perf_counter() - t0
     
-    logger.info(f"\n✅ Batch embedding complete:")
+    logger.info("\n✅ Batch embedding complete:")
     logger.info(f"  Indexed: {result.get('indexed', 0)}")
     logger.info(f"  Duration: {result.get('duration_s', elapsed):.2f}s")
     logger.info(f"  Rate: {result.get('rate', 0):.1f} embeddings/sec")

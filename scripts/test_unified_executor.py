@@ -1,6 +1,5 @@
 import asyncio
 import sys
-from datetime import datetime
 
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 

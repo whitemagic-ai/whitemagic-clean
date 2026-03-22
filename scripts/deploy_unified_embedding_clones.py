@@ -68,11 +68,11 @@ def deploy_unified_embedding_clones():
         mojo_dir = "/home/lucas/Desktop/whitemagicdev/whitemagic-mojo"
         embedding_mojo = os.path.join(mojo_dir, "embedding_index.mojo")
         if os.path.exists(embedding_mojo):
-            print(f"  ✅ embedding_index.mojo exists")
+            print("  ✅ embedding_index.mojo exists")
             results["findings"].append("Mojo embedding indexer available")
             results["quick_wins"].append("Can batch embed using Mojo")
         else:
-            print(f"  ❌ embedding_index.mojo not found")
+            print("  ❌ embedding_index.mojo not found")
             results["blockers"].append("Mojo embedding indexer missing")
     
     results["clones_deployed"] += 10000
@@ -89,7 +89,7 @@ def deploy_unified_embedding_clones():
             print(f"  ✅ Found {count} embedding pipeline memories")
             results["findings"].append(f"{count} embedding memories in DB")
         else:
-            print(f"  ⚠️ No embedding pipeline memories found")
+            print("  ⚠️ No embedding pipeline memories found")
     
     # Check for embedding-related code
     scripts_dir = "/home/lucas/Desktop/whitemagicdev/scripts"

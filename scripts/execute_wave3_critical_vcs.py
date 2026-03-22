@@ -4,7 +4,6 @@ Wave 3 Execution: Core Critical VCs
 Implements the 13 highest-priority migrations across all 5 campaigns
 """
 
-import subprocess
 from pathlib import Path
 from datetime import datetime
 
@@ -64,9 +63,9 @@ def execute_critical_vcs():
         f.write("# Wave 3 Execution Report: Critical VCs\n\n")
         f.write(f"**Date**: {datetime.now().isoformat()}\n\n")
         f.write("## Deployment Summary\n\n")
-        f.write(f"- **Total Critical VCs**: 13\n")
-        f.write(f"- **Campaigns**: 5\n")
-        f.write(f"- **Status**: All VCs initiated\n\n")
+        f.write("- **Total Critical VCs**: 13\n")
+        f.write("- **Campaigns**: 5\n")
+        f.write("- **Status**: All VCs initiated\n\n")
         
         for campaign, count in results.items():
             f.write(f"### {campaign}\n")
@@ -115,7 +114,7 @@ def execute_critical_vcs():
         f.write("5. Proceed to Wave 4: Mass migration\n")
     
     print("=" * 70)
-    print(f"Wave 3 complete: All 13 Critical VCs initiated")
+    print("Wave 3 complete: All 13 Critical VCs initiated")
     print(f"Report: {manifest}")
     
     return sum(results.values())

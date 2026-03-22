@@ -17,7 +17,7 @@ class IPCBenchmark:
         
     def _test_ipc_latency(self, iterations=100):
         """Measure IPC round-trip latency."""
-        from whitemagic.core.ipc_bridge import init_ipc, publish_json, get_status
+        from whitemagic.core.ipc_bridge import init_ipc, publish_json
         
         print("📡 Testing IPC latency...")
         init_ipc('benchmark')

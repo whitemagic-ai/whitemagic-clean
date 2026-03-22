@@ -7,7 +7,6 @@ Activate Buried Campaign Series
 """
 
 import time
-from pathlib import Path
 
 def activate_gemini_campaigns():
     """G001-G007: Gemini Janus Architecture (465K clones)"""
@@ -27,7 +26,7 @@ def activate_gemini_campaigns():
     for code, data in campaigns.items():
         print(f"\n✅ {code}: {data['name']}")
         print(f"   Clones: {data['clones']:,} | VCs: {data['vcs']}")
-        print(f"   Status: READY FOR DEPLOYMENT")
+        print("   Status: READY FOR DEPLOYMENT")
     
     total_clones = sum(c["clones"] for c in campaigns.values())
     total_vcs = sum(c["vcs"] for c in campaigns.values())
@@ -60,7 +59,7 @@ def activate_v16_campaigns():
     for code, data in campaigns.items():
         print(f"\n✅ {code}: {data['name']}")
         print(f"   Clones: {data['clones']:,} | VCs: {data['vcs']}")
-        print(f"   Status: READY FOR DEPLOYMENT")
+        print("   Status: READY FOR DEPLOYMENT")
     
     total_clones = sum(c["clones"] for c in campaigns.values())
     total_vcs = sum(c["vcs"] for c in campaigns.values())
@@ -97,7 +96,7 @@ def activate_evo_campaigns():
     for code, data in campaigns.items():
         print(f"\n✅ {code}: {data['name']}")
         print(f"   Clones: {data['clones']:,} | VCs: {data['vcs']}")
-        print(f"   Status: READY FOR DEPLOYMENT")
+        print("   Status: READY FOR DEPLOYMENT")
     
     total_clones = sum(c["clones"] for c in campaigns.values())
     total_vcs = sum(c["vcs"] for c in campaigns.values())

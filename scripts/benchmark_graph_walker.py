@@ -5,8 +5,6 @@ import logging
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 logging.getLogger("whitemagic").setLevel(logging.WARNING)
 
-from whitemagic.core.memory.shm_manager import get_shm_manager
-from whitemagic.core.memory.shm_graph import get_shm_graph
 from whitemagic.core.memory.db_manager import get_db_pool
 from whitemagic.core.memory.graph_walker import get_graph_walker
 import os

@@ -167,7 +167,7 @@ def polyglot_worker(args: Tuple[List[str], int, int, bool]) -> dict:
                 if batches_processed % 5 == 0:
                     conn.commit()
                 
-            except Exception as e:
+            except Exception:
                 continue
         
         # Final commit
@@ -204,20 +204,20 @@ def polyglot_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     # Check Rust availability
     rust_avail, rust_count, rust_funcs = check_rust_availability()
     
-    print(f"\n  🦀 Rust Bridge Status:")
+    print("\n  🦀 Rust Bridge Status:")
     if rust_avail:
         print(f"     ✅ Rust bridge active: {rust_count} functions")
         print(f"     ✅ Embedding-relevant: {len(rust_funcs)} functions")
         print(f"        {', '.join(rust_funcs[:5])}...")
     else:
-        print(f"     ⚠️  Rust bridge not available (build with: cd whitemagic-rust && maturin develop --release)")
+        print("     ⚠️  Rust bridge not available (build with: cd whitemagic-rust && maturin develop --release)")
     
     # Hardware config
     cpu_threads = mp.cpu_count()
     if num_workers is None:
         num_workers = max(2, cpu_threads // 2)
     
-    print(f"\n  🖥️  Configuration:")
+    print("\n  🖥️  Configuration:")
     print(f"     CPU threads:        {cpu_threads}")
     print(f"     Shadow clones:      {num_workers} workers")
     print(f"     Batch size:         {batch_size} per worker")
@@ -226,7 +226,7 @@ def polyglot_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     # Get stats
     stats = get_stats()
     
-    print(f"\n  📊 Current Status:")
+    print("\n  📊 Current Status:")
     print(f"     Active memories:    {stats['active']:,}")
     print(f"     Already embedded:   {stats['embedded']:,}")
     print(f"     Remaining:          {stats['remaining']:,}")
@@ -236,24 +236,24 @@ def polyglot_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
         print("\n  ✅ All memories already embedded!")
         return stats
     
-    print(f"\n  ⚡ Active Optimizations:")
+    print("\n  ⚡ Active Optimizations:")
     print(f"     1. Shadow Clone Army:      {num_workers} parallel workers (4-8x)")
     print(f"     2. Large Batch Size:       {batch_size} per batch (2-3x)")
     print(f"     3. Rust SIMD:              {'ACTIVE' if rust_avail else 'INACTIVE'} (1.5-2x)")
-    print(f"     4. Optimized DB Writes:    Batch commits, WAL mode (1.3-1.5x)")
-    print(f"     5. Memory-Mapped DB:       512MB mmap (1.2x)")
-    print(f"\n     Combined Expected:         10-20x speedup")
+    print("     4. Optimized DB Writes:    Batch commits, WAL mode (1.3-1.5x)")
+    print("     5. Memory-Mapped DB:       512MB mmap (1.2x)")
+    print("\n     Combined Expected:         10-20x speedup")
     
     # Calculate work distribution
     target_per_worker = int(3.0 * 60 * max_minutes)
     total_target = min(target_per_worker * num_workers, stats["remaining"])
     
-    print(f"\n  🎯 Work Distribution:")
+    print("\n  🎯 Work Distribution:")
     print(f"     Target per worker:  ~{target_per_worker:,} memories")
     print(f"     Total target:       ~{total_target:,} memories")
     
     # Fetch unembedded IDs
-    print(f"\n  🔍 Fetching unembedded memory IDs...")
+    print("\n  🔍 Fetching unembedded memory IDs...")
     conn = sqlite3.connect(DB_PATH)
     memory_ids = [
         row[0] for row in conn.execute(
@@ -276,7 +276,7 @@ def polyglot_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     chunk_size = len(memory_ids) // num_workers
     worker_tasks = []
     
-    print(f"\n  🥷 Deploying Shadow Clone Army:")
+    print("\n  🥷 Deploying Shadow Clone Army:")
     for i in range(num_workers):
         start = i * chunk_size
         end = len(memory_ids) if i == num_workers - 1 else start + chunk_size
@@ -284,7 +284,7 @@ def polyglot_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
         worker_tasks.append((worker_ids, i, batch_size, rust_avail))
         print(f"     Clone {i}: {len(worker_ids):,} memories")
     
-    print(f"\n  🚀 LAUNCHING POLYGLOT ACCELERATION...")
+    print("\n  🚀 LAUNCHING POLYGLOT ACCELERATION...")
     print()
     
     t0 = time.time()
@@ -305,7 +305,7 @@ def polyglot_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     print("  ✅ POLYGLOT ACCELERATION COMPLETE")
     print("=" * 80)
     
-    print(f"\n  🥷 Clone Performance:")
+    print("\n  🥷 Clone Performance:")
     for r in results:
         wid = r.get("worker", "?")
         emb = r.get("embedded", 0)
@@ -323,7 +323,7 @@ def polyglot_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     # Final stats
     final = get_stats()
     
-    print(f"\n  📊 Overall Performance:")
+    print("\n  📊 Overall Performance:")
     print(f"     Total embedded:     {total_embedded:,}")
     print(f"     Total time:         {elapsed:.1f}s ({elapsed/60:.1f} min)")
     print(f"     Overall rate:       {overall_rate:.1f} embeddings/sec")
@@ -336,19 +336,19 @@ def polyglot_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
         print(f"     Est. completion:    {est_time/60:.1f} min at current rate")
     
     # Performance assessment
-    print(f"\n  🎯 Performance Assessment:")
+    print("\n  🎯 Performance Assessment:")
     if speedup >= 15:
         print(f"     ⭐⭐⭐ EXCELLENT! {speedup:.0f}x speedup achieved!")
-        print(f"     Polyglot optimizations working perfectly!")
+        print("     Polyglot optimizations working perfectly!")
     elif speedup >= 8:
         print(f"     ⭐⭐ GREAT! {speedup:.0f}x speedup achieved!")
-        print(f"     Strong parallelization gains!")
+        print("     Strong parallelization gains!")
     elif speedup >= 4:
         print(f"     ⭐ GOOD! {speedup:.1f}x speedup achieved!")
-        print(f"     Solid improvement from shadow clones!")
+        print("     Solid improvement from shadow clones!")
     else:
         print(f"     ✅ Moderate {speedup:.1f}x speedup")
-        print(f"     Consider: CPU performance mode, more workers, or Rust wiring")
+        print("     Consider: CPU performance mode, more workers, or Rust wiring")
     
     print()
     

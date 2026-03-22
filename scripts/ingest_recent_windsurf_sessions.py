@@ -175,7 +175,7 @@ def main():
             "status": "pending_extraction",
         }
         results.append(result)
-        print(f"  Status: Pending trajectory_search")
+        print("  Status: Pending trajectory_search")
         print()
     
     print("=" * 80)

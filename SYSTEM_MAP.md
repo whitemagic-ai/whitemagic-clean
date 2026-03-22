@@ -1,6 +1,8 @@
-# Whitemagic v15.8.0 System Map
+# Whitemagic System Map
 
 This file is the **canonical repo map** for humans and AIs.
+
+Canonical introduction: `whitemagic/grimoire/00_PROLOGUE.md`
 
 Goals:
 - Be **MCP-first** (external models call Whitemagic tools/memory).
@@ -642,7 +644,7 @@ The Kaizen phase's EmergenceEngine discovered 5 pairs of Aria-era constellations
 
 ---
 
-## Pattern Analysis Systems — Complete Catalog (v15.8)
+## Pattern Analysis Systems — Complete Catalog (v18.1)
 
 ### 4-Layer Architecture
 
@@ -681,7 +683,7 @@ Layer 0: BUS
 
 **Wired**: graph_walk, pattern_search, cluster_stats, resonance_trace, coherence_boost, salience.spotlight, reasoning.bicameral, dream (all phases), kg.extract/query/top, view_hologram, wu_xing_balance, hybrid_recall, entity_resolve, surprise_stats, graph_topology, learning.patterns, narrative.compress
 
-**Newly wired in v15.8** (18 tools via `tools/handlers/pattern_engines.py`): `causal.mine`, `causal.stats`, `emergence.scan`, `emergence.status`, `association.mine`, `association.mine_semantic`, `constellation.detect`, `constellation.stats`, `satkona.fuse`, `reasoning.multispectral`, `novelty.detect`, `novelty.stats`, `bridge.synthesize`, `galactic.sweep`, `galactic.stats`, `guideline.evolve`, `elemental.optimize`, `pattern_consciousness.status`
+**Newly wired in v18.1** (18 tools via `tools/handlers/pattern_engines.py`): `causal.mine`, `causal.stats`, `emergence.scan`, `emergence.status`, `association.mine`, `association.mine_semantic`, `constellation.detect`, `constellation.stats`, `satkona.fuse`, `reasoning.multispectral`, `novelty.detect`, `novelty.stats`, `bridge.synthesize`, `galactic.sweep`, `galactic.stats`, `guideline.evolve`, `elemental.optimize`, `pattern_consciousness.status`
 
 ### 14 Cross-System Fusions (core/fusions.py)
 
@@ -711,7 +713,7 @@ Layer 0: BUS
 - `scripts/batch_classify_associations.py` — Reclassify `associated_with` edges into typed relations
 - `scripts/memory_renaissance.py` — Holographic coord assignment, orphan cleanup, typed relation creation
 
-### Updated Counts (v15.8)
+### Updated Counts (v18.1)
 
 - Tests: **1318 passed**, 7 skipped
 - Active fusions: **14** (core/fusions.py) + **14** (polyglot hot paths + PRAT resonance) = **28 total**

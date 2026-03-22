@@ -140,7 +140,7 @@ def step_galactic_sweep():
 
     print(f"  Memories mapped: {report.memories_updated}/{report.total_memories}")
     print(f"  Duration: {elapsed:.1f}s")
-    print(f"  Zone distribution:")
+    print("  Zone distribution:")
     n = max(report.total_memories, 1)
     for zone_name, count in report.zone_counts.items():
         pct = count / n * 100
@@ -205,7 +205,7 @@ def step_constellation_detection():
     print(f"  Duration: {elapsed:.1f}s")
 
     if report.constellations:
-        print(f"\n  Top constellations:")
+        print("\n  Top constellations:")
         for c in report.constellations[:10]:
             print(f"    🌟 {c.name} ({len(c.member_ids)} members, zone={c.zone}, stability={c.stability:.2f})")
             if c.dominant_tags:
@@ -242,7 +242,7 @@ def step_graph_topology():
     try:
         pr = engine.pagerank()
         top_pr = sorted(pr.items(), key=lambda x: x[1], reverse=True)[:5]
-        print(f"  Top PageRank:")
+        print("  Top PageRank:")
         for nid, score in top_pr:
             print(f"    📊 {nid[:12]}... (PR={score:.6f})")
     except Exception:
@@ -313,7 +313,7 @@ def step_harmony_vector():
 def step_wu_xing():
     banner(7, "🔥", "WU XING BALANCE")
     try:
-        from whitemagic.wu_xing import get_wuxing_engine, get_elemental_balance
+        from whitemagic.wu_xing import get_elemental_balance
         balance = get_elemental_balance()
         # Handle both old format (elements dict) and new format (flat keys)
         cycle = balance.get("cycle", balance.get("current_phase", "?"))
@@ -387,7 +387,7 @@ def step_causal_mining():
         print(f"  Causal edges found: {d.get('edges_created', d.get('links_created', '?'))}")
         print(f"  Duration: {elapsed:.1f}s")
         if d.get("top_causal_chains"):
-            print(f"  Top causal chains:")
+            print("  Top causal chains:")
             for chain in d["top_causal_chains"][:5]:
                 print(f"    ⚡ {chain}")
         return d

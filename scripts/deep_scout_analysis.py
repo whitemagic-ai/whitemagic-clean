@@ -4,7 +4,6 @@ Deep Scout Analysis for 1,206 Migration Targets
 Detailed analysis of all files to optimize shadow clone deployment
 """
 
-import ast
 from pathlib import Path
 from datetime import datetime
 import json
@@ -47,7 +46,7 @@ class MigrationScout:
                 analyzed += 1
                 if analyzed % 100 == 0:
                     print(f"  Analyzed {analyzed} files...")
-            except Exception as e:
+            except Exception:
                 continue
         
         # Categorize by language
@@ -133,7 +132,7 @@ class MigrationScout:
                 'patterns': {k: v for k, v in patterns.items() if v}
             }
             
-        except Exception as e:
+        except Exception:
             pass
             
     def categorize_targets(self):
@@ -278,7 +277,7 @@ class MigrationScout:
                     clone_id += 1
                 f.write("\n")
         
-        print(f"\n📊 Analysis saved:")
+        print("\n📊 Analysis saved:")
         print(f"  JSON: {report_file}")
         print(f"  Markdown: {md_file}")
         print()

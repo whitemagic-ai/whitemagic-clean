@@ -23,9 +23,8 @@ import json
 import os
 import re
 import sqlite3
-import sys
 import time
-from collections import Counter, defaultdict
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
@@ -345,7 +344,7 @@ if __name__ == "__main__":
     for mt, info in sorted(type_dist.items(), key=lambda x: -x[1]["count"]):
         md_report += f"| {mt} | {info['count']:,} | {info['avg_length']:,} | {info['avg_importance']:.3f} |\n"
 
-    md_report += f"""
+    md_report += """
 ## Noise Analysis
 | Category | Count |
 |----------|-------|
@@ -828,7 +827,7 @@ def objective_1_red_team():
 
     # Clone consensus on severity
     total_findings = sum(len(v) for v in findings.values())
-    print(f"\n   Deploying 5K clones for security severity assessment...")
+    print("\n   Deploying 5K clones for security severity assessment...")
     sec_prompt = (
         f"Security audit found {total_findings} potential issues across {files_scanned} files: "
         f"hardcoded_secrets={len(findings['hardcoded_secrets'])}, "
@@ -994,11 +993,11 @@ def objective_2_performance():
     for f in findings["python_rust_candidates"][:20]:
         md += f"- `{f['file']}:{f['line']}` → Rust `{f['rust_equivalent']}` — `{f['match'][:60]}`\n"
 
-    md += f"\n## Heavy Imports (Top 20)\n| Module | Import Count |\n|--------|-------------|\n"
+    md += "\n## Heavy Imports (Top 20)\n| Module | Import Count |\n|--------|-------------|\n"
     for f in findings["heavy_imports"]:
         md += f"| {f['module']} | {f['import_count']} |\n"
 
-    md += f"\n## Missing Database Indexes\n"
+    md += "\n## Missing Database Indexes\n"
     for f in findings["missing_indexes"]:
         md += f"- `{f['suggested_index']}`\n"
 
@@ -1090,7 +1089,7 @@ def objective_9_graph_intelligence():
             "degree": r["degree"],
             "title": (title_row["title"] if title_row else "?")[:50],
         })
-    print(f"   Top connected nodes:")
+    print("   Top connected nodes:")
     for n in top_nodes:
         print(f"     degree={n['degree']:>5} — {n['title']}")
 
@@ -1121,16 +1120,16 @@ def objective_9_graph_intelligence():
     for r in assoc_types:
         md += f"| {r['relation_type'] or 'NULL'} | {r['cnt']:,} | {r['cnt']/total_assoc*100:.1f}% |\n"
 
-    md += f"\n## Entity Extraction (200 sample memories)\n"
-    md += f"| Entity Type | Count |\n|---|---|\n"
+    md += "\n## Entity Extraction (200 sample memories)\n"
+    md += "| Entity Type | Count |\n|---|---|\n"
     for etype, cnt in entity_types.most_common():
         md += f"| {etype} | {cnt} |\n"
 
-    md += f"\n## Top Entities\n"
+    md += "\n## Top Entities\n"
     for entity, cnt in entities_found.most_common(20):
         md += f"- **{entity}**: {cnt} occurrences\n"
 
-    md += f"\n## Top Connected Nodes\n"
+    md += "\n## Top Connected Nodes\n"
     for n in top_nodes:
         md += f"- degree={n['degree']} — **{n['title']}**\n"
 
@@ -1293,7 +1292,7 @@ def run_all():
     print_section("OPERATION THOUSAND EYES — COMPLETE")
     print(f"Total elapsed: {grand_elapsed:.1f}s ({grand_elapsed/60:.1f} min)")
     print(f"Clone army stats: {json.dumps(stats, indent=2) if stats else 'N/A'}")
-    print(f"\nReports generated:")
+    print("\nReports generated:")
     for f in sorted(REPORTS_DIR.glob("*.md")):
         if f.stat().st_mtime > grand_start:
             print(f"  📄 {f.name} ({f.stat().st_size:,} bytes)")

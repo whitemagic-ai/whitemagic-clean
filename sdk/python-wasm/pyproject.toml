@@ -41,13 +41,7 @@ Issues = "https://github.com/whitemagic-ai/whitemagic/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["whitemagic_wasm"]
-include = [
-    "whitemagic_wasm/wasm/whitemagic_rust_bg.wasm",
-    "whitemagic_wasm/wasm/whitemagic_rust.js",
-]
 
-[tool.hatch.build.targets.sdist]
-include = [
-    "whitemagic_wasm/wasm/whitemagic_rust_bg.wasm",
-    "whitemagic_wasm/wasm/whitemagic_rust.js",
-]
+[tool.hatch.build.targets.wheel.force-include]
+"../../whitemagic-rust/pkg/web/whitemagic_rust_bg.wasm" = "whitemagic_wasm/wasm/whitemagic_rust_bg.wasm"
+"../../whitemagic-rust/pkg/web/whitemagic_rust.js" = "whitemagic_wasm/wasm/whitemagic_rust.js"

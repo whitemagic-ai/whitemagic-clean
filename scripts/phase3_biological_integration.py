@@ -290,15 +290,15 @@ def main():
     nervous_system_code = create_unified_nervous_system()
     nervous_system_path.write_text(nervous_system_code)
     
-    print(f"   ✅ UnifiedNervousSystem")
-    print(f"      Wires all 7 subsystems")
+    print("   ✅ UnifiedNervousSystem")
+    print("      Wires all 7 subsystems")
     print()
     
     print("=" * 80)
     print("PHASE 3 COMPLETE")
     print("=" * 80)
     print(f"Biological controllers: {created_count}")
-    print(f"Unified nervous system: ✅ Created")
+    print("Unified nervous system: ✅ Created")
     print(f"Total files integrated: {total_files}")
     print()
     print("✅ Biological integration complete!")

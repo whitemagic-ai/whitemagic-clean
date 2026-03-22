@@ -1,9 +1,12 @@
 //! Event Bus - High-performance publish/subscribe messaging system
 
-use std::collections::HashMap;
-use std::sync::{Arc, RwLock, atomic::{AtomicU64, Ordering}};
-use std::time::Instant;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::sync::{
+    atomic::{AtomicU64, Ordering},
+    Arc, RwLock,
+};
+use std::time::Instant;
 
 /// Event type enumeration
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -14,37 +17,37 @@ pub enum EventType {
     GracefulShutdown = 3,
     SubsystemRegistered = 4,
     SubsystemFailed = 5,
-    
+
     // Nervous system events
     CoherenceCritical = 10,
     CoherenceRestore = 11,
-    
+
     // Garden events
     GardenActivated = 20,
     ResonanceCascade = 21,
     WonderSparked = 22,
     CommunityGathered = 23,
-    
+
     // Memory events
     MemoryStored = 30,
     MemoryRecalled = 31,
     DreamConsolidationComplete = 32,
-    
+
     // Identity events
     IdentityEmerged = 40,
-    
+
     // Zodiacal events
     PhaseTransition = 60,
     SignChange = 61,
     CycleComplete = 62,
-    
+
     // System events
     System = 97,
     Subsystem = 98,
     Error = 99,
     Transcendence = 100,
     HarmonyCheck = 101,
-    
+
     // User-defined range starts at 1000
     UserDefined = 1000,
 }
@@ -77,7 +80,7 @@ impl EventType {
             _ => None,
         }
     }
-    
+
     /// Convert to u16
     pub fn to_u16(&self) -> u16 {
         *self as u16
@@ -98,23 +101,23 @@ pub enum Priority {
 pub struct OrchestrationEvent {
     /// Sequence number (global ordering)
     pub sequence: u64,
-    
+
     /// Event type
     pub event_type: EventType,
-    
+
     /// Source subsystem (0 = system)
     pub source: crate::conductor::SubsystemId,
-    
+
     /// Target subsystem (None = broadcast)
     pub target: Option<crate::conductor::SubsystemId>,
-    
+
     /// Priority
     pub priority: Priority,
-    
+
     /// Event timestamp
     #[serde(skip, default = "Instant::now")]
     pub timestamp: Instant,
-    
+
     /// Event payload
     pub payload: HashMap<String, serde_json::Value>,
 }
@@ -134,13 +137,13 @@ struct Subscription {
 pub struct EventBus {
     /// Subscriptions
     subscriptions: RwLock<HashMap<u64, Subscription>>,
-    
+
     /// Subscription ID counter
     next_id: AtomicU64,
-    
+
     /// Event history (circular buffer)
     history: RwLock<Vec<OrchestrationEvent>>,
-    
+
     /// Maximum history size
     max_history: usize,
 }
@@ -155,27 +158,27 @@ impl EventBus {
             max_history: 1000,
         }
     }
-    
+
     /// Subscribe to events
     pub fn subscribe<F>(&self, event_types: Vec<EventType>, handler: F) -> u64
     where
         F: Fn(&OrchestrationEvent) + Send + Sync + 'static,
     {
         let id = self.next_id.fetch_add(1, Ordering::SeqCst);
-        
+
         let subscription = Subscription {
             id,
             event_types,
             handler: Arc::new(handler),
         };
-        
+
         if let Ok(mut subs) = self.subscriptions.write() {
             subs.insert(id, subscription);
         }
-        
+
         id
     }
-    
+
     /// Unsubscribe from events
     pub fn unsubscribe(&self, subscription_id: u64) -> bool {
         if let Ok(mut subs) = self.subscriptions.write() {
@@ -184,7 +187,7 @@ impl EventBus {
             false
         }
     }
-    
+
     /// Publish an event
     pub fn publish(&self, event: OrchestrationEvent) {
         // Store in history
@@ -194,7 +197,7 @@ impl EventBus {
                 history.remove(0);
             }
         }
-        
+
         // Route to subscribers
         if let Ok(subs) = self.subscriptions.read() {
             for sub in subs.values() {
@@ -206,7 +209,7 @@ impl EventBus {
             }
         }
     }
-    
+
     /// Get event history
     pub fn get_history(&self, limit: usize) -> Vec<OrchestrationEvent> {
         if let Ok(history) = self.history.read() {
@@ -215,11 +218,16 @@ impl EventBus {
             Vec::new()
         }
     }
-    
+
     /// Get history for specific event type
-    pub fn get_history_by_type(&self, event_type: EventType, limit: usize) -> Vec<OrchestrationEvent> {
+    pub fn get_history_by_type(
+        &self,
+        event_type: EventType,
+        limit: usize,
+    ) -> Vec<OrchestrationEvent> {
         if let Ok(history) = self.history.read() {
-            history.iter()
+            history
+                .iter()
                 .filter(|e| e.event_type == event_type)
                 .rev()
                 .take(limit)
@@ -229,14 +237,14 @@ impl EventBus {
             Vec::new()
         }
     }
-    
+
     /// Clear history
     pub fn clear_history(&self) {
         if let Ok(mut history) = self.history.write() {
             history.clear();
         }
     }
-    
+
     /// Get subscription count
     pub fn subscription_count(&self) -> usize {
         if let Ok(subs) = self.subscriptions.read() {
@@ -257,20 +265,17 @@ impl Default for EventBus {
 mod tests {
     use super::*;
     use std::sync::atomic::{AtomicUsize, Ordering};
-    
+
     #[test]
     fn test_event_bus_subscribe_publish() {
         let bus = EventBus::new();
         let counter = Arc::new(AtomicUsize::new(0));
-        
+
         let counter_clone = counter.clone();
-        let sub_id = bus.subscribe(
-            vec![EventType::Bootstrap],
-            move |_| {
-                counter_clone.fetch_add(1, Ordering::SeqCst);
-            },
-        );
-        
+        let sub_id = bus.subscribe(vec![EventType::Bootstrap], move |_| {
+            counter_clone.fetch_add(1, Ordering::SeqCst);
+        });
+
         let event = OrchestrationEvent {
             sequence: 0,
             event_type: EventType::Bootstrap,
@@ -280,14 +285,14 @@ mod tests {
             timestamp: Instant::now(),
             payload: HashMap::new(),
         };
-        
+
         bus.publish(event);
-        
+
         assert_eq!(counter.load(Ordering::SeqCst), 1);
-        
+
         // Unsubscribe
         assert!(bus.unsubscribe(sub_id));
-        
+
         // Publish again - should not increment
         let event2 = OrchestrationEvent {
             sequence: 1,
@@ -299,14 +304,14 @@ mod tests {
             payload: HashMap::new(),
         };
         bus.publish(event2);
-        
+
         assert_eq!(counter.load(Ordering::SeqCst), 1);
     }
-    
+
     #[test]
     fn test_event_history() {
         let bus = EventBus::new();
-        
+
         for i in 0..5 {
             let event = OrchestrationEvent {
                 sequence: i,
@@ -319,14 +324,14 @@ mod tests {
             };
             bus.publish(event);
         }
-        
+
         let history = bus.get_history(3);
         assert_eq!(history.len(), 3);
         assert_eq!(history[0].sequence, 4);
         assert_eq!(history[1].sequence, 3);
         assert_eq!(history[2].sequence, 2);
     }
-    
+
     #[test]
     fn test_event_type_conversion() {
         assert_eq!(EventType::Bootstrap.to_u16(), 1);

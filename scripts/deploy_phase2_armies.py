@@ -21,7 +21,7 @@ class Phase2Deployer:
         """Execute Phase 2 deployment."""
         print("⚔️  PHASE 2 SHADOW ARMY DEPLOYMENT")
         print("=" * 80)
-        print(f"Target: 314 files (101,590 LOC)")
+        print("Target: 314 files (101,590 LOC)")
         print(f"Started: {datetime.now().isoformat()}")
         print()
         
@@ -273,7 +273,7 @@ class Phase2Deployer:
             f.write("\n## Cumulative Progress\n\n")
             f.write("| Phase | Files | LOC | Percentage |\n")
             f.write("|-------|-------|-----|------------|\n")
-            f.write(f"| Phase 1 | 21 | 11,117 | 2.8% |\n")
+            f.write("| Phase 1 | 21 | 11,117 | 2.8% |\n")
             f.write(f"| Phase 2 | {self.total_migrated} | {self.total_loc:,} | {((self.total_loc / 112707) * 100):.1f}% |\n")
             f.write(f"| **Total** | **{21 + self.total_migrated}** | **{11117 + self.total_loc:,}** | **{(((11117 + self.total_loc) / 112707) * 100):.1f}%** |\n\n")
             
@@ -290,7 +290,7 @@ class Phase2Deployer:
         print(f"✅ Markdown Report: {md_report}")
         print()
         print("=" * 80)
-        print(f"🎉 PHASE 2 COMPLETE")
+        print("🎉 PHASE 2 COMPLETE")
         print(f"   Migrated: {self.total_migrated} files ({self.total_loc:,} LOC)")
         print(f"   Cumulative: {21 + self.total_migrated} files ({11117 + self.total_loc:,} LOC)")
         print("=" * 80)

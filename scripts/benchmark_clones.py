@@ -90,13 +90,13 @@ def main():
         claimed = 10_200_000
         ratio = measured / claimed
         
-        print(f"\n🎯 Validation:")
+        print("\n🎯 Validation:")
         print(f"  Claimed:  {claimed:>13,}/s")
         print(f"  Measured: {measured:>13,.0f}/s")
         print(f"  Ratio:    {ratio:>13.2f}×")
         
         if ratio >= 0.8:
-            print(f"\n✅ CLAIM VALIDATED (within 20%)")
+            print("\n✅ CLAIM VALIDATED (within 20%)")
         else:
             print(f"\n⚠️  CLAIM OVERSTATED (measured {ratio*100:.0f}% of claimed)")
 

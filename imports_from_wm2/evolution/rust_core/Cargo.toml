@@ -1,0 +1,29 @@
+[package]
+name = "hyperevolution-core"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+rayon = "1.8"
+rand = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+pyo3 = { version = "0.20", features = ["extension-module"] }
+ndarray = "0.15"
+parking_lot = "0.12"
+crossbeam = "0.8"
+ahash = "0.8"
+
+[lib]
+name = "hyperevolution_core"
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "massive_scale"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"

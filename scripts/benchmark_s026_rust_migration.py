@@ -51,7 +51,6 @@ def benchmark_hnsw():
     
     try:
         import numpy as np
-        import whitemagic_rust as wr
         from whitemagic.core.memory.hnsw_index import HNSWIndex
         
         # Test data

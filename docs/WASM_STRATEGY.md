@@ -7,7 +7,7 @@
 
 ## Vision
 
-Two-tier delivery: **WhiteMagic Lite** as a zero-dependency Rust binary (~2-5MB) for instant agent bootstrap, and **WhiteMagic Heavy** as the full 313-tool Python stack delivered via Docker or pip. Both speak MCP over stdio — an agent can start with Lite and upgrade to Heavy seamlessly.
+Two-tier delivery: **WhiteMagic Lite** as a zero-dependency Rust binary (~2-5MB) for instant agent bootstrap, and **WhiteMagic Heavy** as the full Python stack delivered via Docker or pip. Both speak MCP over stdio — an agent can start with Lite and upgrade to Heavy seamlessly.
 
 ## Delivery Tiers
 
@@ -46,7 +46,7 @@ chmod +x wm
 
 ### Tier 1: WhiteMagic Standard (`pip install whitemagic[mcp]`)
 
-The full Python experience. 313 MCP tools across 28 Gana meta-tools. ~60s install.
+The full Python experience centered on the stable 28 Gana MCP contract, with broader internal tool surfaces available behind it. ~60s install.
 
 ### Tier 2: WhiteMagic Heavy (Docker)
 
@@ -80,7 +80,7 @@ ENTRYPOINT ["python", "-m", "whitemagic.run_mcp"]
 
 | | Lite (Seed) | Standard (pip) | Heavy (Docker) |
 |--|-------------|---------------|----------------|
-| **Tools** | ~30 core | 313 full | 313 + polyglot accel |
+| **Tools** | ~30 core | 28 Gana MCP contract + broader internal surface | 28 Gana MCP contract + polyglot accel |
 | **Size** | 2-5MB | ~25MB source | 200-800MB image |
 | **Install** | <3s curl | ~60s pip | ~30s docker pull |
 | **Dependencies** | Zero | Python 3.10+ | Docker only |
@@ -96,7 +96,7 @@ Agent starts → downloads wm-seed (3s)
   → has memory + search + basic tools immediately
   → decides it needs embeddings → pip install whitemagic[embeddings]
   → or: docker pull whitemagic-ai/whitemagic:v15
-  → full 313-tool experience, same state directory
+  → full Python experience, same state directory
 ```
 
 ## What Would Be Compiled

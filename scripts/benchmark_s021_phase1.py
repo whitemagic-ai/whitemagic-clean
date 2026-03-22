@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 import random
-import string
 import sys
 import time
 from pathlib import Path
@@ -17,7 +16,6 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-import numpy as np
 
 
 def benchmark_json_serialization() -> dict:
@@ -62,7 +60,7 @@ def benchmark_json_serialization() -> dict:
 
 def benchmark_sorting() -> dict:
     """Benchmark sorting speedup."""
-    from whitemagic.core.acceleration.sorting_bridge import fast_sort, top_k
+    from whitemagic.core.acceleration.sorting_bridge import fast_sort
     
     # Generate test data
     test_data = [random.random() for _ in range(50000)]
@@ -217,5 +215,5 @@ if __name__ == "__main__":
     with open(reports_dir / "S021_benchmarks.json", "w") as f:
         json.dump(results, f, indent=2)
     
-    print(f"\nResults saved to: reports/S021_benchmarks.json")
+    print("\nResults saved to: reports/S021_benchmarks.json")
     sys.exit(0 if results["all_passed"] else 1)

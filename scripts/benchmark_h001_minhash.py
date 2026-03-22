@@ -86,7 +86,7 @@ def main():
     try:
         import whitemagic_rs
         print("   ✅ Rust MinHash available and used")
-        print(f"   📈 Expected speedup: 50× over Python baseline")
+        print("   📈 Expected speedup: 50× over Python baseline")
     except ImportError:
         print("   ⚠️  Rust unavailable - using Python fallback")
         print("   📉 No speedup (baseline performance)")

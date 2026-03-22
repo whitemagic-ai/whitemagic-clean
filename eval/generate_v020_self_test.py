@@ -4,7 +4,6 @@ LoCoMo V020 WhiteMagic Self-Test
 """
 
 import json
-import random
 from typing import List, Dict, Any
 from datetime import datetime
 

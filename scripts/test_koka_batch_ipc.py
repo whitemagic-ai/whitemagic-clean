@@ -1,5 +1,4 @@
 import subprocess
-import json
 import time
 
 def test_koka_batch():

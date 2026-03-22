@@ -8,7 +8,6 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from collections import Counter
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -29,7 +28,7 @@ def find_regex_hot_paths():
     # Sort by frequency
     regex_files.sort(key=lambda x: x[1], reverse=True)
     
-    print(f"\nTop 10 files by re.compile usage:")
+    print("\nTop 10 files by re.compile usage:")
     for i, (filepath, count) in enumerate(regex_files[:10], 1):
         rel_path = filepath.relative_to(PROJECT_ROOT)
         print(f"  {i:2d}. {str(rel_path):60s} — {count} patterns")
@@ -169,7 +168,7 @@ def wire_top_files(top_files):
         
         # Check if already wired
         if 'from whitemagic.utils.fast_regex import compile' in content:
-            print(f"    ✓ Already wired")
+            print("    ✓ Already wired")
             continue
         
         # Add import at top (after other imports)
@@ -199,9 +198,9 @@ def wire_top_files(top_files):
                 filepath.write_text(content_new)
                 print(f"    ✓ Wired fast_regex ({count} patterns)")
             else:
-                print(f"    ⚠ No changes made")
+                print("    ⚠ No changes made")
         else:
-            print(f"    ⚠ No 'import re' found, skipping")
+            print("    ⚠ No 'import re' found, skipping")
 
 
 def run_benchmark():
@@ -273,7 +272,7 @@ def update_campaign_vc():
         print("  VC marked complete: regex_compile hot paths")
         return True
     else:
-        print(f"\n⚠ Campaign file not updated (pattern not found)")
+        print("\n⚠ Campaign file not updated (pattern not found)")
         return False
 
 

@@ -18,7 +18,6 @@ import sqlite3
 import sys
 import time
 from pathlib import Path
-from datetime import datetime
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -116,8 +115,8 @@ def optimized_batch_embed(max_minutes: int = 5, batch_size: int = 256, dry_run: 
     start_time = time.time()
     end_time = start_time + (max_minutes * 60)
     
-    print(f"\n🚀 Starting optimized batch embedding...")
-    print(f"   Target rate: 6-10 embeddings/sec")
+    print("\n🚀 Starting optimized batch embedding...")
+    print("   Target rate: 6-10 embeddings/sec")
     print()
     
     while time.time() < end_time:
@@ -133,7 +132,7 @@ def optimized_batch_embed(max_minutes: int = 5, batch_size: int = 256, dry_run: 
             
             indexed = result.get("indexed", 0)
             if indexed == 0:
-                print(f"\n✅ All memories embedded!")
+                print("\n✅ All memories embedded!")
                 break
             
             total_embedded += indexed
@@ -178,19 +177,19 @@ def optimized_batch_embed(max_minutes: int = 5, batch_size: int = 256, dry_run: 
     speedup = actual_rate / baseline_rate
     
     print()
-    print(f"  📊 Performance:")
+    print("  📊 Performance:")
     print(f"     Baseline rate:   {baseline_rate:.1f} embeddings/sec")
     print(f"     Optimized rate:  {actual_rate:.1f} embeddings/sec")
     print(f"     Speedup:         {speedup:.1f}x")
     
     if speedup >= 6:
-        print(f"     ✅ Excellent! Exceeded 6x target speedup")
+        print("     ✅ Excellent! Exceeded 6x target speedup")
     elif speedup >= 4:
-        print(f"     ✅ Good! Solid 4-6x speedup achieved")
+        print("     ✅ Good! Solid 4-6x speedup achieved")
     elif speedup >= 2:
-        print(f"     ⚠️  Moderate 2-4x speedup (could be better)")
+        print("     ⚠️  Moderate 2-4x speedup (could be better)")
     else:
-        print(f"     ⚠️  Low speedup - may need Phase 2 (shadow clones)")
+        print("     ⚠️  Low speedup - may need Phase 2 (shadow clones)")
     
     print()
     

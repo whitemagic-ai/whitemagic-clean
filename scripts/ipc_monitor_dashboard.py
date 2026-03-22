@@ -5,7 +5,6 @@ import sys
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
 import time
-import json
 from datetime import datetime
 
 class IPCMonitorDashboard:
@@ -67,10 +66,10 @@ class IPCMonitorDashboard:
     def _display_targets(self):
         """Display target vs actual metrics."""
         print("Targets vs Actual:")
-        print(f"  IPC latency: <0.1ms (measuring...)")
-        print(f"  Events/sec: N/A → target 100K+")
-        print(f"  Multi-process ops: 5.6 → target 2,500+")
-        print(f"  Failover: Manual → target <1s")
+        print("  IPC latency: <0.1ms (measuring...)")
+        print("  Events/sec: N/A → target 100K+")
+        print("  Multi-process ops: 5.6 → target 2,500+")
+        print("  Failover: Manual → target <1s")
         print()
     
     def run(self, duration_seconds=30):

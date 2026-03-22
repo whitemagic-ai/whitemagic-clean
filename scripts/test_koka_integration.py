@@ -14,7 +14,7 @@ import subprocess
 import time
 import sys
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 
 
 class KokaIntegrationTest:
@@ -154,7 +154,7 @@ class KokaIntegrationTest:
                 return result
         
         self.results["failed"].append(("ring_buffer", result.get("error", "Check failed")))
-        print(f"  ✗ Ring buffer failed")
+        print("  ✗ Ring buffer failed")
         return result
     
     def test_rust_bridge(self) -> Dict[str, Any]:
@@ -185,7 +185,7 @@ class KokaIntegrationTest:
                 return result
         
         self.results["failed"].append(("rust_bridge", result.get("error", "Check failed")))
-        print(f"  ✗ Rust bridge failed")
+        print("  ✗ Rust bridge failed")
         return result
     
     def test_effect_runtime(self) -> Dict[str, Any]:
@@ -206,7 +206,7 @@ class KokaIntegrationTest:
             return result
         
         self.results["failed"].append(("effect_runtime", result.get("error", "Check failed")))
-        print(f"  ✗ Effect runtime failed")
+        print("  ✗ Effect runtime failed")
         return result
     
     def test_unified_runtime_v3(self) -> Dict[str, Any]:
@@ -227,7 +227,7 @@ class KokaIntegrationTest:
             return result
         
         self.results["failed"].append(("unified_runtime_v3", result.get("error", "Check failed")))
-        print(f"  ✗ Unified runtime v3 failed")
+        print("  ✗ Unified runtime v3 failed")
         return result
     
     def test_python_bridge(self) -> Dict[str, Any]:

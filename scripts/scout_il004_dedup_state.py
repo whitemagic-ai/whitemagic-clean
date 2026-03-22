@@ -19,12 +19,12 @@ def scout_dedup_state():
     if health.get("status") == "success":
         details = health.get("details", {})
         db = details.get("db", {})
-        print(f"\n💾 Database State:")
+        print("\n💾 Database State:")
         print(f"  Memory count: {db.get('memory_count', 'N/A'):,}")
         print(f"  DB size: {db.get('size_mb', 'N/A'):.1f} MB")
     
     # Search for duplicate-related content
-    print(f"\n🔎 Duplicate Detection Content:")
+    print("\n🔎 Duplicate Detection Content:")
     
     # Check for existing duplicate detection work
     dupes = call_tool("search_memories", query="duplicate detection SHA-256 MinHash", limit=10)
@@ -64,5 +64,5 @@ def scout_dedup_state():
 
 if __name__ == "__main__":
     result = scout_dedup_state()
-    print(f"\n✅ Scout complete. JSON output:")
+    print("\n✅ Scout complete. JSON output:")
     print(json.dumps(result, indent=2))

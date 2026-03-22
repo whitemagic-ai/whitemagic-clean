@@ -97,7 +97,7 @@ class Tier5Commander:
         logger.info("=" * 80)
         logger.info("🛠️  TIER 5: SUPPORT UNITS DEPLOYMENT")
         logger.info("=" * 80)
-        logger.info(f"Forces:")
+        logger.info("Forces:")
         logger.info(f"  Batch Processor:  {self.batch_units:,} units (dependency graphs, parallel processing)")
         logger.info(f"  File Search:      {self.file_search_units:,} units (parallel FS operations)")
         logger.info(f"  Lieutenant Corps: {self.lieutenant_units:,} units (domain specialists)")

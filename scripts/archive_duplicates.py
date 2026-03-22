@@ -17,7 +17,6 @@ Strategy:
 import hashlib
 import json
 import sqlite3
-import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -321,7 +320,7 @@ def verify_deduplication(conn: sqlite3.Connection):
     cur.execute("SELECT COUNT(*) FROM memories WHERE memory_type = 'archived'")
     archived_count = cur.fetchone()[0]
     
-    print(f"✅ Zero duplicate groups remain")
+    print("✅ Zero duplicate groups remain")
     print(f"📊 Active memories: {active_count:,}")
     print(f"📦 Archived memories: {archived_count:,}")
     

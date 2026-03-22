@@ -4,9 +4,7 @@ Tests the Rust implementations of unified.py and db_manager.py
 via the whitemagic_rs Python bindings.
 """
 import pytest
-import tempfile
 import json
-import os
 
 try:
     import whitemagic_rs as wm_rs

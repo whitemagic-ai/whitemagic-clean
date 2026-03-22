@@ -23,21 +23,90 @@ use serde::{Deserialize, Serialize};
 // ---------------------------------------------------------------------------
 
 const LOGIC_KEYWORDS: &[&str] = &[
-    "algorithm", "function", "class", "method", "variable", "parameter",
-    "return", "import", "module", "interface", "struct", "enum", "type",
-    "compile", "binary", "integer", "boolean", "array", "hash", "queue",
-    "stack", "tree", "graph", "node", "edge", "index", "query", "schema",
-    "database", "table", "column", "row", "key", "value", "config",
-    "deploy", "build", "test", "debug", "error", "exception", "log",
+    "algorithm",
+    "function",
+    "class",
+    "method",
+    "variable",
+    "parameter",
+    "return",
+    "import",
+    "module",
+    "interface",
+    "struct",
+    "enum",
+    "type",
+    "compile",
+    "binary",
+    "integer",
+    "boolean",
+    "array",
+    "hash",
+    "queue",
+    "stack",
+    "tree",
+    "graph",
+    "node",
+    "edge",
+    "index",
+    "query",
+    "schema",
+    "database",
+    "table",
+    "column",
+    "row",
+    "key",
+    "value",
+    "config",
+    "deploy",
+    "build",
+    "test",
+    "debug",
+    "error",
+    "exception",
+    "log",
 ];
 
 const EMOTION_KEYWORDS: &[&str] = &[
-    "feel", "believe", "hope", "fear", "love", "hate", "joy", "anger",
-    "sadness", "surprise", "trust", "anticipation", "dream", "wish",
-    "inspire", "motivate", "passion", "creative", "intuition", "vision",
-    "soul", "spirit", "heart", "beauty", "harmony", "peace", "balance",
-    "wisdom", "insight", "revelation", "epiphany", "grateful", "wonder",
-    "meaning", "purpose", "destiny", "journey", "growth", "transform",
+    "feel",
+    "believe",
+    "hope",
+    "fear",
+    "love",
+    "hate",
+    "joy",
+    "anger",
+    "sadness",
+    "surprise",
+    "trust",
+    "anticipation",
+    "dream",
+    "wish",
+    "inspire",
+    "motivate",
+    "passion",
+    "creative",
+    "intuition",
+    "vision",
+    "soul",
+    "spirit",
+    "heart",
+    "beauty",
+    "harmony",
+    "peace",
+    "balance",
+    "wisdom",
+    "insight",
+    "revelation",
+    "epiphany",
+    "grateful",
+    "wonder",
+    "meaning",
+    "purpose",
+    "destiny",
+    "journey",
+    "growth",
+    "transform",
 ];
 
 // ---------------------------------------------------------------------------
@@ -45,16 +114,51 @@ const EMOTION_KEYWORDS: &[&str] = &[
 // ---------------------------------------------------------------------------
 
 const MICRO_KEYWORDS: &[&str] = &[
-    "byte", "bit", "char", "pixel", "cell", "atom", "detail", "specific",
-    "particular", "individual", "single", "one", "local", "narrow", "small",
-    "minor", "trivial", "line", "character", "token", "symbol", "field",
+    "byte",
+    "bit",
+    "char",
+    "pixel",
+    "cell",
+    "atom",
+    "detail",
+    "specific",
+    "particular",
+    "individual",
+    "single",
+    "one",
+    "local",
+    "narrow",
+    "small",
+    "minor",
+    "trivial",
+    "line",
+    "character",
+    "token",
+    "symbol",
+    "field",
 ];
 
 const MACRO_KEYWORDS: &[&str] = &[
-    "system", "architecture", "framework", "platform", "ecosystem",
-    "infrastructure", "enterprise", "global", "universal", "broad",
-    "comprehensive", "holistic", "strategic", "vision", "roadmap",
-    "philosophy", "paradigm", "worldview", "civilization", "cosmos",
+    "system",
+    "architecture",
+    "framework",
+    "platform",
+    "ecosystem",
+    "infrastructure",
+    "enterprise",
+    "global",
+    "universal",
+    "broad",
+    "comprehensive",
+    "holistic",
+    "strategic",
+    "vision",
+    "roadmap",
+    "philosophy",
+    "paradigm",
+    "worldview",
+    "civilization",
+    "cosmos",
 ];
 
 // ---------------------------------------------------------------------------
@@ -75,9 +179,9 @@ fn garden_element(garden: &str) -> &'static str {
 fn element_bias(element: &str) -> [f64; 5] {
     // [x_bias, y_bias, z_bias, w_mult, v_mult]
     match element {
-        "wood" => [0.1, 0.15, 0.0, 1.0, 1.0],   // Growth → slightly macro, creative
-        "fire" => [0.2, 0.1, 0.05, 1.1, 1.0],    // Passion → emotional, important
-        "earth" => [0.0, 0.0, 0.0, 1.0, 1.0],    // Neutral center
+        "wood" => [0.1, 0.15, 0.0, 1.0, 1.0], // Growth → slightly macro, creative
+        "fire" => [0.2, 0.1, 0.05, 1.1, 1.0], // Passion → emotional, important
+        "earth" => [0.0, 0.0, 0.0, 1.0, 1.0], // Neutral center
         "metal" => [-0.15, -0.1, 0.0, 1.0, 1.05], // Precision → logical, micro
         "water" => [0.05, 0.05, -0.1, 0.95, 1.1], // Deep → slightly old, vital
         _ => [0.0, 0.0, 0.0, 1.0, 1.0],
@@ -162,7 +266,13 @@ fn calculate_z(age_days: f64) -> f64 {
 fn calculate_w(importance: f64, access_count: u32, content_len: usize) -> f64 {
     let base = importance.max(0.5);
     let access_boost = (access_count as f64 / 10.0).min(0.5);
-    let richness_boost = if content_len > 500 { 0.2 } else if content_len > 200 { 0.1 } else { 0.0 };
+    let richness_boost = if content_len > 500 {
+        0.2
+    } else if content_len > 200 {
+        0.1
+    } else {
+        0.0
+    };
     (base + access_boost + richness_boost).min(2.5)
 }
 
@@ -229,25 +339,29 @@ pub fn distance_5d(a: &Coordinate5D, b: &Coordinate5D, weights: &[f64; 5]) -> f6
 /// Output: JSON array of Coordinate5D objects.
 #[pyfunction]
 pub fn holographic_encode_batch(memories_json: &str) -> PyResult<String> {
-    let memories: Vec<MemoryInput> = serde_json::from_str(memories_json)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e)))?;
+    let memories: Vec<MemoryInput> = serde_json::from_str(memories_json).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e))
+    })?;
 
     let coords = encode_batch(&memories);
 
-    serde_json::to_string(&coords)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e)))
+    serde_json::to_string(&coords).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e))
+    })
 }
 
 /// Encode a single memory from JSON.
 #[pyfunction]
 pub fn holographic_encode_single(memory_json: &str) -> PyResult<String> {
-    let mem: MemoryInput = serde_json::from_str(memory_json)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e)))?;
+    let mem: MemoryInput = serde_json::from_str(memory_json).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e))
+    })?;
 
     let coord = encode_memory(&mem);
 
-    serde_json::to_string(&coord)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e)))
+    serde_json::to_string(&coord).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e))
+    })
 }
 
 /// Compute 5D distances from a query point to a batch of coordinates.
@@ -259,14 +373,17 @@ pub fn holographic_nearest_5d(
     k: usize,
     weights_json: Option<&str>,
 ) -> PyResult<String> {
-    let query: Coordinate5D = serde_json::from_str(query_json)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse query: {}", e)))?;
-    let coords: Vec<Coordinate5D> = serde_json::from_str(coords_json)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse coords: {}", e)))?;
+    let query: Coordinate5D = serde_json::from_str(query_json).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse query: {}", e))
+    })?;
+    let coords: Vec<Coordinate5D> = serde_json::from_str(coords_json).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse coords: {}", e))
+    })?;
 
     let weights: [f64; 5] = if let Some(wj) = weights_json {
-        serde_json::from_str(wj)
-            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse weights: {}", e)))?
+        serde_json::from_str(wj).map_err(|e| {
+            PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse weights: {}", e))
+        })?
     } else {
         [1.0, 1.0, 1.0, 1.0, 1.0]
     };
@@ -279,8 +396,9 @@ pub fn holographic_nearest_5d(
     distances.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
     distances.truncate(k);
 
-    serde_json::to_string(&distances)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e)))
+    serde_json::to_string(&distances).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e))
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -372,8 +490,22 @@ mod tests {
 
     #[test]
     fn test_distance_5d() {
-        let a = Coordinate5D { id: "a".into(), x: 0.0, y: 0.0, z: 0.0, w: 1.0, v: 0.5 };
-        let b = Coordinate5D { id: "b".into(), x: 1.0, y: 0.0, z: 0.0, w: 1.0, v: 0.5 };
+        let a = Coordinate5D {
+            id: "a".into(),
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: 1.0,
+            v: 0.5,
+        };
+        let b = Coordinate5D {
+            id: "b".into(),
+            x: 1.0,
+            y: 0.0,
+            z: 0.0,
+            w: 1.0,
+            v: 0.5,
+        };
         let weights = [1.0, 1.0, 1.0, 1.0, 1.0];
         let dist = distance_5d(&a, &b, &weights);
         assert!((dist - 1.0).abs() < 1e-10);

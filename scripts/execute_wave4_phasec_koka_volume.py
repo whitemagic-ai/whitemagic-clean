@@ -119,7 +119,7 @@ def execute_wave4_phase_c():
         f.write("## KOKA Effect Systems\n\n")
         f.write(f"- **High-Impact Targets**: {len(KOKA_HIGH_IMPACT)} files\n")
         f.write(f"- **Total LOC**: {koka_total:,}\n")
-        f.write(f"- **Shadow Clones**: KOKA-SPEC-02 through KOKA-SPEC-07\n\n")
+        f.write("- **Shadow Clones**: KOKA-SPEC-02 through KOKA-SPEC-07\n\n")
         
         f.write("## Volume Migration (All Languages)\n\n")
         f.write("| Language | Files | LOC | Focus |\n")
@@ -169,7 +169,7 @@ def execute_wave4_phase_c():
         f.write("4. v17 release preparation\n")
     
     print("\n" + "=" * 70)
-    print(f"Wave 4 Phase C complete:")
+    print("Wave 4 Phase C complete:")
     print(f"  🎯 KOKA: {len(KOKA_HIGH_IMPACT)} high-impact files ({koka_total:,} LOC)")
     print(f"  📦 Volume: {total_files} files ({total_loc:,} LOC)")
     print(f"  Total Phase C: {len(KOKA_HIGH_IMPACT) + total_files} files ({koka_total + total_loc:,} LOC)")

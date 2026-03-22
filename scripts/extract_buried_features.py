@@ -22,7 +22,6 @@ import re
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 # Feature extraction patterns
 FEATURE_PATTERNS = [
@@ -202,7 +201,7 @@ class FeatureExtractor:
         report = []
         report.append("# 🏛️ Archaeological Feature Extraction Report")
         report.append(f"**Generated**: {datetime.now().isoformat()}")
-        report.append(f"**Campaign**: V007 - Archaeological Deep Dig")
+        report.append("**Campaign**: V007 - Archaeological Deep Dig")
         report.append("")
         report.append("---")
         report.append("")

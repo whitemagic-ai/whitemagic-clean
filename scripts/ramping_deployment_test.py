@@ -17,7 +17,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from whitemagic.agents.campaign_loader import load_all_campaigns
 
 
 async def test_scale(scale: int, backend: str = "rust"):
@@ -66,27 +65,27 @@ async def test_scale(scale: int, backend: str = "rust"):
     # Efficiency analysis
     baseline_throughput = 18157  # deploy_grand_army.py
     improvement = throughput / baseline_throughput if baseline_throughput > 0 else 0
-    print(f"\n  vs Baseline (18,157 clones/sec):")
+    print("\n  vs Baseline (18,157 clones/sec):")
     print(f"    Improvement: {improvement:.1f}× faster")
     
     # Optimal use cases
-    print(f"\n  Optimal for:")
+    print("\n  Optimal for:")
     if scale <= 5000:
-        print(f"    - Quick reconnaissance")
-        print(f"    - Single campaign testing")
-        print(f"    - Rapid iteration")
+        print("    - Quick reconnaissance")
+        print("    - Single campaign testing")
+        print("    - Rapid iteration")
     elif scale <= 25000:
-        print(f"    - Multi-campaign deployment")
-        print(f"    - Balanced exploration")
-        print(f"    - Standard operations")
+        print("    - Multi-campaign deployment")
+        print("    - Balanced exploration")
+        print("    - Standard operations")
     elif scale <= 100000:
-        print(f"    - Massive scale operations")
-        print(f"    - Exhaustive search")
-        print(f"    - Genetic algorithms")
+        print("    - Massive scale operations")
+        print("    - Exhaustive search")
+        print("    - Genetic algorithms")
     else:
-        print(f"    - Million-clone deployments")
-        print(f"    - Monte Carlo simulations")
-        print(f"    - Extreme parallelism")
+        print("    - Million-clone deployments")
+        print("    - Monte Carlo simulations")
+        print("    - Extreme parallelism")
     
     return {
         'scale': scale,
@@ -130,16 +129,16 @@ async def main():
     
     # Find optimal scales
     print("\n  Recommended Force Compositions:")
-    print(f"    • Quick Recon: 1K-5K clones (fastest iteration)")
-    print(f"    • Standard Ops: 10K-25K clones (balanced)")
-    print(f"    • Heavy Assault: 50K-100K clones (maximum coverage)")
+    print("    • Quick Recon: 1K-5K clones (fastest iteration)")
+    print("    • Standard Ops: 10K-25K clones (balanced)")
+    print("    • Heavy Assault: 50K-100K clones (maximum coverage)")
     
     # Calculate total capacity
     total_clones = sum(r['scale'] for r in results)
     total_time = sum(r['duration'] for r in results)
     avg_throughput = total_clones / total_time if total_time > 0 else 0
     
-    print(f"\n  Total Test Statistics:")
+    print("\n  Total Test Statistics:")
     print(f"    Total clones deployed: {total_clones:,}")
     print(f"    Total time: {total_time:.3f}s")
     print(f"    Average throughput: {avg_throughput:,.0f} clones/sec")

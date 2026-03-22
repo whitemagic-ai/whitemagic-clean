@@ -81,7 +81,7 @@ def main():
                 print(f"      ❌ Failed: {result.stderr[:200]}")
                 failed += 1
         except subprocess.TimeoutExpired:
-            print(f"      ❌ Timeout (>5 minutes)")
+            print("      ❌ Timeout (>5 minutes)")
             failed += 1
         except Exception as e:
             print(f"      ❌ Error: {e}")

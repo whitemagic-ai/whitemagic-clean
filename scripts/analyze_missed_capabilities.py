@@ -36,7 +36,7 @@ dev_funcs = set(sig["name"] for sig in dev_data["functions"]["signatures"])
 public_funcs = set(sig["name"] for sig in public_data["functions"]["signatures"])
 all_funcs = dev_funcs | public_funcs
 
-print(f"📊 Functions:")
+print("📊 Functions:")
 print(f"   Dev: {len(dev_funcs):,}")
 print(f"   Public: {len(public_funcs):,}")
 print(f"   Combined unique: {len(all_funcs):,}")
@@ -48,11 +48,11 @@ dev_decs = set(dev_data["decorators"]["decorators"].keys())
 public_decs = set(public_data["decorators"]["decorators"].keys())
 all_decs = dev_decs | public_decs
 
-print(f"📊 Decorators:")
+print("📊 Decorators:")
 print(f"   Dev: {len(dev_decs):,}")
 print(f"   Public: {len(public_decs):,}")
 print(f"   Combined unique: {len(all_decs):,}")
-print(f"   Top 10 most used:")
+print("   Top 10 most used:")
 
 # Combine decorator usage
 all_decorator_uses = defaultdict(int)
@@ -69,7 +69,7 @@ print()
 dev_async = dev_data["async"]["total"]
 public_async = public_data["async"]["total"]
 
-print(f"📊 Async Patterns:")
+print("📊 Async Patterns:")
 print(f"   Dev: {dev_async:,}")
 print(f"   Public: {public_async:,}")
 print(f"   Public has {public_async - dev_async:,} more async patterns")
@@ -80,7 +80,7 @@ dev_exceptions = set(dev_data["exceptions"]["exceptions"].keys())
 public_exceptions = set(public_data["exceptions"]["exceptions"].keys())
 all_exceptions = dev_exceptions | public_exceptions
 
-print(f"📊 Exception Types:")
+print("📊 Exception Types:")
 print(f"   Dev: {len(dev_exceptions):,}")
 print(f"   Public: {len(public_exceptions):,}")
 print(f"   Combined unique: {len(all_exceptions):,}")
@@ -92,7 +92,7 @@ dev_constants = set(c["name"] for c in dev_data["constants"]["constants"])
 public_constants = set(c["name"] for c in public_data["constants"]["constants"])
 all_constants = dev_constants | public_constants
 
-print(f"📊 Constants:")
+print("📊 Constants:")
 print(f"   Dev: {len(dev_constants):,}")
 print(f"   Public: {len(public_constants):,}")
 print(f"   Combined unique: {len(all_constants):,}")

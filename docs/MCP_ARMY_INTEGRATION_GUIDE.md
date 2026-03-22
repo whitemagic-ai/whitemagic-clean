@@ -46,7 +46,7 @@
 - **Lt. Omar Hassan** (Discovery): 168K clones, 4 Ganas, 19 MCP tools
 - **Lt. Priya Sharma** (Infrastructure): 103K clones, 4 Ganas, 15 MCP tools
 
-### 3. **374 MCP Tools** (distributed across lieutenants)
+### 3. **MCP Tool Surface** (distributed across lieutenants)
 - Each lieutenant has authority over domain-specific tools
 - Real-time reconnaissance, monitoring, verification
 - See: `whitemagic/agents/mcp_lieutenants.py`
@@ -435,7 +435,7 @@ Gana coverage: 28 Ganas
 
 - ✅ 28 Gana armies mapped
 - ✅ 6 lieutenant officers with MCP authority
-- ✅ 374 MCP tools distributed
+- ✅ MCP tool surface distributed
 - ✅ Real-time reconnaissance, monitoring, verification
 - ✅ Polyglot coordination (7 languages)
 

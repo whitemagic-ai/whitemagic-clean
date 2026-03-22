@@ -1,0 +1,50 @@
+{
+  "total_mutations_tested": 1,
+  "keep_count": 0,
+  "discard_count": 1,
+  "maybe_count": 0,
+  "results": [
+    {
+      "mutation_id": "arch_001",
+      "mutation_name": "Streaming Evolution",
+      "category": "Architecture",
+      "priority": 1,
+      "baseline": {
+        "test_id": "baseline_50000x50",
+        "mutation_name": "baseline",
+        "population": 50000,
+        "generations": 50,
+        "duration": 24.463557243347168,
+        "throughput": 103545.25279673559,
+        "best_fitness": 0.6633865344486136,
+        "avg_fitness": 0.19167756190735227,
+        "diversity": 0.91022,
+        "memory_mb": 991.36328125,
+        "peak_memory_mb": 1008.01953125
+      },
+      "with_mutation": {
+        "test_id": "streaming_50000x50",
+        "mutation_name": "streaming_evolution",
+        "population": 50000,
+        "generations": 50,
+        "duration": 110.15175437927246,
+        "throughput": 22695.96171289335,
+        "best_fitness": 0.6064848259366915,
+        "avg_fitness": 0.5458363433430223,
+        "diversity": 0.9,
+        "memory_mb": -19.52734375,
+        "peak_memory_mb": 988.58984375
+      },
+      "improvements": {
+        "throughput": -78.08111806202585,
+        "duration": -77.79104165775271,
+        "best_fitness": -8.577459076587534,
+        "avg_fitness": 184.76799157475375,
+        "diversity": -1.1228054755993089,
+        "memory": -5176.795359071814
+      },
+      "recommendation": "DISCARD",
+      "notes": "Multiple metrics regressed >5%"
+    }
+  ]
+}

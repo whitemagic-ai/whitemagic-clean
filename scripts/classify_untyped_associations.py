@@ -6,7 +6,6 @@ Run: cd /home/lucas/Desktop/whitemagicdev && .venv/bin/python scripts/classify_u
 
 import re
 import sqlite3
-import sys
 from pathlib import Path
 from typing import Optional
 
@@ -109,18 +108,18 @@ def main():
     print(f"\nProcessing batch of {args.batch_size:,}...")
     result = classify_batch(args.batch_size, dry_run=not args.apply)
     
-    print(f"\nResults:")
+    print("\nResults:")
     print(f"  Processed: {result['processed']:,}")
     print(f"  Pattern-classified: {result['pattern_classified']:,}")
     print(f"  Pending semantic: {result['pending_semantic']:,}")
     
     if result['breakdown']:
-        print(f"\nPattern breakdown:")
+        print("\nPattern breakdown:")
         for edge_type, count in sorted(result['breakdown'].items(), key=lambda x: -x[1]):
             print(f"    {edge_type}: {count:,}")
     
     if not args.apply:
-        print(f"\nDry run - no changes applied. Use --apply to commit.")
+        print("\nDry run - no changes applied. Use --apply to commit.")
     else:
         remaining = untyped - result['pattern_classified']
         print(f"\nApplied! Remaining untyped: {remaining:,}")

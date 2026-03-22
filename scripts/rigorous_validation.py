@@ -6,7 +6,7 @@ Verify content, structure, and readiness for compilation
 
 import json
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 def check_file_content(filepath: Path) -> Tuple[bool, int, str]:
     """Check if file exists and has meaningful content"""

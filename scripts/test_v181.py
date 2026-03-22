@@ -5,7 +5,6 @@ Validates all implementations are working correctly.
 """
 
 import sys
-import time
 from pathlib import Path
 
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')

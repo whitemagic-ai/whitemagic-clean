@@ -156,14 +156,14 @@ def tier2_rust(quick=False):
     iters = 50 if quick else 200
 
     try:
-        import whitemagic_rs
-        print(f"  Rust bridge: LOADED")
+        import whitemagic_rust as whitemagic_rs
+        print("  Rust bridge: LOADED")
     except ImportError:
-        print(f"  ⊘ Rust bridge not available — skipping tier")
+        print("  ⊘ Rust bridge not available — skipping tier")
         RESULTS.append({"label": "Rust bridge", "tier": 2, "status": "skip"})
         return
 
-    # Holographic encoding (takes JSON MemoryInput: id, content, importance, access_count, age_days, galactic_distance)
+    # Holographic encoding
     import json as _json
     _holo_input = _json.dumps({
         "id": "bench_test_001",
@@ -171,7 +171,8 @@ def tier2_rust(quick=False):
         "importance": 0.8, "access_count": 100,
         "age_days": 7.0, "galactic_distance": 0.3,
     })
-    bench("Rust holographic_encode_single", lambda: whitemagic_rs.holographic_encode_single(
+    # Use the correct submodule function
+    bench("Rust holographic_encode_single", lambda: whitemagic_rs.holographic_encoder_5d.holographic_encode_single(
         _holo_input
     ), iterations=iters * 5, tier=2)
 
@@ -180,7 +181,7 @@ def tier2_rust(quick=False):
         "The quantum entanglement of memory systems creates emergent consciousness patterns"
     ), iterations=iters * 5, tier=2)
 
-    # Galactic batch score (takes JSON input)
+    # Galactic batch score
     _galactic_input = _json.dumps([{
         "importance": 0.8, "access_count": 100,
         "recency": 0.7, "emotional_valence": 0.5,
@@ -189,15 +190,16 @@ def tier2_rust(quick=False):
         _galactic_input
     ), iterations=iters * 10, tier=2)
 
-    # MinHash (takes JSON array of keyword arrays)
+    # MinHash
     _minhash_input = _json.dumps([["quick", "brown", "fox", "jumps", "lazy", "dog"]])
     bench("Rust minhash_signatures", lambda: whitemagic_rs.minhash_signatures(
         _minhash_input
     ), iterations=iters * 5, tier=2)
 
-    # Tokio Clone Army (use bench function for raw speed test)
+    # Tokio Clone Army
     try:
         start = time.perf_counter_ns()
+        # Find the correct location for tokio_clone_bench
         result = whitemagic_rs.tokio_clone_bench(10000)
         elapsed = time.perf_counter_ns() - start
         rate = 10000 / (elapsed / 1e9)
@@ -489,7 +491,7 @@ def print_summary():
     skipped = sum(1 for r in RESULTS if r["status"] == "skip")
 
     print(f"\n{'═' * 70}")
-    print(f"📋 BENCHMARK GAUNTLET v5 SUMMARY")
+    print("📋 BENCHMARK GAUNTLET v5 SUMMARY")
     print(f"{'═' * 70}")
     print(f"  Total benchmarks: {total}")
     print(f"  Passed: {passed}  |  Errors: {errors}  |  Skipped: {skipped}")
@@ -507,7 +509,7 @@ def print_summary():
     fast_ops = [r for r in RESULTS if r.get("ops_per_sec", 0) > 0]
     if fast_ops:
         fast_ops.sort(key=lambda r: r["ops_per_sec"], reverse=True)
-        print(f"\n  🏆 Fastest operations:")
+        print("\n  🏆 Fastest operations:")
         for r in fast_ops[:5]:
             print(f"    {_fmt_rate(r['ops_per_sec']):>15}  {r['label']}")
 
@@ -515,7 +517,7 @@ def print_summary():
     slow_ops = [r for r in RESULTS if r.get("duration_ms", 0) > 0]
     if slow_ops:
         slow_ops.sort(key=lambda r: r["duration_ms"], reverse=True)
-        print(f"\n  🐌 Heaviest operations:")
+        print("\n  🐌 Heaviest operations:")
         for r in slow_ops[:5]:
             print(f"    {r['duration_ms']:>10.1f}ms  {r['label']}")
 
@@ -527,7 +529,7 @@ def main():
     parser.add_argument("--json", action="store_true", help="Output JSON results")
     args = parser.parse_args()
 
-    print(f"🚀 WhiteMagic Benchmark Gauntlet v5 — All Engines + Rust")
+    print("🚀 WhiteMagic Benchmark Gauntlet v5 — All Engines + Rust")
     print(f"{'═' * 70}")
     print(f"Timestamp: {datetime.now().isoformat()}")
     print(f"Mode: {'quick' if args.quick else 'full'}")

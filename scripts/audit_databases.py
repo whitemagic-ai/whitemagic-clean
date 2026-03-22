@@ -13,10 +13,7 @@ Outputs comprehensive audit report to reports/memory_deep_audit.md.
 """
 
 import sqlite3
-import json
-import hashlib
 from pathlib import Path
-from collections import Counter
 from typing import Dict, Any, List
 
 # Configuration
@@ -157,7 +154,7 @@ def generate_report(db_stats: Dict[str, Any], aria_audit: List[Dict[str, Any]]):
                 f.write(f"- ⚠️ High quarantine count ({quarantined:,}). Recommend review/purge.\n")
             
             if active["typed_associations"] < active["associations"] * 0.1:
-                f.write(f"- ⚠️ Low typed association ratio. Recommend running association classifier.\n")
+                f.write("- ⚠️ Low typed association ratio. Recommend running association classifier.\n")
                 
             missing_aria = [i["title"] for i in aria_audit if not i["found"]]
             if missing_aria:
@@ -168,4 +165,4 @@ if __name__ == "__main__":
     stats = {name: get_db_stats(path) for name, path in DATABASES.items()}
     aria_audit = audit_aria_memories()
     generate_report(stats, aria_audit)
-    print(f"Audit complete. Report generated at reports/memory_deep_audit.md")
+    print("Audit complete. Report generated at reports/memory_deep_audit.md")

@@ -4,7 +4,7 @@ defmodule WhiteMagic.MixProject do
   def project do
     [
       app: :whitemagic_core,
-      version: "17.0.0",
+      version: "20.0.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps()

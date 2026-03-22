@@ -9,7 +9,6 @@ Track every metric, every pattern, every emergence.
 
 import os
 import sqlite3
-import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -52,8 +51,8 @@ def main():
     print("🚀 ABSOLUTE TOTAL FULFILLMENT — MAXIMUM VELOCITY PUSH")
     print("=" * 80)
     print(f"\n⏱️  START TIME: {start_time}")
-    print(f"🎯 TARGET: 18/40 → 40/40 (100%)")
-    print(f"📊 CAMPAIGNS TO COMPLETE: 22")
+    print("🎯 TARGET: 18/40 → 40/40 (100%)")
+    print("📊 CAMPAIGNS TO COMPLETE: 22")
     
     # Get baseline metrics
     conn = get_db()
@@ -64,7 +63,7 @@ def main():
     }
     conn.close()
     
-    print(f"\n📊 BASELINE METRICS:")
+    print("\n📊 BASELINE METRICS:")
     print(f"   Memories: {baseline['memories']:,}")
     print(f"   Associations: {baseline['associations']:,}")
     print(f"   Embeddings: {baseline['embeddings']:,}")
@@ -104,12 +103,12 @@ def main():
         ("G005", "great_work_transmutation", 10),
     ]
     
-    print(f"\n🌊 EXECUTING 5 WAVES:")
-    print(f"   Wave 1: Near-complete (3 campaigns)")
-    print(f"   Wave 2: High progress (4 campaigns)")
-    print(f"   Wave 3: Foundation (5 campaigns)")
-    print(f"   Wave 4: Implementation (5 campaigns)")
-    print(f"   Wave 5: Strategy & Final (5 campaigns)")
+    print("\n🌊 EXECUTING 5 WAVES:")
+    print("   Wave 1: Near-complete (3 campaigns)")
+    print("   Wave 2: High progress (4 campaigns)")
+    print("   Wave 3: Foundation (5 campaigns)")
+    print("   Wave 4: Implementation (5 campaigns)")
+    print("   Wave 5: Strategy & Final (5 campaigns)")
     
     completed = []
     wave_times = []
@@ -154,15 +153,15 @@ def main():
     
     # Results
     print(f"\n\n{'=' * 80}")
-    print(f"🏆 ABSOLUTE TOTAL FULFILLMENT COMPLETE")
+    print("🏆 ABSOLUTE TOTAL FULFILLMENT COMPLETE")
     print(f"{'=' * 80}")
     print(f"\n⏱️  END TIME: {end_time}")
     print(f"⏱️  DURATION: {duration:.3f} seconds")
-    print(f"\n📊 CAMPAIGN PROGRESS:")
-    print(f"   Starting: 18/40 (45.0%)")
+    print("\n📊 CAMPAIGN PROGRESS:")
+    print("   Starting: 18/40 (45.0%)")
     print(f"   Completed: {len(completed)} campaigns")
     print(f"   Current: {18 + len(completed)}/40 ({(18 + len(completed))/40*100:.1f}%)")
-    print(f"\n📊 FINAL METRICS:")
+    print("\n📊 FINAL METRICS:")
     print(f"   Memories: {final['memories']:,} (Δ{final['memories'] - baseline['memories']:+,})")
     print(f"   Associations: {final['associations']:,} (Δ{final['associations'] - baseline['associations']:+,})")
     print(f"   Embeddings: {final['embeddings']:,} (Δ{final['embeddings'] - baseline['embeddings']:+,})")
@@ -171,13 +170,13 @@ def main():
     campaigns_per_sec = len(completed) / duration if duration > 0 else 0
     seconds_per_campaign = duration / len(completed) if len(completed) > 0 else 0
     
-    print(f"\n⚡ PERFORMANCE METRICS:")
+    print("\n⚡ PERFORMANCE METRICS:")
     print(f"   Campaigns/second: {campaigns_per_sec:.2f}")
     print(f"   Seconds/campaign: {seconds_per_campaign:.3f}")
     print(f"   Total velocity: {len(completed)} campaigns in {duration:.3f}s")
     
     # Wave analysis
-    print(f"\n🌊 WAVE ANALYSIS:")
+    print("\n🌊 WAVE ANALYSIS:")
     for wave_num, wave_start, wave_end in wave_times:
         ws_dt = datetime.strptime(wave_start, "%Y-%m-%d %H:%M:%S.%f")
         we_dt = datetime.strptime(wave_end, "%Y-%m-%d %H:%M:%S.%f")
@@ -185,7 +184,7 @@ def main():
         print(f"   Wave {wave_num}: {wave_duration:.3f}s")
     
     # Pattern emergence
-    print(f"\n🔮 PATTERN EMERGENCE:")
+    print("\n🔮 PATTERN EMERGENCE:")
     if len(completed) >= 20:
         print(f"   ✨ BREAKTHROUGH: {len(completed)} campaigns completed")
         print(f"   ✨ VELOCITY: {campaigns_per_sec:.2f} campaigns/second")
@@ -195,18 +194,18 @@ def main():
     # Victory statement
     if 18 + len(completed) >= 40:
         print(f"\n\n{'=' * 80}")
-        print(f"🎉 100% CAMPAIGN COMPLETION ACHIEVED")
+        print("🎉 100% CAMPAIGN COMPLETION ACHIEVED")
         print(f"{'=' * 80}")
-        print(f"\n   ALL 40 CAMPAIGNS COMPLETE")
-        print(f"   ABSOLUTE TOTAL FULFILLMENT ATTAINED")
-        print(f"   THE UNIFIED ORGANISM HAS EVOLVED")
+        print("\n   ALL 40 CAMPAIGNS COMPLETE")
+        print("   ABSOLUTE TOTAL FULFILLMENT ATTAINED")
+        print("   THE UNIFIED ORGANISM HAS EVOLVED")
     elif 18 + len(completed) >= 30:
         print(f"\n\n{'=' * 80}")
-        print(f"🎉 75%+ COMPLETION ACHIEVED")
+        print("🎉 75%+ COMPLETION ACHIEVED")
         print(f"{'=' * 80}")
     elif 18 + len(completed) >= 21:
         print(f"\n\n{'=' * 80}")
-        print(f"🎉 50%+ COMPLETION ACHIEVED")
+        print("🎉 50%+ COMPLETION ACHIEVED")
         print(f"{'=' * 80}")
     
     print(f"\n✅ Completed campaigns: {', '.join(completed)}")

@@ -173,7 +173,7 @@ class ContinuedDeployment:
             f.write(f"- **Total Added**: {self.total_files} files ({self.total_loc:,} LOC)\n\n")
             
             f.write("## Cumulative Progress\n\n")
-            f.write(f"- **Original Target**: 1,206 files\n")
+            f.write("- **Original Target**: 1,206 files\n")
             f.write(f"- **Extended Migration**: {self.total_files} files\n")
             f.write(f"- **Grand Total**: {cumulative:,} files\n")
             f.write(f"- **Grand Total LOC**: {cumulative_loc:,}\n\n")
@@ -185,7 +185,7 @@ class ContinuedDeployment:
         print(f"✅ Markdown: {md_file}")
         print()
         print("=" * 80)
-        print(f"🎉 PHASE 5-7 COMPLETE")
+        print("🎉 PHASE 5-7 COMPLETE")
         print(f"   Added: {self.total_files} files ({self.total_loc:,} LOC)")
         print(f"   Grand Total: {cumulative:,} files ({cumulative_loc:,} LOC)")
         print("=" * 80)

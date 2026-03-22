@@ -8,7 +8,6 @@ Extract and synthesize all decorator patterns
 import ast
 import json
 from pathlib import Path
-from collections import Counter
 
 PROJECT_ROOT = Path(__file__).parent.parent
 PUBLIC_ROOT = Path.home() / "Desktop" / "whitemagicpublic"
@@ -140,7 +139,7 @@ def main():
     
     total_uses = sum(d["count"] for d in decorators.values())
     
-    print(f"✅ Extracted decorator patterns:")
+    print("✅ Extracted decorator patterns:")
     print(f"   Unique decorators: {len(decorators):,}")
     print(f"   Total uses: {total_uses:,}")
     print()
@@ -171,7 +170,7 @@ def main():
     print("DECORATOR SYNTHESIS COMPLETE")
     print("=" * 80)
     print(f"Decorators: {len(decorators):,}")
-    print(f"Library created: ✅")
+    print("Library created: ✅")
     print(f"Report: {results_path}")
     print()
     print("✅ 50K decorator synthesis clones deployed!")

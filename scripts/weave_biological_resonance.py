@@ -359,7 +359,7 @@ def collect_metrics(self):
             # Analyze file
             analysis = self.analyze_file_for_weaving(file_path)
             
-            print(f"Analysis:")
+            print("Analysis:")
             print(f"  Lines: {analysis['lines']}")
             print(f"  Has Events: {'✅' if analysis['has_events'] else '❌'}")
             print(f"  Has Nervous System: {'✅' if analysis['has_nervous_system'] else '❌'}")

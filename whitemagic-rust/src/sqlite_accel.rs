@@ -22,7 +22,6 @@ use serde::{Deserialize, Serialize};
 // ---------------------------------------------------------------------------
 
 /// Open a WAL-mode SQLite connection with performance pragmas
-#[cfg(feature = "sqlite")]
 fn open_db(db_path: &str) -> Result<rusqlite::Connection, String> {
     let conn = rusqlite::Connection::open(db_path)
         .map_err(|e| format!("SQLite open error: {}", e))?;
@@ -43,7 +42,6 @@ fn open_db(db_path: &str) -> Result<rusqlite::Connection, String> {
 /// Much faster than Python's one-at-a-time UPDATE loop.
 ///
 /// Input: JSON array of {"id": str, "galactic_distance": f64, "retention_score": f64}
-#[cfg(feature = "sqlite")]
 #[pyfunction]
 pub fn sqlite_batch_update_galactic(
     db_path: &str,
@@ -91,7 +89,6 @@ pub fn sqlite_batch_update_galactic(
 
 /// Apply decay drift to all unprotected memories: distance += drift_amount.
 /// Clamps to [0.0, 1.0]. Returns count of affected rows.
-#[cfg(feature = "sqlite")]
 #[pyfunction]
 pub fn sqlite_decay_drift(
     db_path: &str,
@@ -129,7 +126,6 @@ struct SearchResult {
 
 /// Fast FTS5 search with galactic distance weighting.
 /// Returns JSON array of SearchResult sorted by weighted relevance.
-#[cfg(feature = "sqlite")]
 #[pyfunction]
 pub fn sqlite_fts_search(
     db_path: &str,
@@ -202,7 +198,6 @@ struct ZoneStats {
 }
 
 /// Get galactic zone distribution stats from the database.
-#[cfg(feature = "sqlite")]
 #[pyfunction]
 pub fn sqlite_zone_stats(db_path: &str) -> PyResult<String> {
     let conn = open_db(db_path)
@@ -256,7 +251,6 @@ struct MemoryExport {
 
 /// Export memories for batch processing (association mining, consolidation).
 /// Returns JSON array of lightweight memory records.
-#[cfg(feature = "sqlite")]
 #[pyfunction]
 pub fn sqlite_export_for_mining(
     db_path: &str,

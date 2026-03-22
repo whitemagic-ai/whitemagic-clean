@@ -141,7 +141,7 @@ def evolutionary_loop(campaign: Dict[str, Any], max_generations: int = 5) -> Lis
     print(f"🔄 EVOLUTIONARY LOOP: {campaign['id']}")
     print(f"{'='*70}")
     print(f"Max generations: {max_generations}")
-    print(f"Strategy: Each generation learns from previous, improves fitness")
+    print("Strategy: Each generation learns from previous, improves fitness")
     
     generations = []
     
@@ -191,15 +191,14 @@ def weave_evolutionary_systems():
         if hasattr(whitemagic_rs, 'mine_geneseed_patterns'):
             systems['geneseed_vault'] = True
             print("✅ Geneseed Vault: Operational (Rust)")
-    except:
+    except Exception:
         pass
     
     # Check phylogenetics
     try:
-        from whitemagic.agents.phylogenetics import GenomeTracker, SelectionEngine
         systems['phylogenetics'] = True
         print("✅ Phylogenetics: Operational (Python)")
-    except:
+    except Exception:
         pass
     
     # Check kaizen engine
@@ -242,7 +241,7 @@ def explore_entire_ecosystem():
     campaigns = list((base_path / "campaigns").glob("*.md"))
     completed = list((base_path / "campaigns/completedcampaigns").rglob("*.md"))
     
-    print(f"\n📋 Campaigns:")
+    print("\n📋 Campaigns:")
     print(f"  Active: {len(campaigns)}")
     print(f"  Completed: {len(completed)}")
     print(f"  Total: {len(campaigns) + len(completed)}")
@@ -270,7 +269,7 @@ def explore_entire_ecosystem():
     rs_files = list(base_path.glob("**/*.rs"))
     zig_files = list(base_path.glob("**/*.zig"))
     
-    print(f"\n📁 Code Files:")
+    print("\n📁 Code Files:")
     print(f"  Python: {len(py_files)}")
     print(f"  Rust: {len(rs_files)}")
     print(f"  Zig: {len(zig_files)}")
@@ -337,7 +336,7 @@ def main():
     print(f"Total duration: {total_duration:.2f}s")
     print(f"End time: {time.strftime('%H:%M:%S')}")
     
-    print(f"\n🧬 Evolutionary Progress:")
+    print("\n🧬 Evolutionary Progress:")
     for campaign_id, results in all_results.items():
         if results:
             print(f"\n{campaign_id}:")

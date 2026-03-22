@@ -237,8 +237,8 @@ class Phase14_15Deployer:
             f.write("## Final Achievement\n\n")
             f.write(f"### 🎉 **{cumulative:,} FILES MIGRATED**\n")
             f.write(f"### 🎉 **{cumulative_loc:,} LINES OF CODE**\n")
-            f.write(f"### 🎉 **15 DEPLOYMENT PHASES**\n")
-            f.write(f"### 🎉 **5 POLYGLOT LANGUAGES**\n\n")
+            f.write("### 🎉 **15 DEPLOYMENT PHASES**\n")
+            f.write("### 🎉 **5 POLYGLOT LANGUAGES**\n\n")
             
             f.write("## Complete Phase Summary\n\n")
             f.write("| Phase Range | Files | LOC | Description |\n")
@@ -288,8 +288,8 @@ class Phase14_15Deployer:
         print("🎉🎉🎉 ULTIMATE COMPLETION 🎉🎉🎉")
         print(f"   Phase 14-15: {self.total_files} files ({self.total_loc:,} LOC)")
         print(f"   🏆 FINAL TOTAL: {cumulative:,} files ({cumulative_loc:,} LOC)")
-        print(f"   🏆 PHASES: 15 complete")
-        print(f"   🏆 LANGUAGES: 5 deployed")
+        print("   🏆 PHASES: 15 complete")
+        print("   🏆 LANGUAGES: 5 deployed")
         print("=" * 80)
 
 def main():

@@ -4,7 +4,6 @@
 Tests both the Python v2 implementation and provides comparison framework.
 """
 
-import json
 import logging
 import sys
 import time
@@ -16,10 +15,6 @@ sys.path.insert(0, str(project_root))
 from whitemagic.agents.immortal_clone_v2 import (
     CampaignVictoryTracker,
     CampaignDashboard,
-    ImmortalClone,
-    GasTownOrchestrator,
-    Task,
-    ActionResult,
     immortal_clone_deploy
 )
 

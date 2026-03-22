@@ -23,15 +23,14 @@
 
 #[cfg(feature = "arrow")]
 use arrow::array::{
-    ArrayRef, Float64Array, Float64Builder, ListBuilder, RecordBatch,
-    StringBuilder, StringArray,
+    ArrayRef, Float64Array, Float64Builder, ListBuilder, RecordBatch, StringArray, StringBuilder,
 };
 #[cfg(feature = "arrow")]
 use arrow::datatypes::{DataType, Field, Schema};
 #[cfg(feature = "arrow")]
-use arrow::ipc::writer::FileWriter;
-#[cfg(feature = "arrow")]
 use arrow::ipc::reader::FileReader;
+#[cfg(feature = "arrow")]
+use arrow::ipc::writer::FileWriter;
 
 #[cfg(feature = "pyo3")]
 use pyo3::prelude::*;
@@ -74,7 +73,9 @@ pub struct MemoryRecord {
 
 #[cfg(feature = "arrow")]
 /// Build an Arrow RecordBatch from memory records (zero-copy columnar format)
-pub fn memories_to_arrow(records: &[MemoryRecord]) -> Result<RecordBatch, arrow::error::ArrowError> {
+pub fn memories_to_arrow(
+    records: &[MemoryRecord],
+) -> Result<RecordBatch, arrow::error::ArrowError> {
     let mut id_builder = StringBuilder::new();
     let mut title_builder = StringBuilder::new();
     let mut content_builder = StringBuilder::new();
@@ -154,30 +155,72 @@ pub fn ipc_bytes_to_arrow(bytes: &[u8]) -> Result<RecordBatch, arrow::error::Arr
 /// Extract memory records from an Arrow RecordBatch
 pub fn arrow_to_memories(batch: &RecordBatch) -> Vec<MemoryRecord> {
     let n = batch.num_rows();
-    let ids = batch.column(0).as_any().downcast_ref::<StringArray>().unwrap();
-    let titles = batch.column(1).as_any().downcast_ref::<StringArray>().unwrap();
-    let contents = batch.column(2).as_any().downcast_ref::<StringArray>().unwrap();
-    let importances = batch.column(3).as_any().downcast_ref::<Float64Array>().unwrap();
-    let mem_types = batch.column(4).as_any().downcast_ref::<StringArray>().unwrap();
-    let xs = batch.column(5).as_any().downcast_ref::<Float64Array>().unwrap();
-    let ys = batch.column(6).as_any().downcast_ref::<Float64Array>().unwrap();
-    let zs = batch.column(7).as_any().downcast_ref::<Float64Array>().unwrap();
-    let ws = batch.column(8).as_any().downcast_ref::<Float64Array>().unwrap();
-    let vs = batch.column(9).as_any().downcast_ref::<Float64Array>().unwrap();
+    let ids = batch
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+    let titles = batch
+        .column(1)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+    let contents = batch
+        .column(2)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+    let importances = batch
+        .column(3)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+    let mem_types = batch
+        .column(4)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+    let xs = batch
+        .column(5)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+    let ys = batch
+        .column(6)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+    let zs = batch
+        .column(7)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+    let ws = batch
+        .column(8)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+    let vs = batch
+        .column(9)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
 
-    (0..n).map(|i| MemoryRecord {
-        id: ids.value(i).to_string(),
-        title: titles.value(i).to_string(),
-        content: contents.value(i).to_string(),
-        importance: importances.value(i),
-        memory_type: mem_types.value(i).to_string(),
-        x: xs.value(i),
-        y: ys.value(i),
-        z: zs.value(i),
-        w: ws.value(i),
-        v: vs.value(i),
-        tags: vec![], // TODO: extract from list column
-    }).collect()
+    (0..n)
+        .map(|i| MemoryRecord {
+            id: ids.value(i).to_string(),
+            title: titles.value(i).to_string(),
+            content: contents.value(i).to_string(),
+            importance: importances.value(i),
+            memory_type: mem_types.value(i).to_string(),
+            x: xs.value(i),
+            y: ys.value(i),
+            z: zs.value(i),
+            w: ws.value(i),
+            v: vs.value(i),
+            tags: vec![], // TODO: extract from list column
+        })
+        .collect()
 }
 
 // ---------------------------------------------------------------------------
@@ -189,7 +232,10 @@ pub fn arrow_to_memories(batch: &RecordBatch) -> Vec<MemoryRecord> {
 /// Output: Arrow IPC file bytes.
 #[cfg(feature = "python")]
 #[pyfunction]
-pub fn arrow_encode_memories<'py>(py: Python<'py>, json_str: &str) -> PyResult<Bound<'py, pyo3::types::PyBytes>> {
+pub fn arrow_encode_memories<'py>(
+    py: Python<'py>,
+    json_str: &str,
+) -> PyResult<Bound<'py, pyo3::types::PyBytes>> {
     let records: Vec<MemoryRecord> = serde_json::from_str(json_str)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("JSON parse: {}", e)))?;
 
@@ -234,19 +280,24 @@ pub fn arrow_decode_memories(ipc_bytes: &[u8]) -> PyResult<String> {
 pub fn arrow_schema_info() -> PyResult<String> {
     #[cfg(feature = "arrow")]
     {
-        let fields: Vec<serde_json::Value> = MEMORY_SCHEMA.fields().iter().map(|f| {
-            serde_json::json!({
-                "name": f.name(),
-                "type": format!("{:?}", f.data_type()),
-                "nullable": f.is_nullable(),
+        let fields: Vec<serde_json::Value> = MEMORY_SCHEMA
+            .fields()
+            .iter()
+            .map(|f| {
+                serde_json::json!({
+                    "name": f.name(),
+                    "type": format!("{:?}", f.data_type()),
+                    "nullable": f.is_nullable(),
+                })
             })
-        }).collect();
+            .collect();
         Ok(serde_json::json!({
             "format": "Apache Arrow",
             "version": "53.0",
             "fields": fields,
             "field_count": fields.len(),
-        }).to_string())
+        })
+        .to_string())
     }
     #[cfg(not(feature = "arrow"))]
     {
@@ -259,15 +310,21 @@ pub fn arrow_schema_info() -> PyResult<String> {
 #[cfg(feature = "python")]
 #[pyfunction]
 pub fn arrow_roundtrip_bench(n: usize) -> PyResult<(u64, u64, usize)> {
-    let records: Vec<MemoryRecord> = (0..n).map(|i| MemoryRecord {
-        id: format!("bench_{}", i),
-        title: format!("Benchmark memory {}", i),
-        content: format!("This is benchmark content for memory number {}", i),
-        importance: 0.5 + (i as f64 * 0.001),
-        memory_type: "LONG_TERM".to_string(),
-        x: 0.1, y: 0.2, z: 0.3, w: 0.4, v: 0.5,
-        tags: vec!["bench".to_string(), format!("tag_{}", i % 10)],
-    }).collect();
+    let records: Vec<MemoryRecord> = (0..n)
+        .map(|i| MemoryRecord {
+            id: format!("bench_{}", i),
+            title: format!("Benchmark memory {}", i),
+            content: format!("This is benchmark content for memory number {}", i),
+            importance: 0.5 + (i as f64 * 0.001),
+            memory_type: "LONG_TERM".to_string(),
+            x: 0.1,
+            y: 0.2,
+            z: 0.3,
+            w: 0.4,
+            v: 0.5,
+            tags: vec!["bench".to_string(), format!("tag_{}", i % 10)],
+        })
+        .collect();
 
     #[cfg(feature = "arrow")]
     {
@@ -302,17 +359,19 @@ mod tests {
 
     #[test]
     fn test_roundtrip() {
-        let records = vec![
-            MemoryRecord {
-                id: "test1".to_string(),
-                title: "Test Memory".to_string(),
-                content: "Hello Arrow".to_string(),
-                importance: 0.9,
-                memory_type: "LONG_TERM".to_string(),
-                x: 0.1, y: 0.2, z: 0.3, w: 0.4, v: 0.5,
-                tags: vec!["test".to_string()],
-            },
-        ];
+        let records = vec![MemoryRecord {
+            id: "test1".to_string(),
+            title: "Test Memory".to_string(),
+            content: "Hello Arrow".to_string(),
+            importance: 0.9,
+            memory_type: "LONG_TERM".to_string(),
+            x: 0.1,
+            y: 0.2,
+            z: 0.3,
+            w: 0.4,
+            v: 0.5,
+            tags: vec!["test".to_string()],
+        }];
 
         let batch = memories_to_arrow(&records).unwrap();
         assert_eq!(batch.num_rows(), 1);
@@ -330,15 +389,21 @@ mod tests {
 
     #[test]
     fn test_batch_1000() {
-        let records: Vec<MemoryRecord> = (0..1000).map(|i| MemoryRecord {
-            id: format!("m_{}", i),
-            title: format!("Memory {}", i),
-            content: format!("Content of memory {}", i),
-            importance: 0.5,
-            memory_type: "LONG_TERM".to_string(),
-            x: 0.0, y: 0.0, z: 0.0, w: 0.0, v: 0.0,
-            tags: vec![],
-        }).collect();
+        let records: Vec<MemoryRecord> = (0..1000)
+            .map(|i| MemoryRecord {
+                id: format!("m_{}", i),
+                title: format!("Memory {}", i),
+                content: format!("Content of memory {}", i),
+                importance: 0.5,
+                memory_type: "LONG_TERM".to_string(),
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 0.0,
+                v: 0.0,
+                tags: vec![],
+            })
+            .collect();
 
         let batch = memories_to_arrow(&records).unwrap();
         assert_eq!(batch.num_rows(), 1000);
@@ -352,7 +417,6 @@ mod tests {
     }
 }
 
-
 #[cfg(feature = "pyo3")]
 #[pyclass]
 pub struct ArrowIPCBridge {
@@ -364,32 +428,41 @@ pub struct ArrowIPCBridge {
 impl ArrowIPCBridge {
     #[new]
     fn new(path: String) -> Self {
-        ArrowIPCBridge { ipc_file_path: path }
+        ArrowIPCBridge {
+            ipc_file_path: path,
+        }
     }
 
     /// Read an Arrow IPC file and return basic stats (demonstrating zero-copy read capability)
     fn read_ipc_stats(&self) -> PyResult<String> {
         #[cfg(feature = "arrow")]
         {
-            use std::fs::File;
             use arrow::ipc::reader::FileReader;
-            
-            let file = File::open(&self.ipc_file_path).map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
-            let mut reader = FileReader::try_new(file, None).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-            
+            use std::fs::File;
+
+            let file = File::open(&self.ipc_file_path)
+                .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
+            let mut reader = FileReader::try_new(file, None)
+                .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
+
             let mut total_records = 0;
             let mut batches = 0;
-            
+
             while let Some(Ok(batch)) = reader.next() {
                 total_records += batch.num_rows();
                 batches += 1;
             }
-            
-            Ok(format!("Read {} records across {} batches from {}", total_records, batches, self.ipc_file_path))
+
+            Ok(format!(
+                "Read {} records across {} batches from {}",
+                total_records, batches, self.ipc_file_path
+            ))
         }
         #[cfg(not(feature = "arrow"))]
         {
-            Err(pyo3::exceptions::PyRuntimeError::new_err("Arrow feature not enabled in build"))
+            Err(pyo3::exceptions::PyRuntimeError::new_err(
+                "Arrow feature not enabled in build",
+            ))
         }
     }
 }

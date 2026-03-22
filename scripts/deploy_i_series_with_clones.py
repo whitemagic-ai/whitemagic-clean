@@ -6,10 +6,8 @@ Tests traditional shadow clone deployment for I008, I007, I005.
 
 import json
 import os
-import sqlite3
 import sys
 import time
-from datetime import datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent

@@ -452,7 +452,7 @@ def main():
         json.dump(strategy, f, indent=2, default=str)
     
     logger.info("")
-    logger.info(f"💾 Reports saved:")
+    logger.info("💾 Reports saved:")
     logger.info(f"   Intelligence: {intel_path}")
     logger.info(f"   Strategy: {strategy_path}")
     logger.info("")

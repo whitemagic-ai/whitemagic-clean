@@ -1,6 +1,6 @@
-//! Safe Rust bindings to the Zig unified memory manager and auxiliary modules.
+//! Safe Rust bindings to Zig unified memory manager and auxiliary modules.
 //!
-//! Note: When the Zig library (libwhitemagic-zig.a) is not available,
+//! Note: When Zig library (libwhitemagic-zig.a) is not available,
 //! this module provides stub implementations that return sensible defaults.
 
 use pyo3::prelude::*;
@@ -15,6 +15,13 @@ pub struct WmCoordinate {
     pub y: f32, // micro
     pub z: f32, // time
     pub w: f32, // importance
+}
+
+// Implement IntoPy for Python compatibility
+impl IntoPy<pyo3::Py<pyo3::PyAny>> for WmCoordinate {
+    fn into_py(self, py: pyo3::Python<'_>) -> pyo3::Py<pyo3::PyAny> {
+        (self.x, self.y, self.z, self.w).into_py(py)
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -81,19 +88,19 @@ pub fn zig_iching_cast() -> [u8; 6] {
 // ---------------------------------------------------------------------------
 
 #[pyfunction]
-/// Initialise the Zig memory manager from Python.
+/// Initialise Zig memory manager from Python.
 pub fn zig_py_init() {
     zig_memory_init();
 }
 
 #[pyfunction]
-/// Return the current live block count.
+/// Return current live block count.
 pub fn zig_py_block_count() -> usize {
     zig_memory_block_count()
 }
 
 #[pyfunction]
-/// Compact the Zig heap. Returns True on success.
+/// Compact Zig heap. Returns True on success.
 pub fn zig_py_rearrange() -> bool {
     zig_memory_rearrange()
 }
@@ -121,4 +128,22 @@ pub fn zig_py_genomics_flux(rate: f32, concentration: f32) -> f32 {
 /// Entropy-seeded I Ching cast. Returns list of 6 ints (0 or 1).
 pub fn zig_py_iching_cast() -> Vec<u8> {
     zig_iching_cast().to_vec()
+}
+
+// ---------------------------------------------------------------------------
+// PyO3 module registration
+// ---------------------------------------------------------------------------
+
+#[cfg(feature = "python")]
+pub fn register_zig_ffi(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    // Register zig_ prefixed functions for Python access
+    m.add_function(wrap_pyfunction!(zig_py_init, m)?)?;
+    m.add_function(wrap_pyfunction!(zig_py_block_count, m)?)?;
+    m.add_function(wrap_pyfunction!(zig_py_rearrange, m)?)?;
+    m.add_function(wrap_pyfunction!(zig_py_dump_stats, m)?)?;
+    m.add_function(wrap_pyfunction!(zig_py_holographic_project, m)?)?;
+    m.add_function(wrap_pyfunction!(zig_py_genomics_flux, m)?)?;
+    m.add_function(wrap_pyfunction!(zig_py_iching_cast, m)?)?;
+    
+    Ok(())
 }

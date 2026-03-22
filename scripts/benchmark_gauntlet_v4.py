@@ -239,7 +239,7 @@ def tier3_tokio():
     strategies = ["direct", "chain_of_thought", "adversarial", "creative", "analytical", "synthesis", "memory_grounded"]
     result = tokio_deploy_clones("Analyze the patterns in a 111K memory corpus and recommend optimizations", 1000, strategies)
     if result:
-        print(f"\n  Consensus (1000 clones, 7 strategies):")
+        print("\n  Consensus (1000 clones, 7 strategies):")
         print(f"    Winner: {result['winner']['strategy']} (confidence={result['winner']['confidence']:.3f})")
         print(f"    Votes: {result['strategy_votes']}")
         print(f"    Avg confidence: {result['avg_confidence']:.3f}")

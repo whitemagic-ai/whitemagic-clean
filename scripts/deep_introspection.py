@@ -10,7 +10,6 @@ Comprehensive analysis of entire WhiteMagic system:
 
 import os
 import sqlite3
-import subprocess
 from pathlib import Path
 from datetime import datetime
 from collections import defaultdict
@@ -54,10 +53,10 @@ def scan_codebase():
             except:
                 pass
     
-    print(f"\n📊 Codebase Statistics:")
+    print("\n📊 Codebase Statistics:")
     print(f"   Total files: {stats['total_files']:,}")
     print(f"   Total lines: {stats['total_lines']:,}")
-    print(f"\n📝 Top file types:")
+    print("\n📝 Top file types:")
     
     sorted_exts = sorted(stats['files_by_ext'].items(), key=lambda x: x[1], reverse=True)[:15]
     for ext, count in sorted_exts:
@@ -117,7 +116,7 @@ def analyze_databases():
         }
         conn.close()
     
-    print(f"\n📊 Database Statistics:")
+    print("\n📊 Database Statistics:")
     for db_name, stats in db_stats.items():
         print(f"\n   {db_name.upper()} Database:")
         for key, value in stats.items():
@@ -147,7 +146,7 @@ def analyze_session_accomplishments():
         'coherence_percent': 350,
     }
     
-    print(f"\n📊 Key Metrics:")
+    print("\n📊 Key Metrics:")
     print(f"   Campaigns completed: {accomplishments['campaigns_completed']}")
     print(f"   Campaigns generated: {accomplishments['campaigns_generated']}")
     print(f"   Clone budget deployed: {accomplishments['clone_budget']:,}")
@@ -268,19 +267,19 @@ def generate_recommendations(opportunities):
     high = [o for o in opportunities if o['priority'] == 'HIGH']
     medium = [o for o in opportunities if o['priority'] == 'MEDIUM']
     
-    print(f"\n🔴 CRITICAL (Immediate Action):")
+    print("\n🔴 CRITICAL (Immediate Action):")
     for opp in critical:
         rec = f"Implement {opp['category']}: {opp['description']}"
         recommendations.append(('CRITICAL', rec))
         print(f"   • {rec}")
     
-    print(f"\n🟡 HIGH (Next Session):")
+    print("\n🟡 HIGH (Next Session):")
     for opp in high:
         rec = f"Implement {opp['category']}: {opp['description']}"
         recommendations.append(('HIGH', rec))
         print(f"   • {rec}")
     
-    print(f"\n🟢 MEDIUM (Future Sessions):")
+    print("\n🟢 MEDIUM (Future Sessions):")
     for opp in medium:
         rec = f"Implement {opp['category']}: {opp['description']}"
         recommendations.append(('MEDIUM', rec))
@@ -319,7 +318,7 @@ def main():
     print("=" * 80)
     print(f"\n⏱️  End: {end_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}")
     print(f"⏱️  Duration: {duration:.3f} seconds")
-    print(f"\n📊 Summary:")
+    print("\n📊 Summary:")
     print(f"   Files scanned: {codebase_stats['total_files']:,}")
     print(f"   Lines analyzed: {codebase_stats['total_lines']:,}")
     print(f"   Databases analyzed: {len(db_stats)}")

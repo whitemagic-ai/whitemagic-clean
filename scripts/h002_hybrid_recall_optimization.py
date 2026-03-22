@@ -85,7 +85,7 @@ async def execute_campaign():
     print(f"\n\n{'='*100}")
     print("📊 H002 CAMPAIGN COMPLETE - FINAL REPORT")
     print(f"{'='*100}")
-    print(f"\n🎯 OVERALL STATISTICS")
+    print("\n🎯 OVERALL STATISTICS")
     print(f"   Total VCs: {len(all_results)}/20")
     print(f"   Total Clones: {total_clones:,}")
     print(f"   Victories: {total_victories:,}/{total_clones:,} ({total_victories/total_clones*100:.1f}%)")

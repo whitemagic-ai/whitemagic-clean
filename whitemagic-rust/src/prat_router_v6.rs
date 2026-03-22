@@ -4,13 +4,34 @@ use std::sync::OnceLock;
 
 static TOOL_TO_GANA: OnceLock<HashMap<&'static str, &'static str>> = OnceLock::new();
 static GANA_ORDER: [&str; 28] = [
-    "gana_horn", "gana_neck", "gana_root", "gana_room", "gana_heart",
-    "gana_tail", "gana_winnowing_basket", "gana_ghost", "gana_willow",
-    "gana_star", "gana_extended_net", "gana_wings", "gana_chariot",
-    "gana_abundance", "gana_straddling_legs", "gana_mound", "gana_stomach",
-    "gana_hairy_head", "gana_net", "gana_turtle_beak", "gana_three_stars",
-    "gana_dipper", "gana_ox", "gana_girl", "gana_void", "gana_roof",
-    "gana_encampment", "gana_wall"
+    "gana_horn",
+    "gana_neck",
+    "gana_root",
+    "gana_room",
+    "gana_heart",
+    "gana_tail",
+    "gana_winnowing_basket",
+    "gana_ghost",
+    "gana_willow",
+    "gana_star",
+    "gana_extended_net",
+    "gana_wings",
+    "gana_chariot",
+    "gana_abundance",
+    "gana_straddling_legs",
+    "gana_mound",
+    "gana_stomach",
+    "gana_hairy_head",
+    "gana_net",
+    "gana_turtle_beak",
+    "gana_three_stars",
+    "gana_dipper",
+    "gana_ox",
+    "gana_girl",
+    "gana_void",
+    "gana_roof",
+    "gana_encampment",
+    "gana_wall",
 ];
 
 fn get_tool_map() -> &'static HashMap<&'static str, &'static str> {
@@ -40,14 +61,20 @@ pub fn prat_route_batch(tools: Vec<String>) -> Vec<String> {
 
 #[pyfunction]
 pub fn resonance_predecessor(gana: String) -> String {
-    let idx = GANA_ORDER.iter().position(|&r| r == gana.as_str()).unwrap_or(0);
+    let idx = GANA_ORDER
+        .iter()
+        .position(|&r| r == gana.as_str())
+        .unwrap_or(0);
     let prev_idx = if idx == 0 { 27 } else { idx - 1 };
     GANA_ORDER[prev_idx].to_string()
 }
 
 #[pyfunction]
 pub fn resonance_successor(gana: String) -> String {
-    let idx = GANA_ORDER.iter().position(|&r| r == gana.as_str()).unwrap_or(0);
+    let idx = GANA_ORDER
+        .iter()
+        .position(|&r| r == gana.as_str())
+        .unwrap_or(0);
     let next_idx = (idx + 1) % 28;
     GANA_ORDER[next_idx].to_string()
 }

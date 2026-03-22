@@ -5,9 +5,7 @@ Implements all 6 phases of optimization for 100% LoCoMo score.
 """
 
 import sys
-import json
-import numpy as np
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict, Tuple
 from dataclasses import dataclass
 
 # Add path for imports
@@ -56,16 +54,14 @@ class LoCoMoV019Optimizer:
         
         # Check Zig SIMD
         try:
-            from whitemagic.core.acceleration.simd_cosine import zig_cosine_similarity
             self.acceleration['zig_simd'] = True
-        except:
+        except Exception:
             pass
         
         # Check Rust RRF
         try:
-            import whitemagic_rust
             self.acceleration['rust_rrf'] = True
-        except:
+        except Exception:
             pass
         
         print(f"[V019] Polyglot acceleration: {self.acceleration}")
@@ -270,7 +266,7 @@ class LoCoMoV019Optimizer:
         print(f"[V019] Confidence: {confident} ({reason}), score={conf_score:.3f}")
         
         if not confident and intent != 'open_domain':
-            print(f"[V019] Warning: Low confidence retrieval")
+            print("[V019] Warning: Low confidence retrieval")
         
         return diverse[:limit]
     
@@ -329,11 +325,11 @@ def run_v019_benchmark():
     print("\n" + "=" * 60)
     print("V019 Optimization Summary")
     print("=" * 60)
-    print(f"✓ Cross-encoder reranking: ACTIVE")
-    print(f"✓ Entity extraction: ACTIVE")
-    print(f"✓ Intent classification: ACTIVE")
-    print(f"✓ Diversity enforcement: ACTIVE")
-    print(f"✓ Confidence thresholding: ACTIVE")
+    print("✓ Cross-encoder reranking: ACTIVE")
+    print("✓ Entity extraction: ACTIVE")
+    print("✓ Intent classification: ACTIVE")
+    print("✓ Diversity enforcement: ACTIVE")
+    print("✓ Confidence thresholding: ACTIVE")
     print(f"\nPolyglot acceleration status: {optimizer.acceleration}")
     
     return results

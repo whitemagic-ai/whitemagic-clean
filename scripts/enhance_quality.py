@@ -90,7 +90,7 @@ class QualityEnhancer:
         print(f"\nEnhanced: {len(self.enhanced)} files")
         print(f"Lines added: {total_added}")
         
-        print(f"\n✅ Quality enhancement complete!")
+        print("\n✅ Quality enhancement complete!")
 
 def main():
     """Enhance quality"""

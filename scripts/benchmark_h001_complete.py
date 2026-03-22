@@ -7,7 +7,6 @@ Tests on multiple dataset sizes: 100, 1K, 5K, 10K embeddings.
 
 import time
 import sys
-import os
 import numpy as np
 from pathlib import Path
 
@@ -143,7 +142,7 @@ def main():
         
         # Benchmark Python baseline (only for small datasets)
         if n <= 1000:
-            print(f"\n🐍 Python Baseline (O(N²) cosine similarity)...")
+            print("\n🐍 Python Baseline (O(N²) cosine similarity)...")
             py_time, py_count = benchmark_python_baseline(vectors, threshold)
             print(f"   Time: {py_time*1000:.2f}ms")
             print(f"   Duplicates found: {py_count}")
@@ -152,19 +151,19 @@ def main():
             py_time, py_count = None, None
         
         # Benchmark Rust MinHash baseline
-        print(f"\n🦀 Rust MinHash Baseline (O(N²) with parallel signatures)...")
+        print("\n🦀 Rust MinHash Baseline (O(N²) with parallel signatures)...")
         rust_base_time, rust_base_count = benchmark_rust_minhash_baseline(vectors, threshold)
         print(f"   Time: {rust_base_time*1000:.2f}ms")
         print(f"   Duplicates found: {rust_base_count}")
         
         # Benchmark Rust LSH
-        print(f"\n🚀 Rust MinHash + LSH (O(N) with bucketing)...")
+        print("\n🚀 Rust MinHash + LSH (O(N) with bucketing)...")
         rust_lsh_time, rust_lsh_count = benchmark_rust_lsh(vectors, threshold)
         print(f"   Time: {rust_lsh_time*1000:.2f}ms")
         print(f"   Duplicates found: {rust_lsh_count}")
         
         # Calculate speedups
-        print(f"\n📈 Speedup Analysis:")
+        print("\n📈 Speedup Analysis:")
         if py_time and py_time > 0:
             py_speedup = py_time / rust_lsh_time if rust_lsh_time > 0 else 0
             print(f"   Python → Rust LSH: {py_speedup:.1f}× faster")
@@ -220,7 +219,7 @@ def main():
     else:
         final_speedup = 0
     
-    print(f"\n🎯 Target: 50× speedup on duplicate detection")
+    print("\n🎯 Target: 50× speedup on duplicate detection")
     print(f"📈 Achieved: {final_speedup:.1f}× speedup on 10K embeddings")
     
     if final_speedup >= 50:
@@ -230,11 +229,11 @@ def main():
     else:
         print(f"❌ FAILED: {final_speedup:.1f}× is below target")
     
-    print(f"\n🔧 Implementation:")
-    print(f"   ✅ LSH bucketing implemented (O(N) complexity)")
-    print(f"   ✅ Parallel signature computation (Rayon)")
-    print(f"   ✅ Automatic LSH selection for large datasets (>1000)")
-    print(f"   ✅ JSON serialization (can be optimized to bincode)")
+    print("\n🔧 Implementation:")
+    print("   ✅ LSH bucketing implemented (O(N) complexity)")
+    print("   ✅ Parallel signature computation (Rayon)")
+    print("   ✅ Automatic LSH selection for large datasets (>1000)")
+    print("   ✅ JSON serialization (can be optimized to bincode)")
     
     print(f"\n{'='*100}")
     print("🎉 H001 BENCHMARK COMPLETE")

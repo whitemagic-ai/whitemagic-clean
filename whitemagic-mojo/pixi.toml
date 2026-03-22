@@ -2,7 +2,7 @@
 channels = ["https://conda.modular.com/max-nightly", "conda-forge"]
 name = "whitemagic-mojo"
 platforms = ["linux-64"]
-version = "0.1.0"
+version = "20.0.0"
 
 [tasks]
 

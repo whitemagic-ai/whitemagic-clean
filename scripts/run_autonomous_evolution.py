@@ -1,7 +1,6 @@
 import time
 import subprocess
 import datetime
-from pathlib import Path
 
 def is_midnight():
     now = datetime.datetime.now()

@@ -20,11 +20,11 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GalacticZone {
-    Core,      // 0.00 - 0.15
-    InnerRim,  // 0.15 - 0.40
-    MidBand,   // 0.40 - 0.65
-    OuterRim,  // 0.65 - 0.85
-    FarEdge,   // 0.85 - 1.00
+    Core,     // 0.00 - 0.15
+    InnerRim, // 0.15 - 0.40
+    MidBand,  // 0.40 - 0.65
+    OuterRim, // 0.65 - 0.85
+    FarEdge,  // 0.85 - 1.00
 }
 
 impl GalacticZone {
@@ -72,12 +72,12 @@ pub struct MemorySignals {
     pub is_sacred: bool,
     pub is_pinned: bool,
     // Extended signals for full retention scoring
-    pub memory_type_weight: f64,  // type signal: 0.0-1.0 based on memory_type
-    pub richness: f64,            // content richness: title+tags+content length normalized
-    pub activity: f64,            // recall_count normalized to 0.0-1.0
-    pub recency: f64,             // days since last access, normalized
-    pub emotion: f64,             // abs(emotional_valence), normalized
-    pub protection: f64,          // 1.0 if any protection flag, else 0.0
+    pub memory_type_weight: f64, // type signal: 0.0-1.0 based on memory_type
+    pub richness: f64,           // content richness: title+tags+content length normalized
+    pub activity: f64,           // recall_count normalized to 0.0-1.0
+    pub recency: f64,            // days since last access, normalized
+    pub emotion: f64,            // abs(emotional_valence), normalized
+    pub protection: f64,         // 1.0 if any protection flag, else 0.0
 }
 
 /// Weights for the 7-signal retention scoring.
@@ -142,7 +142,7 @@ fn compute_distance(signals: &MemorySignals, retention_score: f64) -> f64 {
         return 0.0;
     }
     let distance = 1.0 - retention_score;
-    (distance.clamp(0.0, 1.0) * 10000.0).round() / 10000.0  // round to 4 decimals
+    (distance.clamp(0.0, 1.0) * 10000.0).round() / 10000.0 // round to 4 decimals
 }
 
 /// Quick retention estimate from basic fields only (no extended signals).
@@ -217,7 +217,7 @@ pub fn zone_counts(distances: &[f64]) -> [u64; 5] {
 /// Apply decay drift: add drift_rate to distances for memories exceeding
 /// inactivity threshold. Returns Vec<(id, new_distance)> for updated memories.
 pub fn batch_decay_drift(
-    memories: &[(String, f64, bool, u64)],  // (id, current_distance, is_protected, days_inactive)
+    memories: &[(String, f64, bool, u64)], // (id, current_distance, is_protected, days_inactive)
     drift_rate: f64,
     inactivity_days: u64,
 ) -> Vec<(String, f64)> {
@@ -244,8 +244,9 @@ pub fn batch_decay_drift(
 /// Output: JSON string of Vec<ScoringResult>.
 #[pyfunction]
 pub fn galactic_batch_score(memories_json: &str) -> PyResult<String> {
-    let raw: Vec<serde_json::Value> = serde_json::from_str(memories_json)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e)))?;
+    let raw: Vec<serde_json::Value> = serde_json::from_str(memories_json).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e))
+    })?;
 
     let signals: Vec<MemorySignals> = raw
         .iter()
@@ -270,15 +271,17 @@ pub fn galactic_batch_score(memories_json: &str) -> PyResult<String> {
 
     let results = batch_score_full(&signals);
 
-    serde_json::to_string(&results)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e)))
+    serde_json::to_string(&results).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e))
+    })
 }
 
 /// Quick batch score using 4-signal heuristic (for incremental updates).
 #[pyfunction]
 pub fn galactic_batch_score_quick(memories_json: &str) -> PyResult<String> {
-    let raw: Vec<serde_json::Value> = serde_json::from_str(memories_json)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e)))?;
+    let raw: Vec<serde_json::Value> = serde_json::from_str(memories_json).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e))
+    })?;
 
     let signals: Vec<MemorySignals> = raw
         .iter()
@@ -303,8 +306,9 @@ pub fn galactic_batch_score_quick(memories_json: &str) -> PyResult<String> {
 
     let results = batch_score_quick(&signals);
 
-    serde_json::to_string(&results)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e)))
+    serde_json::to_string(&results).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e))
+    })
 }
 
 /// Batch decay drift from Python.
@@ -316,8 +320,9 @@ pub fn galactic_decay_drift(
     drift_rate: f64,
     inactivity_days: u64,
 ) -> PyResult<String> {
-    let raw: Vec<serde_json::Value> = serde_json::from_str(memories_json)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e)))?;
+    let raw: Vec<serde_json::Value> = serde_json::from_str(memories_json).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON parse: {}", e))
+    })?;
 
     let memories: Vec<(String, f64, bool, u64)> = raw
         .iter()
@@ -333,8 +338,9 @@ pub fn galactic_decay_drift(
 
     let results = batch_decay_drift(&memories, drift_rate, inactivity_days);
 
-    serde_json::to_string(&results)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e)))
+    serde_json::to_string(&results).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("JSON serialize: {}", e))
+    })
 }
 
 /// Get zone counts from a list of distances.
@@ -424,9 +430,23 @@ mod tests {
         let results = batch_score_full(&memories);
         assert_eq!(results.len(), 2);
         // High-value memory should be closer to core
-        assert!(results.iter().find(|r| r.id == "high").unwrap().galactic_distance < 0.3);
+        assert!(
+            results
+                .iter()
+                .find(|r| r.id == "high")
+                .unwrap()
+                .galactic_distance
+                < 0.3
+        );
         // Low-value memory should be further out
-        assert!(results.iter().find(|r| r.id == "low").unwrap().galactic_distance > 0.8);
+        assert!(
+            results
+                .iter()
+                .find(|r| r.id == "low")
+                .unwrap()
+                .galactic_distance
+                > 0.8
+        );
     }
 
     #[test]

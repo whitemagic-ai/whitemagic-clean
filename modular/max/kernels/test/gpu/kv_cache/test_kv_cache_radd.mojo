@@ -1,0 +1,364 @@
+# ===----------------------------------------------------------------------=== #
+# Copyright (c) 2026, Modular Inc. All rights reserved.
+#
+# Licensed under the Apache License v2.0 with LLVM Exceptions:
+# https://llvm.org/LICENSE.txt
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ===----------------------------------------------------------------------=== #
+
+from math import ceildiv
+from random import random_ui64
+
+from buffer import Dim, DimList, NDBuffer
+from gpu.host import DeviceContext
+from kv_cache.types import KVCacheStaticParams, PagedKVCacheCollection
+from layout import Layout, LayoutTensor, RuntimeLayout, UNKNOWN_VALUE
+from memory import LegacyUnsafePointer
+
+comptime UnsafePointer = LegacyUnsafePointer[mut=True, ...]
+from nn.kv_cache_ragged import generic_kv_cache_radd_dispatch
+
+from utils import IndexList
+
+from kv_cache_test_utils import PagedLookupTable
+
+
+fn test_kv_cache_radd[
+    dtype: DType,
+    num_heads: Int,
+    head_dim: Int,
+    page_size: Int,
+    batch_size: Int,
+](
+    prompt_lens: IndexList[batch_size],
+    cache_lens: IndexList[batch_size],
+    num_active_loras: Int,
+    ctx: DeviceContext,
+) raises:
+    comptime num_layers = 2
+    debug_assert(
+        num_active_loras <= batch_size,
+        "num_active_loras must be less than or equal to batch_size",
+    )
+    var input_row_offsets_host_ptr = UnsafePointer[Scalar[DType.uint32]].alloc(
+        batch_size + 1
+    )
+    var input_row_offsets_host = NDBuffer[DType.uint32, 1](
+        input_row_offsets_host_ptr, batch_size + 1
+    )
+    var cache_lengths_host_ptr = UnsafePointer[Scalar[DType.uint32]].alloc(
+        batch_size
+    )
+    var cache_lengths_host = NDBuffer[DType.uint32, 1](
+        cache_lengths_host_ptr, batch_size
+    )
+
+    var input_row_offsets_slice_host_ptr = UnsafePointer[
+        Scalar[DType.uint32]
+    ].alloc(num_active_loras + 1)
+    var input_row_offsets_slice_host = NDBuffer[DType.uint32, 1](
+        input_row_offsets_slice_host_ptr, num_active_loras + 1
+    )
+    var num_active_loras_slice_start = batch_size - num_active_loras
+    var total_length = 0
+    var total_slice_length = 0
+    var max_full_context_length = 0
+    var max_prompt_length = 0
+    for i in range(batch_size):
+        input_row_offsets_host[i] = UInt32(total_length)
+        cache_lengths_host[i] = UInt32(cache_lens[i])
+        max_full_context_length = max(
+            max_full_context_length, cache_lens[i] + prompt_lens[i]
+        )
+        max_prompt_length = max(max_prompt_length, prompt_lens[i])
+
+        if i >= num_active_loras_slice_start:
+            input_row_offsets_slice_host[
+                i - num_active_loras_slice_start
+            ] = UInt32(total_length)
+            total_slice_length += prompt_lens[i]
+
+        total_length += prompt_lens[i]
+
+    input_row_offsets_host[batch_size] = UInt32(total_length)
+    input_row_offsets_slice_host[num_active_loras] = UInt32(total_length)
+
+    num_paged_blocks = ceildiv(
+        batch_size * max_full_context_length * 2, page_size
+    )
+
+    var cache_lengths_device = ctx.enqueue_create_buffer[DType.uint32](
+        batch_size
+    )
+    ctx.enqueue_copy(cache_lengths_device, cache_lengths_host_ptr)
+    var input_row_offsets_slice_device = ctx.enqueue_create_buffer[
+        DType.uint32
+    ](num_active_loras + 1)
+    ctx.enqueue_copy(
+        input_row_offsets_slice_device, input_row_offsets_slice_host_ptr
+    )
+
+    var kv_block_paged_shape = IndexList[6](
+        num_paged_blocks,
+        2,
+        num_layers,
+        page_size,
+        num_heads,
+        head_dim,
+    )
+    var kv_block_paged_size = (
+        num_paged_blocks * 2 * num_layers * page_size * num_heads * head_dim
+    )
+    var kv_block_paged_host_ptr = UnsafePointer[Scalar[dtype]].alloc(
+        kv_block_paged_size
+    )
+    var kv_block_paged_host = NDBuffer[dtype, 6](
+        kv_block_paged_host_ptr, kv_block_paged_shape
+    )
+    kv_block_paged_host.fill(1)
+
+    var paged_lut = PagedLookupTable[page_size].build(
+        prompt_lens, cache_lens, max_full_context_length, num_paged_blocks, ctx
+    )
+
+    var kv_block_paged_device = ctx.enqueue_create_buffer[dtype](
+        kv_block_paged_size
+    )
+    ctx.enqueue_copy(kv_block_paged_device, kv_block_paged_host_ptr)
+
+    var kv_block_paged_device_nd = NDBuffer[dtype, 6](
+        kv_block_paged_device.unsafe_ptr(), kv_block_paged_shape
+    )
+    var cache_lengths_device_nd = NDBuffer[DType.uint32, 1](
+        cache_lengths_device.unsafe_ptr(), batch_size
+    )
+    var input_row_offsets_slice_device_nd = NDBuffer[DType.uint32, 1](
+        input_row_offsets_slice_device.unsafe_ptr(), num_active_loras + 1
+    )
+
+    var kv_collection_device = PagedKVCacheCollection[
+        dtype,
+        KVCacheStaticParams(
+            num_heads=UInt(num_heads), head_size=UInt(head_dim)
+        ),
+        page_size,
+    ](
+        LayoutTensor[dtype, Layout.row_major[6](), MutAnyOrigin](
+            kv_block_paged_device_nd.data,
+            RuntimeLayout[Layout.row_major[6]()](
+                kv_block_paged_device_nd.dynamic_shape.canonicalize(),
+                kv_block_paged_device_nd.dynamic_stride.canonicalize(),
+            ),
+        ),
+        LayoutTensor[DType.uint32, Layout(UNKNOWN_VALUE), ImmutAnyOrigin](
+            cache_lengths_device_nd.data,
+            RuntimeLayout[Layout(UNKNOWN_VALUE)](
+                cache_lengths_device_nd.dynamic_shape.canonicalize(),
+                cache_lengths_device_nd.dynamic_stride.canonicalize(),
+            ),
+        ),
+        paged_lut.device_tensor(),
+        UInt32(max_prompt_length),
+        UInt32(max_full_context_length),
+    )
+
+    var a_shape = IndexList[2](total_slice_length, num_heads * head_dim * 2)
+    var a_size = total_slice_length * num_heads * head_dim * 2
+    var a_host_ptr = UnsafePointer[Scalar[dtype]].alloc(a_size)
+    var a_host = NDBuffer[
+        dtype, 2, _, DimList(Dim(), num_heads * head_dim * 2)
+    ](a_host_ptr, a_shape)
+    for i in range(a_host.num_elements()):
+        a_host.data[i] = Scalar[dtype](i)
+    var a_device = ctx.enqueue_create_buffer[dtype](a_size)
+    ctx.enqueue_copy(a_device, a_host_ptr)
+    var a_device_nd = NDBuffer[
+        dtype, 2, _, DimList(Dim(), num_heads * head_dim * 2)
+    ](a_device.unsafe_ptr(), a_shape)
+
+    var layer_idx = 1
+    generic_kv_cache_radd_dispatch[target="gpu"](
+        LayoutTensor[
+            dtype,
+            Layout.row_major(UNKNOWN_VALUE, num_heads * head_dim * 2),
+            MutAnyOrigin,
+        ](
+            a_device_nd.data,
+            RuntimeLayout[
+                Layout.row_major(UNKNOWN_VALUE, num_heads * head_dim * 2)
+            ](
+                a_device_nd.dynamic_shape.canonicalize(),
+                a_device_nd.dynamic_stride.canonicalize(),
+            ),
+        ),
+        kv_collection_device,
+        LayoutTensor[DType.uint32, Layout(UNKNOWN_VALUE), ImmutAnyOrigin](
+            input_row_offsets_slice_device_nd.data,
+            RuntimeLayout[Layout(UNKNOWN_VALUE)](
+                input_row_offsets_slice_device_nd.dynamic_shape.canonicalize(),
+                input_row_offsets_slice_device_nd.dynamic_stride.canonicalize(),
+            ),
+        ),
+        UInt32(num_active_loras_slice_start),
+        UInt32(layer_idx),
+        ctx,
+    )
+    ctx.synchronize()
+    ctx.enqueue_copy(kv_block_paged_host_ptr, kv_block_paged_device)
+    ctx.enqueue_copy(a_host_ptr, a_device)
+
+    ctx.synchronize()
+
+    var kv_collection_host = PagedKVCacheCollection[
+        dtype,
+        KVCacheStaticParams(
+            num_heads=UInt(num_heads), head_size=UInt(head_dim)
+        ),
+        page_size,
+    ](
+        LayoutTensor[dtype, Layout.row_major[6](), MutAnyOrigin](
+            kv_block_paged_host.data,
+            RuntimeLayout[Layout.row_major[6]()](
+                kv_block_paged_host.dynamic_shape.canonicalize(),
+                kv_block_paged_host.dynamic_stride.canonicalize(),
+            ),
+        ),
+        LayoutTensor[DType.uint32, Layout(UNKNOWN_VALUE), ImmutAnyOrigin](
+            cache_lengths_host.data,
+            RuntimeLayout[Layout(UNKNOWN_VALUE)](
+                cache_lengths_host.dynamic_shape.canonicalize(),
+                cache_lengths_host.dynamic_stride.canonicalize(),
+            ),
+        ),
+        paged_lut.host_tensor(),
+        UInt32(max_prompt_length),
+        UInt32(max_full_context_length),
+    )
+
+    var k_cache_host = kv_collection_host.get_key_cache(layer_idx)
+    var v_cache_host = kv_collection_host.get_value_cache(layer_idx)
+
+    # first check that we didn't augment previous cache entries
+    for i in range(batch_size):
+        for c in range(cache_lens[i]):
+            for h in range(num_heads):
+                for d in range(head_dim):
+                    var k_val = k_cache_host.load[width=1](i, h, c, d)
+                    var v_val = v_cache_host.load[width=1](i, h, c, d)
+                    if k_val != 1:
+                        raise Error(
+                            "Mismatch in output for k, expected 1, got "
+                            + String(k_val)
+                            + " in k_cache at index "
+                            + String(IndexList[4](i, c, h, d))
+                        )
+                    if v_val != 1:
+                        raise Error(
+                            "Mismatch in output for v, expected 1, got "
+                            + String(v_val)
+                            + " in v_cache at index "
+                            + String(IndexList[4](i, c, h, d))
+                        )
+
+    # now check that we augmented the correct entries
+    # the first elements in the batch should not be lora-augmented
+    for i in range(batch_size - num_active_loras):
+        for c in range(prompt_lens[i]):
+            var actual_len = c + cache_lens[i]
+            for h in range(num_heads):
+                for d in range(head_dim):
+                    var k_val = k_cache_host.load[width=1](i, h, actual_len, d)
+                    var v_val = v_cache_host.load[width=1](i, h, actual_len, d)
+                    if k_val != 1:
+                        raise Error(
+                            "Mismatch in output for k, expected 1, got "
+                            + String(k_val)
+                            + " in k_cache at index "
+                            + String(IndexList[4](i, h, actual_len, d))
+                        )
+                    if v_val != 1:
+                        raise Error(
+                            "Mismatch in output for v, expected 1, got "
+                            + String(v_val)
+                            + " in v_cache at index "
+                            + String(IndexList[4](i, h, actual_len, d))
+                        )
+
+    # now check that the lora-augmented entries are correct
+    arange_counter = 0
+    for i in range(batch_size - num_active_loras, batch_size):
+        for c in range(prompt_lens[i]):
+            var actual_len = c + cache_lens[i]
+            for h in range(num_heads):
+                for d in range(head_dim):
+                    var k_val = k_cache_host.load[width=1](i, h, actual_len, d)
+                    var expected_k_val = 1 + arange_counter
+                    if k_val != Scalar[dtype](expected_k_val):
+                        raise Error(
+                            "Mismatch in output for k, expected "
+                            + String(expected_k_val)
+                            + ", got "
+                            + String(k_val)
+                            + " in k_cache at index "
+                            + String(IndexList[4](i, h, actual_len, d))
+                        )
+                    arange_counter += 1
+            for h in range(num_heads):
+                for d in range(head_dim):
+                    var v_val = v_cache_host.load[width=1](i, h, actual_len, d)
+                    var expected_v_val = 1 + arange_counter
+                    if v_val != Scalar[dtype](expected_v_val):
+                        raise Error(
+                            "Mismatch in output for v, expected "
+                            + String(expected_v_val)
+                            + ", got "
+                            + String(v_val)
+                            + " in v_cache at index "
+                            + String(IndexList[4](i, h, actual_len, d))
+                        )
+                    arange_counter += 1
+
+    # Cleanup
+    input_row_offsets_host_ptr.free()
+    cache_lengths_host_ptr.free()
+    input_row_offsets_slice_host_ptr.free()
+    kv_block_paged_host_ptr.free()
+    a_host_ptr.free()
+    _ = cache_lengths_device^
+    _ = input_row_offsets_slice_device^
+    _ = kv_block_paged_device^
+    _ = paged_lut^
+    _ = a_device^
+
+
+def main():
+    with DeviceContext() as ctx:
+        test_kv_cache_radd[DType.float32, 8, 128, 128](
+            IndexList[4](10, 20, 30, 40),
+            IndexList[4](40, 30, 20, 10),
+            2,
+            ctx,
+        )
+        test_kv_cache_radd[DType.float32, 8, 128, 128](
+            IndexList[4](10, 20, 30, 40),
+            IndexList[4](40, 30, 20, 10),
+            4,
+            ctx,
+        )
+        test_kv_cache_radd[DType.float32, 8, 128, 128](
+            IndexList[4](10, 20, 30, 40),
+            IndexList[4](40, 30, 20, 10),
+            0,
+            ctx,
+        )
+        test_kv_cache_radd[DType.float32, 8, 128, 128](
+            IndexList[1](10),
+            IndexList[1](40),
+            1,
+            ctx,
+        )

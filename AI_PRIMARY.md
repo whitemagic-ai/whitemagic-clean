@@ -58,7 +58,7 @@ WM_MCP_LITE=1 python -m whitemagic.run_mcp
 
 ### Polyglot Accelerators (Optional)
 
-All 10 compiled languages build clean. Rust is recommended for the biggest performance gains:
+All 9 compiled languages build clean. Rust is recommended for the biggest performance gains:
 
 ```bash
 cd whitemagic-rust && maturin develop --release  # Rust (PyO3) — galactic scoring, association mining, 5D KD-tree

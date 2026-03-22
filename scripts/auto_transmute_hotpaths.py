@@ -5,11 +5,7 @@ Ralph Engine: Hot Path Transmutation
 Live auto-transmutation of identified Python hot paths into Rust/Mojo counterparts.
 """
 
-import ast
-import os
-import sys
 from pathlib import Path
-import subprocess
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -57,7 +53,7 @@ def main():
     
     print("\n[PHASE 3] Compiling / Validating...")
     # In a real environment, we'd run `mojo build ...`
-    print(f"  [SUCCESS] Mojo SIMD Kernel passes structural validation.")
+    print("  [SUCCESS] Mojo SIMD Kernel passes structural validation.")
     
     print("\n[PHASE 4] Phylogenetic Auto-Commit")
     print(f"  [Auto-Commit] Ralph: Transmuted {hotpath['function']} to Mojo SIMD. Est +30% speedup.")

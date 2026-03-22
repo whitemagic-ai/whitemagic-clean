@@ -62,7 +62,7 @@ def embed_batch(batch_id, memory_ids, start_idx):
                 )
                 embedded += 1
                 
-            except Exception as e:
+            except Exception:
                 continue
         
         conn.commit()

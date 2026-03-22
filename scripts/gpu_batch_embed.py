@@ -46,7 +46,7 @@ def main():
     # Check database
     if not DB_PATH.exists():
         print(f"❌ Database not found: {DB_PATH}")
-        print(f"   Expected at: ~/.whitemagic/memory/whitemagic.db")
+        print("   Expected at: ~/.whitemagic/memory/whitemagic.db")
         sys.exit(1)
     
     # Load model
@@ -150,7 +150,7 @@ def main():
     
     print("-" * 70)
     print()
-    print(f"✅ EMBEDDING COMPLETE!")
+    print("✅ EMBEDDING COMPLETE!")
     print(f"   Embedded:      {embedded_count:,} memories")
     print(f"   Time:          {elapsed_total/60:.1f} minutes")
     print(f"   Average rate:  {embedded_count/elapsed_total:.0f} embeddings/sec")

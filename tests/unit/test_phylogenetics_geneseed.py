@@ -1,4 +1,3 @@
-import pytest
 
 def test_get_phylogenetics_structural():
     # Geneseed Automated Mutation

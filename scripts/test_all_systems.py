@@ -17,8 +17,8 @@ from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from whitemagic.core.streaming import StreamableToolResponse, ChunkType, collect_stream
-from whitemagic.core.evolution.ml_recommender import ToolRecommender, get_tool_recommender
+from whitemagic.core.streaming import StreamableToolResponse, ChunkType
+from whitemagic.core.evolution.ml_recommender import get_tool_recommender
 from whitemagic.core.evolution.benchmark_tracker import BenchmarkHistoryTracker, BenchmarkResult
 from whitemagic.core.evolution.adaptive_system import get_adaptive_system
 
@@ -65,7 +65,7 @@ async def test_streaming_protocol():
             streamer2.cancel()
             print(f"  Cancelled after {chunks_before_cancel} chunks")
     
-    print(f"✓ Stream cancelled successfully")
+    print("✓ Stream cancelled successfully")
     
     return chunks_received > 0
 
@@ -149,7 +149,7 @@ def test_benchmark_tracker():
     ]
     tracker.record_run(results_v2, version="v2.0")
     
-    print(f"✓ Recorded 2 benchmark runs")
+    print("✓ Recorded 2 benchmark runs")
     
     # Test comparison
     print("\n[3.2] Testing baseline comparison...")
@@ -187,7 +187,7 @@ def test_adaptive_system():
     # Test initial state
     print("\n[4.1] Testing initial state...")
     status = adaptive.get_status()
-    print(f"✓ Adaptive system initialized")
+    print("✓ Adaptive system initialized")
     print(f"  Enabled: {status['enabled']}")
     print(f"  Require approval: {status['require_approval']}")
     print(f"  Applied adaptations: {status['applied_adaptations']}")
@@ -230,7 +230,7 @@ def test_adaptive_system():
     adaptive.update_metrics(coherence=0.75, performance=0.85)
     adaptive.update_metrics(coherence=0.78, performance=0.87)
     status = adaptive.get_status()
-    print(f"✓ Metrics updated")
+    print("✓ Metrics updated")
     print(f"  Current coherence: {status['current_coherence']}")
     print(f"  Current performance: {status['current_performance']}")
     

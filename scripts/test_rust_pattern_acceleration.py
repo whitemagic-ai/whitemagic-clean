@@ -22,13 +22,13 @@ print("="*80)
 # Load galaxy mining results
 galaxy_file = ROOT / "reports/comprehensive_galaxy_mining_results.json"
 if not galaxy_file.exists():
-    print(f"\n❌ Galaxy results not found")
+    print("\n❌ Galaxy results not found")
     sys.exit(1)
 
 with open(galaxy_file) as f:
     galaxy_results = json.load(f)
 
-print(f"\n✅ Loaded galaxy results:")
+print("\n✅ Loaded galaxy results:")
 print(f"   Cross-validated tags: {len(galaxy_results['cross_validated_tags'])}")
 
 # Prepare data for Rust
@@ -59,14 +59,14 @@ print(f"  ✅ Rust scored {len(scored)} patterns in {rust_time*1000:.2f}ms")
 print(f"  Rate: {len(scored)/rust_time:.0f} patterns/sec")
 
 # Show top 5
-print(f"\n  Top 5 by confidence:")
+print("\n  Top 5 by confidence:")
 sorted_scored = sorted(scored, key=lambda p: p.final_confidence, reverse=True)
 for i, p in enumerate(sorted_scored[:5], 1):
     print(f"    {i}. {p.pattern_id}: {p.final_confidence:.2%}")
     print(f"       CV={p.cv_score:.2%}, Outcome={p.outcome_score:.2%}, Freq={p.frequency_score:.2%}, Long={p.longevity_score:.2%}")
 
 # Test 2: Filter patterns
-print(f"\n[Test 2] Filter patterns by confidence...")
+print("\n[Test 2] Filter patterns by confidence...")
 
 start = time.perf_counter()
 filtered = whitemagic_rs.filter_patterns(scored, 0.5, None)
@@ -75,7 +75,7 @@ filter_time = time.perf_counter() - start
 print(f"  ✅ Filtered to {len(filtered)} patterns (≥0.5 confidence) in {filter_time*1000:.2f}ms")
 
 # Test 3: Get statistics
-print(f"\n[Test 3] Calculate pattern statistics...")
+print("\n[Test 3] Calculate pattern statistics...")
 
 start = time.perf_counter()
 stats_json = whitemagic_rs.get_scoring_stats(scored)
@@ -90,7 +90,7 @@ print(f"  Medium (0.50-0.60): {stats['medium_confidence']}")
 print(f"  Avg confidence: {stats['avg_confidence']:.2%}")
 
 # Test 4: Cross-validation (when we have geneseed data)
-print(f"\n[Test 4] Cross-validate patterns...")
+print("\n[Test 4] Cross-validate patterns...")
 
 start = time.perf_counter()
 cross_validated = whitemagic_rs.cross_validate_patterns(

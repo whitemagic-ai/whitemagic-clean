@@ -11,7 +11,6 @@ Tests the complete cycle:
 """
 
 import sys
-import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -29,7 +28,7 @@ print("="*80)
 # Load patterns
 results_file = ROOT / "reports/final_cross_validation_all_sources.json"
 if not results_file.exists():
-    print(f"\n❌ Results file not found")
+    print("\n❌ Results file not found")
     sys.exit(1)
 
 integration = AdaptiveIntegration(
@@ -37,16 +36,16 @@ integration = AdaptiveIntegration(
     manual_review_threshold=0.60,
 )
 
-print(f"\n[1/5] Loading patterns from cross-validation results...")
+print("\n[1/5] Loading patterns from cross-validation results...")
 integration.load_patterns(results_file)
 
 summary = integration.get_integration_summary()
-print(f"  ✅ Loaded patterns:")
+print("  ✅ Loaded patterns:")
 print(f"     Auto-apply queue: {summary['auto_apply_queue']}")
 print(f"     Manual review queue: {summary['manual_review_queue']}")
 
 # Apply patterns
-print(f"\n[2/5] Applying patterns from auto-apply queue...")
+print("\n[2/5] Applying patterns from auto-apply queue...")
 
 results = []
 patterns_to_apply = min(summary['auto_apply_queue'], 10)  # Apply top 10
@@ -70,7 +69,7 @@ for i in range(patterns_to_apply):
     print(f"    Quality score: {result['quality_score']:.2%}")
 
 # Analyze results
-print(f"\n[3/5] Analyzing application results...")
+print("\n[3/5] Analyzing application results...")
 
 successful = [r for r in results if r['success']]
 failed = [r for r in results if not r['success']]
@@ -89,7 +88,7 @@ if successful:
         print(f"  Max performance gain: {max_gain:.2f}x")
 
 # Check confidence updates
-print(f"\n[4/5] Checking confidence updates from autodidactic loop...")
+print("\n[4/5] Checking confidence updates from autodidactic loop...")
 
 for result in results[:5]:  # Check first 5
     stats = integration.get_pattern_stats(result['pattern_id'])
@@ -102,7 +101,7 @@ for result in results[:5]:  # Check first 5
         print(f"    Success rate: {stats['success_rate']:.2%}")
 
 # Get learning summary
-print(f"\n[5/5] Learning summary...")
+print("\n[5/5] Learning summary...")
 
 summary = integration.get_integration_summary()
 learning = summary['learning_summary']
@@ -151,7 +150,7 @@ if perf_gains:
     print(f"Average speedup: {avg_gain:.2f}x")
     print(f"Maximum speedup: {max_gain:.2f}x")
 
-print(f"\nConfidence evolution:")
+print("\nConfidence evolution:")
 improved = [r for r in results[:5] if integration.get_pattern_stats(r['pattern_id']) and 
            integration.get_pattern_stats(r['pattern_id'])['confidence_change'] > 0]
 print(f"  Patterns with increased confidence: {len(improved)}")

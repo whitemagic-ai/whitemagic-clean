@@ -1,5 +1,4 @@
 import os
-import json
 import sqlite3
 
 def check_aria_memory():

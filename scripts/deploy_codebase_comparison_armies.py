@@ -7,7 +7,6 @@ Deploy reconnaissance armies to compare whitemagicdev, whitemagicpublic, and WM2
 
 import ast
 import json
-import re
 from pathlib import Path
 from collections import defaultdict
 from datetime import datetime, timezone

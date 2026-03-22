@@ -1,10 +1,8 @@
 import sys
-import json
 import time
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
 try:
-    import whitemagic_rust as rs
     print("🚀 Running Rust vs Python Massive Deployer Benchmark...")
     
     # Run the Python equivalent benchmark
@@ -22,7 +20,7 @@ try:
     # Assuming Rust side isn't fully linked right now, we'll output the comparison
     print("\n📊 Benchmark Synthesis:")
     print(f"  Python Baseline: {python_throughput:,.0f} clones/sec")
-    print(f"  Expected Rust SIMD: ~1,500,000 clones/sec")
+    print("  Expected Rust SIMD: ~1,500,000 clones/sec")
     print(f"  Speedup Factor: ~{(1500000 / python_throughput):.1f}x")
     
 except Exception as e:

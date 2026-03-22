@@ -1,3 +1,4 @@
+import System.IO (stderr, hPutStrLn)
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE CApiFFI #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
@@ -40,7 +41,11 @@ import WuXing
 -- | Initialize FFI (called once from Python)
 foreign export ccall initFFI :: IO ()
 initFFI :: IO ()
-initFFI = putStrLn "WhiteMagic Haskell FFI initialized"
+initFFI = do
+  silent <- lookupEnv "WM_SILENT_INIT"
+  case silent of
+    Just "1" -> return ()
+    _        -> hPutStrLn stderr "WhiteMagic Haskell FFI initialized"
 
 -- | Create hexagram from 6 integers (0=Yin, 1=Yang)
 foreign export ccall c_create_hexagram :: CInt -> CInt -> CInt -> CInt -> CInt -> CInt -> IO (Ptr Hexagram)

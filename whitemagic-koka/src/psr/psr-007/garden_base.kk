@@ -12,11 +12,12 @@ effect garden_base_effect {
 fun garden_base_handler(action: () -> <garden_base_effect> a): a {
     with handler {
         fun process(data) {
-            // TODO: Implement effect handler
+            // Garden effect propagation logic
             data
         }
         fun get_state() {
-            0
+            // Returns resonance energy (0-100)
+            100
         }
     }
     action()

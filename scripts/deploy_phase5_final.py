@@ -169,7 +169,7 @@ class Phase5Deployer:
             f.write("---\n\n")
             f.write("**🚀 WhiteMagic v17 Polyglot Migration: COMPLETE**\n")
         
-        print(f"\n✅ Reports generated:")
+        print("\n✅ Reports generated:")
         print(f"   JSON: {json_report}")
         print(f"   Markdown: {md_report}")
         print()

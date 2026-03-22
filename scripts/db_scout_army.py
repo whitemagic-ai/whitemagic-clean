@@ -8,7 +8,6 @@ import os
 import sys
 import sqlite3
 import json
-from pathlib import Path
 from datetime import datetime
 
 # Database locations to scout
@@ -188,7 +187,7 @@ def generate_report(results: list) -> dict:
             print(f"   Modified: {db['modified']}")
             
             if i == 1:
-                print(f"   ⭐ RECOMMENDED FOR RESTORATION")
+                print("   ⭐ RECOMMENDED FOR RESTORATION")
     
     # Best candidate
     best = valid_dbs[0] if valid_dbs else None
@@ -219,10 +218,10 @@ def main():
     # Return best candidate for restoration
     if report["best_candidate"]:
         best = report["best_candidate"]
-        print(f"\n🎯 RECOMMENDED ACTION:")
+        print("\n🎯 RECOMMENDED ACTION:")
         print(f"   Restore from: {best['path']}")
-        print(f"   Restore to: ~/.whitemagic/memory/whitemagic.db")
-        print(f"\n   Command:")
+        print("   Restore to: ~/.whitemagic/memory/whitemagic.db")
+        print("\n   Command:")
         print(f"   cp {best['path']} ~/.whitemagic/memory/whitemagic.db")
         return 0
     else:

@@ -7,7 +7,7 @@ Scans all campaigns, checks VC completion status, assigns grades (S/A/B/C/D/F)
 import re
 import sqlite3
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple
 import json
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent

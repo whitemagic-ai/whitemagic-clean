@@ -68,7 +68,7 @@ def process_untyped_associations(db_path: str, dry_run: bool = True, limit: int 
         conn.close()
         return
     
-    print(f"Embedding engine loaded")
+    print("Embedding engine loaded")
     
     cursor.execute("""
         SELECT a.id, a.source_id, a.target_id,
@@ -121,7 +121,7 @@ def process_untyped_associations(db_path: str, dry_run: bool = True, limit: int 
     print(f"\n{'DRY RUN - ' if dry_run else ''}Results:")
     print(f"  Processed: {classified}")
     print(f"  Skipped (no content): {skipped}")
-    print(f"  Type distribution:")
+    print("  Type distribution:")
     for t, c in sorted(type_counts.items(), key=lambda x: -x[1]):
         print(f"    {t}: {c}")
 

@@ -22,13 +22,13 @@ print("="*80)
 # Load comprehensive results
 results_file = ROOT / "reports/comprehensive_cross_validation_results.json"
 if not results_file.exists():
-    print(f"\n❌ Results file not found")
+    print("\n❌ Results file not found")
     sys.exit(1)
 
 with open(results_file) as f:
     results = json.load(f)
 
-print(f"\n📊 Dataset:")
+print("\n📊 Dataset:")
 print(f"   Galaxy archives: {results['sources']['galaxy_archive']:,} memories")
 print(f"   Active MCP DB: {results['sources']['active_mcp']:,} memories")
 print(f"   Total: {sum(results['sources'].values()):,} memories")
@@ -88,7 +88,7 @@ min_time = min(times)
 max_time = max(times)
 std_dev = (sum((t - avg_time)**2 for t in times) / len(times)) ** 0.5
 
-print(f"\n📊 Statistics:")
+print("\n📊 Statistics:")
 print(f"   Average: {avg_time*1000:.2f}ms ({len(all_patterns)/avg_time:.0f} patterns/sec)")
 print(f"   Min: {min_time*1000:.2f}ms ({len(all_patterns)/min_time:.0f} patterns/sec)")
 print(f"   Max: {max_time*1000:.2f}ms ({len(all_patterns)/max_time:.0f} patterns/sec)")
@@ -118,7 +118,7 @@ cv_avg = sum(cv_times) / len(cv_times)
 cv_min = min(cv_times)
 cv_max = max(cv_times)
 
-print(f"\n📊 Statistics:")
+print("\n📊 Statistics:")
 print(f"   Average: {cv_avg*1000:.2f}ms ({len(all_patterns)/cv_avg:.0f} patterns/sec)")
 print(f"   Min: {cv_min*1000:.2f}ms ({len(all_patterns)/cv_min:.0f} patterns/sec)")
 print(f"   Max: {cv_max*1000:.2f}ms ({len(all_patterns)/cv_max:.0f} patterns/sec)")
@@ -156,7 +156,7 @@ print("OVERALL PERFORMANCE SUMMARY")
 print(f"{'='*80}")
 
 total_avg = avg_time + cv_avg + filter_avg + stats_avg
-print(f"\nComplete pipeline (avg):")
+print("\nComplete pipeline (avg):")
 print(f"  Scoring: {avg_time*1000:.2f}ms ({avg_time/total_avg*100:.1f}%)")
 print(f"  Cross-validation: {cv_avg*1000:.2f}ms ({cv_avg/total_avg*100:.1f}%)")
 print(f"  Filtering: {filter_avg*1000:.2f}ms ({filter_avg/total_avg*100:.1f}%)")

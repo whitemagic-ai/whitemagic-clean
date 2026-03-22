@@ -8,8 +8,6 @@ Extract and synthesize all async patterns from whitemagicpublic
 import ast
 import json
 from pathlib import Path
-from collections import defaultdict
-from datetime import datetime, timezone
 
 PROJECT_ROOT = Path(__file__).parent.parent
 PUBLIC_ROOT = Path.home() / "Desktop" / "whitemagicpublic"
@@ -242,7 +240,7 @@ def main():
     print("ASYNC SYNTHESIS COMPLETE")
     print("=" * 80)
     print(f"Patterns extracted: {total:,}")
-    print(f"Subsystem created: ✅")
+    print("Subsystem created: ✅")
     print(f"Report: {results_path}")
     print()
     print("✅ 100K async synthesis clones deployed!")

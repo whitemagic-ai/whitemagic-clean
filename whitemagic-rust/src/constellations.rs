@@ -1,5 +1,5 @@
 //! Constellation Detection — Grid-based clustering for holographic coordinates
-//! 
+//!
 //! Discovers dense clusters of semantically related memories in 5D holographic space.
 //! Implements:
 //!   - Grid-based density scanning
@@ -89,7 +89,11 @@ pub struct GridDetector {
 
 impl GridDetector {
     pub fn new(bins_per_axis: usize, min_cluster_size: usize, max_constellations: usize) -> Self {
-        Self { bins_per_axis, min_cluster_size, max_constellations }
+        Self {
+            bins_per_axis,
+            min_cluster_size,
+            max_constellations,
+        }
     }
 
     /// Map a value to a bin index.
@@ -224,20 +228,20 @@ pub fn hungarian_algorithm(cost_matrix: &[Vec<f64>]) -> Vec<(usize, usize)> {
         min_a.partial_cmp(&min_b).unwrap()
     });
 
-    for row in row_order {
+    for row_idx in row_order {
         let mut best_col = None;
         let mut best_cost = f64::MAX;
 
-        for col in 0..m {
-            if !used_cols.contains(&col) && cost_matrix[row][col] < best_cost {
-                best_cost = cost_matrix[row][col];
+        for (col, &cost) in cost_matrix[row_idx].iter().enumerate().take(m) {
+            if !used_cols.contains(&col) && cost < best_cost {
+                best_cost = cost;
                 best_col = Some(col);
             }
         }
 
         if let Some(col) = best_col {
             used_cols.insert(col);
-            assignments.push((row, col));
+            assignments.push((row_idx, col));
         }
     }
 
@@ -254,7 +258,11 @@ pub fn hungarian_match(
     let new_names: Vec<&String> = new_centroids.keys().collect();
 
     if old_names.is_empty() || new_names.is_empty() {
-        return (HashMap::new(), new_names.iter().map(|s| (*s).clone()).collect(), old_names.iter().map(|s| (*s).clone()).collect());
+        return (
+            HashMap::new(),
+            new_names.iter().map(|s| (*s).clone()).collect(),
+            old_names.iter().map(|s| (*s).clone()).collect(),
+        );
     }
 
     // Build cost matrix
@@ -342,14 +350,16 @@ fn py_detect_grid(
 ) -> PyResult<Vec<Vec<usize>>> {
     let detector = GridDetector::new(bins_per_axis, min_cluster_size, max_constellations);
     let groups = detector.detect(&coords);
-    
+
     // Sort by size descending, cap at max_constellations
     let mut sorted_groups: Vec<Vec<usize>> = groups;
-    sorted_groups.sort_by(|a, b| b.len().cmp(&a.len()));
+    sorted_groups.sort_by_key(|b| std::cmp::Reverse(b.len()));
     sorted_groups.truncate(max_constellations);
-    
+
     Ok(sorted_groups)
 }
+
+type MatchResult = (HashMap<String, String>, Vec<String>, Vec<String>);
 
 #[cfg(feature = "python")]
 #[pyfunction]
@@ -357,8 +367,12 @@ fn py_hungarian_match(
     old_centroids: HashMap<String, [f64; 5]>,
     new_centroids: HashMap<String, [f64; 5]>,
     max_match_distance: f64,
-) -> PyResult<(HashMap<String, String>, Vec<String>, Vec<String>)> {
-    Ok(hungarian_match(&old_centroids, &new_centroids, max_match_distance))
+) -> PyResult<MatchResult> {
+    Ok(hungarian_match(
+        &old_centroids,
+        &new_centroids,
+        max_match_distance,
+    ))
 }
 
 #[cfg(feature = "python")]
@@ -390,10 +404,7 @@ mod tests {
 
     #[test]
     fn test_centroid() {
-        let points = vec![
-            [1.0, 2.0, 3.0, 4.0, 5.0],
-            [2.0, 4.0, 6.0, 8.0, 10.0],
-        ];
+        let points = vec![[1.0, 2.0, 3.0, 4.0, 5.0], [2.0, 4.0, 6.0, 8.0, 10.0]];
         let centroid = compute_centroid(&points);
         assert!((centroid[0] - 1.5).abs() < 1e-10);
         assert!((centroid[4] - 7.5).abs() < 1e-10);
@@ -403,12 +414,12 @@ mod tests {
     fn test_grid_detection() {
         // Create clustered points
         let mut coords: Vec<[f64; 5]> = vec![];
-        
+
         // Cluster 1: around (0.1, 0.1, 0.1, 0.1, 0.1)
         for _ in 0..20 {
             coords.push([0.1, 0.1, 0.1, 0.1, 0.1]);
         }
-        
+
         // Cluster 2: around (0.9, 0.9, 0.9, 0.9, 0.9)
         for _ in 0..15 {
             coords.push([0.9, 0.9, 0.9, 0.9, 0.9]);
@@ -416,7 +427,7 @@ mod tests {
 
         let detector = GridDetector::new(8, 5, 10);
         let groups = detector.detect(&coords);
-        
+
         assert!(groups.len() >= 1, "Should detect at least one cluster");
     }
 }

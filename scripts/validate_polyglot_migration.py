@@ -132,7 +132,7 @@ class PolyglotValidator:
             'status': 'PASS' if len(found_kernels) >= 3 else 'PARTIAL'
         }
         
-        print(f"  ✅ Directory structure: Valid")
+        print("  ✅ Directory structure: Valid")
         print(f"  ✅ Kernels found: {len(found_kernels)}")
         print(f"  Status: {self.results['mojo']['status']}")
         print()
@@ -256,7 +256,7 @@ class PolyglotValidator:
             'status': 'INFO'
         }
         
-        print(f"  Status: Benchmark targets configured")
+        print("  Status: Benchmark targets configured")
         print()
         
     def generate_validation_report(self):
