@@ -34,16 +34,19 @@ pub fn zig_memory_init() {
 }
 
 /// Tear down the Zig memory manager. Stub when Zig not available.
+#[allow(dead_code)]
 pub fn zig_memory_deinit() {
     // Stub: no-op
 }
 
 /// Allocate or re-allocate a named block. Stub returns None.
+#[allow(dead_code)]
 pub fn zig_memory_alloc(_id: u64, _size: usize, _alignment: u32) -> Option<*mut u8> {
     None // Stub: Zig library not available
 }
 
 /// Free a block by ID. Stub is no-op.
+#[allow(dead_code)]
 pub fn zig_memory_free(_id: u64) {
     // Stub: no-op
 }
@@ -59,6 +62,7 @@ pub fn zig_memory_block_count() -> usize {
 }
 
 /// Resolve a handle to its current pointer. Stub returns None.
+#[allow(dead_code)]
 pub fn zig_memory_resolve(_id: u64) -> Option<*mut u8> {
     None // Stub: Zig library not available
 }
