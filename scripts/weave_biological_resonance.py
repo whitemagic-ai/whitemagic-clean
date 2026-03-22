@@ -127,27 +127,27 @@ For each major class, register as biological organ:
 class {organ_opps[0]['class']}:
     def __init__(self):
         # ... existing init ...
-        
+
         # Biological integration
         self.nervous_system = get_nervous_system()
         # Choose appropriate organ type based on function
         # Options: IMMUNE, GENETICS, DREAM, METABOLISM, CONSCIOUSNESS, RESONANCE, EMERGENCE
         self.nervous_system.register_organ(OrganType.INTELLIGENCE, self)
-        
+
         # Subscribe to relevant signals
         self.nervous_system.subscribe("pattern_detected", self.on_pattern)
         self.nervous_system.subscribe("threat_detected", self.on_threat)
-    
+
     def on_pattern(self, data):
         '''Respond to patterns detected by other organs.'''
         # Adaptive behavior based on organism state
         pass
-    
+
     def on_threat(self, data):
         '''Respond to threats detected by immune system.'''
         # Defensive or adaptive response
         pass
-    
+
     def status(self):
         '''Required for health dashboard.'''
         return True  # or more detailed status
@@ -166,7 +166,7 @@ Emit events when state changes:
 def set_state(self, new_state):
     old_state = self.state
     self.state = new_state
-    
+
     # Emit state change event
     emit_event(
         EventType.INTERNAL_STATE_CHANGED,
@@ -178,7 +178,7 @@ def set_state(self, new_state):
         }},
         source=f"{{self.__class__.__name__.lower()}}_state"
     )
-    
+
     # If critical state, also dispatch signal
     if self._is_critical_state(new_state):
         self.nervous_system.dispatch_signal(
@@ -199,7 +199,7 @@ Emit progress during long operations:
 ```python
 def process_items(self, items):
     total = len(items)
-    
+
     # Emit start event
     emit_event(
         EventType.PATTERN_DETECTED,
@@ -210,10 +210,10 @@ def process_items(self, items):
         }},
         source=self.__class__.__name__.lower()
     )
-    
+
     for i, item in enumerate(items):
         result = self._process_single(item)
-        
+
         # Emit progress every 10%
         if i % max(1, total // 10) == 0:
             emit_event(
@@ -227,7 +227,7 @@ def process_items(self, items):
                 }},
                 source=self.__class__.__name__.lower()
             )
-    
+
     # Emit completion event
     emit_event(
         EventType.PATTERN_DETECTED,
@@ -267,7 +267,7 @@ def risky_operation(self):
             }},
             source=f"{{self.__class__.__name__.lower()}}_error"
         )
-        
+
         # Re-raise or handle
         raise
 ```
@@ -289,7 +289,7 @@ def collect_metrics(self):
         "error_rate": self._calculate_error_rate(),
         "resource_usage": self._get_resource_usage()
     }}
-    
+
     # Emit metrics event
     emit_event(
         EventType.PATTERN_DETECTED,
@@ -300,14 +300,14 @@ def collect_metrics(self):
         }},
         source=f"{{self.__class__.__name__.lower()}}_metrics"
     )
-    
+
     # If metrics indicate issues, signal nervous system
     if metrics["error_rate"] > 0.1:
         self.nervous_system.dispatch_signal(
             "health_degraded",
             {{"component": self.__class__.__name__, "metrics": metrics}}
         )
-    
+
     return metrics
 ```
 """
@@ -398,16 +398,16 @@ def generate_weaving_report(weaver: BiologicalWeaver, results: list[dict[str, An
     print()
 
     report = f"""# Biological Resonance Weaving Report
-**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
-**Systems Analyzed**: {len(results)}  
+**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+**Systems Analyzed**: {len(results)}
 **Integration Patterns**: {weaver.patterns_applied}
 
 ## Executive Summary
 
 Analyzed top priority systems and generated biological resonance integration guides for each. These guides provide concrete code patterns for weaving event emission, organ registration, and nervous system integration into existing systems.
 
-**Total Opportunities**: {weaver.patterns_applied}  
-**Systems Ready**: {len(results)}  
+**Total Opportunities**: {weaver.patterns_applied}
+**Systems Ready**: {len(results)}
 **Integration Guides**: {len(results)} files generated
 
 ## Integration Results
@@ -421,9 +421,9 @@ Analyzed top priority systems and generated biological resonance integration gui
         report += f"""
 ### {i}. {candidate['name']} ({candidate['category']})
 
-**File**: `{candidate['file']}`  
-**Priority**: {candidate['priority']}/100  
-**Lines**: {analysis['lines']}  
+**File**: `{candidate['file']}`
+**Priority**: {candidate['priority']}/100
+**Lines**: {analysis['lines']}
 **Integration Opportunities**: {result['opportunities']}
 
 **Current State**:
@@ -539,7 +539,7 @@ Subscribe to organism signals:
 
 Generated {len(results)} integration guides with {weaver.patterns_applied} specific integration patterns. Each guide provides concrete code examples for weaving biological resonance into existing systems.
 
-**Status**: ✅ Weaving analysis complete - Ready for implementation  
+**Status**: ✅ Weaving analysis complete - Ready for implementation
 **Next**: Begin implementing integration guides starting with tactical_pipeline
 """
 

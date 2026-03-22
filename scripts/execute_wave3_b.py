@@ -21,16 +21,16 @@ class CognitiveEpisode:
 class ThoughtGalaxy:
     def __init__(self):
         self.episodes = []
-        
+
     def add_episode(self, episode: CognitiveEpisode):
         self.episodes.append(episode)
         self._recalculate_gravity()
-        
+
     def _recalculate_gravity(self):
         # Simulated gravity clustering based on tag overlap and vector similarity
         for ep in self.episodes:
             ep.score = len(ep.tags) * 1.5 # Placeholder scoring
-            
+
     def recall(self, query_tags: List[str], top_k: int = 5) -> List[CognitiveEpisode]:
         # Simple intersection scoring for now
         results = []
@@ -38,7 +38,7 @@ class ThoughtGalaxy:
             overlap = len(set(ep.tags).intersection(set(query_tags)))
             if overlap > 0:
                 results.append((overlap, ep))
-                
+
         results.sort(key=lambda x: x[0], reverse=True)
         return [r[1] for r in results[:top_k]]
 """)
@@ -64,14 +64,14 @@ class WakingScheduler:
     def __init__(self):
         self.current_phase = WuXingPhase.WATER
         self.last_transition = time.time()
-        
+
     def tick(self):
         now = time.time()
         # Simulated transition logic based on time elapsed
         elapsed = now - self.last_transition
         if elapsed > 3600: # 1 hour per phase
             self._transition()
-            
+
     def _transition(self):
         transitions = {
             WuXingPhase.WATER: WuXingPhase.WOOD,

@@ -315,8 +315,8 @@ def generate_report(keyword_scan, inventory, memory_search, integration, gaps, p
     print("Generating comprehensive report...")
 
     report = f"""# Biological Systems Deep Dive - Findings Report
-**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
-**Campaign**: B001  
+**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+**Campaign**: B001
 **Clones Deployed**: 50,000 (scout-heavy reconnaissance)
 
 ## Executive Summary

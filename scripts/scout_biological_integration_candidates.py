@@ -284,17 +284,17 @@ def generate_comprehensive_report(scout: BiologicalScout, candidates: list[Integ
     print()
 
     report = f"""# Biological Resonance Integration - Scout Report
-**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
-**Scout Mission**: Find viable candidates for biological integration  
-**Files Scanned**: {len(candidates)}  
+**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+**Scout Mission**: Find viable candidates for biological integration
+**Files Scanned**: {len(candidates)}
 **Categories**: {len(categorized)}
 
 ## Executive Summary
 
 Deployed upgraded scouts across entire WhiteMagic codebase to identify systems that would benefit most from biological resonance integration. Found **{len(candidates)} viable candidates** across **{len(categorized)} categories**.
 
-**Top Priority Systems**: {len([c for c in candidates if c.priority > 70])} candidates with priority >70  
-**High Effectiveness Gain**: {len([c for c in candidates if c.effectiveness_gain > 0.6])} candidates with >60% gain  
+**Top Priority Systems**: {len([c for c in candidates if c.priority > 70])} candidates with priority >70
+**High Effectiveness Gain**: {len([c for c in candidates if c.effectiveness_gain > 0.6])} candidates with >60% gain
 **Natural Biological Fit**: {len([c for c in candidates if c.biological_affinity > 0.5])} candidates with >50% affinity
 
 ## Top 20 Integration Candidates
@@ -305,10 +305,10 @@ Deployed upgraded scouts across entire WhiteMagic codebase to identify systems t
         report += f"""
 ### {i}. {candidate.name} ({candidate.category})
 
-**File**: `{candidate.file_path.relative_to(PROJECT_ROOT)}`  
-**Lines**: {candidate.lines}  
-**Priority**: {candidate.priority}/100  
-**Biological Affinity**: {candidate.biological_affinity:.2f}  
+**File**: `{candidate.file_path.relative_to(PROJECT_ROOT)}`
+**Lines**: {candidate.lines}
+**Priority**: {candidate.priority}/100
+**Biological Affinity**: {candidate.biological_affinity:.2f}
 **Effectiveness Gain**: {candidate.effectiveness_gain:.2f}
 
 **Integration Points** ({len(candidate.integration_points)}):
@@ -334,8 +334,8 @@ Deployed upgraded scouts across entire WhiteMagic codebase to identify systems t
         report += f"""
 ### {category.title()} ({len(cat_candidates)} candidates)
 
-**Average Priority**: {avg_priority:.1f}/100  
-**Average Effectiveness Gain**: {avg_gain:.2f}  
+**Average Priority**: {avg_priority:.1f}/100
+**Average Effectiveness Gain**: {avg_gain:.2f}
 **Top Candidate**: {cat_candidates[0].name} ({cat_candidates[0].priority}/100)
 
 """
@@ -356,8 +356,8 @@ High effectiveness gain, low complexity. These can be integrated quickly with im
 
     report += f"""
 
-**Total Phase 1**: {len(phase1)} candidates  
-**Estimated Effort**: 1-2 days  
+**Total Phase 1**: {len(phase1)} candidates
+**Estimated Effort**: 1-2 days
 **Expected Impact**: Immediate effectiveness improvements
 
 ### Phase 2: High Impact Systems (Short-term)
@@ -372,8 +372,8 @@ Maximum effectiveness gain regardless of complexity. Worth the investment.
 
     report += f"""
 
-**Total Phase 2**: {len(phase2)} candidates  
-**Estimated Effort**: 3-5 days  
+**Total Phase 2**: {len(phase2)} candidates
+**Estimated Effort**: 3-5 days
 **Expected Impact**: Major effectiveness improvements
 
 ### Phase 3: Category Completion (Medium-term)
@@ -389,8 +389,8 @@ Ensure every category has biological integration for ecosystem coherence.
 
     report += f"""
 
-**Total Phase 3**: {len(categorized)} categories  
-**Estimated Effort**: 1 week  
+**Total Phase 3**: {len(categorized)} categories
+**Estimated Effort**: 1 week
 **Expected Impact**: Complete ecosystem integration
 
 ### Phase 4: Ecosystem Integration (Long-term)
@@ -405,8 +405,8 @@ High biological affinity systems that naturally fit the organism model.
 
     report += f"""
 
-**Total Phase 4**: {len(phase4)} candidates  
-**Estimated Effort**: 2 weeks  
+**Total Phase 4**: {len(phase4)} candidates
+**Estimated Effort**: 2 weeks
 **Expected Impact**: Fully autonomous organism
 
 ## Specific Integration Recommendations
@@ -484,7 +484,7 @@ def process_data(data):
 
 # After
 def process_data(data):
-    emit_event(EventType.PATTERN_DETECTED, 
+    emit_event(EventType.PATTERN_DETECTED,
                {"operation": "process_data", "status": "started"},
                source="data_processor")
     result = expensive_operation(data)
@@ -503,7 +503,7 @@ class MySystem:
         self.ns = get_nervous_system()
         self.ns.register_organ(OrganType.INTELLIGENCE, self)
         self.ns.subscribe("pattern_detected", self.on_pattern)
-    
+
     def on_pattern(self, data):
         # Respond to patterns from other organs
         pass
@@ -518,7 +518,7 @@ class AdaptiveProcessor:
         self.strategy = "default"
         bus = get_bus()
         bus.listen(EventType.BALANCE_RESTORED, self.adapt_strategy)
-    
+
     def adapt_strategy(self, event):
         # Adapt based on organism state
         if event.data.get("equilibrium") < 0.5:
@@ -553,8 +553,8 @@ class AdaptiveProcessor:
 
 Scout mission identified **{len(candidates)} viable candidates** for biological resonance integration across WhiteMagic codebase.
 
-**Top Priority**: {candidates[0].name if candidates else 'N/A'} ({candidates[0].priority if candidates else 0}/100)  
-**Highest Gain**: {max(candidates, key=lambda c: c.effectiveness_gain).name if candidates else 'N/A'} ({max(candidates, key=lambda c: c.effectiveness_gain).effectiveness_gain if candidates else 0:.2f})  
+**Top Priority**: {candidates[0].name if candidates else 'N/A'} ({candidates[0].priority if candidates else 0}/100)
+**Highest Gain**: {max(candidates, key=lambda c: c.effectiveness_gain).name if candidates else 'N/A'} ({max(candidates, key=lambda c: c.effectiveness_gain).effectiveness_gain if candidates else 0:.2f})
 **Best Fit**: {max(candidates, key=lambda c: c.biological_affinity).name if candidates else 'N/A'} ({max(candidates, key=lambda c: c.biological_affinity).biological_affinity if candidates else 0:.2f})
 
 **Recommendation**: Begin with Phase 1 quick wins for immediate impact, then proceed systematically through phases for complete organism integration.

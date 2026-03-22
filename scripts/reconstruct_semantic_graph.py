@@ -191,7 +191,7 @@ def generate_edges(dry_run: bool = True, commit: bool = False) -> dict[str, Any]
         for id1, id2, edge_type, sim in edges:
             try:
                 conn.execute("""
-                    INSERT OR IGNORE INTO associations 
+                    INSERT OR IGNORE INTO associations
                     (source_id, target_id, relation_type, strength, created_at)
                     VALUES (?, ?, ?, ?, datetime('now'))
                 """, (id1, id2, edge_type, sim))

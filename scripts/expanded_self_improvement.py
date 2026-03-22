@@ -4,7 +4,7 @@
 Analyzes:
 - Code quality and complexity
 - Quantum-inspirable algorithms
-- Polyglot acceleration opportunities  
+- Polyglot acceleration opportunities
 - Memory system optimization
 - Biological subsystem tuning
 """

@@ -14,15 +14,15 @@ def mw_sutra_auto_execute(ctx: DispatchContext, next_fn: NextFn) -> dict[str, An
     try:
         from whitemagic.core.bridge.sutra_bridge import get_sutra_kernel
         sutra = get_sutra_kernel()
-        
+
         # We estimate intent and karma from the tool metadata or context
         # (For now, use defaults or dummy values, real implementation would extract from Gnosis/Karma)
         verdict = sutra.evaluate_action(
-            action_type=ctx.tool_name, 
-            intent_score=1.0, 
+            action_type=ctx.tool_name,
+            intent_score=1.0,
             karma_debt=0.0
         )
-        
+
         if verdict.startswith("Panic") or verdict.startswith("Intervene"):
             # Block and push to UI for Karmic Consent
             try:
@@ -34,16 +34,16 @@ def mw_sutra_auto_execute(ctx: DispatchContext, next_fn: NextFn) -> dict[str, An
                 })
             except Exception as e:
                 logger.warning(f"Failed to push consent to Nexus UI: {e}")
-                
+
             return {
                 "status": "paused",
                 "error": f"Sutra Kernel Intervention: {verdict}. Awaiting Karmic Consent.",
                 "action_required": "user_approval"
             }
-            
+
     except Exception as e:
         logger.warning(f"Sutra Auto-Execute Middleware failed: {e}")
-        
+
     return next_fn(ctx)
 """
 

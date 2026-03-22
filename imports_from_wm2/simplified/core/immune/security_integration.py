@@ -19,7 +19,7 @@ from wm2.core.serializable import Serializable
 class SimplifiedSecurityIntegration(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of security_integration.
-    
+
     Strategy: Unify security checks into middleware
     """
 

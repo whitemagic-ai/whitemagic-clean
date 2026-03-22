@@ -81,7 +81,7 @@ def print_header(text: str):
 
 def check_campaign_victory(campaign_id: str, campaigns_dir: Path) -> tuple[int, int]:
     """Check victory conditions from campaign file.
-    
+
     Returns:
         (total, met)
     """

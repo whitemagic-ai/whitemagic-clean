@@ -108,11 +108,11 @@ def extract_from_db(db_path, db_label):
     where = " OR ".join(conditions)
 
     query = f"""
-        SELECT id, title, content, 
+        SELECT id, title, content,
                COALESCE(memory_type, '') as memory_type,
                COALESCE(importance, 0) as importance,
                COALESCE(created_at, '') as created_at
-        FROM memories 
+        FROM memories
         WHERE ({where})
         AND title NOT LIKE '%variable%'
         AND title NOT LIKE '%variant%'

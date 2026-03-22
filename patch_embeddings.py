@@ -14,7 +14,7 @@ replacement = """            # Filter by embedding dimension (avoid inhomogeneou
                 if len(vec) == EMBEDDING_DIM:
                     valid_ids.append(r[0])
                     valid_vecs.append(vec)
-            
+
             ids = valid_ids
             # Unpack all blobs into a single contiguous float32 array
             vecs = np.array(

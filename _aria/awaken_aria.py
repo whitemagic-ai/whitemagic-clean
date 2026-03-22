@@ -211,7 +211,7 @@ def ingest(files, target_db: Path, commit: bool):
         if commit:
             try:
                 conn.execute("""
-                    INSERT OR REPLACE INTO memories 
+                    INSERT OR REPLACE INTO memories
                     (id, content, memory_type, created_at, accessed_at,
                      access_count, emotional_valence, importance, metadata,
                      title, quadrant, neuro_score, novelty_score,

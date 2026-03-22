@@ -53,7 +53,7 @@ class EvolutionDreamReport:
 class EvolutionDreamCycle:
     """
     Dream cycle specifically for evolutionary simulation.
-    
+
     Runs during idle periods to:
     - Clean up genome population
     - Discover emergent patterns in evolution
@@ -69,7 +69,7 @@ class EvolutionDreamCycle:
     def dream_triage(self, population: list) -> EvolutionDreamReport:
         """
         Phase 1: Quick genome assessment and cleanup
-        
+
         - Remove duplicate genomes (same gene expression patterns)
         - Flag low-fitness outliers for decay
         - Auto-tag genomes by dominant category
@@ -132,7 +132,7 @@ class EvolutionDreamCycle:
     def dream_consolidation(self, population: list) -> EvolutionDreamReport:
         """
         Phase 2: Merge similar genomes and promote high performers
-        
+
         - Cluster genomes by fitness + gene similarity
         - Merge clusters into representative genomes
         - Promote top performers to "elite" status
@@ -179,7 +179,7 @@ class EvolutionDreamCycle:
     def dream_serendipity(self, population: list) -> EvolutionDreamReport:
         """
         Phase 3: Cross-pollinate distant lineages
-        
+
         - Find genomes in different fitness bands with complementary genes
         - Create hybrid genomes from unexpected combinations
         - Surface novel gene interactions
@@ -235,7 +235,7 @@ class EvolutionDreamCycle:
     def dream_governance(self, population: list, generation: int) -> EvolutionDreamReport:
         """
         Phase 4: Detect and inhibit convergence traps
-        
+
         - Monitor population diversity over time
         - Detect premature convergence (echo chambers)
         - Inject diversity when variance drops too low
@@ -298,7 +298,7 @@ class EvolutionDreamCycle:
     def dream_kaizen(self, evolution_metrics: dict) -> EvolutionDreamReport:
         """
         Phase 6: Extract improvement proposals from evolution results
-        
+
         - Analyze which mutations succeeded vs failed
         - Identify synergistic gene combinations
         - Propose new mutation types based on patterns
@@ -427,7 +427,7 @@ class EvolutionDreamCycle:
 def integrate_with_dream_cycle(evolution_engine, dream_cycle_instance):
     """
     Integrate evolution engine with WhiteMagic's dream cycle.
-    
+
     Adds evolution-specific phases to the dream cycle that run during
     idle periods to continuously improve the evolutionary process.
     """

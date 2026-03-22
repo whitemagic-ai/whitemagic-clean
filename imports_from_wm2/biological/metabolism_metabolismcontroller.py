@@ -17,7 +17,7 @@ from wm2.core.serializable import Serializable
 class MetabolismController(BaseEngine, Serializable, MetricCollector):
     """
     Memory lifecycle and decay management
-    
+
     Integrates 75 files from the metabolism subsystem.
     """
 

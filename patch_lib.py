@@ -13,7 +13,7 @@ if "ipc_bridge_module" not in content:
     let ipc_bridge_module = PyModule::new_bound(_py, "ipc_bridge")?;
     ipc_bridge::ipc_bridge(_py, &ipc_bridge_module)?;
     m.add_submodule(&ipc_bridge_module)?;
-    
+
     // Add conductor sub-module"""
     content = content.replace("    // Add conductor sub-module", replacement)
 

@@ -36,9 +36,9 @@ def test_simhash_on_real_data():
 
     # Load sample of embeddings (limit to 100 for quick test)
     cursor.execute("""
-        SELECT memory_id, embedding 
-        FROM memory_embeddings 
-        WHERE embedding IS NOT NULL 
+        SELECT memory_id, embedding
+        FROM memory_embeddings
+        WHERE embedding IS NOT NULL
         LIMIT 100
     """)
     rows = cursor.fetchall()

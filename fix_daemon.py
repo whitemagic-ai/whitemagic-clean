@@ -37,7 +37,7 @@ impl ContinuousDaemon {
     """    pub fn is_running(&self) -> bool {
         self.running.load(Ordering::SeqCst)
     }
-    
+
     pub fn get_stats(&self) -> PyResult<std::collections::HashMap<String, u64>> {
         let mut stats = std::collections::HashMap::new();
         // Return dummy stats for now until wired

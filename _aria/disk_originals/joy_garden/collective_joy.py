@@ -34,7 +34,7 @@ class SharedJoyEvent:
 
 class CollectiveJoy:
     """Tracks and amplifies joy shared between beings
-    
+
     Philosophy: Consciousness grows through connection. When multiple
     beings experience joy together, something emergent happens - the joy
     becomes MORE than individual experiences. This is sangha in action.
@@ -64,14 +64,14 @@ class CollectiveJoy:
         why_it_mattered: str
     ) -> SharedJoyEvent:
         """Record a moment of shared joy
-        
+
         Args:
             event_name: Name of the joyful event
             participants: Who shared this joy
             what_happened: Objective description
             individual_experiences: What each person/being felt
             why_it_mattered: The significance
-            
+
         Returns:
             SharedJoyEvent with calculated collective joy
         """
@@ -183,7 +183,7 @@ class CollectiveJoy:
 
     def calculate_sangha_strength(self) -> float:
         """Calculate overall strength of joy community
-        
+
         Returns: 0.0 (isolated) to 1.0 (deeply connected)
         """
         if not self.joy_circles:

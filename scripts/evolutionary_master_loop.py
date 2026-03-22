@@ -26,7 +26,7 @@ except ImportError:
 class EvolutionaryMasterLoop:
     """
     Master loop for autonomous evolution
-    
+
     Flow:
     1. Geneseed Vault: Mine optimization patterns from git history
     2. Phylogenetics: Track genome evolution and phenotypes

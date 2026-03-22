@@ -28,7 +28,7 @@ class LoCoMoScorer:
     def calculate_match_score(self, predicted: str, expected: str) -> float:
         """
         Calculate similarity between predicted and expected answers.
-        
+
         Returns 1.0 for exact match, 0.0 for no match.
         Partial credit for similar answers (e.g., "GPT-4" vs "GPT-4 Turbo").
         """
@@ -55,7 +55,7 @@ class LoCoMoScorer:
     def score_answer(self, answer_obj: dict) -> tuple[float, str]:
         """
         Score a single answer.
-        
+
         Returns (score, feedback) where score is 0.0-1.0.
         """
         qid = answer_obj.get('question_id')
@@ -93,7 +93,7 @@ class LoCoMoScorer:
     def score_submission(self, answers_file: str) -> dict[str, Any]:
         """
         Score a complete submission file.
-        
+
         Returns detailed scoring report.
         """
         with open(answers_file) as f:
@@ -168,7 +168,7 @@ class LoCoMoScorer:
     def compare_submissions(self, submission_files: list[str]) -> str:
         """
         Compare multiple AI submissions and generate a report.
-        
+
         Returns markdown report.
         """
         reports = []
@@ -210,7 +210,7 @@ class LoCoMoScorer:
 def ingest_results(eval_dir: str = '/home/lucas/Desktop/whitemagicdev/eval') -> str:
     """
     Auto-discover and score all external AI result files.
-    
+
     Returns path to generated report.
     """
     # Find all external_ai_answers files

@@ -10,12 +10,12 @@ if "from whitemagic.core.bridge.sutra_bridge import get_sutra_kernel" not in con
 # Add the sutra check to store()
 replacement = """    def store(self, memory: Memory, content_hash: str | None = None) -> str:
         \"\"\"Store or update a memory.\"\"\"
-        
+
         # 0. Rust Sutra Kernel Check (Ahimsa/Satya/Harmony)
         sutra = get_sutra_kernel()
         verdict = sutra.evaluate_action(
-            action_type="memory_store", 
-            intent_score=1.0, 
+            action_type="memory_store",
+            intent_score=1.0,
             karma_debt=0.0
         )
         if verdict.startswith("Panic"):

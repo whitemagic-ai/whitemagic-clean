@@ -229,7 +229,7 @@ ZODIAC_ARMY_SYNERGY = {
 class UnifiedV16SupremeCommander:
     """
     Supreme Commander for the v16 Unified Army
-    
+
     Orchestrates 25.6M units across 5 tiers:
     - Tier 1: Scout Swarm (10M) - Reconnaissance
     - Tier 2: Immortal Clones (10M) - Execution
@@ -302,7 +302,7 @@ class UnifiedV16SupremeCommander:
     async def deploy_wave_1_scouts(self) -> dict[str, Any]:
         """
         Wave 1: Deploy 10M Scout Swarm for v16 preparation
-        
+
         Mission: Analyze all Python files, identify async candidates,
         map embedding pipeline requirements, prepare terrain for main army
         """
@@ -586,10 +586,10 @@ async def main():
 Examples:
     # Deploy Wave 1 (10M scouts)
     python deploy_unified_v16_army.py --wave 1
-    
+
     # Deploy full unified army (25.6M units)
     python deploy_unified_v16_army.py --full
-    
+
     # Verbose mode with detailed progress
     python deploy_unified_v16_army.py --full --verbose
         """

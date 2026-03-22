@@ -136,7 +136,7 @@ impl {struct_name} {{
             data: Arc::new(RwLock::new(Vec::new())),
         }}
     }}
-    
+
     fn process(&self, items: Vec<String>) -> PyResult<Vec<String>> {{
         // Parallel processing with Rayon
         let results: Vec<String> = items
@@ -146,10 +146,10 @@ impl {struct_name} {{
                 format!("processed: {{}}", item)
             }})
             .collect();
-        
+
         Ok(results)
     }}
-    
+
     fn get_stats(&self) -> PyResult<usize> {{
         let data = self.data.read().unwrap();
         Ok(data.len())
@@ -170,17 +170,17 @@ const std = @import("std");
 
 pub const {struct_name} = struct {{
     allocator: std.mem.Allocator,
-    
+
     pub fn init(allocator: std.mem.Allocator) !{struct_name} {{
         return {struct_name}{{
             .allocator = allocator,
         }};
     }}
-    
+
     pub fn deinit(self: *{struct_name}) void {{
         _ = self;
     }}
-    
+
     pub fn process(self: *{struct_name}, data: []const u8) ![]u8 {{
         _ = self;
         // TODO: Implement SIMD processing
@@ -220,10 +220,10 @@ fn main():
 
 struct {base_name.title().replace('_', '')}:
     var data: Tensor[DType.float32]
-    
+
     fn __init__(inout self):
         self.data = Tensor[DType.float32](0)
-    
+
     fn process(self) -> Tensor[DType.float32]:
         # TODO: GPU-accelerated processing
         return self.data

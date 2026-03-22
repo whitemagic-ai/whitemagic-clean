@@ -40,7 +40,7 @@ replacement = """
               </div>
             </div>
           </div>
-          
+
           <div className="flex-1 bg-gray-800 rounded-xl border border-gray-700 p-4">
             <GanaActivityHeatmap />
           </div>

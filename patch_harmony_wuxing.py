@@ -13,7 +13,7 @@ if "WuXingWheel" not in content:
         <div className="col-span-1 lg:col-span-1">
           <WuXingWheel currentPhase={stats.phase} />
         </div>
-        
+
         {/* Radar/Guna Distribution could go here but we just push it to col-span-2 */}
         <div className="col-span-1 lg:col-span-2">
 """

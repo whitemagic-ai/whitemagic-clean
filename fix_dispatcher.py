@@ -58,7 +58,7 @@ content = content.replace(
     """    def prat_route(self, tool: str) -> str:
         operation = "prat_route"
         use_koka = self._should_use_koka(operation)
-        
+
         start = time.perf_counter()
         if use_koka:
             result = self._get_pool("prat").call({"op": "check", "tool": tool})
@@ -73,12 +73,12 @@ content = content.replace(
     """    def prat_route(self, tool: str) -> str:
         operation = "prat_route"
         start = time.perf_counter()
-        
+
         try:
             result = rs.prat_route(tool)
         except Exception:
             result = PythonFastPath.prat_route(tool)
-            
+
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(False, latency, operation)
         return result"""
@@ -104,7 +104,7 @@ content = content.replace(
             results = rs.prat_route_batch(tools)
         except Exception:
             results = [PythonFastPath.prat_route(t) for t in tools]
-            
+
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(False, latency / max(1, len(tools)), "prat_route")
         return results"""

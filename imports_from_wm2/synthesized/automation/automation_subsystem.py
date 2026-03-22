@@ -16,7 +16,7 @@ from wm2.core.serializable import Serializable
 class AutomationSubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified automation subsystem synthesized from WM1.
-    
+
     Integrates 13 missing classes:
         - PipelineState
     - TacticalPipeline
@@ -31,7 +31,7 @@ class AutomationSubsystem(BaseEngine, Serializable, MetricCollector):
     - DispatchPipeline
     - RabbitHoleEntry
     - PipelineStage
-    
+
     """
 
     def __init__(self, name: str = "automation_subsystem"):

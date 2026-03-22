@@ -135,38 +135,38 @@ impl Search {
     fn new(db_path: String, pool_size: Option<usize>) -> PyResult<Self> {
         let size = pool_size.unwrap_or(4);
         let mut pool = Vec::with_capacity(size);
-        
+
         // Create connection pool
         for _ in 0..size {
             let conn = Connection::open(&db_path)
                 .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
                     format!("Failed to open database: {}", e)
                 ))?;
-            
+
             // Enable WAL mode for better concurrency
             conn.execute("PRAGMA journal_mode=WAL", [])
                 .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
                     format!("Failed to set WAL mode: {}", e)
                 ))?;
-            
+
             pool.push(conn);
         }
-        
+
         Ok(Self {
             pool: Arc::new(Mutex::new(pool)),
             db_path,
         })
     }
-    
+
     /// Full-text search with BM25 ranking
-    /// 
+    ///
     /// Args:
     ///     query: Search query string
     ///     tags: Optional list of tags to filter by
     ///     memory_type: Optional memory type filter
     ///     min_importance: Minimum importance score (0.0-1.0)
     ///     limit: Maximum number of results
-    /// 
+    ///
     /// Returns:
     ///     List of memory IDs matching the query
     fn search(
@@ -179,19 +179,19 @@ impl Search {
     ) -> PyResult<Vec<String>> {
         let pool = self.pool.lock().unwrap();
         let conn = &pool[0];
-        
+
         // Build SQL query with BM25 ranking
         let mut sql = String::from(
-            "SELECT id FROM memories_fts 
-             WHERE memories_fts MATCH ? 
+            "SELECT id FROM memories_fts
+             WHERE memories_fts MATCH ?
              ORDER BY bm25(memories_fts, 10.0, 1.0, 5.0)"
         );
-        
+
         // Add filters
         let mut params_vec: Vec<Box<dyn rusqlite::ToSql>> = vec![
             Box::new(query.clone())
         ];
-        
+
         if let Some(ref t) = tags {
             if !t.is_empty() {
                 sql.push_str(" AND tags IN (");
@@ -202,51 +202,51 @@ impl Search {
                 }
             }
         }
-        
+
         if let Some(ref mt) = memory_type {
             sql.push_str(" AND memory_type = ?");
             params_vec.push(Box::new(mt.clone()));
         }
-        
+
         if let Some(mi) = min_importance {
             sql.push_str(" AND importance >= ?");
             params_vec.push(Box::new(mi));
         }
-        
+
         // Add limit
         let lim = limit.unwrap_or(10);
         sql.push_str(" LIMIT ?");
         params_vec.push(Box::new(lim as i64));
-        
+
         // Execute query
         let mut stmt = conn.prepare(&sql)
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
                 format!("Failed to prepare query: {}", e)
             ))?;
-        
+
         let params_refs: Vec<&dyn rusqlite::ToSql> = params_vec
             .iter()
             .map(|p| p.as_ref())
             .collect();
-        
+
         let rows = stmt.query_map(params_refs.as_slice(), |row| {
             row.get::<_, String>(0)
         }).map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
             format!("Query failed: {}", e)
         ))?;
-        
+
         let mut results = Vec::new();
         for row in rows {
             if let Ok(id) = row {
                 results.push(id);
             }
         }
-        
+
         Ok(results)
     }
-    
+
     /// Parallel batch search
-    /// 
+    ///
     /// Processes multiple queries in parallel using Rayon
     fn batch_search(
         &self,
@@ -265,21 +265,21 @@ impl Search {
                 ).unwrap_or_default()
             })
             .collect();
-        
+
         Ok(results)
     }
-    
+
     /// Get search statistics
     fn get_stats(&self) -> PyResult<(usize, usize)> {
         let pool = self.pool.lock().unwrap();
         let conn = &pool[0];
-        
+
         let count: i64 = conn.query_row(
             "SELECT COUNT(*) FROM memories_fts",
             [],
             |row| row.get(0)
         ).unwrap_or(0);
-        
+
         Ok((pool.len(), count as usize))
     }
 }
@@ -320,7 +320,7 @@ impl GraphWalker {
             graph: HashMap::new(),
         }
     }
-    
+
     /// Add edge to graph
     fn add_edge(
         &mut self,
@@ -338,9 +338,9 @@ impl GraphWalker {
                 relation_type,
             });
     }
-    
+
     /// Walk graph from start node with depth limit
-    /// 
+    ///
     /// Uses breadth-first search with semantic scoring
     fn walk(
         &self,
@@ -351,17 +351,17 @@ impl GraphWalker {
         let mut visited = HashSet::new();
         let mut queue = VecDeque::new();
         let mut results = Vec::new();
-        
+
         queue.push_back((start.clone(), 0, 1.0));
         visited.insert(start);
-        
+
         while let Some((node, depth, score)) = queue.pop_front() {
             if depth >= max_depth || score < min_score {
                 continue;
             }
-            
+
             results.push((node.clone(), score));
-            
+
             // Explore neighbors
             if let Some(edges) = self.graph.get(&node) {
                 for edge in edges {
@@ -377,13 +377,13 @@ impl GraphWalker {
                 }
             }
         }
-        
+
         // Sort by score descending
         results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
-        
+
         Ok(results)
     }
-    
+
     /// Parallel multi-start walk
     fn parallel_walk(
         &self,
@@ -398,15 +398,15 @@ impl GraphWalker {
                     .unwrap_or_default()
             })
             .collect();
-        
+
         Ok(results)
     }
-    
+
     /// Get graph statistics
     fn get_stats(&self) -> PyResult<(usize, usize)> {
         let node_count = self.graph.len();
         let edge_count: usize = self.graph.values().map(|v| v.len()).sum();
-        
+
         Ok((node_count, edge_count))
     }
 }

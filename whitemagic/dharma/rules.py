@@ -33,7 +33,7 @@ import re
 import threading
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -79,7 +79,7 @@ def _get_haskell_bridge() -> Any:
 # Action spectrum (Gevurah → Chesed)
 # ---------------------------------------------------------------------------
 
-class DharmaAction(str, Enum):
+class DharmaAction(StrEnum):
     """Graduated action spectrum from MandalaOS's Yama engine."""
 
     LOG = "log"            # Record the event silently

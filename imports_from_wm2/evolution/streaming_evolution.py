@@ -40,7 +40,7 @@ class StreamingEvolutionEngine:
     ) -> rust.Genome:
         """
         Process population in chunks to avoid memory overflow.
-        
+
         Strategy:
         1. Divide population into manageable chunks
         2. Evolve each chunk independently

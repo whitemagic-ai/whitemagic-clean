@@ -16,7 +16,7 @@ from wm2.core.serializable import Serializable
 class HarmonySubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified harmony subsystem synthesized from WM1.
-    
+
     Integrates 13 missing classes:
         - HarmonySnapshot
     - ElementalState
@@ -31,7 +31,7 @@ class HarmonySubsystem(BaseEngine, Serializable, MetricCollector):
     - ElementalOptimizer
     - HarmonyVector
     - HarmonyMonitor
-    
+
     """
 
     def __init__(self, name: str = "harmony_subsystem"):

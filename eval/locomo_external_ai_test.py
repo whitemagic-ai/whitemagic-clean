@@ -3,13 +3,13 @@
 LoCoMo External AI Testing Framework
 ======================================
 
-Novel testing approach: Use an external AI as an "oracle" to generate 
-ground-truth questions/answers from WhiteMagic's memories, then test 
+Novel testing approach: Use an external AI as an "oracle" to generate
+ground-truth questions/answers from WhiteMagic's memories, then test
 WhiteMagic's ability to retrieve those answers.
 
 This tests:
 1. Single-hop recall: Direct memory retrieval
-2. Multi-hop recall: Following associations  
+2. Multi-hop recall: Following associations
 3. Temporal recall: Time-based queries
 4. Open-domain recall: Concept-based search
 
@@ -47,7 +47,7 @@ DB_PATH = Path.home() / ".whitemagic" / "memory" / "whitemagic.db"
 def generate_memory_sample(n_memories: int = 50) -> dict[str, Any]:
     """
     Generate a clean sample of memories for external AI testing.
-    
+
     IMPORTANT: This exports ONLY memory content, not conversation history,
     not Windsurf sessions, not internal reasoning. Just the facts.
     """
@@ -58,7 +58,7 @@ def generate_memory_sample(n_memories: int = 50) -> dict[str, Any]:
 
     # Get diverse, high-quality memories
     rows = conn.execute("""
-        SELECT 
+        SELECT
             m.id,
             m.title,
             m.content,
@@ -70,7 +70,7 @@ def generate_memory_sample(n_memories: int = 50) -> dict[str, Any]:
         FROM memories m
         LEFT JOIN associations a ON m.id = a.source_id
         WHERE m.memory_type = 'LONG_TERM'
-          AND m.title IS NOT NULL 
+          AND m.title IS NOT NULL
           AND LENGTH(m.content) > 200
           AND m.title NOT LIKE 'Recovered:%'
           AND m.title NOT LIKE 'bench_%'
@@ -159,7 +159,7 @@ def save_sample(sample: dict, output_path: Path) -> None:
 def validate_answers(test_file: Path) -> dict[str, Any]:
     """
     Validate WhiteMagic's answers against external AI's expected answers.
-    
+
     This uses WhiteMagic's hybrid search to answer each question,
     then compares to the expected answer.
     """
@@ -255,7 +255,7 @@ def validate_answers(test_file: Path) -> dict[str, Any]:
 def retrieve_with_whitemagic(db, engine, question: str, source_ids: list) -> str:
     """
     Retrieve answer using WhiteMagic's hybrid search.
-    
+
     Tries multiple strategies:
     1. Vector search (if embeddings available)
     2. FTS search
@@ -266,8 +266,8 @@ def retrieve_with_whitemagic(db, engine, question: str, source_ids: list) -> str
     # Strategy 1: FTS search
     try:
         cursor = db.conn.execute(
-            """SELECT title, content FROM memories 
-               WHERE memory_type != 'quarantined' 
+            """SELECT title, content FROM memories
+               WHERE memory_type != 'quarantined'
                AND (title LIKE ? OR content LIKE ?)
                ORDER BY importance DESC
                LIMIT 3""",
@@ -298,7 +298,7 @@ def retrieve_with_whitemagic(db, engine, question: str, source_ids: list) -> str
 def evaluate_answer(retrieved: str, expected: str) -> bool:
     """
     Evaluate if retrieved answer matches expected answer.
-    
+
     Uses simple keyword overlap for now.
     Could use semantic similarity for better accuracy.
     """
@@ -329,8 +329,7 @@ def check_source_found(db, source_ids: list) -> bool:
 
     try:
         cursor = db.conn.execute(
-            "SELECT COUNT(*) FROM memories WHERE id IN (%s)" %
-            ','.join('?' * len(source_ids)),
+            "SELECT COUNT(*) FROM memories WHERE id IN ({})".format(','.join('?' * len(source_ids))),
             source_ids
         )
         count = cursor.fetchone()[0]

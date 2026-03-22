@@ -17,7 +17,7 @@ content = content.replace(
                 pass
         except Exception:
             pass
-            
+
         proposals = []
         metrics = {}"""
 )

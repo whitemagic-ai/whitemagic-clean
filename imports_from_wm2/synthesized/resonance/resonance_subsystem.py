@@ -16,7 +16,7 @@ from wm2.core.serializable import Serializable
 class ResonanceSubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified resonance subsystem synthesized from WM1.
-    
+
     Integrates 60 missing classes:
         - ResonanceEvent
     - ResonanceLedger

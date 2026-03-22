@@ -12,7 +12,7 @@ import logging
 import threading
 import time
 from dataclasses import asdict, dataclass, field
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -22,7 +22,7 @@ from whitemagic.utils.fast_json import loads as _json_loads
 logger = logging.getLogger(__name__)
 
 
-class GratitudeChannel(str, Enum):
+class GratitudeChannel(StrEnum):
     XRPL = "xrpl"
     X402 = "x402"
     MANUAL = "manual"

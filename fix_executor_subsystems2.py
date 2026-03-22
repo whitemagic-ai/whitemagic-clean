@@ -7,7 +7,7 @@ content = content.replace(
                     self.log("🧠 Triggering Nervous System Pulse")""",
     """                # Update iteration count to properly trigger pulses
                 self.current_iteration = getattr(self, 'current_iteration', 0) + 1
-                
+
                 # Homeostasis / Biological Subsystem pulse
                 if self.current_iteration % 5 == 0:  # Lowered from 50 to 5 for testing
                     self.log("🧠 Triggering Nervous System Pulse")"""

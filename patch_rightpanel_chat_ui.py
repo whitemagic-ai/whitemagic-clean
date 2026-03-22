@@ -19,7 +19,7 @@ pill_replacement = """                  <div
                         <span>Current File Context</span>
                       </div>
                     )}
-                    
+
                     {/* Tool Call Status for Assistant */}
                     {msg.role === "assistant" && msg.content.includes("Holographic") && (
                       <div className="flex flex-col gap-2 mb-2">
@@ -35,7 +35,7 @@ pill_replacement = """                  <div
                         </div>
                       </div>
                     )}
-                    
+
                     {msg.content.replace(/I am looking at `.*`\\.\\s*/, '')}
                   </div>"""
 

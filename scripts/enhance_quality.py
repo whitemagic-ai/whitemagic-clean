@@ -46,7 +46,7 @@ class QualityEnhancer:
             module_name = file_path.stem.replace('_v2', '').replace('_', ' ').title()
             module_doc = f"""//! {module_name}
 //! High-performance implementation with Rust optimizations
-//! 
+//!
 //! This module provides significant speedup over Python implementation
 //! through parallel processing, efficient data structures, and zero-copy operations.
 

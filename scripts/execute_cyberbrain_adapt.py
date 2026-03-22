@@ -26,7 +26,7 @@ class GlobalWorkspace:
     def __init__(self):
         self.events = []
         self.active_core = None
-        
+
     def publish_event(self, core_id: str, event_type: str, payload: Dict[str, Any], salience: float):
         event = {
             "timestamp": time.time(),
@@ -37,19 +37,19 @@ class GlobalWorkspace:
         }
         self.events.append(event)
         self._arbitrate()
-        
+
     def _arbitrate(self):
         if not self.events:
             return
-            
+
         # Sort by salience descending
         self.events.sort(key=lambda x: x["salience"], reverse=True)
         top_event = self.events[0]
-        
+
         if top_event["salience"] > 0.8:
             self.active_core = top_event["core"]
             # Dispatch to active core (simulated)
-            
+
     def get_state(self):
         return {
             "active_core": self.active_core,
@@ -71,23 +71,23 @@ class TimescaleSync:
             "planner": [],     # 1s
             "consolidation": [] # 1hr
         }
-        
+
     def register_hook(self, timescale: str, callback):
         if timescale in self.loops:
             self.loops[timescale].append(callback)
-            
+
     async def run_reflex_loop(self):
         while True:
             for cb in self.loops["reflex"]:
                 cb()
             await asyncio.sleep(0.01)
-            
+
     async def run_planner_loop(self):
         while True:
             for cb in self.loops["planner"]:
                 cb()
             await asyncio.sleep(1.0)
-            
+
     async def run_consolidation_loop(self):
         while True:
             for cb in self.loops["consolidation"]:

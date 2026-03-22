@@ -14,13 +14,13 @@ Features:
 Usage:
     # Auto-select armies for objective
     python3 scripts/deploy_unified_zodiac_army.py --objective "optimize embeddings hot path"
-    
+
     # Deploy specific armies
     python3 scripts/deploy_unified_zodiac_army.py --armies tokio,lieutenant --clones 100
-    
+
     # Deploy all armies
     python3 scripts/deploy_unified_zodiac_army.py --all --clones 50
-    
+
     # Show zodiac-army mappings
     python3 scripts/deploy_unified_zodiac_army.py --show-mappings
 """

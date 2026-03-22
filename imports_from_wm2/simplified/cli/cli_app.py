@@ -19,7 +19,7 @@ from wm2.core.serializable import Serializable
 class SimplifiedCliApp(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of cli_app.
-    
+
     Strategy: Extract command handlers into separate modules
     """
 

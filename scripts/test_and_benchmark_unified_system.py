@@ -558,15 +558,15 @@ def generate_comprehensive_report(results: TestResults):
     summary = results.summary()
 
     report = f"""# Unified Nervous System - Test & Integration Report
-**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
+**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 **Test Suite**: Comprehensive System Validation
 
 ## Executive Summary
 
 Comprehensive testing and benchmarking of the unified nervous system with shadow clone army integration reveals **production-ready performance** with bidirectional communication capabilities.
 
-**Test Results**: {summary['tests']['passed']}/{summary['tests']['total']} passed ({summary['tests']['pass_rate']*100:.1f}%)  
-**Benchmarks**: {summary['benchmarks']['total']} completed  
+**Test Results**: {summary['tests']['passed']}/{summary['tests']['total']} passed ({summary['tests']['pass_rate']*100:.1f}%)
+**Benchmarks**: {summary['benchmarks']['total']} completed
 **Integrations**: {summary['integrations']['successful']}/{summary['integrations']['total']} successful
 
 ## Test Results
@@ -785,15 +785,15 @@ Comprehensive testing and benchmarking of the unified nervous system with shadow
 
 The unified nervous system with shadow clone integration creates a **living, adaptive organism** capable of:
 
-✅ **Bidirectional communication** between biological organs and clone armies  
-✅ **Event-driven coordination** at 10,000+ events/sec  
-✅ **Adaptive responses** based on clone findings  
-✅ **Evolutionary improvement** through feedback loops  
-✅ **Organism-level intelligence** greater than sum of parts  
+✅ **Bidirectional communication** between biological organs and clone armies
+✅ **Event-driven coordination** at 10,000+ events/sec
+✅ **Adaptive responses** based on clone findings
+✅ **Evolutionary improvement** through feedback loops
+✅ **Organism-level intelligence** greater than sum of parts
 
-**Performance**: Production-ready with sub-millisecond latency  
-**Scalability**: Handles 600K+ clones/sec deployment  
-**Integration**: Seamless bidirectional communication  
+**Performance**: Production-ready with sub-millisecond latency
+**Scalability**: Handles 600K+ clones/sec deployment
+**Integration**: Seamless bidirectional communication
 
 **Next Step**: Deploy this integrated system across all campaigns for autonomous, adaptive execution.
 """

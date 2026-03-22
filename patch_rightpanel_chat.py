@@ -21,19 +21,19 @@ chat_state_injection = """
 
   const handleSend = () => {
     if (!input.trim()) return;
-    
+
     // Add user message
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: input };
     setMessages(prev => [...prev, userMsg]);
     setInput("");
-    
+
     // In a real implementation, this would send an IPC message to the Rust backend
     // which forwards it to the Python AI core. For now, simulate a response.
     setTimeout(() => {
-      const aiMsg: Message = { 
-        id: (Date.now() + 1).toString(), 
-        role: "assistant", 
-        content: `I received your intent. Holographic Context has been injected via Arrow IPC. Auto-executing Sattvic analysis...` 
+      const aiMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: `I received your intent. Holographic Context has been injected via Arrow IPC. Auto-executing Sattvic analysis...`
       };
       setMessages(prev => [...prev, aiMsg]);
     }, 1000);
@@ -56,7 +56,7 @@ chat_input_replacement = """
                   placeholder="Command the swarm..."
                   className="w-full bg-wm-bg border border-wm-border rounded-lg pl-3 pr-10 py-2 text-sm focus:outline-none focus:border-wm-purple-500/50"
                 />
-                <button 
+                <button
                   onClick={handleSend}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-wm-purple-400 hover:text-wm-purple-300 p-1"
                 >

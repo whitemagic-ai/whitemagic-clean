@@ -11,16 +11,16 @@ batch-ingested into the galactic memory core.
 Usage:
     # Step 1: From within Cascade, probe UUIDs and save to manifest
     # (This is done via trajectory_search tool calls in conversation)
-    
+
     # Step 2: Ingest from manifest into galactic memory
     python scripts/extract_and_ingest_windsurf.py --apply
-    
+
     # Dry run (default):
     python scripts/extract_and_ingest_windsurf.py
-    
+
     # Show inventory:
     python scripts/extract_and_ingest_windsurf.py --inventory
-    
+
     # Ingest into a specific galaxy:
     python scripts/extract_and_ingest_windsurf.py --apply --galaxy windsurf_dev_history
 """

@@ -581,7 +581,7 @@ def retrieve_fusion(query: str, limit: int = 20) -> list[dict]:
 
 def retrieve_title_boosted(query: str, limit: int = 20) -> list[dict]:
     """Title-boosted vector search for LoCoMo 100%% (V019 Tier 2).
-    
+
     Uses vector search for candidates, then applies aggressive title boosting
     to re-rank results. This helps open-domain queries where titles contain
     relevant keywords.
@@ -717,7 +717,7 @@ def retrieve_adaptive(query: str, limit: int = 20) -> list[dict]:
 
 def retrieve_content_expanded(query: str, limit: int = 20) -> list[dict]:
     """Content-expanded retrieval for open-domain queries.
-    
+
     Open-domain queries are content fragments (not titles).
     Strategy: Massive candidate pool + RRF fusion + Zig-accelerated holographic reranking.
     """

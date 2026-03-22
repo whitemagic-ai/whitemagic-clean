@@ -61,13 +61,13 @@ impl UnifiedMemoryV2 {
             vector_index: Vec::new(),
         }
     }
-    
+
     fn store(&mut self, id: String, content: String, embedding: Vec<f64>) -> PyResult<()> {
         self.memories.insert(id.clone(), content);
         self.vector_index.push((id, embedding));
         Ok(())
     }
-    
+
     fn hybrid_recall(
         &self,
         query: String,
@@ -82,17 +82,17 @@ impl UnifiedMemoryV2 {
                 (id.clone(), score)
             })
             .collect();
-        
+
         scored.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
-        
+
         Ok(scored.into_iter().take(limit).map(|(id, _)| id).collect())
     }
-    
+
     fn cosine_similarity(&self, a: &[f64], b: &[f64]) -> f64 {
         let dot: f64 = a.iter().zip(b.iter()).map(|(x, y)| x * y).sum();
         let norm_a: f64 = a.iter().map(|x| x * x).sum::<f64>().sqrt();
         let norm_b: f64 = b.iter().map(|x| x * x).sum::<f64>().sqrt();
-        
+
         if norm_a == 0.0 || norm_b == 0.0 {
             0.0
         } else {
@@ -123,16 +123,16 @@ impl HologramConsolidation {
             holograms: HashMap::new(),
         }
     }
-    
+
     fn consolidate(&mut self, memory_id: String, hologram: Vec<f64>) -> PyResult<()> {
         self.holograms.insert(memory_id, hologram);
         Ok(())
     }
-    
+
     fn get_hologram(&self, memory_id: String) -> PyResult<Option<Vec<f64>>> {
         Ok(self.holograms.get(&memory_id).cloned())
     }
-    
+
     fn consolidate_batch(&mut self, batch: Vec<(String, Vec<f64>)>) -> PyResult<usize> {
         let count = batch.len();
         for (id, hologram) in batch {
@@ -168,22 +168,22 @@ impl SynthesisEngine {
             sources: Vec::new(),
         }
     }
-    
+
     fn add_source(&mut self, source: String) -> PyResult<()> {
         self.sources.push(source);
         Ok(())
     }
-    
+
     fn synthesize(&self, inputs: Vec<String>) -> PyResult<String> {
         // Parallel synthesis
         let results: Vec<String> = inputs
             .par_iter()
             .map(|input| format!("synthesized: {}", input))
             .collect();
-        
+
         Ok(results.join(" | "))
     }
-    
+
     fn get_source_count(&self) -> PyResult<usize> {
         Ok(self.sources.len())
     }
@@ -213,7 +213,7 @@ impl PredictiveEngine {
             max_history: max_history.unwrap_or(100),
         }
     }
-    
+
     fn add_observation(&mut self, value: f64) -> PyResult<()> {
         if self.history.len() >= self.max_history {
             self.history.pop_front();
@@ -221,28 +221,28 @@ impl PredictiveEngine {
         self.history.push_back(value);
         Ok(())
     }
-    
+
     fn predict_next(&self) -> PyResult<f64> {
         if self.history.is_empty() {
             return Ok(0.0);
         }
-        
+
         // Simple moving average prediction
         let sum: f64 = self.history.iter().sum();
         let avg = sum / self.history.len() as f64;
-        
+
         Ok(avg)
     }
-    
+
     fn predict_trend(&self) -> PyResult<String> {
         if self.history.len() < 2 {
             return Ok("unknown".to_string());
         }
-        
+
         let recent: Vec<f64> = self.history.iter().rev().take(5).cloned().collect();
         let first = recent.last().unwrap();
         let last = recent.first().unwrap();
-        
+
         if last > first {
             Ok("increasing".to_string())
         } else if last < first {
@@ -280,13 +280,13 @@ impl GanaGhost {
         capabilities.insert("search".to_string(), true);
         capabilities.insert("graph".to_string(), true);
         capabilities.insert("reasoning".to_string(), true);
-        
+
         Self {
             capabilities,
             metrics: HashMap::new(),
         }
     }
-    
+
     fn get_capabilities(&self) -> PyResult<Vec<String>> {
         Ok(self.capabilities
             .iter()
@@ -294,16 +294,16 @@ impl GanaGhost {
             .map(|(name, _)| name.clone())
             .collect())
     }
-    
+
     fn record_metric(&mut self, name: String, value: f64) -> PyResult<()> {
         self.metrics.insert(name, value);
         Ok(())
     }
-    
+
     fn get_metric(&self, name: String) -> PyResult<Option<f64>> {
         Ok(self.metrics.get(&name).copied())
     }
-    
+
     fn introspect(&self) -> PyResult<(usize, usize)> {
         Ok((self.capabilities.len(), self.metrics.len()))
     }

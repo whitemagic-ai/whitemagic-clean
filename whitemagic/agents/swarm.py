@@ -21,13 +21,13 @@ import threading
 import time
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-class TaskStatus(str, Enum):
+class TaskStatus(StrEnum):
     PENDING = "pending"
     ASSIGNED = "assigned"
     RUNNING = "running"
@@ -35,7 +35,7 @@ class TaskStatus(str, Enum):
     FAILED = "failed"
 
 
-class ConsensusStrategy(str, Enum):
+class ConsensusStrategy(StrEnum):
     MAJORITY = "majority"
     UNANIMOUS = "unanimous"
     FIRST_WINS = "first_wins"

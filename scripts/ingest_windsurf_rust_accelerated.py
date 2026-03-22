@@ -36,7 +36,7 @@ def content_hash(text: str) -> str:
 def batch_ingest_rust(sessions: list[dict], contents: list[str]) -> dict:
     """
     Rust-accelerated batch ingestion.
-    
+
     Uses:
     - Arrow encoding for zero-copy serialization
     - Batch SQLite operations

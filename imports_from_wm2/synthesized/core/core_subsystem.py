@@ -16,7 +16,7 @@ from wm2.core.serializable import Serializable
 class CoreSubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified core subsystem synthesized from WM1.
-    
+
     Integrates 1058 missing classes:
         - AsyncEvent
     - OrganType

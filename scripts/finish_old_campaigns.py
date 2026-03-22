@@ -50,43 +50,43 @@ except ImportError:
 
 class RustBridge:
     """Bridge between Python and Rust implementations"""
-    
+
     def __init__(self):
         self.rust_available = RUST_AVAILABLE
-    
+
     def get_search(self, db_path: str):
         """Get Rust search implementation"""
         if not self.rust_available:
             raise RuntimeError("Rust bindings not available")
-        
+
         return whitemagic_rs.Search(db_path)
-    
+
     def get_vector_search(self):
         """Get Rust vector search implementation"""
         if not self.rust_available:
             raise RuntimeError("Rust bindings not available")
-        
+
         return whitemagic_rs.VectorSearch()
-    
+
     def get_graph_walker(self):
         """Get Rust graph walker implementation"""
         if not self.rust_available:
             raise RuntimeError("Rust bindings not available")
-        
+
         return whitemagic_rs.GraphWalker()
-    
+
     def get_reasoning_engine(self, threshold: float = 0.7):
         """Get Rust reasoning engine implementation"""
         if not self.rust_available:
             raise RuntimeError("Rust bindings not available")
-        
+
         return whitemagic_rs.ReasoningEngine(threshold)
-    
+
     def get_memory_consolidation(self, threshold: float = 0.7):
         """Get Rust memory consolidation implementation"""
         if not self.rust_available:
             raise RuntimeError("Rust bindings not available")
-        
+
         return whitemagic_rs.MemoryConsolidation(threshold)
 
 # Global bridge instance

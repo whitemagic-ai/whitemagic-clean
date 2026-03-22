@@ -47,31 +47,31 @@ impl SqliteBackendV2 {{
     fn new(db_path: String, pool_size: Option<usize>) -> PyResult<Self> {{
         let size = pool_size.unwrap_or(4);
         let mut pool = Vec::with_capacity(size);
-        
+
         for _ in 0..size {{
             let conn = Connection::open(&db_path)
                 .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
                     format!("Failed to open database: {{}}", e)
                 ))?;
-            
+
             conn.execute("PRAGMA journal_mode=WAL", [])
                 .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
                     format!("Failed to set WAL mode: {{}}", e)
                 ))?;
-            
+
             pool.push(conn);
         }}
-        
+
         Ok(Self {{
             db_path,
             pool: Arc::new(Mutex::new(pool)),
         }})
     }}
-    
+
     fn execute(&self, query: String) -> PyResult<usize> {{
         let pool = self.pool.lock().unwrap();
         let conn = &pool[0];
-        
+
         conn.execute(&query, [])
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
                 format!("Query failed: {{}}", e)
@@ -116,23 +116,23 @@ impl UnifiedMemory {{
             }})),
         }}
     }}
-    
+
     fn store(&mut self, key: String, value: String) -> PyResult<()> {{
         let mut memories = self.memories.write().unwrap();
         let mut stats = self.stats.write().unwrap();
-        
+
         stats.total_size += value.len();
         memories.insert(key, value);
         stats.total_memories = memories.len();
-        
+
         Ok(())
     }}
-    
+
     fn retrieve(&self, key: String) -> PyResult<Option<String>> {{
         let memories = self.memories.read().unwrap();
         Ok(memories.get(&key).cloned())
     }}
-    
+
     fn get_stats(&self) -> PyResult<MemoryStats> {{
         let stats = self.stats.read().unwrap();
         Ok(stats.clone())
@@ -175,17 +175,17 @@ const std = @import("std");
 
 pub const {base_name.title().replace('_', '')} = struct {{
     allocator: std.mem.Allocator,
-    
+
     pub fn init(allocator: std.mem.Allocator) !{base_name.title().replace('_', '')} {{
         return {base_name.title().replace('_', '')}{{
             .allocator = allocator,
         }};
     }}
-    
+
     pub fn deinit(self: *{base_name.title().replace('_', '')}) void {{
         _ = self;
     }}
-    
+
     // TODO: Implement hot path operations with SIMD
 }};
 

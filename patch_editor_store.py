@@ -22,7 +22,7 @@ if "saveFile: (path: string) => Promise<void>;" not in content:
     const state = useEditorStore.getState();
     const file = state.openFiles.find((f) => f.path === path);
     if (!file || !file.dirty) return;
-    
+
     try {
       if (window.__TAURI_INTERNALS__) {
         // Need to add this endpoint to Rust

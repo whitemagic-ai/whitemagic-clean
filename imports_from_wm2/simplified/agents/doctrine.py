@@ -19,7 +19,7 @@ from wm2.core.serializable import Serializable
 class SimplifiedDoctrine(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of doctrine.
-    
+
     Strategy: Convert to rule engine with configs
     """
 

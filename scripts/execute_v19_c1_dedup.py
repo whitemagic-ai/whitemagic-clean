@@ -23,9 +23,9 @@ def execute_v19_dedup(dry_run=True):
     print("\n🔍 Phase 1: Exact Duplicates by Content Hash")
     cursor.execute("""
         SELECT content_hash, COUNT(*) as cnt, GROUP_CONCAT(id) as ids
-        FROM memories 
+        FROM memories
         WHERE memory_type != 'quarantined' AND content_hash IS NOT NULL
-        GROUP BY content_hash 
+        GROUP BY content_hash
         HAVING cnt > 1
     """)
 
@@ -36,12 +36,12 @@ def execute_v19_dedup(dry_run=True):
     print("\n🔍 Phase 2: Near Duplicates by Title Match")
     cursor.execute("""
         SELECT title, COUNT(*) as cnt, GROUP_CONCAT(id) as ids
-        FROM memories 
-        WHERE memory_type != 'quarantined' 
+        FROM memories
+        WHERE memory_type != 'quarantined'
           AND title NOT LIKE 'Untitled%'
           AND title NOT LIKE 'Session%'
           AND title != ''
-        GROUP BY title 
+        GROUP BY title
         HAVING cnt > 1
     """)
 
@@ -66,7 +66,7 @@ def execute_v19_dedup(dry_run=True):
         # Keep the one with highest importance/access count
         placeholders = ','.join('?' * len(ids))
         cursor.execute(f"""
-            SELECT id FROM memories 
+            SELECT id FROM memories
             WHERE id IN ({placeholders})
             ORDER BY importance DESC, access_count DESC, created_at DESC
         """, ids)
@@ -79,8 +79,8 @@ def execute_v19_dedup(dry_run=True):
 
         for arch_id in to_archive:
             cursor.execute("""
-                UPDATE memories 
-                SET memory_type = 'quarantined', 
+                UPDATE memories
+                SET memory_type = 'quarantined',
                     title = '[DEDUP] ' || title
                 WHERE id = ?
             """, (arch_id,))

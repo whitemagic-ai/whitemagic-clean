@@ -24,7 +24,7 @@ from wm2.core.serializable import Serializable
 class AsyncSubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified async subsystem for WM2.
-    
+
     Provides:
     - Async task management
     - Concurrent execution

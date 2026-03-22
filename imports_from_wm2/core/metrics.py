@@ -16,7 +16,7 @@ from typing import Any
 class MetricCollector:
     """
     Unified metric collection mixin with decorator support.
-    
+
     Automatically tracks:
     - Method call counts
     - Execution times
@@ -98,7 +98,7 @@ class MetricCollector:
 def tracked(func: Callable) -> Callable:
     """
     Decorator to automatically track method metrics.
-    
+
     Usage:
         @tracked
         def my_method(self):
@@ -129,7 +129,7 @@ def tracked(func: Callable) -> Callable:
 class PerformanceMonitor(MetricCollector):
     """
     Extended metric collector with performance thresholds.
-    
+
     Automatically warns when methods exceed time thresholds.
     """
 

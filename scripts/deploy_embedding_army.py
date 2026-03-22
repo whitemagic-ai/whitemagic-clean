@@ -40,7 +40,7 @@ def embed_batch(batch_id, memory_ids, start_idx):
         # Get batch of memories
         placeholders = ','.join('?' * len(memory_ids))
         cursor.execute(f"""
-            SELECT id, content FROM memories 
+            SELECT id, content FROM memories
             WHERE id IN ({placeholders})
             AND content IS NOT NULL
         """, memory_ids)
@@ -89,9 +89,9 @@ def main():
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT id FROM memories 
-        WHERE embedding IS NULL 
-        AND content IS NOT NULL 
+        SELECT id FROM memories
+        WHERE embedding IS NULL
+        AND content IS NOT NULL
         AND length(content) > 10
         ORDER BY created_at DESC
     """)

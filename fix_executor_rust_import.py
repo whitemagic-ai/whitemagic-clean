@@ -10,7 +10,7 @@ content = content.replace(
     """    def has_objectives(self) -> bool:
         \"\"\"Check if there are pending objectives.\"\"\"
         return len(self.objectives) > 0
-        
+
     def get_rust_stats(self) -> dict:
         \"\"\"Get runtime stats from the Rust background daemon.\"\"\"
         if self._rust_daemon and self._rust_daemon.is_running():

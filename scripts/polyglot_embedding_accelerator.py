@@ -60,7 +60,7 @@ def get_stats():
 
 def polyglot_worker(args: tuple[list[str], int, int, bool]) -> dict:
     """Worker with polyglot optimizations.
-    
+
     Uses Rust functions for:
     - Batch operations
     - Vector encoding
@@ -256,7 +256,7 @@ def polyglot_accelerate(max_minutes: int = 5, num_workers: int = None, batch_siz
     conn = sqlite3.connect(DB_PATH)
     memory_ids = [
         row[0] for row in conn.execute(
-            """SELECT id FROM memories 
+            """SELECT id FROM memories
                WHERE memory_type != 'quarantined'
                AND id NOT IN (SELECT memory_id FROM memory_embeddings)
                LIMIT ?""",

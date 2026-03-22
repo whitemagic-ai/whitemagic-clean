@@ -64,7 +64,7 @@ def main():
 
     # Count total memories
     cursor = conn.execute("""
-        SELECT COUNT(*) FROM memories 
+        SELECT COUNT(*) FROM memories
         WHERE memory_type != 'quarantined'
     """)
     total_memories = cursor.fetchone()[0]

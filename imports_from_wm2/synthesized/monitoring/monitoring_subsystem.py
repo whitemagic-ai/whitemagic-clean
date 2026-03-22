@@ -16,7 +16,7 @@ from wm2.core.serializable import Serializable
 class MonitoringSubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified monitoring subsystem synthesized from WM1.
-    
+
     Integrates 11 missing classes:
         - HealthMetric
     - GreenSnapshot
@@ -29,7 +29,7 @@ class MonitoringSubsystem(BaseEngine, Serializable, MetricCollector):
     - GreenScore
     - GardenHealth
     - AnomalyDetector
-    
+
     """
 
     def __init__(self, name: str = "monitoring_subsystem"):

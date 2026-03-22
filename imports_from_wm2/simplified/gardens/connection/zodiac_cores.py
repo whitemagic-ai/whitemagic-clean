@@ -19,7 +19,7 @@ from wm2.core.serializable import Serializable
 class SimplifiedZodiacCores(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of zodiac_cores.
-    
+
     Strategy: Merge with main zodiac_cores (duplicate)
     """
 

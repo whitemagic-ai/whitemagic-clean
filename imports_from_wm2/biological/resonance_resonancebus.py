@@ -17,7 +17,7 @@ from wm2.core.serializable import Serializable
 class ResonanceBus(BaseEngine, Serializable, MetricCollector):
     """
     Enable cross-system harmony communication
-    
+
     Integrates 200 files from the resonance subsystem.
     """
 

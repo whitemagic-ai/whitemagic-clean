@@ -7,19 +7,19 @@ Automatically selects the best army type(s) for each objective.
 Usage:
     # Deploy all armies on all objectives
     python3 scripts/deploy_unified_army.py --all
-    
+
     # Deploy specific army type
     python3 scripts/deploy_unified_army.py --army immortal
     python3 scripts/deploy_unified_army.py --army tokio
     python3 scripts/deploy_unified_army.py --army shadow
-    
+
     # Deploy specific lieutenant
     python3 scripts/deploy_unified_army.py --lieutenant security
     python3 scripts/deploy_unified_army.py --lieutenant performance
-    
+
     # Deploy on specific campaign
     python3 scripts/deploy_unified_army.py --campaign H001
-    
+
     # Auto-select best army for objective
     python3 scripts/deploy_unified_army.py --objective "optimize embeddings hot path"
 """
@@ -178,11 +178,11 @@ class UnifiedArmyCommander:
 
     def select_best_army(self, objective: str, requirements: dict[str, Any] | None = None) -> list[ArmyType]:
         """Auto-select best army type(s) for an objective.
-        
+
         Args:
             objective: The objective description
             requirements: Optional requirements (throughput, concurrency, etc.)
-        
+
         Returns:
             List of recommended army types (can deploy multiple)
         """
@@ -357,13 +357,13 @@ class UnifiedArmyCommander:
         max_clones: int = 10,
     ) -> UnifiedDeployment:
         """Deploy unified army (multiple types in parallel).
-        
+
         Args:
             objective: The objective to achieve
             auto_select: Auto-select best armies
             armies: Specific armies to deploy (if not auto-selecting)
             max_clones: Max clones per army
-        
+
         Returns:
             UnifiedDeployment with results from all armies
         """

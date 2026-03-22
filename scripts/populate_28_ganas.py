@@ -138,7 +138,7 @@ def populate_ganas(dry_run: bool = False) -> dict:
         for tag in tags:
             # Get memories with this tag (excluding quarantined)
             cur.execute("""
-                SELECT DISTINCT t.memory_id 
+                SELECT DISTINCT t.memory_id
                 FROM tags t
                 JOIN memories m ON t.memory_id = m.id
                 WHERE t.tag = ? AND m.memory_type != 'quarantined'
@@ -149,7 +149,7 @@ def populate_ganas(dry_run: bool = False) -> dict:
                 if not dry_run:
                     for mid in memory_ids:
                         cur.execute("""
-                            INSERT OR IGNORE INTO constellation_membership 
+                            INSERT OR IGNORE INTO constellation_membership
                             (memory_id, constellation_name, membership_confidence, updated_at)
                             VALUES (?, ?, ?, ?)
                         """, (mid, const_name, 0.85, datetime.now().isoformat()))
@@ -176,7 +176,7 @@ def verify_28_ganas() -> dict:
     cur.execute("""
         SELECT constellation_name,
                COUNT(CASE WHEN memory_id NOT GLOB '__gana_placeholder__*' THEN 1 END) as members
-        FROM constellation_membership 
+        FROM constellation_membership
         WHERE constellation_name LIKE 'Gana_%'
         GROUP BY constellation_name
     """)

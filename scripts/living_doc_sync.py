@@ -14,7 +14,7 @@ from pathlib import Path
 
 def sync_system_map(root_dir: Path | None = None) -> dict:
     """Sync SYSTEM_MAP.md with current codebase statistics.
-    
+
     Returns dict with sync results.
     """
     root = root_dir or Path(__file__).resolve().parent.parent

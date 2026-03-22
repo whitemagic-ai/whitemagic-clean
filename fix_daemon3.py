@@ -15,7 +15,7 @@ content = content.replace(
                     // Pull memory tasks, maintain homeostasis
                     tokio::time::sleep(Duration::from_millis(1000)).await;
                     loops_clone.fetch_add(1, Ordering::SeqCst);
-                    
+
                     // Simple simulation of task execution
                     tasks_clone.fetch_add(1, Ordering::SeqCst);"""
 )

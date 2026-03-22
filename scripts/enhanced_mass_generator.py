@@ -380,7 +380,7 @@ impl Phylogenetics {
             generation_count: 0,
         }
     }
-    
+
     fn track_lineage(
         &mut self,
         code_id: String,
@@ -393,9 +393,9 @@ impl Phylogenetics {
         } else {
             0
         };
-        
+
         self.generation_count = self.generation_count.max(generation + 1);
-        
+
         let lineage = CodeLineage {
             id: code_id.clone(),
             parent_id,
@@ -403,33 +403,33 @@ impl Phylogenetics {
             fitness_score: fitness,
             mutations,
         };
-        
+
         self.lineages.insert(code_id, lineage);
-        
+
         Ok(())
     }
-    
+
     fn get_best_lineage(&self) -> PyResult<Option<String>> {
         let best = self.lineages
             .values()
             .max_by(|a, b| a.fitness_score.partial_cmp(&b.fitness_score).unwrap());
-        
+
         Ok(best.map(|l| l.id.clone()))
     }
-    
+
     fn get_generation_stats(&self, generation: usize) -> PyResult<(usize, f64)> {
         let gen_lineages: Vec<_> = self.lineages
             .values()
             .filter(|l| l.generation == generation)
             .collect();
-        
+
         let count = gen_lineages.len();
         let avg_fitness = if count > 0 {
             gen_lineages.iter().map(|l| l.fitness_score).sum::<f64>() / count as f64
         } else {
             0.0
         };
-        
+
         Ok((count, avg_fitness))
     }
 }
@@ -464,47 +464,47 @@ impl Kaizen {
             improvements: HashMap::new(),
         }
     }
-    
+
     fn analyze_code(&mut self, file_path: String, code: String) -> PyResult<Vec<String>> {
         let mut suggestions = Vec::new();
-        
+
         // Check for missing error handling
         if !code.contains("Result<") && !code.contains("PyResult") {
             suggestions.push("Add error handling with Result types".to_string());
             self.add_improvement(&file_path, "Add error handling", 0.8, 0.3);
         }
-        
+
         // Check for missing parallelization
         if code.contains("iter()") && !code.contains("par_iter()") {
             suggestions.push("Consider parallel processing with Rayon".to_string());
             self.add_improvement(&file_path, "Add parallelization", 0.9, 0.4);
         }
-        
+
         // Check for missing documentation
         if !code.contains("///") && !code.contains("//!") {
             suggestions.push("Add documentation comments".to_string());
             self.add_improvement(&file_path, "Add documentation", 0.6, 0.2);
         }
-        
+
         Ok(suggestions)
     }
-    
+
     fn add_improvement(&mut self, file_path: &str, description: &str, impact: f64, effort: f64) {
         let priority = impact / effort;
-        
+
         let improvement = Improvement {
             description: description.to_string(),
             impact,
             effort,
             priority,
         };
-        
+
         self.improvements
             .entry(file_path.to_string())
             .or_insert_with(Vec::new)
             .push(improvement);
     }
-    
+
     fn get_top_improvements(&self, limit: usize) -> PyResult<Vec<(String, String, f64)>> {
         let mut all_improvements: Vec<_> = self.improvements
             .iter()
@@ -512,10 +512,10 @@ impl Kaizen {
                 imps.iter().map(move |imp| (file.clone(), imp.description.clone(), imp.priority))
             })
             .collect();
-        
+
         all_improvements.sort_by(|a, b| b.2.partial_cmp(&a.2).unwrap());
         all_improvements.truncate(limit);
-        
+
         Ok(all_improvements)
     }
 }
@@ -547,7 +547,7 @@ impl EvolutionEngine {
             generation: 0,
         }
     }
-    
+
     fn evolve_population(
         &mut self,
         population: Vec<String>,
@@ -556,53 +556,53 @@ impl EvolutionEngine {
         // Selection - keep top 50%
         let mut scored: Vec<_> = population.into_iter().zip(fitness_scores.iter()).collect();
         scored.sort_by(|a, b| b.1.partial_cmp(a.1).unwrap());
-        
+
         let survivors: Vec<String> = scored
             .into_iter()
             .take(self.population_size / 2)
             .map(|(code, _)| code)
             .collect();
-        
+
         // Crossover and mutation
         let mut new_population = survivors.clone();
         let mut rng = rand::thread_rng();
-        
+
         while new_population.len() < self.population_size {
             let parent1 = &survivors[rng.gen_range(0..survivors.len())];
             let parent2 = &survivors[rng.gen_range(0..survivors.len())];
-            
+
             let child = self.crossover(parent1, parent2);
             let mutated = if rng.gen::<f64>() < self.mutation_rate {
                 self.mutate(&child)
             } else {
                 child
             };
-            
+
             new_population.push(mutated);
         }
-        
+
         self.generation += 1;
-        
+
         Ok(new_population)
     }
-    
+
     fn crossover(&self, parent1: &str, parent2: &str) -> String {
         let lines1: Vec<&str> = parent1.lines().collect();
         let lines2: Vec<&str> = parent2.lines().collect();
-        
+
         let split = lines1.len() / 2;
-        
+
         let mut child_lines = lines1[..split].to_vec();
         child_lines.extend_from_slice(&lines2[split..]);
-        
+
         child_lines.join("\n")
     }
-    
+
     fn mutate(&self, code: &str) -> String {
         // Simple mutation: add optimization comment
         format!("// Evolved generation {}\n{}", self.generation, code)
     }
-    
+
     fn get_generation(&self) -> PyResult<usize> {
         Ok(self.generation)
     }
@@ -630,7 +630,7 @@ impl GanaWinnowingBasket {
             search_cache: HashMap::new(),
         }
     }
-    
+
     fn search_memories(
         &mut self,
         query: String,
@@ -640,24 +640,24 @@ impl GanaWinnowingBasket {
         if let Some(cached) = self.search_cache.get(&query) {
             return Ok(cached.clone());
         }
-        
+
         // Perform search (placeholder - would call actual search)
         let results = vec![
             format!("result_1_for_{}", query),
             format!("result_2_for_{}", query),
         ];
-        
+
         let limited: Vec<String> = results
             .into_iter()
             .take(limit.unwrap_or(10))
             .collect();
-        
+
         // Cache results
         self.search_cache.insert(query, limited.clone());
-        
+
         Ok(limited)
     }
-    
+
     fn hybrid_recall(
         &self,
         query: String,
@@ -666,19 +666,19 @@ impl GanaWinnowingBasket {
         use_graph: bool
     ) -> PyResult<Vec<String>> {
         let mut results = Vec::new();
-        
+
         if use_fts {
             results.push(format!("fts_result_for_{}", query));
         }
-        
+
         if use_vector {
             results.push(format!("vector_result_for_{}", query));
         }
-        
+
         if use_graph {
             results.push(format!("graph_result_for_{}", query));
         }
-        
+
         Ok(results)
     }
 }
@@ -704,7 +704,7 @@ impl GanaNeck {
             created_count: 0,
         }
     }
-    
+
     fn create_memory(
         &mut self,
         content: String,
@@ -712,12 +712,12 @@ impl GanaNeck {
         tags: Vec<String>
     ) -> PyResult<String> {
         self.created_count += 1;
-        
+
         let memory_id = format!("mem_{}_{}", self.created_count, title.replace(" ", "_"));
-        
+
         Ok(memory_id)
     }
-    
+
     fn batch_create(
         &mut self,
         memories: Vec<(String, String, Vec<String>)>
@@ -727,7 +727,7 @@ impl GanaNeck {
             .map(|(content, title, tags)| self.create_memory(content, title, tags))
             .collect()
     }
-    
+
     fn get_stats(&self) -> PyResult<usize> {
         Ok(self.created_count)
     }
@@ -757,20 +757,20 @@ impl GanaHeart {
             max_context_size: max_size.unwrap_or(100),
         }
     }
-    
+
     fn add_to_context(&mut self, item: String) -> PyResult<()> {
         if self.context.len() >= self.max_context_size {
             self.context.pop_front();
         }
-        
+
         self.context.push_back(item);
-        
+
         Ok(())
     }
-    
+
     fn get_context(&self, limit: Option<usize>) -> PyResult<Vec<String>> {
         let lim = limit.unwrap_or(10);
-        
+
         Ok(self.context
             .iter()
             .rev()
@@ -778,7 +778,7 @@ impl GanaHeart {
             .cloned()
             .collect())
     }
-    
+
     fn clear_context(&mut self) -> PyResult<()> {
         self.context.clear();
         Ok(())
@@ -807,36 +807,36 @@ impl MetricsCollector {
             metrics: HashMap::new(),
         }
     }
-    
+
     fn record_metric(&mut self, name: String, value: f64) -> PyResult<()> {
         let timestamp = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_secs();
-        
+
         self.metrics
             .entry(name)
             .or_insert_with(Vec::new)
             .push((timestamp, value));
-        
+
         Ok(())
     }
-    
+
     fn get_metric_stats(&self, name: String) -> PyResult<(f64, f64, f64)> {
         let values: Vec<f64> = self.metrics
             .get(&name)
             .map(|v| v.iter().map(|(_, val)| *val).collect())
             .unwrap_or_default();
-        
+
         if values.is_empty() {
             return Ok((0.0, 0.0, 0.0));
         }
-        
+
         let sum: f64 = values.iter().sum();
         let mean = sum / values.len() as f64;
         let min = values.iter().cloned().fold(f64::INFINITY, f64::min);
         let max = values.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
-        
+
         Ok((mean, min, max))
     }
 }
@@ -861,14 +861,14 @@ impl Telemetry {
             enabled: true,
         }
     }
-    
+
     fn emit_event(&self, event_type: String, data: String) -> PyResult<()> {
         if self.enabled {
             println!("[TELEMETRY] {}: {}", event_type, data);
         }
         Ok(())
     }
-    
+
     fn toggle(&mut self) -> PyResult<bool> {
         self.enabled = !self.enabled;
         Ok(self.enabled)
@@ -896,7 +896,7 @@ impl HermitCrab {
             access_rules: HashMap::new(),
         }
     }
-    
+
     fn check_access(&self, resource: String, requester: String) -> PyResult<bool> {
         if let Some(allowed) = self.access_rules.get(&resource) {
             Ok(allowed.contains(&requester))
@@ -904,13 +904,13 @@ impl HermitCrab {
             Ok(true)  // Default allow
         }
     }
-    
+
     fn grant_access(&mut self, resource: String, requester: String) -> PyResult<()> {
         self.access_rules
             .entry(resource)
             .or_insert_with(Vec::new)
             .push(requester);
-        
+
         Ok(())
     }
 }
@@ -935,17 +935,17 @@ impl SecurityMonitor {
             alert_count: 0,
         }
     }
-    
+
     fn check_threat(&mut self, action: String) -> PyResult<bool> {
         let is_threat = action.contains("delete") || action.contains("drop");
-        
+
         if is_threat {
             self.alert_count += 1;
         }
-        
+
         Ok(is_threat)
     }
-    
+
     fn get_alert_count(&self) -> PyResult<usize> {
         Ok(self.alert_count)
     }
@@ -967,24 +967,24 @@ impl SimdOps {
     fn new() -> Self {
         Self
     }
-    
+
     fn dot_product(&self, a: Vec<f64>, b: Vec<f64>) -> PyResult<f64> {
         if a.len() != b.len() {
             return Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(
                 "Vectors must have same length"
             ));
         }
-        
+
         let result: f64 = a.iter().zip(b.iter()).map(|(x, y)| x * y).sum();
-        
+
         Ok(result)
     }
-    
+
     fn cosine_similarity(&self, a: Vec<f64>, b: Vec<f64>) -> PyResult<f64> {
         let dot = self.dot_product(a.clone(), b.clone())?;
         let norm_a: f64 = a.iter().map(|x| x * x).sum::<f64>().sqrt();
         let norm_b: f64 = b.iter().map(|x| x * x).sum::<f64>().sqrt();
-        
+
         if norm_a == 0.0 || norm_b == 0.0 {
             Ok(0.0)
         } else {
@@ -1016,11 +1016,11 @@ impl CacheManager {
             max_size: max_size.unwrap_or(1000),
         }
     }
-    
+
     fn get(&self, key: String) -> PyResult<Option<String>> {
         Ok(self.cache.get(&key).cloned())
     }
-    
+
     fn set(&mut self, key: String, value: String) -> PyResult<()> {
         if self.cache.len() >= self.max_size {
             // Simple eviction: remove first key
@@ -1028,12 +1028,12 @@ impl CacheManager {
                 self.cache.remove(&first_key);
             }
         }
-        
+
         self.cache.insert(key, value);
-        
+
         Ok(())
     }
-    
+
     fn clear(&mut self) -> PyResult<()> {
         self.cache.clear();
         Ok(())
@@ -1060,12 +1060,12 @@ impl IntegrationLayer {
             initialized: false,
         }
     }
-    
+
     fn initialize(&mut self) -> PyResult<()> {
         self.initialized = true;
         Ok(())
     }
-    
+
     fn is_ready(&self) -> PyResult<bool> {
         Ok(self.initialized)
     }
@@ -1092,12 +1092,12 @@ impl PerformanceMonitor {
             start_time: None,
         }
     }
-    
+
     fn start_timer(&mut self) -> PyResult<()> {
         self.start_time = Some(Instant::now());
         Ok(())
     }
-    
+
     fn stop_timer(&mut self) -> PyResult<f64> {
         if let Some(start) = self.start_time {
             let duration = start.elapsed();
@@ -1131,27 +1131,27 @@ impl TestSuite {
             tests_passed: 0,
         }
     }
-    
+
     fn run_test(&mut self, test_name: String, result: bool) -> PyResult<()> {
         self.tests_run += 1;
-        
+
         if result {
             self.tests_passed += 1;
             println!("✅ {}", test_name);
         } else {
             println!("❌ {}", test_name);
         }
-        
+
         Ok(())
     }
-    
+
     fn get_results(&self) -> PyResult<(usize, usize, f64)> {
         let pass_rate = if self.tests_run > 0 {
             (self.tests_passed as f64 / self.tests_run as f64) * 100.0
         } else {
             0.0
         };
-        
+
         Ok((self.tests_run, self.tests_passed, pass_rate))
     }
 }

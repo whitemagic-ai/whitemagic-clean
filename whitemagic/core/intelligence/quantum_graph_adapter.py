@@ -44,7 +44,7 @@ class QuantumGraphAdapter:
         get_neighbors_func: Callable[[str], list[dict]] | None = None,
     ) -> WalkResult:
         """Perform a quantum-enhanced graph walk.
-        
+
         Strategy:
         1. Start with classical walk for initial seed expansion
         2. Apply Grover amplification if oracle provided

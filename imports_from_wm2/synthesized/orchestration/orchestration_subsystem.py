@@ -16,7 +16,7 @@ from wm2.core.serializable import Serializable
 class OrchestrationSubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified orchestration subsystem synthesized from WM1.
-    
+
     Integrates 19 missing classes:
         - ZodiacCouncil
     - ZodiacElement
@@ -37,7 +37,7 @@ class OrchestrationSubsystem(BaseEngine, Serializable, MetricCollector):
     - ZodiacSign
     - UnifiedCouncil
     - ZodiacalProcession
-    
+
     """
 
     def __init__(self, name: str = "orchestration_subsystem"):

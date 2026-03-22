@@ -11,7 +11,7 @@ replacement = """        start_time = datetime.now()
 
         # 1. Gather context
         context = self.synthesizer.gather()
-        
+
         # 1.5 Inject Holographic Context
         try:
             injector = get_holographic_injector()

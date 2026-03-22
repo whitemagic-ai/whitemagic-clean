@@ -19,7 +19,7 @@ from wm2.core.serializable import Serializable
 class SimplifiedExceptions(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of exceptions.
-    
+
     Strategy: Consolidate exception hierarchy
     """
 

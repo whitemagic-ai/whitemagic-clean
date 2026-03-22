@@ -619,8 +619,8 @@ class ComprehensiveAnalyzer:
         elapsed = time.time() - self.start_time
 
         report = f"""# Comprehensive System Analysis - Strategic Report
-**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
-**Analysis Duration**: {elapsed:.1f} seconds  
+**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+**Analysis Duration**: {elapsed:.1f} seconds
 **Scope**: Complete system analysis - implications, campaigns, codebase, insights, evolution
 
 ## Executive Summary
@@ -689,9 +689,9 @@ The biological integration approach has implications across multiple fields simu
         report += f"""
 ### Overall Status
 
-**Total Campaigns**: {audit.get('total_campaigns', 0)}  
-**Total Victory Conditions**: {audit.get('total_vcs', 0)}  
-**Completed VCs**: {audit.get('completed_vcs', 0)}  
+**Total Campaigns**: {audit.get('total_campaigns', 0)}
+**Total Victory Conditions**: {audit.get('total_vcs', 0)}
+**Completed VCs**: {audit.get('completed_vcs', 0)}
 **Completion Rate**: {audit.get('completion_rate', 0)*100:.1f}%
 
 ### By Status
@@ -722,8 +722,8 @@ The biological integration approach has implications across multiple fields simu
         report += f"""
 ### Overall Statistics
 
-**Total Files**: {codebase.get('total_files', 0):,}  
-**Total Lines**: {codebase.get('total_lines', 0):,}  
+**Total Files**: {codebase.get('total_files', 0):,}
+**Total Lines**: {codebase.get('total_lines', 0):,}
 **Total Characters**: {codebase.get('total_chars', 0):,}
 
 ### By Language
@@ -755,9 +755,9 @@ The biological integration approach has implications across multiple fields simu
         report += f"""
 ### Overall Statistics
 
-**Total Documents**: {docs.get('total_docs', 0)}  
-**Reports**: {len(docs.get('reports', []))}  
-**Markdown Docs**: {len(docs.get('markdown_docs', []))}  
+**Total Documents**: {docs.get('total_docs', 0)}
+**Reports**: {len(docs.get('reports', []))}
+**Markdown Docs**: {len(docs.get('markdown_docs', []))}
 **Total Characters**: {docs.get('total_chars', 0):,}
 
 ### Recent Activity (Last 24 Hours)
@@ -790,7 +790,7 @@ The system is rapidly evolving with significant documentation activity in the la
             report += f"""
 ### Insight {i}: {insight['insight']}
 
-**Category**: {insight['category'].title()}  
+**Category**: {insight['category'].title()}
 **Priority**: {insight['priority'].upper()}
 
 **Action**: {insight['action']}
@@ -824,8 +824,8 @@ The system is rapidly evolving with significant documentation activity in the la
                 report += f"""
 #### {obj['objective']}
 
-**Method**: {obj['method']}  
-**Timeline**: {obj['timeline']}  
+**Method**: {obj['method']}
+**Timeline**: {obj['timeline']}
 **Impact**: {obj['impact']}
 
 """
@@ -882,8 +882,8 @@ WhiteMagic is at an inflection point. The biological integration has proven succ
 
 ---
 
-**Analysis Complete**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
-**Duration**: {elapsed:.1f} seconds  
+**Analysis Complete**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+**Duration**: {elapsed:.1f} seconds
 **Status**: ✅ COMPREHENSIVE ANALYSIS COMPLETE
 """
 

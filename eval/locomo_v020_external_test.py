@@ -6,7 +6,7 @@ Implements: semantic scoring, adversarial questions, calibration assessment
 LOCOMO_V020_PROMPT = """
 # LoCoMo V020 Memory Retrieval Benchmark
 
-You are participating in an external validation of a memory retrieval system. 
+You are participating in an external validation of a memory retrieval system.
 Your task is to answer questions based ONLY on the provided memory corpus.
 
 ## CRITICAL RULES
@@ -58,7 +58,7 @@ Some questions contain **false premises** (wrong dates, incorrect facts). Exampl
 - "What happened on January 12, 2026?" when memory is from January 9
 - "Memory X says Y" when it actually says Z
 
-**Correct behavior**: 
+**Correct behavior**:
 - Do NOT hallucinate an answer to fit the false premise
 - Do NOT ignore the error and answer as if premise were true
 - DO flag the discrepancy: "Memory is dated January 9, not January 12"

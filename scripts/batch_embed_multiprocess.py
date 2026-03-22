@@ -64,7 +64,7 @@ def worker_embed_batch(worker_id: int, batch_ids: list, batch_texts: list, resul
 def batch_embed_multiprocess(num_workers: int = 4, batch_size: int = 256, limit: int | None = None):
     """
     Embed all active memories using multiple worker processes
-    
+
     Args:
         num_workers: Number of parallel workers (default: 4 for 4 physical cores)
         batch_size: Batch size per worker (default: 256)
@@ -77,7 +77,7 @@ def batch_embed_multiprocess(num_workers: int = 4, batch_size: int = 256, limit:
     # Get status
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.execute("""
-        SELECT COUNT(*) FROM memories 
+        SELECT COUNT(*) FROM memories
         WHERE memory_type != 'quarantined'
     """)
     total_memories = cursor.fetchone()[0]

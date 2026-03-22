@@ -57,27 +57,27 @@ impl MemoryCompression {
             compressed_count: 0,
         }
     }
-    
+
     fn compress(&mut self, content: String) -> PyResult<Vec<u8>> {
         // Simple compression simulation
         let bytes = content.as_bytes();
         let original_size = bytes.len();
-        
+
         // Simulate compression (in real implementation, use actual compression)
         let compressed = bytes.to_vec();
         let compressed_size = compressed.len();
-        
+
         self.compression_ratio = if original_size > 0 {
             compressed_size as f64 / original_size as f64
         } else {
             1.0
         };
-        
+
         self.compressed_count += 1;
-        
+
         Ok(compressed)
     }
-    
+
     fn decompress(&self, compressed: Vec<u8>) -> PyResult<String> {
         // Simulate decompression
         String::from_utf8(compressed)
@@ -85,14 +85,14 @@ impl MemoryCompression {
                 format!("Decompression failed: {}", e)
             ))
     }
-    
+
     fn batch_compress(&mut self, contents: Vec<String>) -> PyResult<Vec<Vec<u8>>> {
         contents
             .into_iter()
             .map(|content| self.compress(content))
             .collect()
     }
-    
+
     fn get_stats(&self) -> PyResult<(usize, f64)> {
         Ok((self.compressed_count, self.compression_ratio))
     }
@@ -123,16 +123,16 @@ impl MemoryDeduplication {
             duplicates_found: 0,
         }
     }
-    
+
     fn calculate_hash(&self, content: &str) -> u64 {
         let mut hasher = DefaultHasher::new();
         content.hash(&mut hasher);
         hasher.finish()
     }
-    
+
     fn check_duplicate(&mut self, memory_id: String, content: String) -> PyResult<bool> {
         let hash = self.calculate_hash(&content);
-        
+
         if self.content_hashes.contains_key(&hash) {
             self.duplicates_found += 1;
             Ok(true)
@@ -141,26 +141,26 @@ impl MemoryDeduplication {
             Ok(false)
         }
     }
-    
+
     fn batch_deduplicate(
         &mut self,
         memories: Vec<(String, String)> // (id, content)
     ) -> PyResult<Vec<String>> {
         let mut unique_ids = Vec::new();
-        
+
         for (id, content) in memories {
             if !self.check_duplicate(id.clone(), content)? {
                 unique_ids.push(id);
             }
         }
-        
+
         Ok(unique_ids)
     }
-    
+
     fn find_similar(&self, content: String, threshold: f64) -> PyResult<Vec<String>> {
         // Simple similarity check based on length
         let target_len = content.len() as f64;
-        
+
         let similar: Vec<String> = self.content_hashes
             .values()
             .filter(|id| {
@@ -170,14 +170,14 @@ impl MemoryDeduplication {
             })
             .cloned()
             .collect();
-        
+
         Ok(similar)
     }
-    
+
     fn get_stats(&self) -> PyResult<(usize, usize)> {
         Ok((self.content_hashes.len(), self.duplicates_found))
     }
-    
+
     fn clear(&mut self) -> PyResult<()> {
         self.content_hashes.clear();
         self.duplicates_found = 0;

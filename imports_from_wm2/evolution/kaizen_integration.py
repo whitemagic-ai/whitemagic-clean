@@ -41,7 +41,7 @@ class EvolutionImprovementProposal:
 class EvolutionKaizenAnalyzer:
     """
     Analyzes evolution results to extract improvement proposals.
-    
+
     This creates actionable insights from evolutionary simulation that can
     be applied to improve future runs or the underlying codebase.
     """
@@ -57,7 +57,7 @@ class EvolutionKaizenAnalyzer:
     ) -> list[EvolutionImprovementProposal]:
         """
         Comprehensive analysis of an evolution run.
-        
+
         Returns actionable improvement proposals.
         """
         self.proposals = []
@@ -381,7 +381,7 @@ def extract_improvement_proposals(
 ) -> list[EvolutionImprovementProposal]:
     """
     Extract actionable improvement proposals from evolution results.
-    
+
     This is the main entry point for kaizen integration.
     """
     analyzer = EvolutionKaizenAnalyzer()

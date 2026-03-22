@@ -28,7 +28,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -37,13 +37,13 @@ from whitemagic.utils.fast_json import dumps_str as _json_dumps
 logger = logging.getLogger(__name__)
 
 
-class ArmyTier(str, Enum):
+class ArmyTier(StrEnum):
     ALPHA = "alpha"    # 10K clones — consensus voting
     BETA = "beta"      # 70K clones — map-reduce
     GAMMA = "gamma"    # 240K+ clones — brute-force search
 
 
-class ObjectiveStatus(str, Enum):
+class ObjectiveStatus(StrEnum):
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -51,7 +51,7 @@ class ObjectiveStatus(str, Enum):
     SKIPPED = "skipped"
 
 
-class FindingSeverity(str, Enum):
+class FindingSeverity(StrEnum):
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"

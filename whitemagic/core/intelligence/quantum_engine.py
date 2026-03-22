@@ -1,7 +1,7 @@
 """
 Quantum-Inspired Engine - Grover's Amplification and Superposition Walks.
 =======================================================================
-Provides O(√N) search and parallel path exploration using complex amplitude 
+Provides O(√N) search and parallel path exploration using complex amplitude
 simulations. Part of v22 Intelligence Matrix.
 """
 
@@ -22,7 +22,7 @@ class QuantumEngine:
     def grover_search(self, items: list[Any], oracle: Callable[[Any], bool], iterations: int = None) -> list[Any]:
         """
         Grover's Amplification algorithm for O(√N) search.
-        
+
         Args:
             items: List of search candidates.
             oracle: Function returning True for the target item.
@@ -57,7 +57,7 @@ class QuantumEngine:
     def superposition_walk(self, graph: dict[str, list[str]], start_node: str, hops: int = 2) -> dict[str, float]:
         """
         Explores multiple graph paths simultaneously using amplitude distribution.
-        
+
         Args:
             graph: Adjacency list representation.
             start_node: Initial memory ID.

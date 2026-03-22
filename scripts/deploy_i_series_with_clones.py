@@ -64,7 +64,7 @@ def execute_i008_arrow_ipc():
     3. List required Python bindings
     4. Document zero-copy patterns
     5. Create implementation checklist
-    
+
     Vote on: What's the highest priority missing feature?
     Options: [ipc_writer, ipc_reader, python_bindings, zero_copy_validation]"""
 
@@ -82,7 +82,7 @@ def execute_i008_arrow_ipc():
     3. Create Python bindings via PyO3
     4. Add error handling
     5. Write comprehensive tests
-    
+
     Vote on: Best approach for Python bindings?
     Options: [direct_pyo3, arrow_pyarrow_interop, custom_buffer_protocol]"""
 
@@ -99,7 +99,7 @@ def execute_i008_arrow_ipc():
     3. Test with large datasets (>1GB)
     4. Measure memory usage
     5. Validate 10-100× speedup claim
-    
+
     Vote on: Most important validation metric?
     Options: [serialization_speed, memory_usage, zero_copy_proof, large_dataset_performance]"""
 
@@ -126,7 +126,7 @@ def execute_i007_tokio_async():
     2. Map sync → async conversion strategy
     3. Design async clone army scheduler
     4. Plan async MCP tool handlers
-    
+
     Vote on: Which operations should be async first?
     Options: [database_ops, file_io, http_requests, all_io_operations]"""
 
@@ -143,7 +143,7 @@ def execute_i007_tokio_async():
     3. Add async file I/O
     4. Implement async HTTP client
     5. Create async memory operations
-    
+
     Vote on: Best async pattern for database?
     Options: [tokio_postgres, async_sqlite, sqlx, custom_async_wrapper]"""
 
@@ -159,7 +159,7 @@ def execute_i007_tokio_async():
     2. Test async clone army throughput
     3. Validate 10× I/O speedup
     4. Compare CPU usage
-    
+
     Vote on: Most important async metric?
     Options: [concurrent_requests, io_latency, throughput, cpu_efficiency]"""
 
@@ -186,7 +186,7 @@ def execute_i005_iceoryx2():
     2. Review existing ipc_bridge.rs
     3. Design zero-copy architecture
     4. Document shared memory layout
-    
+
     Vote on: Best Iceoryx2 pattern for WhiteMagic?
     Options: [pub_sub, request_response, event_stream, hybrid]"""
 
@@ -203,7 +203,7 @@ def execute_i005_iceoryx2():
     3. Implement publisher/subscriber
     4. Add lock-free messaging
     5. Wire to Python
-    
+
     Vote on: Critical feature for MVP?
     Options: [zero_copy_proof, lock_free_messaging, python_bindings, multi_process_test]"""
 
@@ -219,7 +219,7 @@ def execute_i005_iceoryx2():
     2. Measure throughput (target: 1M+ msg/sec)
     3. Verify zero-copy
     4. Validate 1000× speedup
-    
+
     Vote on: Most impressive metric to showcase?
     Options: [sub_microsecond_latency, million_msg_per_sec, zero_copy_proof, 1000x_speedup]"""
 

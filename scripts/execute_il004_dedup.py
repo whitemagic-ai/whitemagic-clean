@@ -24,9 +24,9 @@ def execute_dedup():
     print("\n🔍 Phase 1: Finding exact duplicates by content hash...")
     cursor.execute("""
         SELECT content_hash, COUNT(*) as cnt, GROUP_CONCAT(id) as ids
-        FROM memories 
+        FROM memories
         WHERE memory_type != 'quarantined' AND content_hash IS NOT NULL
-        GROUP BY content_hash 
+        GROUP BY content_hash
         HAVING cnt > 1
     """)
 
@@ -47,7 +47,7 @@ def execute_dedup():
         placeholders = ','.join('?' * len(ids))
         cursor.execute(f"""
             SELECT id, title, content, importance, access_count, memory_type
-            FROM memories 
+            FROM memories
             WHERE id IN ({placeholders})
             ORDER BY importance DESC, access_count DESC
         """, ids)
@@ -70,7 +70,7 @@ def execute_dedup():
 
             # Archive loser (quarantine with duplicate_of reference)
             cursor.execute("""
-                UPDATE memories 
+                UPDATE memories
                 SET memory_type = 'quarantined',
                     content = '[ARCHIVED: duplicate_of ' || ? || ']'
                 WHERE id = ?
@@ -80,7 +80,7 @@ def execute_dedup():
 
         # Update winner with merged metadata
         cursor.execute("""
-            UPDATE memories 
+            UPDATE memories
             SET access_count = ?,
                 importance = MAX(COALESCE(importance, 0.5), 0.9)
             WHERE id = ?
@@ -94,8 +94,8 @@ def execute_dedup():
     print("\n✅ Phase 2: Verification...")
     cursor.execute("""
         SELECT COUNT(*) FROM (
-            SELECT content_hash, COUNT(*) as cnt 
-            FROM memories 
+            SELECT content_hash, COUNT(*) as cnt
+            FROM memories
             WHERE memory_type != 'quarantined' AND content_hash IS NOT NULL
             GROUP BY content_hash HAVING cnt > 1
         )

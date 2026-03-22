@@ -160,7 +160,7 @@ class LLMMetaBenchmark:
     def score_answer(self, answer: str, ground_truth: str, keywords: list[str]) -> float:
         """
         Score answer quality (0.0 to 1.0).
-        
+
         Simple heuristic:
         - 0.5 base if answer exists
         - +0.1 for each keyword found (up to 0.5)
@@ -210,10 +210,10 @@ class LLMMetaBenchmark:
     async def run_benchmark(self, modes: list[EnhancementMode] = None) -> dict[str, Any]:
         """
         Run full benchmark across all test cases and modes.
-        
+
         Args:
             modes: List of enhancement modes to test (default: all)
-            
+
         Returns:
             Comprehensive benchmark results
         """

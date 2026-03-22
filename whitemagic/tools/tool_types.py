@@ -5,11 +5,11 @@ domain definition files in registry_defs/.
 """
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class ToolCategory(str, Enum):
+class ToolCategory(StrEnum):
     MEMORY = "memory"
     SESSION = "session"
     GARDEN = "garden"
@@ -33,7 +33,7 @@ class ToolCategory(str, Enum):
     SECURITY = "security"
 
 
-class ToolSafety(str, Enum):
+class ToolSafety(StrEnum):
     READ = "read"
     WRITE = "write"
     DELETE = "delete"

@@ -17,7 +17,7 @@ from wm2.core.serializable import Serializable
 class EvolutionEngine(BaseEngine, Serializable, MetricCollector):
     """
     Unified genetic algorithm engine
-    
+
     Integrates 102 files from the evolution subsystem.
     """
 

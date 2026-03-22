@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 async def execute_i005_iceoryx2():
     """Execute I005: Iceoryx2 Zero-Copy IPC.
-    
+
     Target: 1000× IPC speedup
     Approach: Zero-copy shared memory, lock-free message passing
     """
@@ -109,7 +109,7 @@ async def execute_i005_iceoryx2():
 
 async def execute_i007_tokio_async():
     """Execute I007: Tokio Async Supremacy.
-    
+
     Target: 10× I/O speedup
     Approach: Full async/await architecture
     """
@@ -190,7 +190,7 @@ async def execute_i007_tokio_async():
 
 async def execute_i008_arrow_ipc():
     """Execute I008: Arrow IPC Complete.
-    
+
     Target: Zero-copy data transfer
     Approach: Complete arrow_bridge.rs implementation
     """

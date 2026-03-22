@@ -30,7 +30,7 @@ def extract_functions(file_path: Path):
 
 def generate_test_mutation(target_func: str):
     """
-    Since we don't have a reliable local LLM running (Ollama is down), 
+    Since we don't have a reliable local LLM running (Ollama is down),
     we will use AST synthesis to generate a basic structural test.
     In a real environment, this calls `whitemagic.inference.local_llm`.
     """

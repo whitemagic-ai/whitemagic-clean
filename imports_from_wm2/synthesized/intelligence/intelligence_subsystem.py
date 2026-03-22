@@ -16,14 +16,14 @@ from wm2.core.serializable import Serializable
 class IntelligenceSubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified intelligence subsystem synthesized from WM1.
-    
+
     Integrates 5 missing classes:
         - EmergenceScorer
     - EmergenceEngine
     - EmergenceCapture
     - KaizenReport
     - EmergenceInsight
-    
+
     """
 
     def __init__(self, name: str = "intelligence_subsystem"):

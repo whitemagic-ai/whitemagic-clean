@@ -18,7 +18,7 @@ injection = """
       const selection = editor.getSelection();
       const text = editor.getModel().getValueInRange(selection);
       const state = useEditorStore.getState();
-      
+
       const event = new CustomEvent('open-ai-chat-with-context', {
         detail: {
           file: state.activeFile,
@@ -30,7 +30,7 @@ injection = """
     };
 
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL, triggerAgent);
-    
+
     // Add right-click context menu action
     editor.addAction({
       id: 'aria-inline-agent',

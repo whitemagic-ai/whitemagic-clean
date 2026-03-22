@@ -9,7 +9,7 @@ replacement = """    def call_parallel():
         from whitemagic.tools.prat_router import route_prat_call
         def single_call(_i):
             return route_prat_call("gana_chariot", "archaeology", {"search_term": "rust"})
-        
+
         with ThreadPoolExecutor(max_workers=n) as ex:
             futs = [ex.submit(single_call, i) for i in range(n)]
             results = [f.result() for f in futs]

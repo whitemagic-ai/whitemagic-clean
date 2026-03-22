@@ -111,14 +111,14 @@ try:
     using JSON
     include("{Path(__file__).parent / 'julia_analysis/statistical_analysis.jl'}")
     using .EvolutionStatistics
-    
+
     data = JSON.parsefile("{data_file}")
     fitness = data["fitness_history"]
     diversity = data["diversity_history"]
-    
+
     analyzer = EvolutionAnalyzer(fitness, diversity, Matrix{{Float64}}[])
     results = analyze_run(analyzer)
-    
+
     println(JSON.json(results))
     """
 

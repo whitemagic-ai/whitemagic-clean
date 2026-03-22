@@ -17,7 +17,7 @@ from pathlib import Path
 
 def run_sync_cycle(root_dir: Path | None = None) -> dict:
     """Run full sync cycle: census → sync → drift check.
-    
+
     Returns dict with results.
     """
     root = root_dir or Path(__file__).resolve().parent.parent

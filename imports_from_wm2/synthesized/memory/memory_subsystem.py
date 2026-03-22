@@ -16,7 +16,7 @@ from wm2.core.serializable import Serializable
 class MemorySubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified memory subsystem synthesized from WM1.
-    
+
     Integrates 19 missing classes:
         - SessionBootstrap
     - ThoughtGalaxy
@@ -37,7 +37,7 @@ class MemorySubsystem(BaseEngine, Serializable, MetricCollector):
     - SessionHandoff
     - GalaxyMap
     - GalaxyExplorer
-    
+
     """
 
     def __init__(self, name: str = "memory_subsystem"):

@@ -16,7 +16,7 @@ T = TypeVar('T', bound='Serializable')
 class Serializable:
     """
     Unified serialization mixin with auto-introspection.
-    
+
     Automatically serializes all public attributes based on type hints.
     Handles common types: str, int, float, bool, dict, list, datetime, Path.
     """

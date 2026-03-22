@@ -19,7 +19,7 @@ from wm2.core.serializable import Serializable
 class SimplifiedMediaProcessor(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of media_processor.
-    
+
     Strategy: Extract format-specific processors
     """
 

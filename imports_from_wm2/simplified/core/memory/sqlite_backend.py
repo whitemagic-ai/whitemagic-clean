@@ -19,7 +19,7 @@ from wm2.core.serializable import Serializable
 class SimplifiedSqliteBackend(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of sqlite_backend.
-    
+
     Strategy: Extract query builders and connection pooling
     """
 

@@ -86,11 +86,11 @@ from typing import Dict, Any
         template += f'''
 class {cls['name']}({base_class}):
     """Migrated {cls['name']} using WM2 base class."""
-    
+
     def __init__(self, name: str = "{cls['name'].lower()}"):
         super().__init__(name=name)
         # TODO: Migrate initialization logic from WM1
-    
+
     def get_stats(self) -> Dict[str, Any]:
         """Get component statistics."""
         return {{

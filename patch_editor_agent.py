@@ -8,7 +8,7 @@ injection = """
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL, () => {
       const selection = editor.getSelection();
       const text = editor.getModel().getValueInRange(selection);
-      
+
       // Trigger the AI chat with the selected context
       const event = new CustomEvent('open-ai-chat-with-context', {
         detail: {

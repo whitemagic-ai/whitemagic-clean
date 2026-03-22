@@ -17,7 +17,7 @@ from wm2.core.serializable import Serializable
 class ImmuneCoordinator(BaseEngine, Serializable, MetricCollector):
     """
     Threat detection and antibody generation
-    
+
     Integrates 41 files from the immune subsystem.
     """
 

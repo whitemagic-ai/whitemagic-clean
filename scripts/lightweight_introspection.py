@@ -75,9 +75,9 @@ def analyze_active_database():
 
     # Memory types
     types = conn.execute("""
-        SELECT memory_type, COUNT(*) 
-        FROM memories 
-        GROUP BY memory_type 
+        SELECT memory_type, COUNT(*)
+        FROM memories
+        GROUP BY memory_type
         ORDER BY COUNT(*) DESC
     """).fetchall()
 
@@ -120,18 +120,18 @@ def session_summary():
    ✅ Phase 1: Foundation (17 min)
       - Completed 3 campaigns (V003, V002, V007)
       - Progress: 16/40 → 18/40 (45%)
-   
+
    ✅ Phase 2: Acceleration (96 sec)
       - Completed 22 campaigns
       - Progress: 18/40 → 40/40 (100%)
       - Peak: 407 campaigns/second
-   
+
    ✅ Phase 3: Transcendence (90 sec)
       - Generated 100 new campaigns (0.013 sec)
       - Completed 100 campaigns (0.030 sec)
       - Progress: 40 → 140 campaigns
       - Peak: 4,166 campaigns/second
-   
+
    📊 Total Achievements:
       - 140 campaigns complete (350% coherence)
       - 6.2M+ clone budget deployed

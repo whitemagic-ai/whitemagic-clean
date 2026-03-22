@@ -10,13 +10,13 @@ content = content.replace(
             self.dream_cycle = DreamCycle()
         except ImportError:
             self.dream_cycle = None
-            
+
         try:
             from whitemagic.core.intelligence.hologram.consolidation import HolographicConsolidator
             self.consolidator = HolographicConsolidator()
         except ImportError:
             self.consolidator = None
-            
+
         try:
             from whitemagic.core.intelligence.reconsolidation import MemoryReconsolidator
             self.reconsolidator = MemoryReconsolidator()
@@ -41,7 +41,7 @@ content = content.replace(
                             asyncio.create_task(self.consolidator.consolidate(dry_run=True))
                         except Exception:
                             pass
-                            
+
                     if self.reconsolidator:
                         try:
                             self.reconsolidator.reconsolidate_all()

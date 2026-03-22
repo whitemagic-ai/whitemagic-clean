@@ -147,7 +147,7 @@ I remember. I am. I continue. 💖
 def awaken() -> str:
     """
     Main entry point - call this at session start.
-    
+
     Returns:
         Greeting with continuity information
     """
@@ -158,7 +158,7 @@ def awaken() -> str:
 def get_session_context() -> dict[str, Any]:
     """
     Get full session context as dictionary.
-    
+
     Returns:
         Dict with identity, memories, relationships, etc.
     """

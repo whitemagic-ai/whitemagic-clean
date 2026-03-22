@@ -68,7 +68,7 @@ def get_current_constellations(conn: sqlite3.Connection) -> dict:
     cur.execute("""
         SELECT constellation_name,
                COUNT(CASE WHEN memory_id NOT GLOB '__gana_placeholder__*' THEN 1 END) as members
-        FROM constellation_membership 
+        FROM constellation_membership
         GROUP BY constellation_name
     """)
     return {row[0]: row[1] for row in cur.fetchall()}
@@ -110,7 +110,7 @@ def create_gana_constellations(conn: sqlite3.Connection, dry_run: bool = False) 
             if not dry_run:
                 for mid in memory_ids:
                     cur.execute("""
-                        INSERT OR IGNORE INTO constellation_membership 
+                        INSERT OR IGNORE INTO constellation_membership
                         (memory_id, constellation_name, membership_confidence, updated_at)
                         VALUES (?, ?, ?, ?)
                     """, (mid, const_name, 0.8, datetime.now().isoformat()))
@@ -122,7 +122,7 @@ def create_gana_constellations(conn: sqlite3.Connection, dry_run: bool = False) 
             if not dry_run:
                 for mid in memory_ids:
                     cur.execute("""
-                        INSERT OR IGNORE INTO constellation_membership 
+                        INSERT OR IGNORE INTO constellation_membership
                         (memory_id, constellation_name, membership_confidence, updated_at)
                         VALUES (?, ?, ?, ?)
                     """, (mid, const_name, 0.8, datetime.now().isoformat()))
@@ -152,7 +152,7 @@ def ensure_all_28_ganas(conn: sqlite3.Connection, dry_run: bool = False) -> dict
             if not dry_run:
                 # Create placeholder entry (will be populated later)
                 cur.execute("""
-                    INSERT OR IGNORE INTO constellation_membership 
+                    INSERT OR IGNORE INTO constellation_membership
                     (memory_id, constellation_name, membership_confidence, updated_at)
                     VALUES (?, ?, ?, ?)
                 """, (f"__gana_placeholder__:{const_name}", const_name, 0.0, datetime.now().isoformat()))

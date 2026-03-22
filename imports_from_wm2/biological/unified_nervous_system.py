@@ -24,7 +24,7 @@ from wm2.core.serializable import Serializable
 class UnifiedNervousSystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified nervous system integrating all 7 biological subsystems.
-    
+
     Enables emergent behaviors through cross-system communication.
     """
 

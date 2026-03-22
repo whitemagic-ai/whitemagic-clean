@@ -7,7 +7,7 @@ content = content.replace(
     """    def get_predecessor(self, gana: str) -> str:
         operation = "resonance_predecessor"
         use_koka = self._should_use_koka(operation)
-        
+
         start = time.perf_counter()
         if use_koka:
             result = self._get_pool("resonance").call({"op": "predecessor", "gana": gana})
@@ -26,7 +26,7 @@ content = content.replace(
             result = rs.resonance_predecessor(gana)
         except Exception:
             result = PythonFastPath.get_predecessor(gana)
-            
+
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(False, latency, operation)
         return result"""
@@ -37,7 +37,7 @@ content = content.replace(
     """    def get_successor(self, gana: str) -> str:
         operation = "resonance_successor"
         use_koka = self._should_use_koka(operation)
-        
+
         start = time.perf_counter()
         if use_koka:
             result = self._get_pool("resonance").call({"op": "successor", "gana": gana})
@@ -56,7 +56,7 @@ content = content.replace(
             result = rs.resonance_successor(gana)
         except Exception:
             result = PythonFastPath.get_successor(gana)
-            
+
         latency = (time.perf_counter() - start) * 1_000_000
         self._record_latency(False, latency, operation)
         return result"""

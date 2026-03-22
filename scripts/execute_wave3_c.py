@@ -15,7 +15,7 @@ class UnifiedNervousSystem:
     def __init__(self, workspace, timescale_sync):
         self.workspace = workspace
         self.timescale = timescale_sync
-        
+
         self.subsystems = {
             "immune": {"status": "active", "layer": "root", "load": 0.1},
             "metabolism": {"status": "active", "layer": "cerebellum", "load": 0.2},
@@ -25,24 +25,24 @@ class UnifiedNervousSystem:
             "resonance": {"status": "active", "layer": "parietal", "load": 0.1},
             "emergence": {"status": "monitoring", "layer": "logos", "load": 0.05}
         }
-        
+
         # Wire into timescales
         self.timescale.register_hook("reflex", self._check_homeostasis)
         self.timescale.register_hook("planner", self._update_consciousness)
         self.timescale.register_hook("consolidation", self._trigger_dream_cycle)
-        
+
     def _check_homeostasis(self):
         # 10ms loop - Check basic resource budgets (metabolism)
         pass
-        
+
     def _update_consciousness(self):
         # 1s loop - Gating and habit selection
         pass
-        
+
     def _trigger_dream_cycle(self):
         # 1hr loop - Memory consolidation (hippocampal routing)
         self.subsystems["dream"]["status"] = "active"
-        
+
     def get_system_health(self):
         return {name: data["status"] for name, data in self.subsystems.items()}
 """)
@@ -62,14 +62,14 @@ from typing import List, Dict
 class LoCoMoEnhancer:
     def __init__(self):
         self.temporal_index = {}
-        
+
     def beam_search(self, start_node: str, width: int, max_depth: int, graph_engine) -> List[str]:
         \"\"\"
         Beam search for knowledge graph traversal.
         \"\"\"
         # Simulated implementation
         return [start_node]
-        
+
     def index_temporal(self, memory_id: str, timestamp: float):
         # Add to time-series bucket
         bucket = int(timestamp) // 3600

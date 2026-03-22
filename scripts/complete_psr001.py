@@ -78,7 +78,7 @@ impl MemoryConsolidation {
             consolidation_threshold: threshold.unwrap_or(0.7),
         }
     }
-    
+
     fn add_candidate(
         &mut self,
         id: String,
@@ -94,7 +94,7 @@ impl MemoryConsolidation {
         });
         Ok(())
     }
-    
+
     fn consolidate(&self) -> PyResult<Vec<String>> {
         // Parallel scoring
         let consolidated: Vec<String> = self.candidates
@@ -108,24 +108,24 @@ impl MemoryConsolidation {
                 }
             })
             .collect();
-        
+
         Ok(consolidated)
     }
-    
+
     fn calculate_consolidation_score(&self, candidate: &MemoryCandidate) -> f64 {
         // Weighted scoring
         let importance_weight = 0.4;
         let access_weight = 0.3;
         let age_weight = 0.3;
-        
+
         let access_score = (candidate.access_count as f64).min(10.0) / 10.0;
         let age_score = (candidate.age_hours / 24.0).min(1.0);
-        
+
         candidate.importance * importance_weight
             + access_score * access_weight
             + age_score * age_weight
     }
-    
+
     fn get_candidate_count(&self) -> PyResult<usize> {
         Ok(self.candidates.len())
     }
@@ -154,20 +154,20 @@ impl MemoryDecay {
             half_life_hours: half_life.unwrap_or(168.0), // 1 week default
         }
     }
-    
+
     fn calculate_decay(&self, age_hours: f64, initial_strength: f64) -> PyResult<f64> {
         // Exponential decay: strength = initial * e^(-λt)
         let decay_constant = 0.693 / self.half_life_hours;
         let current_strength = initial_strength * (-decay_constant * age_hours).exp();
-        
+
         Ok(current_strength)
     }
-    
+
     fn should_forget(&self, age_hours: f64, importance: f64) -> PyResult<bool> {
         let current_strength = self.calculate_decay(age_hours, importance)?;
         Ok(current_strength < 0.1) // Forget if below 10% strength
     }
-    
+
     fn batch_decay(
         &self,
         memories: Vec<(f64, f64)> // (age_hours, importance)
@@ -211,7 +211,7 @@ impl MemoryLifecycle {
             transitions: Vec::new(),
         }
     }
-    
+
     fn set_stage(&mut self, memory_id: String, stage: String) -> PyResult<()> {
         if let Some(old_stage) = self.stages.get(&memory_id) {
             self.transitions.push((
@@ -220,32 +220,32 @@ impl MemoryLifecycle {
                 stage.clone()
             ));
         }
-        
+
         self.stages.insert(memory_id, stage);
         Ok(())
     }
-    
+
     fn get_stage(&self, memory_id: String) -> PyResult<Option<String>> {
         Ok(self.stages.get(&memory_id).cloned())
     }
-    
+
     fn get_transitions(&self, memory_id: String) -> PyResult<Vec<(String, String)>> {
         let transitions: Vec<(String, String)> = self.transitions
             .iter()
             .filter(|(id, _, _)| id == &memory_id)
             .map(|(_, from, to)| (from.clone(), to.clone()))
             .collect();
-        
+
         Ok(transitions)
     }
-    
+
     fn get_stage_counts(&self) -> PyResult<Vec<(String, usize)>> {
         let mut counts: HashMap<String, usize> = HashMap::new();
-        
+
         for stage in self.stages.values() {
             *counts.entry(stage.clone()).or_insert(0) += 1;
         }
-        
+
         Ok(counts.into_iter().collect())
     }
 }
@@ -273,14 +273,14 @@ impl MindfulForgetting {
             forgetting_threshold: threshold.unwrap_or(0.3),
         }
     }
-    
+
     fn protect_memory(&mut self, memory_id: String) -> PyResult<()> {
         if !self.protected_ids.contains(&memory_id) {
             self.protected_ids.push(memory_id);
         }
         Ok(())
     }
-    
+
     fn should_forget(
         &self,
         memory_id: String,
@@ -292,14 +292,14 @@ impl MindfulForgetting {
         if self.protected_ids.contains(&memory_id) {
             return Ok(false);
         }
-        
+
         // Calculate forgetting score
         let recency_penalty = (last_access_days / 30.0).min(1.0);
         let retention_score = (relevance * 0.4 + importance * 0.6) * (1.0 - recency_penalty * 0.5);
-        
+
         Ok(retention_score < self.forgetting_threshold)
     }
-    
+
     fn batch_evaluate(
         &self,
         memories: Vec<(String, f64, f64, f64)> // (id, relevance, importance, days)
@@ -314,7 +314,7 @@ impl MindfulForgetting {
                 }
             })
             .collect();
-        
+
         Ok(to_forget)
     }
 }
@@ -343,28 +343,28 @@ impl Reconsolidation {
             strength_boost: boost.unwrap_or(0.1),
         }
     }
-    
+
     fn trigger_reconsolidation(&mut self, memory_id: String) -> PyResult<f64> {
         let timestamp = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_secs();
-        
+
         self.reconsolidation_events
             .entry(memory_id)
             .or_insert_with(Vec::new)
             .push(timestamp);
-        
+
         Ok(self.strength_boost)
     }
-    
+
     fn get_reconsolidation_count(&self, memory_id: String) -> PyResult<usize> {
         Ok(self.reconsolidation_events
             .get(&memory_id)
             .map(|v| v.len())
             .unwrap_or(0))
     }
-    
+
     fn calculate_boosted_strength(
         &self,
         memory_id: String,
@@ -372,7 +372,7 @@ impl Reconsolidation {
     ) -> PyResult<f64> {
         let count = self.get_reconsolidation_count(memory_id)?;
         let boost = self.strength_boost * count as f64;
-        
+
         Ok((base_strength + boost).min(1.0))
     }
 }
@@ -400,15 +400,15 @@ impl DreamCycleIntegration {
             processed_count: 0,
         }
     }
-    
+
     fn queue_for_dreaming(&mut self, memory_id: String) -> PyResult<()> {
         self.dream_queue.push_back(memory_id);
         Ok(())
     }
-    
+
     fn process_dream_batch(&mut self, batch_size: usize) -> PyResult<Vec<String>> {
         let mut processed = Vec::new();
-        
+
         for _ in 0..batch_size {
             if let Some(memory_id) = self.dream_queue.pop_front() {
                 processed.push(memory_id);
@@ -417,14 +417,14 @@ impl DreamCycleIntegration {
                 break;
             }
         }
-        
+
         Ok(processed)
     }
-    
+
     fn get_queue_size(&self) -> PyResult<usize> {
         Ok(self.dream_queue.len())
     }
-    
+
     fn get_processed_count(&self) -> PyResult<usize> {
         Ok(self.processed_count)
     }
@@ -460,7 +460,7 @@ impl MemoryPhylogenetics {
             lineages: HashMap::new(),
         }
     }
-    
+
     fn track_memory(
         &mut self,
         memory_id: String,
@@ -472,7 +472,7 @@ impl MemoryPhylogenetics {
         } else {
             0
         };
-        
+
         let lineage = MemoryLineage {
             memory_id: memory_id.clone(),
             parent_id: parent_id.clone(),
@@ -480,42 +480,42 @@ impl MemoryPhylogenetics {
             generation,
             mutations,
         };
-        
+
         // Update parent's children
         if let Some(ref pid) = parent_id {
             if let Some(parent) = self.lineages.get_mut(pid) {
                 parent.children.push(memory_id.clone());
             }
         }
-        
+
         self.lineages.insert(memory_id, lineage);
-        
+
         Ok(())
     }
-    
+
     fn get_lineage(&self, memory_id: String) -> PyResult<Vec<String>> {
         let mut lineage = Vec::new();
         let mut current_id = Some(memory_id);
-        
+
         while let Some(id) = current_id {
             lineage.push(id.clone());
             current_id = self.lineages.get(&id).and_then(|l| l.parent_id.clone());
         }
-        
+
         lineage.reverse();
         Ok(lineage)
     }
-    
+
     fn get_descendants(&self, memory_id: String) -> PyResult<Vec<String>> {
         let mut descendants = Vec::new();
-        
+
         if let Some(lineage) = self.lineages.get(&memory_id) {
             for child_id in &lineage.children {
                 descendants.push(child_id.clone());
                 descendants.extend(self.get_descendants(child_id.clone())?);
             }
         }
-        
+
         Ok(descendants)
     }
 }

@@ -7,12 +7,12 @@ injection = """
   useEffect(() => {
     const handleContext = (e: any) => {
       setTab("chat");
-      
+
       const { file, selection, range } = e.detail;
       const contextMsg = `I am looking at \\`${file}\\`${range ? ` (lines ${range.startLineNumber}-${range.endLineNumber})` : ''}.`;
-      
+
       setInput(prev => prev + (prev ? '\\n' : '') + contextMsg);
-      
+
       if (selection) {
         // You could also add the selection to the chat context internally without showing it in the input box,
         // but for now we'll just focus the chat box.
@@ -20,7 +20,7 @@ injection = """
         if (el) el.focus();
       }
     };
-    
+
     window.addEventListener('open-ai-chat-with-context', handleContext);
     return () => window.removeEventListener('open-ai-chat-with-context', handleContext);
   }, [setTab]);

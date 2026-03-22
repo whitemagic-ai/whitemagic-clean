@@ -111,14 +111,14 @@ from dataclasses import dataclass
 class KokaProcess:
     name: str
     proc: subprocess.Popen
-    
+
     def send(self, cmd: dict) -> dict:
         """Send command and receive response."""
         self.proc.stdin.write(json.dumps(cmd) + "\\n")
         self.proc.stdin.flush()
         response = self.proc.stdout.readline()
         return json.loads(response)
-    
+
     def close(self):
         self.send({"op": "quit"})
         self.proc.wait()
@@ -126,11 +126,11 @@ class KokaProcess:
 
 class KokaRuntime:
     """Unified interface to all Koka binaries."""
-    
+
     def __init__(self, koka_dir: str = "./whitemagic-koka"):
         self.koka_dir = koka_dir
         self.processes: Dict[str, KokaProcess] = {}
-        
+
     def start_unified_runtime(self) -> KokaProcess:
         """Start unified runtime v3."""
         proc = subprocess.Popen(
@@ -144,7 +144,7 @@ class KokaRuntime:
         koka_proc = KokaProcess("unified_runtime_v3", proc)
         self.processes["unified"] = koka_proc
         return koka_proc
-    
+
     def start_ring_buffer(self) -> KokaProcess:
         """Start ring buffer."""
         proc = subprocess.Popen(
@@ -157,7 +157,7 @@ class KokaRuntime:
         koka_proc = KokaProcess("ring_buffer", proc)
         self.processes["ring_buffer"] = koka_proc
         return koka_proc
-    
+
     def start_rust_bridge(self) -> KokaProcess:
         """Start rust bridge."""
         proc = subprocess.Popen(
@@ -170,41 +170,41 @@ class KokaRuntime:
         koka_proc = KokaProcess("rust_bridge", proc)
         self.processes["rust_bridge"] = koka_proc
         return koka_proc
-    
+
     def batch_write_embeddings(self, embeddings: List[List[float]], ids: List[int]) -> dict:
         """Batch write embeddings via ring buffer."""
         if "ring_buffer" not in self.processes:
             self.start_ring_buffer()
-        
+
         rb = self.processes["ring_buffer"]
         return rb.send({
             "op": "batch_write",
             "count": len(embeddings)
         })
-    
+
     def emit_event(self, source: str, event_type: str) -> dict:
         """Emit event via effect runtime."""
         if "unified" not in self.processes:
             self.start_unified_runtime()
-        
+
         return self.processes["unified"].send({
             "op": "emit",
             "source": source,
             "event": event_type
         })
-    
+
     def cosine_similarity(self, a: List[float], b: List[float]) -> float:
         """Compute cosine similarity via rust bridge."""
         if "rust_bridge" not in self.processes:
             self.start_rust_bridge()
-        
+
         result = self.processes["rust_bridge"].send({
             "op": "cosine",
             "a": a,
             "b": b
         })
         return result.get("cosine_sim", 0.0)
-    
+
     def close_all(self):
         """Close all Koka processes."""
         for proc in self.processes.values():
@@ -256,25 +256,25 @@ from typing import Dict, Any
 
 class KokaMetricsExporter:
     """Export Koka metrics in Prometheus format."""
-    
+
     def __init__(self):
         self.metrics: Dict[str, Any] = {}
-    
+
     def record_ipc_latency(self, binary: str, latency_ms: float):
         """Record IPC latency."""
         key = f"koka_ipc_latency_ms{{binary=\"{binary}\"}}"
         self.metrics[key] = latency_ms
-    
+
     def record_throughput(self, binary: str, ops_per_sec: float):
         """Record throughput."""
         key = f"koka_throughput_ops{{binary=\"{binary}\"}}"
         self.metrics[key] = ops_per_sec
-    
+
     def record_process_status(self, binary: str, status: str):
         """Record process status."""
         key = f"koka_process_running{{binary=\"{binary}\"}}"
         self.metrics[key] = 1 if status == "running" else 0
-    
+
     def export_prometheus(self) -> str:
         """Export in Prometheus format."""
         lines = []

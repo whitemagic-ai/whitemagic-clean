@@ -17,7 +17,7 @@ from wm2.core.serializable import Serializable
 class EmergenceDetector(BaseEngine, Serializable, MetricCollector):
     """
     Serendipity scoring and novelty detection
-    
+
     Integrates 92 files from the emergence subsystem.
     """
 

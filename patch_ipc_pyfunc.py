@@ -21,14 +21,14 @@ status_func = """pub fn ipc_status() -> HashMap<String, String> {
     status.insert("published".to_string(), IPC_STATS.published.load(Ordering::Relaxed).to_string());
     status.insert("received".to_string(), IPC_STATS.received.load(Ordering::Relaxed).to_string());
     status.insert("errors".to_string(), IPC_STATS.errors.load(Ordering::Relaxed).to_string());
-    
+
     #[cfg(feature = "iceoryx2")]
     status.insert("iceoryx2_compiled".to_string(), "true".to_string());
     #[cfg(not(feature = "iceoryx2"))]
     status.insert("iceoryx2_compiled".to_string(), "false".to_string());
-    
+
     status.insert("channels".to_string(), format!("[{}, {}, {}, {}]", CHANNEL_EVENTS, CHANNEL_MEMORIES, CHANNEL_COMMANDS, CHANNEL_HARMONY));
-    
+
     status
 }"""
 

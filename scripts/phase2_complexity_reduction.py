@@ -93,20 +93,20 @@ from typing import Dict, Any
 class Simplified{file_path.stem.title().replace('_', '')}(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of {file_path.stem}.
-    
+
     Strategy: {target['strategy']}
     """
-    
+
     def __init__(self, name: str = "{file_path.stem}_simplified"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
-    
+
     @tracked
     def process(self, data: Any) -> Any:
         """Simplified processing logic."""
         # TODO: Implement simplified logic
         return data
-    
+
     @tracked
     def get_stats(self) -> Dict[str, Any]:
         """Get statistics."""

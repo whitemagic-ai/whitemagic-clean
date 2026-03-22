@@ -16,7 +16,7 @@ except ImportError:
 
 class ZodiacLedger:
     \"\"\"In-memory and persistent cryptographic ledger.\"\"\"
-    
+
     def __init__(self, db_manager=None):
         self._chain: List[ZodiacEntry] = []
         self._genesis_hash = hashlib.sha256(b"WHITEMAGIC_GENESIS_v16").hexdigest()
@@ -26,9 +26,9 @@ class ZodiacLedger:
         self._rust_ledger = _RustLedger() if _RustLedger else None
 
     def record_action(
-        self, 
-        actor_id: str, 
-        action_type: str, 
+        self,
+        actor_id: str,
+        action_type: str,
         payload: Dict[str, Any],
         context_id: Optional[str] = None,
         consent_token: Optional[str] = None
@@ -39,7 +39,7 @@ class ZodiacLedger:
             if self._rust_ledger:
                 try:
                     rust_sig = self._rust_ledger.record_action(
-                        action_type, 
+                        action_type,
                         _json_dumps(payload),
                         "sattvic", # default guna
                         0.0 # default karma

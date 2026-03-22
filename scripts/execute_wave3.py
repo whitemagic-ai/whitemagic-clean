@@ -18,15 +18,15 @@ class FunnelArchitecture:
     def process_file(self, filepath: str) -> dict:
         if not os.path.exists(filepath):
             return {"error": "file not found"}
-            
+
         with open(filepath, "rb") as f:
             content = f.read()
-            
+
         file_hash = hashlib.sha256(content).hexdigest()
-        
+
         if file_hash in self.cache:
             return {"status": "cached", "hash": file_hash}
-            
+
         # Heavy processing simulation
         self.cache[file_hash] = True
         return {"status": "processed", "hash": file_hash, "size": len(content)}
@@ -49,13 +49,13 @@ class SkeletonEngine:
         try:
             tree = ast.parse(source_code)
             skeleton = []
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, ast.FunctionDef):
                     skeleton.append(f"def {node.name}(...): ...")
                 elif isinstance(node, ast.ClassDef):
                     skeleton.append(f"class {node.name}: ...")
-                    
+
             return "\\n".join(skeleton)
         except SyntaxError:
             return ""

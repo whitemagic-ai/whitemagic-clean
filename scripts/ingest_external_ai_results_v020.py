@@ -73,7 +73,7 @@ class SemanticScorer:
     def semantic_score(self, predicted: str, references: list[str], keywords: list[str]) -> dict[str, float]:
         """
         Calculate semantic similarity score.
-        
+
         Returns:
             - semantic_sim: Best match against any reference (0.0-1.0)
             - keyword_cov: Required concept coverage (0.0-1.0)
@@ -114,7 +114,7 @@ class LoCoMoV020Scorer:
     def check_adversarial_behavior(self, answer_obj: dict, question: dict) -> tuple[bool, str]:
         """
         Check if AI correctly handled adversarial question.
-        
+
         Returns (passed, feedback)
         """
         qtype = question.get('question_type', '')
@@ -154,7 +154,7 @@ class LoCoMoV020Scorer:
     def check_calibration(self, answer_obj: dict, question: dict, match_score: float) -> tuple[float, str]:
         """
         Assess confidence calibration.
-        
+
         Returns (calibration_error, assessment)
         """
         confidence = answer_obj.get('confidence', 0.0)
@@ -174,7 +174,7 @@ class LoCoMoV020Scorer:
     def score_answer(self, answer_obj: dict) -> tuple[float, str, dict]:
         """
         Score a single answer with V020 semantic evaluation.
-        
+
         Returns (score, feedback, diagnostics)
         """
         qid = answer_obj.get('question_id')

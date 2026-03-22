@@ -5,7 +5,7 @@ Incorporates: hybrid fusion, quarantine deduplication, learned reranking
 LOCOMO_V019_PROMPT = """
 # LoCoMo V019 Memory Retrieval Benchmark
 
-You are participating in an external validation of a memory retrieval system. 
+You are participating in an external validation of a memory retrieval system.
 Your task is to answer questions based ONLY on the provided memory corpus.
 
 ## CRITICAL RULES

@@ -10,7 +10,7 @@ content = content.replace(
     """    def infer_dependencies(self, active_clusters: dict[tuple[int, int], list[str]]) -> dict[str, list[str]]:
         \"\"\"Infer a Directed Acyclic Graph (DAG) between clusters.
         Logic: Calculate the 'flow' between clusters based on coordinate gradients.
-        
+
         Rust Fast-Path: If whitemagic_rust is available, it handles the coordinate math and DAG generation.
         \"\"\"
         try:

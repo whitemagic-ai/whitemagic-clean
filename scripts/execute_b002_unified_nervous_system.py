@@ -28,12 +28,12 @@ REPORTS_DIR = PROJECT_ROOT / "reports"
 class UnifiedNervousSystem:
     """
     Synthesis of all communication systems into unified organism.
-    
+
     Combines:
     1. NervousSystem - Organ registration and direct feedback loops
     2. GanYingBus - Event-driven resonance and async messaging
     3. CrossCampaignBlackboard - Shared intelligence and dependency tracking
-    
+
     Creates a coherent whole greater than the sum of parts.
     """
 
@@ -329,8 +329,8 @@ def generate_integration_report(analysis, unified):
     print()
 
     report = f"""# Unified Nervous System - Integration Report
-**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
-**Campaign**: B002  
+**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+**Campaign**: B002
 **Clones Deployed**: 80,000 (synthesis + integration)
 
 ## Executive Summary
@@ -350,7 +350,7 @@ Successfully synthesized **3 independent communication systems** into a unified 
   - Direct feedback loops (threat → dream, homeostasis → genetics, dream → genetics)
   - Health dashboard
 
-**Strengths**: Direct organ-to-organ communication, explicit feedback loops  
+**Strengths**: Direct organ-to-organ communication, explicit feedback loops
 **Gaps**: No event persistence, limited to registered organs, no async support
 
 ### Gan Ying Bus (whitemagic/core/resonance/gan_ying.py)
@@ -363,7 +363,7 @@ Successfully synthesized **3 independent communication systems** into a unified 
   - Async mode: 10,000+ events/sec throughput
   - Decorator-based subscriptions (@listen_to)
 
-**Strengths**: High throughput, async support, confidence tracking, lazy loading  
+**Strengths**: High throughput, async support, confidence tracking, lazy loading
 **Gaps**: No organ awareness, no direct feedback loops, events are ephemeral
 
 ### CrossCampaignBlackboard (scripts/deploy_grand_army.py)
@@ -375,7 +375,7 @@ Successfully synthesized **3 independent communication systems** into a unified 
   - Dependency graph (campaign X needs Y)
   - Thread-safe with locks
 
-**Strengths**: Persistent state, dependency awareness, cross-campaign intelligence  
+**Strengths**: Persistent state, dependency awareness, cross-campaign intelligence
 **Gaps**: Campaign-specific, not generalized, no event integration
 
 ## 2. Integration Architecture
@@ -390,7 +390,7 @@ class UnifiedNervousSystem:
         self.nervous_system = get_nervous_system()
         self.gan_ying_bus = get_bus()
         self.blackboard = {{}}
-        
+
         self._wire_event_signal_bridge()
         self._wire_organ_event_subscriptions()
 ```

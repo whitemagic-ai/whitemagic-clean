@@ -16,7 +16,7 @@ from wm2.core.serializable import Serializable
 class SecuritySubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified security subsystem synthesized from WM1.
-    
+
     Integrates 19 missing classes:
         - SecurityEventType
     - BreakerRegistry
@@ -37,7 +37,7 @@ class SecuritySubsystem(BaseEngine, Serializable, MetricCollector):
     - HermitState
     - BreakerConfig
     - HermitCrab
-    
+
     """
 
     def __init__(self, name: str = "security_subsystem"):

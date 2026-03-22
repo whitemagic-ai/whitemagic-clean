@@ -13,7 +13,7 @@ class KokaCircuitBreaker:
         self.last_failure_time = 0.0
         self.state = "CLOSED" # CLOSED (ok), OPEN (failing), HALF_OPEN (testing)
         self.lock = threading.Lock()
-        
+
     def record_failure(self):
         with self.lock:
             self.failures += 1
@@ -21,14 +21,14 @@ class KokaCircuitBreaker:
             if self.failures >= self.failure_threshold:
                 self.state = "OPEN"
                 logger.warning(f"Koka circuit breaker OPENED after {self.failures} failures")
-                
+
     def record_success(self):
         with self.lock:
             self.failures = 0
             if self.state != "CLOSED":
                 self.state = "CLOSED"
                 logger.info("Koka circuit breaker RESET to CLOSED")
-                
+
     def allow_request(self) -> bool:
         with self.lock:
             if self.state == "CLOSED":
@@ -57,7 +57,7 @@ if "class KokaCircuitBreaker" not in content:
         if not self.is_available(module):
             logger.debug("Koka module not available: %s", module)
             return None
-            
+
         breaker = self._breakers.get(module)
         if breaker and not breaker.allow_request():
             logger.warning("Koka circuit breaker OPEN for %s - skipping dispatch", module)
@@ -80,7 +80,7 @@ if "class KokaCircuitBreaker" not in content:
         try:
             res = result_queue.get(timeout=timeout)
             # Give thread a chance to finish cleanly
-            thread.join(0.1) 
+            thread.join(0.1)
             return res
         except queue.Empty:
             return None"""

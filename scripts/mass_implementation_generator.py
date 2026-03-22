@@ -111,26 +111,26 @@ impl VectorSearch {
             vectors: Vec::new(),
         }
     }
-    
+
     fn add_vector(&mut self, id: String, vector: Vec<f64>) {
         self.vectors.push((id, vector));
     }
-    
+
     fn cosine_similarity(&self, a: &[f64], b: &[f64]) -> f64 {
         let dot: f64 = a.iter().zip(b.iter()).map(|(x, y)| x * y).sum();
         let norm_a: f64 = a.iter().map(|x| x * x).sum::<f64>().sqrt();
         let norm_b: f64 = b.iter().map(|x| x * x).sum::<f64>().sqrt();
-        
+
         if norm_a == 0.0 || norm_b == 0.0 {
             0.0
         } else {
             dot / (norm_a * norm_b)
         }
     }
-    
+
     fn search(&self, query: Vec<f64>, k: usize) -> PyResult<Vec<(String, f64)>> {
         let mut heap = BinaryHeap::new();
-        
+
         for (id, vec) in &self.vectors {
             let score = self.cosine_similarity(&query, vec);
             heap.push(ScoredVector {
@@ -138,23 +138,23 @@ impl VectorSearch {
                 score,
             });
         }
-        
+
         let results: Vec<(String, f64)> = heap
             .into_sorted_vec()
             .into_iter()
             .take(k)
             .map(|sv| (sv.id, sv.score))
             .collect();
-        
+
         Ok(results)
     }
-    
+
     fn batch_search(&self, queries: Vec<Vec<f64>>, k: usize) -> PyResult<Vec<Vec<(String, f64)>>> {
         let results: Vec<Vec<(String, f64)>> = queries
             .iter()
             .map(|q| self.search(q.clone(), k).unwrap_or_default())
             .collect();
-        
+
         Ok(results)
     }
 }
@@ -184,7 +184,7 @@ impl HybridRecall {
             graph_weight: graph_weight.unwrap_or(0.2),
         }
     }
-    
+
     fn reciprocal_rank_fusion(
         &self,
         fts_results: Vec<String>,
@@ -194,29 +194,29 @@ impl HybridRecall {
     ) -> PyResult<Vec<String>> {
         let mut scores: HashMap<String, f64> = HashMap::new();
         let k_val = k.unwrap_or(60) as f64;
-        
+
         // FTS scores
         for (rank, id) in fts_results.iter().enumerate() {
             let score = self.fts_weight / (k_val + (rank + 1) as f64);
             *scores.entry(id.clone()).or_insert(0.0) += score;
         }
-        
+
         // Vector scores
         for (rank, id) in vector_results.iter().enumerate() {
             let score = self.vector_weight / (k_val + (rank + 1) as f64);
             *scores.entry(id.clone()).or_insert(0.0) += score;
         }
-        
+
         // Graph scores
         for (rank, id) in graph_results.iter().enumerate() {
             let score = self.graph_weight / (k_val + (rank + 1) as f64);
             *scores.entry(id.clone()).or_insert(0.0) += score;
         }
-        
+
         // Sort by score descending
         let mut results: Vec<(String, f64)> = scores.into_iter().collect();
         results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
-        
+
         Ok(results.into_iter().map(|(id, _)| id).collect())
     }
 }
@@ -245,7 +245,7 @@ impl Reranker {
             relevance_weight: 0.5,
         }
     }
-    
+
     fn rerank(
         &self,
         results: Vec<String>,
@@ -265,9 +265,9 @@ impl Reranker {
                 (id, score)
             })
             .collect();
-        
+
         scored.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
-        
+
         Ok(scored.into_iter().map(|(id, _)| id).collect())
     }
 }
@@ -295,14 +295,14 @@ impl AssociationMiner {
             min_confidence: min_confidence.unwrap_or(0.5),
         }
     }
-    
+
     fn mine_patterns(
         &self,
         transactions: Vec<Vec<String>>
     ) -> PyResult<Vec<(Vec<String>, Vec<String>, f64)>> {
         let mut patterns = Vec::new();
         let total = transactions.len() as f64;
-        
+
         // Count item frequencies
         let mut item_counts: HashMap<String, usize> = HashMap::new();
         for transaction in &transactions {
@@ -310,14 +310,14 @@ impl AssociationMiner {
                 *item_counts.entry(item.clone()).or_insert(0) += 1;
             }
         }
-        
+
         // Find frequent items
         let frequent: Vec<String> = item_counts
             .iter()
             .filter(|(_, &count)| (count as f64 / total) >= self.min_support)
             .map(|(item, _)| item.clone())
             .collect();
-        
+
         // Generate association rules
         for antecedent in &frequent {
             for consequent in &frequent {
@@ -326,14 +326,14 @@ impl AssociationMiner {
                         &transactions,
                         &[antecedent.clone(), consequent.clone()]
                     );
-                    
+
                     if support >= self.min_support {
                         let confidence = self.calculate_confidence(
                             &transactions,
                             antecedent,
                             consequent
                         );
-                        
+
                         if confidence >= self.min_confidence {
                             patterns.push((
                                 vec![antecedent.clone()],
@@ -345,26 +345,26 @@ impl AssociationMiner {
                 }
             }
         }
-        
+
         Ok(patterns)
     }
-    
+
     fn calculate_support(&self, transactions: &[Vec<String>], items: &[String]) -> f64 {
         let count = transactions
             .iter()
             .filter(|t| items.iter().all(|item| t.contains(item)))
             .count();
-        
+
         count as f64 / transactions.len() as f64
     }
-    
+
     fn calculate_confidence(&self, transactions: &[Vec<String>], ante: &str, cons: &str) -> f64 {
         let ante_count = transactions.iter().filter(|t| t.contains(&ante.to_string())).count();
         let both_count = transactions
             .iter()
             .filter(|t| t.contains(&ante.to_string()) && t.contains(&cons.to_string()))
             .count();
-        
+
         if ante_count == 0 {
             0.0
         } else {
@@ -395,14 +395,14 @@ impl CommunityDetector {
             max_iterations: max_iterations.unwrap_or(100),
         }
     }
-    
+
     fn detect_communities(
         &self,
         edges: Vec<(String, String)>
     ) -> PyResult<HashMap<String, usize>> {
         let mut labels: HashMap<String, usize> = HashMap::new();
         let mut neighbors: HashMap<String, Vec<String>> = HashMap::new();
-        
+
         // Build adjacency list and initialize labels
         let mut label_counter = 0;
         for (src, dst) in &edges {
@@ -414,27 +414,27 @@ impl CommunityDetector {
                 labels.insert(dst.clone(), label_counter);
                 label_counter += 1;
             }
-            
+
             neighbors.entry(src.clone()).or_insert_with(Vec::new).push(dst.clone());
             neighbors.entry(dst.clone()).or_insert_with(Vec::new).push(src.clone());
         }
-        
+
         // Label propagation
         let mut rng = rand::thread_rng();
         for _ in 0..self.max_iterations {
             let mut changed = false;
             let nodes: Vec<String> = labels.keys().cloned().collect();
-            
+
             for node in nodes {
                 if let Some(neighs) = neighbors.get(&node) {
                     let mut label_counts: HashMap<usize, usize> = HashMap::new();
-                    
+
                     for neigh in neighs {
                         if let Some(&label) = labels.get(neigh) {
                             *label_counts.entry(label).or_insert(0) += 1;
                         }
                     }
-                    
+
                     if let Some((&new_label, _)) = label_counts.iter().max_by_key(|(_, &count)| count) {
                         if labels.get(&node) != Some(&new_label) {
                             labels.insert(node.clone(), new_label);
@@ -443,12 +443,12 @@ impl CommunityDetector {
                     }
                 }
             }
-            
+
             if !changed {
                 break;
             }
         }
-        
+
         Ok(labels)
     }
 }
@@ -474,7 +474,7 @@ impl ReasoningEngine {
             confidence_threshold: confidence_threshold.unwrap_or(0.7),
         }
     }
-    
+
     fn infer(
         &self,
         premises: Vec<String>,
@@ -490,10 +490,10 @@ impl ReasoningEngine {
                 }
             })
             .collect();
-        
+
         Ok(conclusions)
     }
-    
+
     fn generate_hypotheses(
         &self,
         observations: Vec<String>,
@@ -508,7 +508,7 @@ impl ReasoningEngine {
             })
             .filter(|(_, score)| *score >= self.confidence_threshold)
             .collect();
-        
+
         Ok(hypotheses)
     }
 }
@@ -534,28 +534,28 @@ impl CausalNet {
             edges: Vec::new(),
         }
     }
-    
+
     fn add_causal_link(&mut self, cause: String, effect: String, strength: f64) {
         self.edges.push((cause, effect, strength));
     }
-    
+
     fn infer_causes(&self, effect: String) -> PyResult<Vec<(String, f64)>> {
         let causes: Vec<(String, f64)> = self.edges
             .iter()
             .filter(|(_, e, _)| e == &effect)
             .map(|(c, _, s)| (c.clone(), *s))
             .collect();
-        
+
         Ok(causes)
     }
-    
+
     fn infer_effects(&self, cause: String) -> PyResult<Vec<(String, f64)>> {
         let effects: Vec<(String, f64)> = self.edges
             .iter()
             .filter(|(c, _, _)| c == &cause)
             .map(|(_, e, s)| (e.clone(), *s))
             .collect();
-        
+
         Ok(effects)
     }
 }
@@ -580,7 +580,7 @@ impl EmergenceDetector {
             novelty_threshold: novelty_threshold.unwrap_or(0.8),
         }
     }
-    
+
     fn detect_emergence(
         &self,
         current_patterns: Vec<Vec<String>>,
@@ -593,24 +593,24 @@ impl EmergenceDetector {
                 similarity < self.novelty_threshold
             })
             .collect();
-        
+
         Ok(emergent)
     }
-    
+
     fn max_similarity(&self, pattern: &[String], historical: &[Vec<String>]) -> f64 {
         historical
             .iter()
             .map(|h| self.jaccard_similarity(pattern, h))
             .fold(0.0, f64::max)
     }
-    
+
     fn jaccard_similarity(&self, a: &[String], b: &[String]) -> f64 {
         let set_a: std::collections::HashSet<_> = a.iter().collect();
         let set_b: std::collections::HashSet<_> = b.iter().collect();
-        
+
         let intersection = set_a.intersection(&set_b).count();
         let union = set_a.union(&set_b).count();
-        
+
         if union == 0 {
             0.0
         } else {

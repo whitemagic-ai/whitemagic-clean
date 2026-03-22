@@ -18,7 +18,7 @@ from pathlib import Path
 
 def detect_drift(root_dir: Path | None = None) -> dict:
     """Detect documentation drift.
-    
+
     Returns dict with drift findings.
     """
     root = root_dir or Path(__file__).resolve().parent.parent

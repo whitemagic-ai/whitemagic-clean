@@ -149,7 +149,7 @@ def smart_batch_embed(max_minutes: int = 5, batch_size: int = 512, commit_every:
     print("\n  🔍 Fetching unembedded memory IDs...")
     memory_ids = [
         row[0] for row in conn.execute(
-            """SELECT id FROM memories 
+            """SELECT id FROM memories
                WHERE memory_type != 'quarantined'
                AND id NOT IN (SELECT memory_id FROM memory_embeddings)
                LIMIT ?""",

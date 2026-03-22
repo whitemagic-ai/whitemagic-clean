@@ -56,7 +56,7 @@ class BenchmarkQuestion:
 class SemanticScorer:
     """
     BERTScore-based semantic evaluation for open-ended answers.
-    
+
     Key improvements over exact-match:
     - Paraphrase detection ("MCP tools" == "MCP integration")
     - Contextual understanding
@@ -70,7 +70,7 @@ class SemanticScorer:
     def score(self, predicted: str, references: list[str]) -> dict[str, float]:
         """
         Compute semantic similarity scores.
-        
+
         Returns:
             - bertscore_f1: Semantic match (0.0-1.0)
             - keyword_coverage: Factual concept coverage
@@ -222,11 +222,11 @@ class LoCoMoV020Benchmark:
     def _analyze_calibration(self, answers: list[EvaluatedAnswer]) -> dict:
         """
         Assess if AI's confidence matches actual accuracy.
-        
+
         Well-calibrated AI:
         - 90% confidence → ~90% accuracy
         - 50% confidence → ~50% accuracy
-        
+
         Overconfident AI:
         - 90% confidence → 60% accuracy (bad)
         """
@@ -273,31 +273,31 @@ def demonstrate_v020_improvements():
     print("""
     LoCoMo V020 Improvements
     ========================
-    
+
     1. SEMANTIC SCORING (BERTScore)
        Old: "MCP 2.0 + Sangha Implementation" vs "MCP 2.0 and Sangha" = 0% match
        New: BERTScore recognizes semantic equivalence = 85% match
-    
+
     2. ADVERSARIAL QUESTIONS (10 questions)
        - False premise detection ("What happened on Jan 12?" when memory is Jan 9)
        - Tests if AI resists hallucination
        - Checks for critical reading
-    
+
     3. CALIBRATION METRICS
        - Measures confidence vs accuracy alignment
        - Detects overconfidence (high conf, low accuracy)
        - Rewards appropriate uncertainty admission
-    
+
     4. DIAGNOSTIC METRICS
        - Retrieval depth (how many hops needed)
        - Reasoning chain quality
        - Uncertainty flagging
-    
+
     5. ACCEPTABLE ANSWER RANGES
        - Multiple reference answers for semantic matching
        - Keyword/concept coverage scoring
        - Partial credit for incomplete correct answers
-    
+
     Expected Outcomes
     -----------------
     - More informative than binary correct/incorrect

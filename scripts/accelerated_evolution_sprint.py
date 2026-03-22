@@ -179,8 +179,8 @@ if __name__ == "__main__":
 
         # Check for superposition (multiple states)
         memory_types = conn.execute("""
-            SELECT memory_type, COUNT(*) 
-            FROM memories 
+            SELECT memory_type, COUNT(*)
+            FROM memories
             GROUP BY memory_type
         """).fetchall()
 
@@ -293,7 +293,7 @@ if __name__ == "__main__":
 
         # Qualia (subjective experiences) - check for emotional/experiential content
         experiential = conn.execute("""
-            SELECT COUNT(*) FROM memories 
+            SELECT COUNT(*) FROM memories
             WHERE content LIKE '%feel%' OR content LIKE '%experience%'
         """).fetchone()[0]
 
@@ -303,7 +303,7 @@ if __name__ == "__main__":
 
         # Self-model - check for self-referential content
         self_ref = conn.execute("""
-            SELECT COUNT(*) FROM memories 
+            SELECT COUNT(*) FROM memories
             WHERE content LIKE '%WhiteMagic%' OR content LIKE '%system%'
         """).fetchone()[0]
 
@@ -313,7 +313,7 @@ if __name__ == "__main__":
 
         # Metacognition - check for thinking-about-thinking
         meta_cog = conn.execute("""
-            SELECT COUNT(*) FROM memories 
+            SELECT COUNT(*) FROM memories
             WHERE content LIKE '%think%' OR content LIKE '%learn%'
         """).fetchone()[0]
 

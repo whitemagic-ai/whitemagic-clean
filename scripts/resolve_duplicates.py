@@ -21,10 +21,10 @@ def resolve_duplicates():
 
     # Find duplicate content hashes
     cursor.execute("""
-        SELECT content_hash, COUNT(*) as cnt 
-        FROM memories 
+        SELECT content_hash, COUNT(*) as cnt
+        FROM memories
         WHERE memory_type != 'quarantined' AND content_hash IS NOT NULL
-        GROUP BY content_hash 
+        GROUP BY content_hash
         HAVING cnt > 1
         ORDER BY cnt DESC
     """)
@@ -49,7 +49,7 @@ def resolve_duplicates():
                    (SELECT COUNT(*) FROM associations WHERE source_id = memories.id OR target_id = memories.id) as assoc_count
             FROM memories
             WHERE content_hash = ? AND memory_type != 'quarantined'
-            ORDER BY 
+            ORDER BY
                 importance DESC,
                 assoc_count DESC,
                 access_count DESC,
@@ -76,24 +76,24 @@ def resolve_duplicates():
 
             # Repoint associations to winner
             cursor.execute("""
-                UPDATE associations SET source_id = ? 
+                UPDATE associations SET source_id = ?
                 WHERE source_id = ? AND target_id != ?
             """, (winner_id, loser_id, winner_id))
 
             cursor.execute("""
-                UPDATE associations SET target_id = ? 
+                UPDATE associations SET target_id = ?
                 WHERE target_id = ? AND source_id != ?
             """, (winner_id, loser_id, winner_id))
 
             # Remove self-loops
             cursor.execute("""
-                DELETE FROM associations 
+                DELETE FROM associations
                 WHERE source_id = ? AND target_id = ?
             """, (winner_id, winner_id))
 
             # Quarantine loser
             cursor.execute("""
-                UPDATE memories 
+                UPDATE memories
                 SET memory_type = 'quarantined'
                 WHERE id = ?
             """, (loser_id,))
@@ -114,10 +114,10 @@ def resolve_duplicates():
     # Verify
     cursor.execute("""
         SELECT COUNT(*) FROM (
-            SELECT content_hash, COUNT(*) as cnt 
-            FROM memories 
+            SELECT content_hash, COUNT(*) as cnt
+            FROM memories
             WHERE memory_type != 'quarantined' AND content_hash IS NOT NULL
-            GROUP BY content_hash 
+            GROUP BY content_hash
             HAVING cnt > 1
         )
     """)

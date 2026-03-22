@@ -19,7 +19,7 @@ from wm2.core.serializable import Serializable
 class SimplifiedRustAccelerators(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of rust_accelerators.
-    
+
     Strategy: Move to actual Rust implementations
     """
 

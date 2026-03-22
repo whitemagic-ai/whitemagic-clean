@@ -88,8 +88,8 @@ def generate_report(integration_ok, army_results):
 
     report = f"""# Polyglot Shadow Armies Report
 
-**Campaign:** V003 - Polyglot Shadow Clone Armies  
-**Date:** {Path(__file__).stat().st_mtime}  
+**Campaign:** V003 - Polyglot Shadow Clone Armies
+**Date:** {Path(__file__).stat().st_mtime}
 **Status:** Integration Complete
 
 ## Summary

@@ -38,8 +38,8 @@ filetree_replacement = """function FileTree({
         openFile({
           id: node.path,
           name: node.name,
-          language: node.name.endsWith(".ts") || node.name.endsWith(".tsx") ? "typescript" : 
-                   node.name.endsWith(".rs") ? "rust" : 
+          language: node.name.endsWith(".ts") || node.name.endsWith(".tsx") ? "typescript" :
+                   node.name.endsWith(".rs") ? "rust" :
                    node.name.endsWith(".py") ? "python" : "plaintext",
           content,
         });
@@ -48,7 +48,7 @@ filetree_replacement = """function FileTree({
       }
       return;
     }
-    
+
     if (!open && children.length === 0) {
       setLoading(true);
       try {

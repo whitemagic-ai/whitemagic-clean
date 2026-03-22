@@ -73,7 +73,7 @@ def generate_starter_db(source_path: str, target_path: str):
     if mem_ids:
         placeholders = ','.join('?' * len(mem_ids))
         assocs = source.execute(f"""
-            SELECT * FROM associations 
+            SELECT * FROM associations
             WHERE source_id IN ({placeholders}) AND target_id IN ({placeholders})
             AND relation_type != 'associated_with'
         """, mem_ids + mem_ids).fetchall()

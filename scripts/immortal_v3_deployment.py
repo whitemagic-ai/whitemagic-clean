@@ -30,10 +30,10 @@ Architecture:
 Usage:
     # Deploy on all campaigns with zodiac UI
     python3 scripts/immortal_v3_deployment.py --campaigns --zodiac-ui
-    
+
     # Deploy 1M clones for massive scale test
     python3 scripts/immortal_v3_deployment.py --scale 1000000 --benchmark
-    
+
     # Deploy with specific zodiac armies
     python3 scripts/immortal_v3_deployment.py --armies tokio,immortal,grand
 """

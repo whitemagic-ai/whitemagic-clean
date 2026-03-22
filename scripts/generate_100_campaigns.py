@@ -193,8 +193,8 @@ def create_campaign_files(campaigns):
 
         content = f"""# {code}: {name}
 
-**Category**: {CAMPAIGN_CATEGORIES.get(code[0], 'Unknown')}  
-**Clone Budget**: {clones:,}  
+**Category**: {CAMPAIGN_CATEGORIES.get(code[0], 'Unknown')}
+**Clone Budget**: {clones:,}
 **Victory Conditions**: {vcs}
 
 ## Objective
@@ -227,8 +227,8 @@ Leverage the unified organism's full capabilities for maximum synergy.
 
 ---
 
-**Status**: Pending  
-**Priority**: High  
+**Status**: Pending
+**Priority**: High
 **Phase**: The Great Work
 """
 

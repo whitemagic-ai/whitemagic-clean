@@ -46,7 +46,7 @@ def get_unembedded_memory_ids(limit: int = None) -> list[str]:
     """Get list of memory IDs that need embedding."""
     conn = sqlite3.connect(DB_PATH)
     query = """
-        SELECT id FROM memories 
+        SELECT id FROM memories
         WHERE memory_type != 'quarantined'
         AND id NOT IN (SELECT memory_id FROM memory_embeddings)
     """
@@ -60,16 +60,16 @@ def get_unembedded_memory_ids(limit: int = None) -> list[str]:
 
 def embed_memory_batch_worker(args: tuple[list[str], int]) -> dict:
     """Worker function to embed a batch of memories.
-    
+
     Each worker:
     1. Loads its own model instance
     2. Fetches memory content
     3. Generates embeddings
     4. Writes to database
-    
+
     Args:
         args: Tuple of (memory_ids, worker_id)
-    
+
     Returns:
         dict with results
     """
@@ -99,8 +99,8 @@ def embed_memory_batch_worker(args: tuple[list[str], int]) -> dict:
 
         placeholders = ','.join('?' * len(memory_ids))
         query = f"""
-            SELECT id, title, content 
-            FROM memories 
+            SELECT id, title, content
+            FROM memories
             WHERE id IN ({placeholders})
         """
         rows = conn.execute(query, memory_ids).fetchall()
@@ -157,7 +157,7 @@ def embed_memory_batch_worker(args: tuple[list[str], int]) -> dict:
 
 def shadow_clone_embed(max_minutes: int = 5, num_workers: int = None):
     """Deploy shadow clone army for parallel embedding.
-    
+
     Args:
         max_minutes: Time limit in minutes
         num_workers: Number of parallel workers (default: CPU count / 2)

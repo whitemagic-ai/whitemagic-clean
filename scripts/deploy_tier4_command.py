@@ -4,7 +4,7 @@ Tier 4: Command Units Deployment
 ===============================
 Deploy 300K command & control units:
 - War Room: 100K strategic command units
-- Tactical Yin-Yang: 100K 7-phase cycle coordinators  
+- Tactical Yin-Yang: 100K 7-phase cycle coordinators
 - Intelligent Army: 100K AI synthesis nodes
 
 Inherits Tier 3 optimizations:

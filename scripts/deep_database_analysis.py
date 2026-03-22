@@ -26,7 +26,7 @@ def analyze_active_db():
 
     # Get all memories with tags
     cursor.execute("""
-        SELECT m.id, m.title, m.content, m.memory_type, m.importance, 
+        SELECT m.id, m.title, m.content, m.memory_type, m.importance,
                m.created_at, m.galactic_distance, m.metadata
         FROM memories m
         ORDER BY m.importance DESC NULLS LAST
@@ -121,8 +121,8 @@ def analyze_active_db():
     total_associations = cursor.fetchone()[0]
 
     cursor.execute("""
-        SELECT relation_type, COUNT(*) 
-        FROM associations 
+        SELECT relation_type, COUNT(*)
+        FROM associations
         GROUP BY relation_type
     """)
     association_types = dict(cursor.fetchall())

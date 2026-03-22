@@ -41,7 +41,7 @@ impl ZodiacLedger {
 
     pub fn record_action(&mut self, action_type: &str, payload: &str, guna: &str, karma: f32) -> String {
         let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
+
         let mut hasher = Sha256::new();
         hasher.update(payload.as_bytes());
         let payload_hash = format!("{:x}", hasher.finalize());
@@ -63,7 +63,7 @@ impl ZodiacLedger {
 
         self.current_hash = signature.clone();
         self.entries.push(entry);
-        
+
         signature
     }
 }
@@ -113,7 +113,7 @@ impl DharmaEngine {
 
         // Harmony Vector Thresholds (Tiferet Loop)
         let total_health = intent_score - (karma_debt * 0.1);
-        
+
         if total_health < 0.3 {
             ActionVerdict::Intervene("Critical karmic debt. Action blocked.".to_string())
         } else if total_health < 0.5 {

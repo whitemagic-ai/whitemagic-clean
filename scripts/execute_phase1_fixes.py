@@ -103,10 +103,10 @@ def merge_exact_duplicates():
 
         # Find duplicate titles
         cur.execute("""
-            SELECT title, COUNT(*) as cnt 
-            FROM memories 
+            SELECT title, COUNT(*) as cnt
+            FROM memories
             WHERE memory_type != 'quarantined'
-            GROUP BY title 
+            GROUP BY title
             HAVING cnt > 1
             ORDER BY cnt DESC
         """)

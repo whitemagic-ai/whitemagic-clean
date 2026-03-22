@@ -81,38 +81,38 @@ from typing import Dict, Any, List
 class {subsystem['controller']}(BaseEngine, Serializable, MetricCollector):
     """
     {subsystem['description']}
-    
+
     Integrates {subsystem['files']} files from the {subsystem['name']} subsystem.
     """
-    
+
     def __init__(self, name: str = "{subsystem['name']}_controller"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
         self.active = False
         self.signals_processed = 0
-    
+
     @tracked
     def activate(self):
         """Activate the {subsystem['name']} subsystem."""
         self.active = True
         self.record_metric("activation_time", self._created_at.isoformat())
-    
+
     @tracked
     def process_signal(self, signal: Dict[str, Any]) -> Dict[str, Any]:
         """Process a signal through the {subsystem['name']} subsystem."""
         if not self.active:
             return {{"status": "inactive"}}
-        
+
         self.signals_processed += 1
         self.record_metric("signals_processed", self.signals_processed)
-        
+
         # TODO: Implement {subsystem['name']}-specific signal processing
         return {{
             "subsystem": "{subsystem['name']}",
             "signal_id": signal.get("id"),
             "processed": True,
         }}
-    
+
     @tracked
     def get_health(self) -> Dict[str, Any]:
         """Get health status of {subsystem['name']} subsystem."""
@@ -122,7 +122,7 @@ class {subsystem['controller']}(BaseEngine, Serializable, MetricCollector):
             "signals_processed": self.signals_processed,
             "files_integrated": {subsystem['files']},
         }}
-    
+
     @tracked
     def get_stats(self) -> Dict[str, Any]:
         """Get comprehensive statistics."""
@@ -163,14 +163,14 @@ from wm2.biological.immune_coordinator import ImmuneCoordinator
 class UnifiedNervousSystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified nervous system integrating all 7 biological subsystems.
-    
+
     Enables emergent behaviors through cross-system communication.
     """
-    
+
     def __init__(self, name: str = "nervous_system"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
-        
+
         # Initialize all subsystems
         self.subsystems = {
             "dream": DreamCycleController(),
@@ -181,59 +181,59 @@ class UnifiedNervousSystem(BaseEngine, Serializable, MetricCollector):
             "metabolism": MetabolismController(),
             "immune": ImmuneCoordinator(),
         }
-        
+
         self.wired = False
-    
+
     @tracked
     def wire_all(self) -> Dict[str, bool]:
         """Wire all subsystems together."""
         results = {}
-        
+
         for name, subsystem in self.subsystems.items():
             try:
                 subsystem.activate()
                 results[name] = True
             except Exception as e:
                 results[name] = False
-        
+
         self.wired = all(results.values())
         self.record_metric("wiring_complete", self.wired)
-        
+
         return results
-    
+
     @tracked
     def route_signal(self, signal: Dict[str, Any]) -> Dict[str, Any]:
         """Route a signal through appropriate subsystems."""
         if not self.wired:
             return {"error": "nervous_system_not_wired"}
-        
+
         signal_type = signal.get("type", "unknown")
         results = {}
-        
+
         # Route to appropriate subsystems based on signal type
         if signal_type in ["consolidation", "dream"]:
             results["dream"] = self.subsystems["dream"].process_signal(signal)
-        
+
         if signal_type in ["harmony", "resonance"]:
             results["resonance"] = self.subsystems["resonance"].process_signal(signal)
-        
+
         if signal_type in ["evolution", "mutation"]:
             results["evolution"] = self.subsystems["evolution"].process_signal(signal)
-        
+
         if signal_type in ["awareness", "consciousness"]:
             results["consciousness"] = self.subsystems["consciousness"].process_signal(signal)
-        
+
         if signal_type in ["emergence", "serendipity"]:
             results["emergence"] = self.subsystems["emergence"].process_signal(signal)
-        
+
         if signal_type in ["decay", "metabolism"]:
             results["metabolism"] = self.subsystems["metabolism"].process_signal(signal)
-        
+
         if signal_type in ["threat", "immune"]:
             results["immune"] = self.subsystems["immune"].process_signal(signal)
-        
+
         return results
-    
+
     @tracked
     def get_system_health(self) -> Dict[str, Any]:
         """Get health status of entire nervous system."""
@@ -241,16 +241,16 @@ class UnifiedNervousSystem(BaseEngine, Serializable, MetricCollector):
             "wired": self.wired,
             "subsystems": {},
         }
-        
+
         for name, subsystem in self.subsystems.items():
             health["subsystems"][name] = subsystem.get_health()
-        
+
         active_count = sum(1 for s in self.subsystems.values() if s.active)
         health["active_subsystems"] = active_count
         health["total_subsystems"] = len(self.subsystems)
-        
+
         return health
-    
+
     @tracked
     def get_stats(self) -> Dict[str, Any]:
         """Get comprehensive statistics."""

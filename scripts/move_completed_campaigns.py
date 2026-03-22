@@ -14,7 +14,7 @@ COMPLETED_DIR.mkdir(exist_ok=True)
 
 def check_campaign_complete(filepath: Path) -> tuple[bool, int, int]:
     """Check if a campaign is 100% complete.
-    
+
     Returns: (is_complete, completed_count, total_count)
     """
     content = filepath.read_text(encoding='utf-8', errors='ignore')

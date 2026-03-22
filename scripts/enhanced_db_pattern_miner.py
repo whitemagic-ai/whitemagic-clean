@@ -63,9 +63,9 @@ class EnhancedDBPatternMiner:
 
             # Get memory content
             cursor.execute("""
-                SELECT content, tags, title 
-                FROM memories 
-                WHERE content IS NOT NULL 
+                SELECT content, tags, title
+                FROM memories
+                WHERE content IS NOT NULL
                 LIMIT 1000
             """)
 

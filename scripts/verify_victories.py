@@ -61,10 +61,10 @@ def check_deduplication():
 
     # Check for exact content hash duplicates in active memory
     cursor.execute("""
-        SELECT content_hash, COUNT(*) 
-        FROM memories 
-        WHERE memory_type != 'quarantined' 
-        GROUP BY content_hash 
+        SELECT content_hash, COUNT(*)
+        FROM memories
+        WHERE memory_type != 'quarantined'
+        GROUP BY content_hash
         HAVING COUNT(*) > 1
     """)
     dupes = cursor.fetchall()

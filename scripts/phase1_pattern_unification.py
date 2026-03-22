@@ -113,11 +113,11 @@ from typing import Dict, Any
 
 class {file_path.stem.title().replace('_', '')}(BaseManager, Serializable, MetricCollector):
     """Migrated {file_path.stem} using WM2 unified patterns."""
-    
+
     def __init__(self, name: str = "{file_path.stem}"):
         BaseManager.__init__(self, name=name)
         MetricCollector.__init__(self)
-    
+
     @tracked
     def get_stats(self) -> Dict[str, Any]:
         """Get comprehensive statistics (auto-tracked)."""
@@ -125,7 +125,7 @@ class {file_path.stem.title().replace('_', '')}(BaseManager, Serializable, Metri
             **BaseManager.get_stats(self),
             **MetricCollector.get_stats(self),
         }}
-    
+
     # TODO: Migrate specific methods from WM1
 '''
 
@@ -155,17 +155,17 @@ from typing import Dict, Any
 
 class {file_path.stem.title().replace('_', '')}(BaseEngine, Serializable, MetricCollector):
     """Migrated {file_path.stem} using WM2 unified patterns."""
-    
+
     def __init__(self, name: str = "{file_path.stem}"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
-    
+
     @tracked
     def process(self, data: Any) -> Any:
         """Process data through engine (auto-tracked)."""
         # TODO: Migrate processing logic from WM1
         return data
-    
+
     @tracked
     def get_stats(self) -> Dict[str, Any]:
         """Get comprehensive statistics (auto-tracked)."""
@@ -173,7 +173,7 @@ class {file_path.stem.title().replace('_', '')}(BaseEngine, Serializable, Metric
             **BaseEngine.get_stats(self),
             **MetricCollector.get_stats(self),
         }}
-    
+
     # TODO: Migrate specific methods from WM1
 '''
 

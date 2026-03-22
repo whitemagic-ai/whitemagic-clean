@@ -33,7 +33,7 @@ replacement_fn = """    pub fn evaluate_action(&self, action_type: &str, intent_
 
         // Harmony Vector Thresholds (Tiferet Loop)
         let total_health = intent_score - (karma_debt * 0.1);
-        
+
         if total_health < 0.3 {
             "Intervene: Critical karmic debt. Action blocked.".to_string()
         } else if total_health < 0.5 {

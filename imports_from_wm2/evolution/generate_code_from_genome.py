@@ -46,26 +46,26 @@ mutations.append(CodeMutation(
     code_snippet="""
 class StreamingEvolutionEngine:
     '''Memory-efficient evolution via chunked processing'''
-    
+
     def __init__(self, chunk_size: int = 10_000):
         self.chunk_size = chunk_size
         self.best_genomes = []
-    
+
     def evolve_chunked(self, total_population: int, generations: int):
         '''Process population in chunks to avoid memory overflow'''
         num_chunks = total_population // self.chunk_size
-        
+
         for gen in range(generations):
             chunk_best = []
-            
+
             for chunk_idx in range(num_chunks):
                 # Process chunk
                 chunk_pop = self._create_chunk(chunk_idx)
                 chunk_best.append(self._evolve_chunk(chunk_pop))
-            
+
             # Merge best from all chunks
             self.best_genomes = self._merge_best(chunk_best)
-        
+
         return self.best_genomes[0]
 """,
     priority=1,
@@ -88,15 +88,15 @@ class ProgressMetrics:
     diversity: float
     memory_mb: float
     throughput: float
-    
+
 class ProgressTracker:
     def __init__(self):
         self.metrics = []
         self.process = psutil.Process()
-    
+
     def update(self, gen: int, fitness: float, diversity: float, throughput: float):
         memory_mb = self.process.memory_info().rss / 1024 / 1024
-        
+
         self.metrics.append(ProgressMetrics(
             generation=gen,
             best_fitness=fitness,
@@ -104,7 +104,7 @@ class ProgressTracker:
             memory_mb=memory_mb,
             throughput=throughput
         ))
-        
+
         # Warn if memory > 80% of available
         if memory_mb > psutil.virtual_memory().available / 1024 / 1024 * 0.8:
             print(f"⚠️  WARNING: High memory usage ({memory_mb:.0f} MB)")
@@ -125,13 +125,13 @@ import multiprocessing as mp
 class ParallelEvaluator:
     def __init__(self, num_workers: int = None):
         self.num_workers = num_workers or mp.cpu_count()
-    
+
     def evaluate_population(self, genomes: List[Genome]) -> List[float]:
         '''Evaluate genomes in parallel across CPU cores'''
         with ProcessPoolExecutor(max_workers=self.num_workers) as executor:
             fitnesses = list(executor.map(self._evaluate_single, genomes))
         return fitnesses
-    
+
     def _evaluate_single(self, genome: Genome) -> float:
         # Fitness evaluation logic
         return genome.calculate_fitness()
@@ -158,7 +158,7 @@ class AdaptiveMutationRate:
         self.base_rate = base_rate
         self.min_rate = 0.05
         self.max_rate = 0.30
-    
+
     def calculate(self, diversity: float) -> float:
         '''Increase mutation when diversity is low, decrease when high'''
         if diversity < 0.3:
@@ -184,11 +184,11 @@ class SpeciationManager:
     def __init__(self, niche_radius: float = 0.1):
         self.niche_radius = niche_radius
         self.species = []
-    
+
     def assign_species(self, genomes: List[Genome]) -> Dict[int, List[Genome]]:
         '''Group similar genomes into species'''
         species_map = {}
-        
+
         for genome in genomes:
             assigned = False
             for species_id, representative in enumerate(self.species):
@@ -196,15 +196,15 @@ class SpeciationManager:
                     species_map.setdefault(species_id, []).append(genome)
                     assigned = True
                     break
-            
+
             if not assigned:
                 # Create new species
                 species_id = len(self.species)
                 self.species.append(genome)
                 species_map[species_id] = [genome]
-        
+
         return species_map
-    
+
     def _distance(self, g1: Genome, g2: Genome) -> float:
         # Calculate genetic distance
         return 1.0 - len(set(g1.genes) & set(g2.genes)) / max(len(g1.genes), len(g2.genes))
@@ -223,22 +223,22 @@ class EliteArchive:
     def __init__(self, max_size: int = 100):
         self.max_size = max_size
         self.archive = []
-    
+
     def add(self, genome: Genome):
         '''Add genome if it's novel or high-fitness'''
         if self._is_novel(genome) or self._is_elite(genome):
             self.archive.append(genome)
             self.archive.sort(key=lambda g: g.fitness, reverse=True)
             self.archive = self.archive[:self.max_size]
-    
+
     def _is_novel(self, genome: Genome) -> bool:
         '''Check if genome is sufficiently different from archive'''
         if not self.archive:
             return True
-        
+
         min_distance = min(self._distance(genome, arch) for arch in self.archive)
         return min_distance > 0.2  # Novelty threshold
-    
+
     def _is_elite(self, genome: Genome) -> bool:
         '''Check if genome is in top percentile'''
         if len(self.archive) < self.max_size:
@@ -270,24 +270,24 @@ class CachedFitnessEvaluator:
         self.cache = {}
         self.hits = 0
         self.misses = 0
-    
+
     def evaluate(self, genome: Genome) -> float:
         '''Evaluate with caching to avoid redundant calculations'''
         genome_hash = self._hash_genome(genome)
-        
+
         if genome_hash in self.cache:
             self.hits += 1
             return self.cache[genome_hash]
-        
+
         self.misses += 1
         fitness = genome.calculate_fitness()
         self.cache[genome_hash] = fitness
         return fitness
-    
+
     def _hash_genome(self, genome: Genome) -> str:
         gene_str = ''.join(sorted(g.name for g in genome.genes))
         return hashlib.md5(gene_str.encode()).hexdigest()
-    
+
     def get_stats(self) -> Dict:
         total = self.hits + self.misses
         hit_rate = self.hits / total if total > 0 else 0
@@ -310,18 +310,18 @@ class VectorizedFitnessEvaluator:
         '''Evaluate multiple genomes using vectorized operations'''
         # Extract gene matrices
         gene_counts = np.array([len(g.genes) for g in genomes])
-        expression_levels = np.array([[g.expression for g in genome.genes] 
+        expression_levels = np.array([[g.expression for g in genome.genes]
                                       for genome in genomes])
-        
+
         # Vectorized fitness calculation
         performance = np.mean(expression_levels, axis=1)
         complexity_penalty = 1.0 - (gene_counts / 100.0)
         diversity_bonus = np.std(expression_levels, axis=1)
-        
-        fitness = (performance * 0.6 + 
-                  complexity_penalty * 0.2 + 
+
+        fitness = (performance * 0.6 +
+                  complexity_penalty * 0.2 +
                   diversity_bonus * 0.2)
-        
+
         return fitness
 """,
     priority=2,
@@ -336,24 +336,24 @@ mutations.append(CodeMutation(
     code_snippet="""
 class LazyGenome:
     '''Genome that delays expensive operations until needed'''
-    
+
     def __init__(self, gene_ids: List[str]):
         self.gene_ids = gene_ids
         self._genes = None
         self._fitness = None
-    
+
     @property
     def genes(self) -> List[Gene]:
         if self._genes is None:
             self._genes = [self._create_gene(gid) for gid in self.gene_ids]
         return self._genes
-    
+
     @property
     def fitness(self) -> float:
         if self._fitness is None:
             self._fitness = self._calculate_fitness()
         return self._fitness
-    
+
     def _create_gene(self, gene_id: str) -> Gene:
         # Lazy gene creation
         return Gene(gene_id, expression=0.5)
@@ -373,17 +373,17 @@ class ConvergenceDetector:
         self.patience = patience
         self.threshold = threshold
         self.best_fitness_history = []
-    
+
     def should_stop(self, current_fitness: float) -> bool:
         '''Stop if no improvement for patience generations'''
         self.best_fitness_history.append(current_fitness)
-        
+
         if len(self.best_fitness_history) < self.patience:
             return False
-        
+
         recent = self.best_fitness_history[-self.patience:]
         improvement = max(recent) - min(recent)
-        
+
         return improvement < self.threshold
 """,
     priority=4,
@@ -425,21 +425,21 @@ class ReproductionStrategy:
     def reproduce(self, population: List[Genome], diversity: float) -> List[Genome]:
         '''Mix sexual and asexual reproduction based on diversity'''
         offspring = []
-        
+
         # More sexual reproduction when diversity is low
         sexual_ratio = 1.0 - diversity
         num_sexual = int(len(population) * sexual_ratio)
-        
+
         # Sexual reproduction (crossover)
         for _ in range(num_sexual):
             p1, p2 = random.sample(population, 2)
             offspring.append(self._crossover(p1, p2))
-        
+
         # Asexual reproduction (mutation only)
         for _ in range(len(population) - num_sexual):
             parent = random.choice(population)
             offspring.append(self._mutate(parent))
-        
+
         return offspring
 """,
     priority=2,
@@ -455,12 +455,12 @@ mutations.append(CodeMutation(
 class EnvironmentalPressure:
     def __init__(self):
         self.pressure_cycle = 0
-    
+
     def apply_pressure(self, genomes: List[Genome], generation: int) -> List[Genome]:
         '''Simulate changing environmental conditions'''
         # Pressure cycles every 50 generations
         self.pressure_cycle = (generation // 50) % 4
-        
+
         if self.pressure_cycle == 0:
             # Favor performance
             return sorted(genomes, key=lambda g: g.performance, reverse=True)
@@ -495,25 +495,25 @@ class MetaLearner:
     def __init__(self):
         self.successful_mutations = []
         self.successful_crossovers = []
-    
+
     def record_success(self, operation: str, genome: Genome, improvement: float):
         '''Learn which operations lead to improvements'''
         if operation == "mutation":
             self.successful_mutations.append((genome.genes, improvement))
         elif operation == "crossover":
             self.successful_crossovers.append((genome.genes, improvement))
-    
+
     def suggest_mutation(self) -> str:
         '''Suggest mutation based on historical success'''
         if not self.successful_mutations:
             return "random"
-        
+
         # Analyze patterns in successful mutations
         gene_frequencies = {}
         for genes, improvement in self.successful_mutations:
             for gene in genes:
                 gene_frequencies[gene.category] = gene_frequencies.get(gene.category, 0) + improvement
-        
+
         # Suggest mutating the most successful category
         best_category = max(gene_frequencies, key=gene_frequencies.get)
         return f"mutate_{best_category}"
@@ -535,25 +535,25 @@ class FitnessPredictor:
     def __init__(self):
         self.model = RandomForestRegressor(n_estimators=100)
         self.training_data = []
-    
+
     def train(self, genomes: List[Genome], fitnesses: List[float]):
         '''Train ML model to predict fitness'''
         X = np.array([self._genome_to_features(g) for g in genomes])
         y = np.array(fitnesses)
-        
+
         self.training_data.append((X, y))
-        
+
         if len(self.training_data) > 10:
             # Retrain on accumulated data
             all_X = np.vstack([x for x, _ in self.training_data])
             all_y = np.concatenate([y for _, y in self.training_data])
             self.model.fit(all_X, all_y)
-    
+
     def predict(self, genome: Genome) -> float:
         '''Predict fitness without expensive evaluation'''
         X = self._genome_to_features(genome).reshape(1, -1)
         return self.model.predict(X)[0]
-    
+
     def _genome_to_features(self, genome: Genome) -> np.ndarray:
         return np.array([
             len(genome.genes),
@@ -574,19 +574,19 @@ mutations.append(CodeMutation(
 class ParameterTuner:
     def __init__(self):
         self.param_history = []
-    
+
     def tune(self, current_params: Dict, metrics: Dict) -> Dict:
         '''Automatically adjust parameters based on performance'''
         self.param_history.append((current_params.copy(), metrics.copy()))
-        
+
         if len(self.param_history) < 10:
             return current_params
-        
+
         # Analyze which parameters led to best results
-        best_idx = max(range(len(self.param_history)), 
+        best_idx = max(range(len(self.param_history)),
                       key=lambda i: self.param_history[i][1]['best_fitness'])
         best_params, _ = self.param_history[best_idx]
-        
+
         # Adjust current params toward best params
         tuned = {}
         for key in current_params:
@@ -594,7 +594,7 @@ class ParameterTuner:
             best = best_params[key]
             # Move 20% toward best
             tuned[key] = current + (best - current) * 0.2
-        
+
         return tuned
 """,
     priority=3,
@@ -619,15 +619,15 @@ class PatternRecognizer:
             for i in range(len(genes)):
                 for j in range(i+1, len(genes)):
                     gene_pairs.append((genes[i], genes[j]))
-        
+
         pair_counts = Counter(gene_pairs)
-        
+
         # Category distribution
         category_counts = Counter()
         for genome in elite_genomes:
             for gene in genome.genes:
                 category_counts[gene.category] += 1
-        
+
         return {
             "common_pairs": pair_counts.most_common(10),
             "category_distribution": dict(category_counts),
@@ -655,14 +655,14 @@ class HybridEvaluator:
     def __init__(self):
         self.rust_available = self._check_rust()
         self.python_fallback = PythonEvaluator()
-    
+
     def evaluate(self, genomes: List[Genome]) -> List[float]:
         '''Use Rust for large batches, Python for small'''
         if self.rust_available and len(genomes) > 1000:
             return self._rust_evaluate(genomes)
         else:
             return self.python_fallback.evaluate(genomes)
-    
+
     def _rust_evaluate(self, genomes: List[Genome]) -> List[float]:
         import hyperevolution_core as rust
         # Convert to Rust genomes and evaluate
@@ -688,14 +688,14 @@ class JuliaAnalyzer:
         # Save metrics to temp file
         with open('/tmp/evolution_metrics.json', 'w') as f:
             json.dump(metrics, f)
-        
+
         # Call Julia script
         result = subprocess.run([
             'julia',
             'julia_analysis/statistical_analysis.jl',
             '/tmp/evolution_metrics.json'
         ], capture_output=True, text=True)
-        
+
         # Parse results
         return json.loads(result.stdout)
 """,
@@ -711,7 +711,7 @@ mutations.append(CodeMutation(
     code_snippet="""
 class LanguageRouter:
     '''Route operations to optimal language implementation'''
-    
+
     def route_operation(self, operation: str, data: Any) -> Any:
         if operation == "parallel_evolution":
             return self._rust_parallel(data)

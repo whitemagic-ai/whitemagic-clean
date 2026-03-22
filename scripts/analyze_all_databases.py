@@ -76,8 +76,8 @@ class DatabaseAnalyzer:
 
                 # Sample memories for pattern analysis
                 cursor.execute("""
-                    SELECT id, title, content, tags, metadata 
-                    FROM memories 
+                    SELECT id, title, content, tags, metadata
+                    FROM memories
                     LIMIT 10000
                 """)
 

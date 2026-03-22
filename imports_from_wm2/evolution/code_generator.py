@@ -44,7 +44,7 @@ class CodeMutation:
 class CodeGenerator:
     """
     Generates code from successful evolutionary mutations.
-    
+
     Maps abstract genes to concrete code changes.
     """
 
@@ -55,7 +55,7 @@ class CodeGenerator:
     def _build_gene_mapping(self) -> dict[str, dict[str, Any]]:
         """
         Build mapping from gene names to code templates.
-        
+
         This is the key translation layer - each gene type maps to
         a specific kind of code change.
         """
@@ -118,7 +118,7 @@ class CodeGenerator:
     ) -> list[CodeMutation]:
         """
         Generate code mutations from a successful genome.
-        
+
         Returns list of code changes that can be applied to the codebase.
         """
         mutations = []
@@ -157,7 +157,7 @@ class CodeGenerator:
     ) -> dict[str, Any]:
         """
         Apply generated mutations to the actual codebase.
-        
+
         If dry_run=True, only validates and reports what would be changed.
         If dry_run=False, actually modifies files.
         """
@@ -273,24 +273,24 @@ class CodeGenerator:
         class UnifiedNervousSystem:
             """
             Unified nervous system that wires together all biological subsystems.
-            
+
             Expression level: {gene.expression_level:.2f}
             """
-            
+
             def __init__(self):
                 self.subsystems = {{}}
                 self.signal_bus = []
-                
+
             def register_subsystem(self, name: str, subsystem: Any):
                 """Register a biological subsystem"""
                 self.subsystems[name] = subsystem
-                
+
             def route_signal(self, signal: str, data: Dict[str, Any]):
                 """Route signals between subsystems"""
                 for name, subsystem in self.subsystems.items():
                     if hasattr(subsystem, 'receive_signal'):
                         subsystem.receive_signal(signal, data)
-                        
+
             def health_check(self) -> Dict[str, bool]:
                 """Check health of all subsystems"""
                 return {{
@@ -305,11 +305,11 @@ class CodeGenerator:
         def integrate_all_subsystems(subsystems: List[Any]) -> Dict[str, Any]:
             """
             Master integration function for all subsystems.
-            
+
             Expression level: {gene.expression_level:.2f}
             """
             integrated = {{}}
-            
+
             for subsystem in subsystems:
                 name = subsystem.__class__.__name__
                 integrated[name] = {{
@@ -317,7 +317,7 @@ class CodeGenerator:
                     'status': 'active',
                     'health': subsystem.health_check() if hasattr(subsystem, 'health_check') else 'unknown'
                 }}
-            
+
             return integrated
         ''')
 
@@ -325,10 +325,10 @@ class CodeGenerator:
         """Generate phylogenetic memory module"""
         return textwrap.dedent(f'''
         """Phylogenetic Memory Tracking - Generated from evolution"""
-        
+
         from dataclasses import dataclass
         from typing import List, Dict
-        
+
         @dataclass
         class LineageEdge:
             """Edge in phylogenetic tree"""
@@ -336,17 +336,17 @@ class CodeGenerator:
             target_id: str
             edge_type: str
             timestamp: float
-            
+
         class PhylogeneticTracker:
             """
             Track memory lineage and evolution.
-            
+
             Expression level: {gene.expression_level:.2f}
             """
-            
+
             def __init__(self):
                 self.edges: List[LineageEdge] = []
-                
+
             def record_transfer(self, source_id: str, target_id: str):
                 """Record memory transfer between galaxies"""
                 edge = LineageEdge(
@@ -356,18 +356,18 @@ class CodeGenerator:
                     timestamp=time.time()
                 )
                 self.edges.append(edge)
-                
+
             def build_lineage_tree(self, memory_id: str) -> Dict[str, List[str]]:
                 """Build complete lineage tree for a memory"""
                 ancestors = []
                 descendants = []
-                
+
                 for edge in self.edges:
                     if edge.target_id == memory_id:
                         ancestors.append(edge.source_id)
                     elif edge.source_id == memory_id:
                         descendants.append(edge.target_id)
-                
+
                 return {{"ancestors": ancestors, "descendants": descendants}}
         ''')
 
@@ -377,18 +377,18 @@ class CodeGenerator:
         def vector_search(query_embedding: List[float], index: Any, top_k: int = 10) -> List[Dict]:
             """
             Semantic vector search using embeddings.
-            
+
             Expression level: {gene.expression_level:.2f}
             """
             import numpy as np
-            
+
             # Normalize query
             query = np.array(query_embedding)
             query = query / np.linalg.norm(query)
-            
+
             # Search index
             distances, indices = index.search(query.reshape(1, -1), top_k)
-            
+
             results = []
             for dist, idx in zip(distances[0], indices[0]):
                 results.append({{
@@ -396,7 +396,7 @@ class CodeGenerator:
                     "distance": float(dist),
                     "similarity": float(1.0 / (1.0 + dist))
                 }})
-            
+
             return results
         ''')
 
@@ -405,9 +405,9 @@ class CodeGenerator:
         return textwrap.dedent(f'''
         // Rust hot path optimization
         // Expression level: {gene.expression_level:.2f}
-        
+
         use rayon::prelude::*;
-        
+
         pub fn parallel_process(data: &[f64]) -> Vec<f64> {{
             data.par_iter()
                 .map(|x| x * x)
@@ -422,13 +422,13 @@ class CodeGenerator:
         def expensive_resource(self):
             """
             Lazy-loaded expensive resource.
-            
+
             Expression level: {gene.expression_level:.2f}
             """
             if not hasattr(self, '_expensive_resource'):
                 self._expensive_resource = self._load_expensive_resource()
             return self._expensive_resource
-            
+
         def _load_expensive_resource(self):
             """Actually load the resource"""
             # Expensive initialization here
@@ -441,18 +441,18 @@ class CodeGenerator:
         class ImmuneSystem:
             """
             Pattern immunity and threat detection.
-            
+
             Expression level: {gene.expression_level:.2f}
             """
-            
+
             def __init__(self):
                 self.known_threats = set()
                 self.antibodies = {{}}
-                
+
             def detect_threat(self, pattern: str) -> bool:
                 """Detect if pattern matches known threat"""
                 return pattern in self.known_threats
-                
+
             def create_antibody(self, threat: str):
                 """Create antibody for detected threat"""
                 self.antibodies[threat] = {{
@@ -460,7 +460,7 @@ class CodeGenerator:
                     'strength': 1.0
                 }}
                 self.known_threats.add(threat)
-                
+
             def is_healthy(self) -> bool:
                 """Check immune system health"""
                 return len(self.known_threats) < 1000
@@ -470,7 +470,7 @@ class CodeGenerator:
 def generate_code_from_genome(genome, codebase_root: Path) -> list[CodeMutation]:
     """
     Main entry point for code generation.
-    
+
     Takes a successful genome and generates actual code mutations.
     """
     generator = CodeGenerator(codebase_root)
@@ -488,7 +488,7 @@ def apply_mutations_to_codebase(
 ) -> dict[str, Any]:
     """
     Apply generated mutations to the codebase.
-    
+
     Set dry_run=False to actually modify files.
     """
     generator = CodeGenerator(codebase_root)

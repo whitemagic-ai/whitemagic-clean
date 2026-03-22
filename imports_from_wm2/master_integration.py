@@ -27,7 +27,7 @@ from wm2.synthesized.security.security_subsystem import SecuritySubsystem
 class MasterIntegration(BaseEngine, Serializable, MetricCollector):
     """
     Master integration of all WM1 capabilities into WM2.
-    
+
     Subsystems integrated: 9
     Total classes: 1217
     """

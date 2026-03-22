@@ -36,23 +36,23 @@ content = content.replace(
                     // Pull memory tasks, maintain homeostasis
                     tokio::time::sleep(Duration::from_millis(1000)).await;
                     loops_clone.fetch_add(1, Ordering::SeqCst);
-                    
+
                     // Simple simulation of task execution
                     tasks_clone.fetch_add(1, Ordering::SeqCst);""",
     """                    // Daemon core loop
                     // Periodically trigger background consolidation
                     // Pull memory tasks, maintain homeostasis
-                    
+
                     // Simulate a batch consolidation job being submitted and processed async
                     tokio::spawn(async move {
                         // In a real scenario, this would pop from an MPSC channel of memories
                         // and feed them into the SIMD consolidation engine.
                         tokio::time::sleep(Duration::from_millis(50)).await;
                     });
-                    
+
                     tokio::time::sleep(Duration::from_millis(1000)).await;
                     loops_clone.fetch_add(1, Ordering::SeqCst);
-                    
+
                     // Simple simulation of task execution
                     tasks_clone.fetch_add(1, Ordering::SeqCst);"""
 )

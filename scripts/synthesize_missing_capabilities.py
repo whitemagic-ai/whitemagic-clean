@@ -96,36 +96,36 @@ from typing import Dict, Any, List, Optional
 class {subsystem.title()}Subsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified {subsystem} subsystem synthesized from WM1.
-    
+
     Integrates {len(classes)} missing classes:
     {chr(10).join(f"    - {cls}" for cls in classes[:20])}
     {"    ..." if len(classes) > 20 else ""}
     """
-    
+
     def __init__(self, name: str = "{subsystem}_subsystem"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
         self.components = {{}}
         self.active = False
-    
+
     @tracked
     def initialize(self):
         """Initialize all {subsystem} components."""
         self.active = True
         self.record_metric("initialized", True)
-        
+
         # TODO: Initialize {len(classes)} components from WM1
         # Classes to integrate: {', '.join(classes[:10])}
-    
+
     @tracked
     def process(self, data: Any) -> Any:
         """Process data through {subsystem} subsystem."""
         if not self.active:
             self.initialize()
-        
+
         # TODO: Implement {subsystem}-specific processing
         return data
-    
+
     @tracked
     def get_stats(self) -> Dict[str, Any]:
         """Get comprehensive statistics."""
@@ -172,31 +172,31 @@ from typing import Dict, Any
 class MasterIntegration(BaseEngine, Serializable, MetricCollector):
     """
     Master integration of all WM1 capabilities into WM2.
-    
+
     Subsystems integrated: {synthesized_count}
     Total classes: {len(missing_classes)}
     """
-    
+
     def __init__(self, name: str = "master_integration"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
-        
+
         # Initialize all subsystems
         self.subsystems = {{
 {chr(10).join(f'            "{subsystem}": {subsystem.title()}Subsystem(),' for subsystem in categorized.keys() if categorized[subsystem])}
         }}
-        
+
         self.initialized = False
-    
+
     @tracked
     def initialize_all(self):
         """Initialize all subsystems."""
         for name, subsystem in self.subsystems.items():
             subsystem.initialize()
-        
+
         self.initialized = True
         self.record_metric("subsystems_initialized", len(self.subsystems))
-    
+
     @tracked
     def get_stats(self) -> Dict[str, Any]:
         """Get comprehensive statistics."""
@@ -206,10 +206,10 @@ class MasterIntegration(BaseEngine, Serializable, MetricCollector):
             "initialized": self.initialized,
             "subsystems": {{}},
         }}
-        
+
         for name, subsystem in self.subsystems.items():
             stats["subsystems"][name] = subsystem.get_stats()
-        
+
         return stats
 '''
 

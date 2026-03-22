@@ -36,7 +36,7 @@ import time
 from collections import deque
 from dataclasses import asdict, dataclass
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 # Guna classification (MandalaOS concept)
 # ---------------------------------------------------------------------------
 
-class Guna(str, Enum):
+class Guna(StrEnum):
     """Process temperament tags inspired by Vedic gunas."""
 
     SATTVIC = "sattvic"    # Balanced, interactive, light

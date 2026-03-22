@@ -17,7 +17,7 @@ from wm2.core.serializable import Serializable
 class ConsciousnessMonitor(BaseEngine, Serializable, MetricCollector):
     """
     Coherence tracking and awareness metrics
-    
+
     Integrates 97 files from the consciousness subsystem.
     """
 

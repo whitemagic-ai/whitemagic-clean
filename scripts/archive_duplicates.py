@@ -34,7 +34,7 @@ def compute_content_hash(title: str, content: str) -> str:
 
 def score_memory(importance: float, access_count: int, created_at: str) -> float:
     """Score a memory for duplicate resolution.
-    
+
     Higher score = better candidate to keep.
     Formula: importance * access_count * recency_factor
     """
@@ -54,7 +54,7 @@ def score_memory(importance: float, access_count: int, created_at: str) -> float
 
 def find_duplicate_groups(conn: sqlite3.Connection) -> dict[str, list[dict]]:
     """Find all duplicate memory groups by content hash.
-    
+
     Returns: {hash: [memory_dict, ...]} for groups with 2+ members
     """
     print("🔍 Scanning for duplicate content...")
@@ -118,16 +118,16 @@ def get_memory_metadata(conn: sqlite3.Connection, mem_id: str) -> dict:
 
     # Get associations (both directions)
     cur.execute("""
-        SELECT target_id, association_type, strength 
-        FROM associations 
+        SELECT target_id, association_type, strength
+        FROM associations
         WHERE source_id = ?
     """, (mem_id,))
     outgoing = [{'target': row[0], 'type': row[1], 'strength': row[2]}
                 for row in cur.fetchall()]
 
     cur.execute("""
-        SELECT source_id, association_type, strength 
-        FROM associations 
+        SELECT source_id, association_type, strength
+        FROM associations
         WHERE target_id = ?
     """, (mem_id,))
     incoming = [{'source': row[0], 'type': row[1], 'strength': row[2]}
@@ -135,8 +135,8 @@ def get_memory_metadata(conn: sqlite3.Connection, mem_id: str) -> dict:
 
     # Get holographic coordinates
     cur.execute("""
-        SELECT x, y, z, w, v 
-        FROM holographic_coordinates 
+        SELECT x, y, z, w, v
+        FROM holographic_coordinates
         WHERE memory_id = ?
     """, (mem_id,))
     coords_row = cur.fetchone()
@@ -163,22 +163,22 @@ def merge_metadata(conn: sqlite3.Connection, winner_id: str, loser_id: str):
     # Repoint associations from loser to winner
     # Outgoing: loser -> X becomes winner -> X
     cur.execute("""
-        UPDATE associations 
-        SET source_id = ? 
-        WHERE source_id = ? 
+        UPDATE associations
+        SET source_id = ?
+        WHERE source_id = ?
         AND NOT EXISTS (
-            SELECT 1 FROM associations 
+            SELECT 1 FROM associations
             WHERE source_id = ? AND target_id = associations.target_id
         )
     """, (winner_id, loser_id, winner_id))
 
     # Incoming: X -> loser becomes X -> winner
     cur.execute("""
-        UPDATE associations 
-        SET target_id = ? 
-        WHERE target_id = ? 
+        UPDATE associations
+        SET target_id = ?
+        WHERE target_id = ?
         AND NOT EXISTS (
-            SELECT 1 FROM associations 
+            SELECT 1 FROM associations
             WHERE source_id = associations.source_id AND target_id = ?
         )
     """, (winner_id, loser_id, winner_id))
@@ -219,7 +219,7 @@ def archive_memory(conn: sqlite3.Connection, memory: dict, winner_id: str,
     # Mark as archived in DB (don't delete, just mark)
     cur = conn.cursor()
     cur.execute("""
-        UPDATE memories 
+        UPDATE memories
         SET memory_type = 'archived',
             metadata = json_set(COALESCE(metadata, '{}'), '$.duplicate_of', ?)
         WHERE id = ?
@@ -294,10 +294,10 @@ def verify_deduplication(conn: sqlite3.Connection):
 
     # Count duplicate groups in active memories
     cur.execute("""
-        SELECT content, COUNT(*) as c 
-        FROM memories 
+        SELECT content, COUNT(*) as c
+        FROM memories
         WHERE memory_type NOT IN ('quarantined', 'archived')
-        GROUP BY content 
+        GROUP BY content
         HAVING c > 1
     """)
 
@@ -311,7 +311,7 @@ def verify_deduplication(conn: sqlite3.Connection):
 
     # Count active memories
     cur.execute("""
-        SELECT COUNT(*) FROM memories 
+        SELECT COUNT(*) FROM memories
         WHERE memory_type NOT IN ('quarantined', 'archived')
     """)
     active_count = cur.fetchone()[0]

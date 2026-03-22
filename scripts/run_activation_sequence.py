@@ -453,13 +453,13 @@ def step_system_summary(results):
   Embeddings:      {db.get('embeddings', '?'):,}
   Holo Coords:     {db.get('holographic_coords', '?'):,}
   DB Size:         {db.get('db_size_mb', '?')} MB
-  
+
   Galactic Zones:  {json.dumps(sweep.get('zone_counts', {}), indent=None)[:200]}
   Core Memories:   {sweep.get('core_count', '?'):,}
   Constellations:  {constellations.get('constellations_found', '?')}
   Bridge Nodes:    {graph.get('bridges', '?')}
   Communities:     {graph.get('communities', '?')}
-  
+
   New Assocs Created: {mining.get('keyword_mining', {}).get('links_created', 0) + mining.get('semantic_mining', {}).get('links_created', 0)}
 """)
 

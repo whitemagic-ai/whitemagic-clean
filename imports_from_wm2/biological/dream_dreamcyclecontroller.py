@@ -17,7 +17,7 @@ from wm2.core.serializable import Serializable
 class DreamCycleController(BaseEngine, Serializable, MetricCollector):
     """
     Consolidate 8 dream phases into unified cycle
-    
+
     Integrates 216 files from the dream subsystem.
     """
 

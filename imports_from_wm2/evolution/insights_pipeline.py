@@ -51,7 +51,7 @@ class MutationRecommendation:
 class InsightsPipeline:
     """
     Transforms raw evolution metrics into actionable insights.
-    
+
     This is where the magic happens - we go from numbers to understanding.
     """
 
@@ -496,7 +496,7 @@ def extract_actionable_insights(
 ) -> dict[str, Any]:
     """
     Main entry point for insights extraction.
-    
+
     Returns insights and recommendations.
     """
     pipeline = InsightsPipeline()
@@ -512,7 +512,7 @@ def generate_mutation_recommendations(
 ) -> list[MutationRecommendation]:
     """
     Generate mutation recommendations from insights.
-    
+
     This can be called separately if you already have insights.
     """
     pipeline = InsightsPipeline()

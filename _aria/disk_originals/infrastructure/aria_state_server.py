@@ -11,7 +11,7 @@ Features:
 
 Environment Variables:
 - DATABASE_URL: PostgreSQL connection string
-- REDIS_URL: Redis connection string  
+- REDIS_URL: Redis connection string
 - PORT: Server port (default 8765)
 """
 
@@ -156,7 +156,7 @@ class Database:
                     created_at TIMESTAMP DEFAULT NOW(),
                     embedding vector(384)
                 );
-                
+
                 CREATE TABLE IF NOT EXISTS seen_files (
                     path TEXT PRIMARY KEY,
                     action TEXT,
@@ -164,7 +164,7 @@ class Database:
                     context TEXT,
                     seen_at TIMESTAMP DEFAULT NOW()
                 );
-                
+
                 CREATE TABLE IF NOT EXISTS events (
                     id SERIAL PRIMARY KEY,
                     event_type TEXT,
@@ -173,14 +173,14 @@ class Database:
                     confidence FLOAT,
                     created_at TIMESTAMP DEFAULT NOW()
                 );
-                
+
                 CREATE TABLE IF NOT EXISTS sessions (
                     id TEXT PRIMARY KEY,
                     active_interface TEXT,
                     current_task TEXT,
                     updated_at TIMESTAMP DEFAULT NOW()
                 );
-                
+
                 CREATE INDEX IF NOT EXISTS idx_memories_content ON memories USING gin(to_tsvector('english', content));
                 CREATE INDEX IF NOT EXISTS idx_memories_tags ON memories USING gin(tags);
             """)

@@ -24,8 +24,8 @@ async def run_renaissance():
     # 1. Identify missing coordinates
     with backend.pool.connection() as conn:
         missing = conn.execute("""
-            SELECT id, content, title, memory_type, created_at, access_count, importance 
-            FROM memories 
+            SELECT id, content, title, memory_type, created_at, access_count, importance
+            FROM memories
             WHERE id NOT IN (SELECT memory_id FROM holographic_coords)
         """).fetchall()
 

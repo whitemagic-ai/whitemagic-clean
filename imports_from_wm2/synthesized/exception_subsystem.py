@@ -44,7 +44,7 @@ class WM2TimeoutError(WM2Exception):
 class ExceptionSubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified exception handling subsystem for WM2.
-    
+
     Provides:
     - Exception tracking and logging
     - Error recovery strategies

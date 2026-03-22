@@ -36,9 +36,9 @@ def compute_coords_batch(batch_id, memory_ids):
         # Get batch of memories
         placeholders = ','.join('?' * len(memory_ids))
         cursor.execute(f"""
-            SELECT id, importance, emotional_valence, neuro_score, 
+            SELECT id, importance, emotional_valence, neuro_score,
                    novelty_score, galactic_distance, retention_score
-            FROM memories 
+            FROM memories
             WHERE id IN ({placeholders})
         """, memory_ids)
 
@@ -90,7 +90,7 @@ def main():
 
     # Get all memories without coordinates
     cursor.execute("""
-        SELECT id FROM memories 
+        SELECT id FROM memories
         WHERE holographic_coords IS NULL
         ORDER BY created_at DESC
     """)

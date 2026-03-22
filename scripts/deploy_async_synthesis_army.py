@@ -119,21 +119,21 @@ from wm2.core.metrics import MetricCollector, tracked
 class AsyncSubsystem(BaseEngine, Serializable, MetricCollector):
     """
     Unified async subsystem for WM2.
-    
+
     Provides:
     - Async task management
     - Concurrent execution
     - Async context managers
     - Async generators
     """
-    
+
     def __init__(self, name: str = "async_subsystem"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
         self.loop: Optional[asyncio.AbstractEventLoop] = None
         self.tasks: List[asyncio.Task] = []
         self.active = False
-    
+
     @tracked
     def initialize(self):
         """Initialize async subsystem."""
@@ -142,35 +142,35 @@ class AsyncSubsystem(BaseEngine, Serializable, MetricCollector):
         except RuntimeError:
             self.loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
-        
+
         self.active = True
         self.record_metric("initialized", True)
-    
+
     @tracked
     async def execute_async(self, coro: Callable) -> Any:
         """Execute an async coroutine."""
         if not self.active:
             self.initialize()
-        
+
         return await coro()
-    
+
     @tracked
     async def gather_tasks(self, *coros: Callable) -> List[Any]:
         """Execute multiple async tasks concurrently."""
         if not self.active:
             self.initialize()
-        
+
         results = await asyncio.gather(*[coro() for coro in coros])
         self.record_metric("tasks_gathered", len(coros))
         return results
-    
+
     @tracked
     async def async_generator_example(self) -> AsyncIterator[int]:
         """Example async generator pattern."""
         for i in range(10):
             await asyncio.sleep(0.01)
             yield i
-    
+
     @tracked
     def get_stats(self) -> Dict[str, Any]:
         """Get comprehensive statistics."""

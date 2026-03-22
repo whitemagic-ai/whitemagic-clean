@@ -25,7 +25,7 @@ def execute_v19_typed_edges(dry_run=True):
     print("\n🔍 Phase 1: Landscape Scan")
     cursor.execute("""
         SELECT relation_type, COUNT(*) as cnt
-        FROM associations 
+        FROM associations
         GROUP BY relation_type
         ORDER BY cnt DESC
     """)

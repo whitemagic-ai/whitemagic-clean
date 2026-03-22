@@ -19,7 +19,7 @@ from wm2.core.serializable import Serializable
 class SimplifiedPolyglotRouter(BaseEngine, Serializable, MetricCollector):
     """
     Simplified version of polyglot_router.
-    
+
     Strategy: Simplify routing with dispatch tables
     """
 

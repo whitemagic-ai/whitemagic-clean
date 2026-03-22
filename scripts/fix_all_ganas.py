@@ -113,7 +113,7 @@ def handle_reconsolidation_mark(**kwargs: Any) -> dict[str, Any]:
     memory_id = kwargs.get("memory_id")
     if not memory_id:
         return {"status": "error", "error": "memory_id required"}
-    
+
     from whitemagic.core.memory.unified import get_unified_memory
     mem = get_unified_memory()
     mem.mark_for_reconsolidation(memory_id)
@@ -124,10 +124,10 @@ def handle_reconsolidation_update(**kwargs: Any) -> dict[str, Any]:
     """Update reconsolidated memory."""
     memory_id = kwargs.get("memory_id")
     updates = kwargs.get("updates", {})
-    
+
     if not memory_id:
         return {"status": "error", "error": "memory_id required"}
-    
+
     from whitemagic.core.memory.unified import get_unified_memory
     mem = get_unified_memory()
     mem.update_reconsolidated(memory_id, updates)
@@ -158,10 +158,10 @@ logger = logging.getLogger(__name__)
 def handle_graph_topology(**kwargs: Any) -> dict[str, Any]:
     """Get graph topology statistics."""
     from whitemagic.core.intelligence.graph_engine import GraphEngine
-    
+
     engine = GraphEngine()
     stats = engine.get_topology_stats()
-    
+
     return {
         "status": "success",
         "topology": {
@@ -177,11 +177,11 @@ def handle_graph_topology(**kwargs: Any) -> dict[str, Any]:
 def handle_community_propagate(**kwargs: Any) -> dict[str, Any]:
     """Propagate information through graph communities."""
     from whitemagic.core.intelligence.graph_engine import GraphEngine
-    
+
     engine = GraphEngine()
     message = kwargs.get("message", "")
     community_id = kwargs.get("community_id")
-    
+
     result = engine.propagate_in_community(community_id, message)
     return {"status": "success", "propagated": result}
 
@@ -189,10 +189,10 @@ def handle_community_propagate(**kwargs: Any) -> dict[str, Any]:
 def handle_community_status(**kwargs: Any) -> dict[str, Any]:
     """Get community health status."""
     from whitemagic.core.intelligence.graph_engine import GraphEngine
-    
+
     engine = GraphEngine()
     communities = engine.get_communities()
-    
+
     return {
         "status": "success",
         "community_count": len(communities),
@@ -203,10 +203,10 @@ def handle_community_status(**kwargs: Any) -> dict[str, Any]:
 def handle_community_health(**kwargs: Any) -> dict[str, Any]:
     """Analyze community health metrics."""
     from whitemagic.core.intelligence.graph_engine import GraphEngine
-    
+
     engine = GraphEngine()
     health = engine.analyze_community_health()
-    
+
     return {"status": "success", "health": health}
 ''')
                 self.fixes_applied.append("Created living_graph.py")
@@ -227,10 +227,10 @@ logger = logging.getLogger(__name__)
 def get_metrics_summary() -> dict[str, Any]:
     """Get summary of all tracked metrics."""
     from whitemagic.core.memory.hologram import HologramCache
-    
+
     cache = HologramCache()
     stats = cache.get_stats()
-    
+
     return {
         "status": "success",
         "metrics": {
@@ -269,11 +269,11 @@ def list_cascade_patterns() -> list[dict[str, Any]]:
 def execute_cascade(pattern: str, tools: list[str], **kwargs: Any) -> dict[str, Any]:
     """Execute a cascade pattern."""
     logger.info(f"Executing cascade pattern: {pattern} with {len(tools)} tools")
-    
+
     results = []
     for tool in tools:
         results.append({"tool": tool, "status": "executed"})
-    
+
     return {
         "status": "success",
         "pattern": pattern,

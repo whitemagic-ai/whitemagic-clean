@@ -7,7 +7,7 @@ injection = """
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setInput(val);
-    
+
     // Simple mock of @-mentions for context
     if (val.endsWith('@')) {
       // Trigger a contextual menu (in a real app, this would open a popup)

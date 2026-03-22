@@ -190,14 +190,14 @@ class JuliaBridge:
         using JSON
         include("{self.module_path.absolute()}")
         using .EvolutionStatistics
-        
+
         data = JSON.parsefile("{data_file}")
         fitness = data["fitness_history"]
         diversity = data["diversity_history"]
-        
+
         analyzer = EvolutionAnalyzer(fitness, diversity, Matrix{{Float64}}[])
         results = analyze_run(analyzer)
-        
+
         println(JSON.json(results))
         """
 
@@ -285,7 +285,7 @@ class ZigBridge:
 class PolyglotBridge:
     """
     Unified bridge for all polyglot components.
-    
+
     Automatically selects best available implementation for each operation.
     """
 

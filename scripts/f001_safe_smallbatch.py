@@ -61,7 +61,7 @@ def main():
 
     # Get tasks
     cursor.execute("""
-        SELECT m.id, m.content 
+        SELECT m.id, m.content
         FROM memories m
         LEFT JOIN memory_embeddings e ON m.id = e.memory_id
         WHERE m.memory_type NOT IN ('archived_orphan', 'quarantined', 'scavenged') AND e.memory_id IS NULL
