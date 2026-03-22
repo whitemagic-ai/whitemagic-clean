@@ -180,7 +180,7 @@ print("="*80)
 print(f"\nCompleted: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 print("\nSummary:")
 print(f"  ✓ Adaptive system: ENABLED (manual approval mode)")
-print(f"  ✓ Optimizers: ACTIotl
+print(f"  ✓ Optimizers: ACTIVE ({len(final_status['pending_approvals'])} pending approvals)")
 print(f"  ✓ Latency saved: {mem_latency + pat_latency:.2f}ms")
 print(f"  ✓ System coherence: {final_status['current_coherence']:.3f}")
 print(f"  ✓ System performance: {final_status['current_performance']:.3f}")
