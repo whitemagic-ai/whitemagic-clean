@@ -470,7 +470,7 @@ class GrandUnifiedCycle:
             return
 
         try:
-            from whitemagic.core.resonance.gan_ying import emit_event, EventType
+            from whitemagic.core.resonance.gan_ying import EventType, emit_event
 
             # Unified cycle event
             emit_event(
@@ -553,7 +553,7 @@ class GrandUnifiedCycle:
         if self._doctrine:
             try:
                 # Use doctrine's phase force weights
-                from whitemagic.agents.doctrine import WuXingPhase, PHASE_FORCE_WEIGHTS
+                from whitemagic.agents.doctrine import PHASE_FORCE_WEIGHTS, WuXingPhase
                 phase = WuXingPhase(element.value)
                 weights = PHASE_FORCE_WEIGHTS.get(phase, {})
                 return {k.value: v for k, v in weights.items()}

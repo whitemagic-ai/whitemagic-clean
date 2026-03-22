@@ -3,8 +3,9 @@ import logging
 import shutil
 import sqlite3
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, cast
+from typing import Any, cast
 
 from whitemagic.runtime_status import get_runtime_status
 from whitemagic.tools import introspection as _core

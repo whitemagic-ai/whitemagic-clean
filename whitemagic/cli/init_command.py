@@ -20,7 +20,6 @@ from pathlib import Path
 
 import click
 
-
 # ---------------------------------------------------------------------------
 # Template content — module-level strings, no indentation issues
 # ---------------------------------------------------------------------------

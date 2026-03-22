@@ -8,11 +8,12 @@ import json
 import os
 import socket
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections.abc import Coroutine
 from datetime import datetime
 from typing import Any, Optional, TypeVar
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 def _emit(event_type_name: str, data: dict[str, Any]) -> None:
@@ -278,7 +279,7 @@ def handle_broker_status(**kwargs: Any) -> dict[str, Any]:
     try:
         info = _run(_do())
         return {"status": "success", **info}
-    except asyncio.TimeoutError:
+    except TimeoutError:
         return {
             "status": "error",
             "error": f"Broker status timed out after {timeout}s",

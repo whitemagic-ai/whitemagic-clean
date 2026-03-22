@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Union, cast
+from typing import Any, cast
 
 from whitemagic.core.memory.unified import get_unified_memory
 from whitemagic.core.memory.unified_types import MemoryType
@@ -22,7 +22,7 @@ class MemoryManager:
     Adapts legacy method signatures to UnifiedMemory calls.
     """
 
-    def __init__(self, base_dir: Union[str, Path] = "."):
+    def __init__(self, base_dir: str | Path = "."):
         self.base_path = Path(base_dir)
         # Initialize a dedicated UnifiedMemory instance for this manager
         # if a custom path is provided (for test isolation)
@@ -358,7 +358,7 @@ class MemoryManager:
 
 _manager: MemoryManager | None = None
 
-def get_memory_manager(base_dir: Union[str, Path] = ".") -> MemoryManager:
+def get_memory_manager(base_dir: str | Path = ".") -> MemoryManager:
     """Get or create the global MemoryManager singleton."""
     global _manager
     if _manager is None:

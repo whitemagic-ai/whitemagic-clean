@@ -48,7 +48,7 @@ class GardenStateTracker:
         """Load state from disk."""
         if self.state_file.exists():
             try:
-                with open(self.state_file, "r") as f:
+                with open(self.state_file) as f:
                     data = json.load(f)
                     for name, state_data in data.items():
                         self.states[name] = GardenState(**state_data)

@@ -6,10 +6,11 @@ Central nervous bus that wires WhiteMagic's biological subsystems into a unified
 Connects Immune, Genetics, Dream, Metabolism, Consciousness, Resonance, and Emergence.
 """
 
-from typing import Dict, Any, List, Optional, Callable
 import logging
 import threading
+from collections.abc import Callable
 from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class NervousSystem:
     def __new__(cls):
         with cls._lock:
             if cls._instance is None:
-                cls._instance = super(NervousSystem, cls).__new__(cls)
+                cls._instance = super().__new__(cls)
                 cls._instance._initialized = False
             return cls._instance
 
@@ -41,8 +42,8 @@ class NervousSystem:
         if self._initialized:
             return
 
-        self.organs: Dict[str, Any] = {}
-        self.signals: Dict[str, List[Callable]] = {}
+        self.organs: dict[str, Any] = {}
+        self.signals: dict[str, list[Callable]] = {}
         self._initialized = True
         logger.info("Nervous System initialized")
 
@@ -51,7 +52,7 @@ class NervousSystem:
         self.organs[organ_type.value] = organ_instance
         logger.info(f"Organ registered: {organ_type.value}")
 
-    def get_organ(self, organ_type: OrganType) -> Optional[Any]:
+    def get_organ(self, organ_type: OrganType) -> Any | None:
         """Retrieve a registered organ."""
         return self.organs.get(organ_type.value)
 
@@ -61,7 +62,7 @@ class NervousSystem:
             self.signals[signal_type] = []
         self.signals[signal_type].append(callback)
 
-    def dispatch_signal(self, signal_type: str, data: Dict[str, Any]):
+    def dispatch_signal(self, signal_type: str, data: dict[str, Any]):
         """Dispatch a signal to all subscribers."""
         if signal_type in self.signals:
             for callback in self.signals[signal_type]:
@@ -70,7 +71,7 @@ class NervousSystem:
                 except Exception as e:
                     logger.error(f"Error in signal handler for {signal_type}: {e}")
 
-    def health_dashboard(self) -> Dict[str, str]:
+    def health_dashboard(self) -> dict[str, str]:
         """Return status of all registered organs."""
         status = {}
         for name, organ in self.organs.items():
@@ -89,7 +90,7 @@ class NervousSystem:
 
     # --- Specific Feedback Loops (V005) ---
 
-    def signal_threat_detected(self, threat_level: float, details: Dict[str, Any]):
+    def signal_threat_detected(self, threat_level: float, details: dict[str, Any]):
         """Immune -> Dream: Threat triggers defensive dream cycle."""
         self.dispatch_signal("threat_detected", {"level": threat_level, "details": details})
 
@@ -108,7 +109,7 @@ class NervousSystem:
             rate = max(0.01, 1.0 - equilibrium_score)
             genetics.set_mutation_rate(rate)
 
-    def signal_dream_consolidation(self, insights: List[Dict[str, Any]]):
+    def signal_dream_consolidation(self, insights: list[dict[str, Any]]):
         """Dream -> Genetics: Consolidation feeds fitness scores."""
         self.dispatch_signal("dream_consolidated", {"insights": insights})
 

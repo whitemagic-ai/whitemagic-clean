@@ -16,8 +16,8 @@ This turns a small local LLM into a much more capable system.
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import Any, Optional, Dict
 from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +43,8 @@ class EnhancedResponse:
     mode: EnhancementMode
     latency_ms: float
     tokens_used: int
-    enhancement_details: Dict[str, Any] = field(default_factory=dict)
-    baseline_answer: Optional[str] = None  # For comparison
+    enhancement_details: dict[str, Any] = field(default_factory=dict)
+    baseline_answer: str | None = None  # For comparison
     improvement_score: float = 0.0  # How much better than baseline
 
 
@@ -70,8 +70,8 @@ class LLMMetaHarness:
     def _try_load(self):
         """Load local LLM and WhiteMagic systems."""
         try:
-            from whitemagic.inference.local_llm import LocalLLM
             from whitemagic.core.memory import get_unified_memory
+            from whitemagic.inference.local_llm import LocalLLM
 
             self._llm = LocalLLM(model=self.model_name)
             self._memory = get_unified_memory()
@@ -394,7 +394,7 @@ Refine and provide final answer:"""
             baseline_answer=initial,
         )
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get performance statistics."""
         stats = {
             "total_queries": self._stats["total_queries"],
@@ -414,7 +414,7 @@ Refine and provide final answer:"""
 
 
 # Singleton instance
-_harness: Optional[LLMMetaHarness] = None
+_harness: LLMMetaHarness | None = None
 
 
 def get_meta_harness(model_name: str = "qwen2.5-coder:1.5b") -> LLMMetaHarness:

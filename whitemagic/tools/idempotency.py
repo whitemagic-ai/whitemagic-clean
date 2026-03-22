@@ -13,19 +13,19 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from whitemagic.config.paths import ARTIFACTS_DIR
 from whitemagic.tools.envelope import coerce_jsonable
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 from whitemagic.utils.fileio import atomic_write, file_lock
 
 
 def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    return datetime.now(UTC).replace(microsecond=0).isoformat()
 
 
 def _safe_tool_filename(tool: str) -> str:
@@ -33,7 +33,7 @@ def _safe_tool_filename(tool: str) -> str:
 
 
 def _record_path(tool: str, key: str) -> Path:
-    h = hashlib.sha256(f"{tool}:{key}".encode("utf-8")).hexdigest()[:24]
+    h = hashlib.sha256(f"{tool}:{key}".encode()).hexdigest()[:24]
     base = Path(ARTIFACTS_DIR) / "idempotency"
     base.mkdir(parents=True, exist_ok=True)
     return Path(base / f"{_safe_tool_filename(tool)}__{h}.json")

@@ -5,8 +5,8 @@ Tests the Rust pattern accelerators on the full 226K memory dataset
 to validate 30x speedup and identify performance characteristics.
 """
 
-import sys
 import json
+import sys
 import time
 from pathlib import Path
 

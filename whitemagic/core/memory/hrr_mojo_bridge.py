@@ -5,6 +5,7 @@ Bridges Python HRR calls to Mojo implementation for 10-50x speedup.
 import logging
 import os
 import subprocess
+
 import numpy as np
 
 logger = logging.getLogger(__name__)

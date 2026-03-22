@@ -2,12 +2,12 @@
 Provides 1000x speedup for similarity search on large corpora.
 """
 
-import numpy as np
-import sqlite3
-import pickle
-from pathlib import Path
-from typing import List, Tuple, Optional, Dict
 import logging
+import pickle
+import sqlite3
+from pathlib import Path
+
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class RustHNSWWrapper:
         self.m = m
         self.ef_construction = ef_construction
         self._index = _rust_hnsw.HNSWIndex(dim, m, ef_construction) if RUST_HNSW_AVAILABLE else None
-        self._node_vectors: Dict[str, np.ndarray] = {}  # Store vectors for save/load
+        self._node_vectors: dict[str, np.ndarray] = {}  # Store vectors for save/load
 
     def add_item(self, memory_id: str, vector: np.ndarray):
         """Add a vector to the index."""
@@ -39,7 +39,7 @@ class RustHNSWWrapper:
         if self._index:
             self._index.add_item(memory_id, vector.tolist())
 
-    def search(self, query: np.ndarray, k: int = 10, ef: int = 50) -> List[Tuple[str, float]]:
+    def search(self, query: np.ndarray, k: int = 10, ef: int = 50) -> list[tuple[str, float]]:
         """Search for k nearest neighbors."""
         query = query.astype(np.float32)
         if self._index:
@@ -51,7 +51,7 @@ class RustHNSWWrapper:
         return len(self._node_vectors)
 
     @property
-    def nodes(self) -> Dict[str, Dict]:
+    def nodes(self) -> dict[str, dict]:
         """Compatibility property for Python interface."""
         return {mid: {'vector': v} for mid, v in self._node_vectors.items()}
 
@@ -65,13 +65,13 @@ class HNSWIndex:
     """
 
     def __init__(self, dim: int = 384, m: int = 16, ef_construction: int = 200,
-                 db_path: Optional[Path] = None, use_rust: bool = True):
+                 db_path: Path | None = None, use_rust: bool = True):
         self.dim = dim
         self.m = m  # Number of neighbors per layer
         self.ef_construction = ef_construction
         self.max_level = 0
-        self.nodes: Dict[str, Dict] = {}  # memory_id -> {vector, level, neighbors}
-        self.entry_point: Optional[str] = None
+        self.nodes: dict[str, dict] = {}  # memory_id -> {vector, level, neighbors}
+        self.entry_point: str | None = None
         self.db_path = db_path or Path.home() / ".whitemagic/memory/hnsw_index.pkl"
 
         # Use Rust implementation if available and requested
@@ -147,7 +147,7 @@ class HNSWIndex:
             self.entry_point = memory_id
 
     def _search_layer(self, query: np.ndarray, entry: str, level: int,
-                      k: int) -> List[str]:
+                      k: int) -> list[str]:
         """Search for k nearest neighbors at a specific layer."""
         visited = {entry}
         candidates = [(self._distance(query, self.nodes[entry]['vector']), entry)]
@@ -174,7 +174,7 @@ class HNSWIndex:
 
         return [r[1] for r in results]
 
-    def search(self, query: np.ndarray, k: int = 10, ef: int = 50) -> List[Tuple[str, float]]:
+    def search(self, query: np.ndarray, k: int = 10, ef: int = 50) -> list[tuple[str, float]]:
         """Approximate nearest neighbor search."""
         # Route to Rust implementation if available
         if self._rust_index:
@@ -205,7 +205,7 @@ class HNSWIndex:
         results = self._search_layer_ef(query, curr_node, ef)
         return [(mid, 1.0 - dist) for dist, mid in results[:k]]
 
-    def _search_layer_ef(self, query: np.ndarray, entry: str, ef: int) -> List[Tuple[float, str]]:
+    def _search_layer_ef(self, query: np.ndarray, entry: str, ef: int) -> list[tuple[float, str]]:
         """Search layer 0 with ef parameter for better recall."""
         visited = {entry}
         candidates = [(self._distance(query, self.nodes[entry]['vector']), entry)]
@@ -290,7 +290,7 @@ class HNSWIndex:
 
 
 # Singleton instance
-_hnsw_index: Optional[HNSWIndex] = None
+_hnsw_index: HNSWIndex | None = None
 
 def get_hnsw_index() -> HNSWIndex:
     """Get or create the global HNSW index."""
@@ -305,7 +305,7 @@ def get_hnsw_index() -> HNSWIndex:
     return _hnsw_index
 
 
-def search_similar_hnsw(query_embedding: np.ndarray, k: int = 10) -> List[Tuple[str, float]]:
+def search_similar_hnsw(query_embedding: np.ndarray, k: int = 10) -> list[tuple[str, float]]:
     """Fast approximate similarity search using HNSW."""
     index = get_hnsw_index()
     return index.search(query_embedding, k=k)

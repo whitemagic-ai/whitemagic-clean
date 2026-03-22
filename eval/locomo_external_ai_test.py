@@ -52,10 +52,10 @@ def generate_memory_sample(n_memories: int = 50) -> dict[str, Any]:
     not Windsurf sessions, not internal reasoning. Just the facts.
     """
     logger.info(f"Generating memory sample from {DB_PATH}")
-    
+
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
-    
+
     # Get diverse, high-quality memories
     rows = conn.execute("""
         SELECT 
@@ -82,15 +82,15 @@ def generate_memory_sample(n_memories: int = 50) -> dict[str, Any]:
         ORDER BY m.importance DESC, LENGTH(m.content) DESC
         LIMIT ?
     """, (n_memories * 2,)).fetchall()
-    
+
     # Diverse sample across galactic zones
     memories = []
     seen_zones = set()
-    
+
     for row in rows:
         if len(memories) >= n_memories:
             break
-            
+
         # Determine galactic zone
         dist = row['galactic_distance'] or 0.5
         if dist < 0.1:
@@ -101,12 +101,12 @@ def generate_memory_sample(n_memories: int = 50) -> dict[str, Any]:
             zone = 'architecture'
         else:
             zone = 'outer'
-        
+
         # Ensure zone diversity
         if zone in seen_zones and len(seen_zones) >= 3:
             continue
         seen_zones.add(zone)
-        
+
         memories.append({
             'id': row['id'],
             'title': row['title'],
@@ -116,7 +116,7 @@ def generate_memory_sample(n_memories: int = 50) -> dict[str, Any]:
             'zone': zone,
             'associations': row['associated_ids'].split(',') if row['associated_ids'] else []
         })
-    
+
     sample = {
         'generated_at': datetime.now().isoformat(),
         'count': len(memories),
@@ -143,7 +143,7 @@ def generate_memory_sample(n_memories: int = 50) -> dict[str, Any]:
         },
         'memories': memories
     }
-    
+
     conn.close()
     logger.info(f"Generated sample with {len(memories)} memories")
     return sample
@@ -164,26 +164,26 @@ def validate_answers(test_file: Path) -> dict[str, Any]:
     then compares to the expected answer.
     """
     logger.info(f"Loading test questions from {test_file}")
-    
+
     with open(test_file) as f:
         test_data = json.load(f)
-    
+
     questions = test_data.get('questions', [])
     logger.info(f"Loaded {len(questions)} test questions")
-    
+
     # Import WhiteMagic retrieval
     try:
-        from whitemagic.core.memory.sqlite_backend import get_unified_memory
         from whitemagic.core.memory.embeddings import get_embedding_engine
-        
+        from whitemagic.core.memory.sqlite_backend import get_unified_memory
+
         db = get_unified_memory()
         engine = get_embedding_engine()
-        
+
         logger.info("WhiteMagic systems initialized")
     except Exception as e:
         logger.error(f"Failed to initialize WhiteMagic: {e}")
         return {'error': str(e)}
-    
+
     results = {
         'total_questions': len(questions),
         'answered': 0,
@@ -192,7 +192,7 @@ def validate_answers(test_file: Path) -> dict[str, Any]:
         'by_difficulty': {},
         'details': []
     }
-    
+
     for q in questions:
         qid = q.get('question_id', 'unknown')
         qtype = q.get('question_type', 'unknown')
@@ -200,30 +200,30 @@ def validate_answers(test_file: Path) -> dict[str, Any]:
         expected = q.get('expected_answer', '')
         source_ids = q.get('source_memory_ids', [])
         difficulty = q.get('difficulty', 'medium')
-        
+
         # Initialize counters
         if qtype not in results['by_type']:
             results['by_type'][qtype] = {'total': 0, 'correct': 0}
         if difficulty not in results['by_difficulty']:
             results['by_difficulty'][difficulty] = {'total': 0, 'correct': 0}
-        
+
         results['by_type'][qtype]['total'] += 1
         results['by_difficulty'][difficulty]['total'] += 1
-        
+
         try:
             # Retrieve using WhiteMagic
             retrieved = retrieve_with_whitemagic(db, engine, question_text, source_ids)
-            
+
             # Compare retrieved vs expected (semantic similarity check)
             is_correct = evaluate_answer(retrieved, expected)
-            
+
             if is_correct:
                 results['correct'] += 1
                 results['by_type'][qtype]['correct'] += 1
                 results['by_difficulty'][difficulty]['correct'] += 1
-            
+
             results['answered'] += 1
-            
+
             results['details'].append({
                 'question_id': qid,
                 'question_type': qtype,
@@ -234,7 +234,7 @@ def validate_answers(test_file: Path) -> dict[str, Any]:
                 'correct': is_correct,
                 'source_found': check_source_found(db, source_ids)
             })
-            
+
         except Exception as e:
             logger.error(f"Error answering question {qid}: {e}")
             results['details'].append({
@@ -242,13 +242,13 @@ def validate_answers(test_file: Path) -> dict[str, Any]:
                 'error': str(e),
                 'correct': False
             })
-    
+
     # Calculate accuracy
     if results['answered'] > 0:
         results['accuracy'] = results['correct'] / results['answered']
     else:
         results['accuracy'] = 0.0
-    
+
     return results
 
 
@@ -262,7 +262,7 @@ def retrieve_with_whitemagic(db, engine, question: str, source_ids: list) -> str
     3. Association following
     """
     answer_parts = []
-    
+
     # Strategy 1: FTS search
     try:
         cursor = db.conn.execute(
@@ -278,7 +278,7 @@ def retrieve_with_whitemagic(db, engine, question: str, source_ids: list) -> str
             answer_parts.append(f"FTS: {rows[0][1][:300]}")
     except Exception as e:
         logger.debug(f"FTS search error: {e}")
-    
+
     # Strategy 2: Direct source lookup
     for sid in source_ids[:2]:
         try:
@@ -291,7 +291,7 @@ def retrieve_with_whitemagic(db, engine, question: str, source_ids: list) -> str
                 answer_parts.append(f"Source: {row[1][:300]}")
         except Exception:
             pass
-    
+
     return " | ".join(answer_parts) if answer_parts else "No relevant information found"
 
 
@@ -304,21 +304,21 @@ def evaluate_answer(retrieved: str, expected: str) -> bool:
     """
     if not retrieved or not expected:
         return False
-    
+
     # Normalize
     retrieved_lower = retrieved.lower()
     expected_lower = expected.lower()
-    
+
     # Extract key terms from expected (nouns, verbs, numbers)
     expected_terms = set(expected_lower.split())
-    
+
     # Check overlap
     matches = sum(1 for term in expected_terms if term in retrieved_lower)
-    
+
     # Consider correct if >30% of key terms match
     if len(expected_terms) > 0:
         return matches / len(expected_terms) > 0.3
-    
+
     return False
 
 
@@ -326,10 +326,10 @@ def check_source_found(db, source_ids: list) -> bool:
     """Check if source memories exist in DB"""
     if not source_ids:
         return False
-    
+
     try:
         cursor = db.conn.execute(
-            "SELECT COUNT(*) FROM memories WHERE id IN (%s)" % 
+            "SELECT COUNT(*) FROM memories WHERE id IN (%s)" %
             ','.join('?' * len(source_ids)),
             source_ids
         )
@@ -344,26 +344,26 @@ def print_results(results: dict) -> None:
     print("\n" + "=" * 70)
     print("LoCoMo External AI Test Results")
     print("=" * 70)
-    
+
     print(f"\nTotal Questions: {results['total_questions']}")
     print(f"Answered: {results['answered']}")
     print(f"Correct: {results['correct']}")
     print(f"Overall Accuracy: {results['accuracy']:.1%}")
-    
+
     print("\nBy Question Type:")
     for qtype, stats in results.get('by_type', {}).items():
         if stats['total'] > 0:
             acc = stats['correct'] / stats['total']
             print(f"  {qtype:15} {stats['correct']}/{stats['total']} = {acc:.1%}")
-    
+
     print("\nBy Difficulty:")
     for diff, stats in results.get('by_difficulty', {}).items():
         if stats['total'] > 0:
             acc = stats['correct'] / stats['total']
             print(f"  {diff:15} {stats['correct']}/{stats['total']} = {acc:.1%}")
-    
+
     print("\n" + "=" * 70)
-    
+
     print("\nSample Questions:")
     for detail in results['details'][:5]:
         status = "✅" if detail.get('correct') else "❌"
@@ -390,9 +390,9 @@ def main():
                         help='Validate WhiteMagic against external AI test file')
     parser.add_argument('--save-results', type=str, default='eval/locomo_results.json',
                         help='Save detailed results')
-    
+
     args = parser.parse_args()
-    
+
     if args.generate_sample:
         sample = generate_memory_sample(args.memories)
         save_sample(sample, Path(args.output))
@@ -402,22 +402,22 @@ def main():
         print("2. Ask them to generate 100 questions")
         print("3. Save their response as JSON test file")
         print("4. Run: python3 eval/locomo_external_ai_test.py --validate <test_file>")
-        
+
     elif args.validate:
         test_file = Path(args.validate)
         if not test_file.exists():
             print(f"Error: Test file not found: {test_file}")
             return 1
-        
+
         results = validate_answers(test_file)
         print_results(results)
-        
+
         # Save detailed results
         if args.save_results:
             with open(args.save_results, 'w') as f:
                 json.dump(results, f, indent=2)
             print(f"\nDetailed results saved to: {args.save_results}")
-        
+
         # Exit with appropriate code
         target_accuracy = 0.78
         if results.get('accuracy', 0) >= target_accuracy:

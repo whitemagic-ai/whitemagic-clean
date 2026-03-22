@@ -6,9 +6,9 @@ Maps the 20-gene optimal genome to concrete code improvements.
 """
 
 import json
-from pathlib import Path
 from dataclasses import dataclass
-from typing import List
+from pathlib import Path
+
 
 @dataclass
 class CodeMutation:
@@ -32,7 +32,7 @@ print()
 print("Generating code mutations from 20-gene optimal genome...")
 print()
 
-mutations: List[CodeMutation] = []
+mutations: list[CodeMutation] = []
 
 # ARCHITECTURE GENES (3 genes)
 print("🏗️  ARCHITECTURE GENES")

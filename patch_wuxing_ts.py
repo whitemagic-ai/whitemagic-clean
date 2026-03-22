@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/center/WuXingWheel.tsx', 'r') as f:
+with open('nexus/src/components/center/WuXingWheel.tsx') as f:
     content = f.read()
 
 content = content.replace("import React, { useEffect, useRef } from 'react';", "import { useEffect, useRef } from 'react';")

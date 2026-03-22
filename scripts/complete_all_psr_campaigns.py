@@ -6,7 +6,7 @@ Deploy millions of clones to complete PSR-001 through PSR-010 in parallel
 
 import time
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any
 
 # PSR-001 targets from campaign file
 PSR001_TARGETS = [
@@ -24,7 +24,7 @@ PSR001_TARGETS = [
 def generate_rust_migration(source_file: str, target_lang: str) -> str:
     """Generate actual Rust migration code"""
     base_name = source_file.replace('.py', '')
-    
+
     if source_file == "sqlite_backend.py":
         return f"""//! {base_name} - Rust Migration
 //! High-performance database operations with connection pooling
@@ -79,7 +79,7 @@ impl SqliteBackendV2 {{
     }}
 }}
 """
-    
+
     elif source_file == "unified.py":
         return f"""//! {base_name} - Rust Migration
 //! Unified memory interface with safety guarantees
@@ -139,7 +139,7 @@ impl UnifiedMemory {{
     }}
 }}
 """
-    
+
     else:
         return f"""//! {base_name} - {target_lang} Migration
 //! Auto-generated migration template
@@ -166,7 +166,7 @@ impl {base_name.title().replace('_', '')} {{
 def generate_zig_migration(source_file: str) -> str:
     """Generate Zig migration code for hot paths"""
     base_name = source_file.replace('.py', '')
-    
+
     return f"""// {base_name} - Zig Migration
 // Zero-overhead hot path implementation
 // Target: 100-1000× speedup with SIMD
@@ -205,14 +205,14 @@ export fn {base_name}_destroy(instance: ?*{base_name.title().replace('_', '')}) 
 }}
 """
 
-def complete_psr001_with_clones() -> Dict[str, Any]:
+def complete_psr001_with_clones() -> dict[str, Any]:
     """Complete PSR-001 using clone armies to prepare implementations"""
     print("\n" + "="*70)
     print("🚀 PSR-001: MEMORY CORE MIGRATION")
     print("="*70)
     print(f"Targets: {len(PSR001_TARGETS)}")
     print("Strategy: Clone armies prepare, direct implementation follows")
-    
+
     base_path = Path(__file__).parent.parent
     results = {
         'rust_files': [],
@@ -220,13 +220,13 @@ def complete_psr001_with_clones() -> Dict[str, Any]:
         'mojo_files': [],
         'koka_files': []
     }
-    
+
     for source_file, target_lang, priority, speedup, complexity in PSR001_TARGETS:
         print(f"\n📝 Migrating: {source_file} → {target_lang}")
         print(f"   Priority: {priority}, Expected: {speedup}, Complexity: {complexity}/5")
-        
+
         base_name = source_file.replace('.py', '')
-        
+
         if target_lang == "Rust":
             # Generate Rust code
             code = generate_rust_migration(source_file, target_lang)
@@ -235,7 +235,7 @@ def complete_psr001_with_clones() -> Dict[str, Any]:
             output_file.write_text(code)
             results['rust_files'].append(str(output_file))
             print(f"   ✅ Created: {output_file.relative_to(base_path)}")
-            
+
         elif target_lang == "Zig":
             # Generate Zig code
             code = generate_zig_migration(source_file)
@@ -244,7 +244,7 @@ def complete_psr001_with_clones() -> Dict[str, Any]:
             output_file.write_text(code)
             results['zig_files'].append(str(output_file))
             print(f"   ✅ Created: {output_file.relative_to(base_path)}")
-            
+
         elif target_lang == "Mojo":
             # Generate Mojo placeholder
             code = f"""# {base_name} - Mojo Migration
@@ -259,7 +259,7 @@ fn main():
             output_file.write_text(code)
             results['mojo_files'].append(str(output_file))
             print(f"   ✅ Created: {output_file.relative_to(base_path)}")
-            
+
         elif target_lang == "Koka":
             # Generate Koka placeholder
             code = f"""// {base_name} - Koka Migration
@@ -275,26 +275,26 @@ module {base_name}
             output_file.write_text(code)
             results['koka_files'].append(str(output_file))
             print(f"   ✅ Created: {output_file.relative_to(base_path)}")
-    
+
     return results
 
 def main():
     """Main execution"""
     start_time = time.time()
-    
+
     print("\n" + "="*70)
     print("🌟 COMPLETE ALL PSR CAMPAIGNS")
     print("="*70)
     print(f"Start time: {time.strftime('%H:%M:%S')}")
     print("Strategy: Parallel deployment with clone army assistance")
-    
+
     # Complete PSR-001
     psr001_results = complete_psr001_with_clones()
-    
+
     # Summary
     total_files = sum(len(files) for files in psr001_results.values())
     duration = time.time() - start_time
-    
+
     print("\n" + "="*70)
     print("📊 PSR-001 COMPLETION SUMMARY")
     print("="*70)
@@ -304,7 +304,7 @@ def main():
     print(f"Koka files: {len(psr001_results['koka_files'])}")
     print(f"Total files created: {total_files}")
     print(f"Duration: {duration:.2f}s")
-    
+
     print("\n" + "="*70)
     print("✅ PSR-001 MIGRATION COMPLETE")
     print("="*70)
@@ -313,7 +313,7 @@ def main():
     print("  2. Compile Zig modules")
     print("  3. Test all migrations")
     print("  4. Move to PSR-002 through PSR-010")
-    
+
     print(f"\n⏰ End time: {time.strftime('%H:%M:%S')}")
 
 if __name__ == '__main__':

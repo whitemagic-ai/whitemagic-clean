@@ -1,5 +1,5 @@
 
-with open("scripts/execute_v19_c1_dedup.py", "r") as f:
+with open("scripts/execute_v19_c1_dedup.py") as f:
     content = f.read()
 
 content = content.replace(

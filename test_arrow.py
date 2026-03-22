@@ -1,12 +1,14 @@
-import pyarrow as pa
-import time
-import whitemagic_rust
-import uuid
 import json
+import time
+import uuid
+
+import pyarrow as pa
+
+import whitemagic_rust
 
 try:
     print("Available in arrow_bridge:", dir(whitemagic_rust.arrow_bridge))
-    
+
     # Create some mock memories
     mems = []
     for i in range(10):
@@ -19,7 +21,7 @@ try:
             "memory_type": "long_term",
             "tags": ["test", f"tag_{i}"]
         })
-        
+
     print(f"Encoding {len(mems)} memories to Arrow IPC...")
     start = time.time()
     # Serialize to JSON first as the Rust bridge expects a JSON string
@@ -27,12 +29,12 @@ try:
     arrow_bytes = whitemagic_rust.arrow_bridge.arrow_encode_memories(json_str)
     encode_time = time.time() - start
     print(f"Encoded to {len(arrow_bytes)} bytes in {encode_time*1000:.2f}ms")
-    
+
     # The bytes might be raw JSON if Arrow feature is disabled, but we compiled with --release
     # Let's write to file to inspect
     with open("test_arrow.ipc", "wb") as f:
         f.write(bytes(arrow_bytes))
-        
+
     # Read back via PyArrow IPC
     try:
         reader = pa.ipc.open_file(pa.py_buffer(bytearray(arrow_bytes)))

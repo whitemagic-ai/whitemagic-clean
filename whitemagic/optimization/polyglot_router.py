@@ -12,8 +12,6 @@ import ctypes
 import logging
 import math
 import os
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 import subprocess
 import time
 from collections.abc import Callable
@@ -21,6 +19,8 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Any, TypeVar, cast
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T")

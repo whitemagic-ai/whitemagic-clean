@@ -6,8 +6,8 @@ Uses existing tools and databases without heavy file scanning.
 
 import os
 import sqlite3
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -16,10 +16,10 @@ def quick_codebase_stats():
     print("\n" + "=" * 80)
     print("📁 CODEBASE QUICK STATS")
     print("=" * 80)
-    
+
     # Use find and wc for efficiency
     import subprocess
-    
+
     # Count Python files
     try:
         py_files = subprocess.check_output(
@@ -30,7 +30,7 @@ def quick_codebase_stats():
         print(f"\n   Python files: {py_count}")
     except Exception:
         print("\n   Python files: Unable to count")
-    
+
     # Count Rust files
     try:
         rs_files = subprocess.check_output(
@@ -41,13 +41,13 @@ def quick_codebase_stats():
         print(f"   Rust files: {rs_count}")
     except Exception:
         print("   Rust files: Unable to count")
-    
+
     # Count campaign files
     campaigns_dir = PROJECT_ROOT / "campaigns"
     if campaigns_dir.exists():
         campaigns = len(list(campaigns_dir.glob("*.md")))
         print(f"   Campaign files: {campaigns}")
-    
+
     return {'py_files': py_count if 'py_count' in locals() else 0}
 
 def analyze_active_database():
@@ -55,24 +55,24 @@ def analyze_active_database():
     print("\n" + "=" * 80)
     print("💾 ACTIVE DATABASE ANALYSIS")
     print("=" * 80)
-    
+
     db_path = os.path.expanduser("~/.whitemagic/memory/whitemagic.db")
     if not os.path.exists(db_path):
         print("\n   ⚠️  Database not found")
         return {}
-    
+
     conn = sqlite3.connect(db_path)
-    
+
     # Basic counts
     memories = conn.execute("SELECT COUNT(*) FROM memories").fetchone()[0]
     associations = conn.execute("SELECT COUNT(*) FROM associations").fetchone()[0]
     embeddings = conn.execute("SELECT COUNT(*) FROM memory_embeddings").fetchone()[0]
-    
+
     print(f"\n   Memories: {memories:,}")
     print(f"   Associations: {associations:,}")
     print(f"   Embeddings: {embeddings:,}")
     print(f"   Embedding coverage: {(embeddings/memories*100):.1f}%")
-    
+
     # Memory types
     types = conn.execute("""
         SELECT memory_type, COUNT(*) 
@@ -80,11 +80,11 @@ def analyze_active_database():
         GROUP BY memory_type 
         ORDER BY COUNT(*) DESC
     """).fetchall()
-    
+
     print("\n   Memory types:")
     for mem_type, count in types[:5]:
         print(f"      {mem_type}: {count:,}")
-    
+
     # Top tags (check schema first)
     try:
         tags = conn.execute("""
@@ -94,15 +94,15 @@ def analyze_active_database():
             ORDER BY cnt DESC
             LIMIT 5
         """).fetchall()
-        
+
         print("\n   Top tags:")
         for tag, count in tags:
             print(f"      {tag}: {count:,}")
     except sqlite3.OperationalError:
         print("\n   Top tags: Schema varies")
-    
+
     conn.close()
-    
+
     return {
         'memories': memories,
         'associations': associations,
@@ -115,7 +115,7 @@ def session_summary():
     print("\n" + "=" * 80)
     print("🎯 TODAY'S SESSION SUMMARY")
     print("=" * 80)
-    
+
     print("""
    ✅ Phase 1: Foundation (17 min)
       - Completed 3 campaigns (V003, V002, V007)
@@ -145,7 +145,7 @@ def identify_quick_wins():
     print("\n" + "=" * 80)
     print("💡 QUICK WIN OPPORTUNITIES")
     print("=" * 80)
-    
+
     opportunities = [
         {
             'title': 'Batch Embed Remaining Memories',
@@ -183,7 +183,7 @@ def identify_quick_wins():
             'campaigns': ['V003', 'P001'],
         },
     ]
-    
+
     print("\n🎯 Top 5 Quick Wins:\n")
     for i, opp in enumerate(opportunities, 1):
         print(f"{i}. {opp['title']} [Effort: {opp['effort']}]")
@@ -191,7 +191,7 @@ def identify_quick_wins():
         print(f"   Impact: {opp['impact']}")
         print(f"   Campaigns: {', '.join(opp['campaigns'])}")
         print()
-    
+
     return opportunities
 
 def generate_next_steps():
@@ -199,7 +199,7 @@ def generate_next_steps():
     print("\n" + "=" * 80)
     print("📋 RECOMMENDED NEXT STEPS")
     print("=" * 80)
-    
+
     steps = [
         "1. Batch embed remaining memories (increase coverage to 95%+)",
         "2. Activate recursive self-improvement loops (R-series)",
@@ -210,7 +210,7 @@ def generate_next_steps():
         "7. Integrate divine principles deeper (D-series)",
         "8. Continue transcendence evolution (X-series)",
     ]
-    
+
     print("\n🚀 Priority Order:\n")
     for step in steps:
         print(f"   {step}")
@@ -218,30 +218,30 @@ def generate_next_steps():
 
 def main():
     start = datetime.now()
-    
+
     print("\n" + "=" * 80)
     print("🔮 LIGHTWEIGHT INTROSPECTION")
     print("=" * 80)
     print(f"\n⏱️  Start: {start.strftime('%H:%M:%S.%f')[:-3]}")
-    
+
     # Quick stats (no heavy scanning)
     quick_codebase_stats()
-    
+
     # Database analysis
     analyze_active_database()
-    
+
     # Session summary
     session_summary()
-    
+
     # Quick wins
     opportunities = identify_quick_wins()
-    
+
     # Next steps
     generate_next_steps()
-    
+
     end = datetime.now()
     duration = (end - start).total_seconds()
-    
+
     print("\n" + "=" * 80)
     print("✅ INTROSPECTION COMPLETE")
     print("=" * 80)

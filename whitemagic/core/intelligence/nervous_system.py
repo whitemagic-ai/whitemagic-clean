@@ -51,28 +51,36 @@ class UnifiedNervousSystem:
 
         # 4. Memory Metabolism
         try:
-            from whitemagic.core.intelligence.hologram.consolidation import HolographicConsolidator
+            from whitemagic.core.intelligence.hologram.consolidation import (
+                HolographicConsolidator,
+            )
             self.metabolism = HolographicConsolidator()
         except ImportError:
             self.metabolism = None
 
         # 5. Consciousness
         try:
-            from whitemagic.core.intelligence.agentic.coherence_persistence import CoherenceTracker
+            from whitemagic.core.intelligence.agentic.coherence_persistence import (
+                CoherenceTracker,
+            )
             self.consciousness = CoherenceTracker()
         except ImportError:
             self.consciousness = None
 
         # 6. Resonance
         try:
-            from whitemagic.core.intelligence.agentic.resonance_amp import ResonanceAmplifier
+            from whitemagic.core.intelligence.agentic.resonance_amp import (
+                ResonanceAmplifier,
+            )
             self.resonance = ResonanceAmplifier()
         except ImportError:
             self.resonance = None
 
         # 7. Emergence
         try:
-            from whitemagic.core.intelligence.agentic.emergence_engine import EmergenceEngine
+            from whitemagic.core.intelligence.agentic.emergence_engine import (
+                EmergenceEngine,
+            )
             self.emergence = EmergenceEngine()
         except ImportError:
             self.emergence = None

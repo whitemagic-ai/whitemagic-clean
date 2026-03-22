@@ -1,6 +1,7 @@
-import time
-import subprocess
 import datetime
+import subprocess
+import time
+
 
 def is_midnight():
     now = datetime.datetime.now()
@@ -8,13 +9,13 @@ def is_midnight():
 
 def run_loop():
     print(f"[{datetime.datetime.now().isoformat()}] Starting Evolutionary Master Loop...")
-    
+
     # Run the Geneseed test generator stub to show intent
     subprocess.run(["python3", "scripts/evolve_test_coverage.py"], check=False)
-    
+
     # Run the Evolutionary Master loop
     subprocess.run(["python3", "scripts/evolutionary_master_loop.py"], check=False)
-    
+
     print(f"[{datetime.datetime.now().isoformat()}] Cycle complete. Sleeping...")
 
 def main():
@@ -25,11 +26,11 @@ def main():
         if is_midnight():
             print("Midnight reached. Stopping.")
             break
-            
+
         run_loop()
         cycles += 1
         time.sleep(2)
-        
+
     print(f"Autonomous loop finished {cycles} cycles.")
 
 if __name__ == "__main__":

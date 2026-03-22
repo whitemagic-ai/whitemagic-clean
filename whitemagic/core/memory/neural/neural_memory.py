@@ -8,7 +8,11 @@ Created: December 2, 2025 (Hanuman Tuesday)
 
 from whitemagic.core.memory.unified_types import (
     LinkType as LinkType,
+)
+from whitemagic.core.memory.unified_types import (
     Memory as Memory,
+)
+from whitemagic.core.memory.unified_types import (
     MemoryState as MemoryState,
 )
 

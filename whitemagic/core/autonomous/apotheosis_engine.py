@@ -13,10 +13,11 @@ from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Optional
+from typing import Any
 
 from whitemagic.core.consciousness.coherence import get_coherence_metric
 
@@ -64,7 +65,7 @@ class DiscoveredCapability:
     discovery_context: str
     confidence: float
     tested: bool
-    test_results: Optional[dict[str, Any]]
+    test_results: dict[str, Any] | None
     discovered_at: float
 
 
@@ -203,7 +204,7 @@ class SelfMonitoringHealthLoop:
         ]
         return "Health concerns detected: " + "; ".join(concerns)
 
-    def get_health_trend(self, metric: str, hours: float = 24.0) -> Optional[list[HealthReading]]:
+    def get_health_trend(self, metric: str, hours: float = 24.0) -> list[HealthReading] | None:
         """Get health trend for a specific metric over time."""
         cutoff = time.time() - (hours * 3600)
         return [
@@ -311,7 +312,7 @@ class PredictiveMaintenanceEngine:
 
         return {
             "current_memories": current_count,
-            "projected_in_{}d".format(days_ahead): int(projected_count),
+            f"projected_in_{days_ahead}d": int(projected_count),
             "growth_rate_per_day": growth_rate_per_day,
             "estimated_days_to_sweep": days_to_threshold,
             "recommended_sweep_date": datetime.now().isoformat() if days_to_threshold < 14 else None,
@@ -522,7 +523,7 @@ class ApotheosisEngine:
 
 
 # Singleton accessor
-_apotheosis_engine: Optional[ApotheosisEngine] = None
+_apotheosis_engine: ApotheosisEngine | None = None
 
 
 def get_apotheosis_engine() -> ApotheosisEngine:

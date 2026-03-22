@@ -10,7 +10,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from whitemagic.core.resonance.gan_ying_enhanced import EventType, ResonanceEvent, get_bus
+from whitemagic.core.resonance.gan_ying_enhanced import (
+    EventType,
+    ResonanceEvent,
+    get_bus,
+)
 
 
 class GardenResonanceMatrix:

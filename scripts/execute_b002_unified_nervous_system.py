@@ -6,16 +6,20 @@ into a unified communication infrastructure.
 """
 
 import sys
-from pathlib import Path
 from datetime import datetime
-from typing import Any, Dict, List
+from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from whitemagic.core.nervous_system import OrganType, get_nervous_system
 from whitemagic.core.resonance.gan_ying import (
-    EventType, ResonanceEvent, get_bus, emit_event, listen_to
+    EventType,
+    ResonanceEvent,
+    emit_event,
+    get_bus,
+    listen_to,
 )
 
 REPORTS_DIR = PROJECT_ROOT / "reports"
@@ -32,25 +36,25 @@ class UnifiedNervousSystem:
     
     Creates a coherent whole greater than the sum of parts.
     """
-    
+
     def __init__(self):
         # Core systems
         self.nervous_system = get_nervous_system()
         self.gan_ying_bus = get_bus()
-        self.blackboard: Dict[str, Any] = {}
-        
+        self.blackboard: dict[str, Any] = {}
+
         # Integration state
-        self.event_to_signal_map: Dict[EventType, str] = {}
-        self.signal_to_event_map: Dict[str, EventType] = {}
-        self.organ_event_subscriptions: Dict[str, List[EventType]] = {}
-        
+        self.event_to_signal_map: dict[EventType, str] = {}
+        self.signal_to_event_map: dict[str, EventType] = {}
+        self.organ_event_subscriptions: dict[str, list[EventType]] = {}
+
         # Wire up bidirectional communication
         self._wire_event_signal_bridge()
         self._wire_organ_event_subscriptions()
-        
+
     def _wire_event_signal_bridge(self):
         """Create bidirectional bridge between Gan Ying events and Nervous System signals."""
-        
+
         # Map EventType → Nervous System signal
         self.event_to_signal_map = {
             EventType.MEMORY_CREATED: "memory_created",
@@ -62,59 +66,59 @@ class UnifiedNervousSystem:
             EventType.BALANCE_RESTORED: "homeostasis_update",
             EventType.NOVEL_PATTERN: "emergence_detected",
         }
-        
+
         # Reverse mapping
         self.signal_to_event_map = {v: k for k, v in self.event_to_signal_map.items()}
-        
+
         # Subscribe to all Gan Ying events and forward to Nervous System
         # Note: We'll subscribe manually in register_biological_organ instead
         # since @listen_to decorator doesn't work well in loops
-        
+
         # Subscribe to Nervous System signals and forward to Gan Ying
         original_dispatch = self.nervous_system.dispatch_signal
-        
-        def enhanced_dispatch(signal_type: str, data: Dict[str, Any]):
+
+        def enhanced_dispatch(signal_type: str, data: dict[str, Any]):
             # Call original
             original_dispatch(signal_type, data)
-            
+
             # Forward to Gan Ying if mapped
             if signal_type in self.signal_to_event_map:
                 event_type = self.signal_to_event_map[signal_type]
                 emit_event(event_type, data, source="nervous_system")
-        
+
         self.nervous_system.dispatch_signal = enhanced_dispatch
-    
+
     def _wire_organ_event_subscriptions(self):
         """Wire each organ to relevant Gan Ying events."""
-        
+
         # Immune system listens to threats and patterns
         self.organ_event_subscriptions["immune"] = [
             EventType.THREAT_DETECTED,
             EventType.PATTERN_DETECTED,
             EventType.ANOMALY_DETECTED,
         ]
-        
+
         # Genetics listens to fitness signals
         self.organ_event_subscriptions["genetics"] = [
             EventType.DREAM_STATE_ENTERED,
             EventType.BALANCE_RESTORED,
             EventType.PATTERN_DETECTED,
         ]
-        
+
         # Dream listens to threats and consolidation triggers
         self.organ_event_subscriptions["dream"] = [
             EventType.THREAT_DETECTED,
             EventType.MEMORY_CREATED,
             EventType.SEMANTIC_LINKED,
         ]
-        
+
         # Metabolism listens to memory events
         self.organ_event_subscriptions["metabolism"] = [
             EventType.MEMORY_CREATED,
             EventType.MEMORY_UPDATED,
             EventType.MEMORY_ACCESSED,
         ]
-        
+
         # Consciousness listens to everything (awareness)
         self.organ_event_subscriptions["consciousness"] = [
             EventType.MEMORY_CREATED,
@@ -122,26 +126,26 @@ class UnifiedNervousSystem:
             EventType.NOVEL_PATTERN,
             EventType.BALANCE_RESTORED,
         ]
-        
+
         # Resonance listens to patterns and emergence
         self.organ_event_subscriptions["resonance"] = [
             EventType.PATTERN_DETECTED,
             EventType.NOVEL_PATTERN,
             EventType.SEMANTIC_LINKED,
         ]
-        
+
         # Emergence listens to patterns and novelty
         self.organ_event_subscriptions["emergence"] = [
             EventType.PATTERN_DETECTED,
             EventType.NOVEL_PATTERN,
             EventType.SEMANTIC_LINKED,
         ]
-    
+
     def register_biological_organ(self, organ_type: OrganType, instance: Any):
         """Register an organ with full integration."""
         # Register with NervousSystem
         self.nervous_system.register_organ(organ_type, instance)
-        
+
         # Subscribe organ to relevant Gan Ying events
         organ_name = organ_type.value
         if organ_name in self.organ_event_subscriptions:
@@ -151,23 +155,23 @@ class UnifiedNervousSystem:
                     @listen_to(event_type)
                     def route_to_organ(event: ResonanceEvent, org=instance):
                         org.on_event(event)
-    
+
     def post_to_blackboard(self, key: str, value: Any):
         """Post intelligence to shared blackboard."""
         self.blackboard[key] = value
-        
+
         # Also emit as Gan Ying event
         emit_event(
             EventType.INTERNAL_STATE_CHANGED,
             {"blackboard_key": key, "value": value},
             source="blackboard"
         )
-    
+
     def get_from_blackboard(self, key: str, default: Any = None) -> Any:
         """Retrieve intelligence from blackboard."""
         return self.blackboard.get(key, default)
-    
-    def health_dashboard(self) -> Dict[str, Any]:
+
+    def health_dashboard(self) -> dict[str, Any]:
         """Comprehensive health across all systems."""
         return {
             "nervous_system": self.nervous_system.health_dashboard(),
@@ -185,11 +189,11 @@ class UnifiedNervousSystem:
                 "organ_subscriptions": len(self.organ_event_subscriptions),
             }
         }
-    
+
     def demonstrate_integration(self):
         """Demonstrate unified communication flow."""
         print("\n🧠 Demonstrating Unified Nervous System Integration\n")
-        
+
         # 1. Emit Gan Ying event → should trigger Nervous System signal
         print("1. Emitting THREAT_DETECTED event via Gan Ying...")
         emit_event(
@@ -197,21 +201,21 @@ class UnifiedNervousSystem:
             {"threat_level": 0.7, "source": "demo"},
             source="integration_demo"
         )
-        
+
         # 2. Dispatch Nervous System signal → should trigger Gan Ying event
         print("2. Dispatching homeostasis_update signal via Nervous System...")
         self.nervous_system.dispatch_signal("homeostasis_update", {"score": 0.85})
-        
+
         # 3. Post to blackboard → should trigger event
         print("3. Posting to blackboard...")
         self.post_to_blackboard("demo_key", {"status": "integrated"})
-        
+
         # 4. Show health dashboard
         print("\n📊 Health Dashboard:")
         health = self.health_dashboard()
         for system, status in health.items():
             print(f"  {system}: {status}")
-        
+
         print("\n✅ Integration demonstration complete!")
 
 
@@ -221,13 +225,13 @@ def analyze_existing_systems():
     print("  ANALYZING EXISTING COMMUNICATION SYSTEMS")
     print("="*70)
     print()
-    
+
     analysis = {
         "nervous_system": {},
         "gan_ying_bus": {},
         "blackboard_pattern": {},
     }
-    
+
     # 1. NervousSystem analysis
     print("1. NervousSystem (whitemagic/core/nervous_system.py)")
     ns_file = PROJECT_ROOT / "whitemagic/core/nervous_system.py"
@@ -250,7 +254,7 @@ def analyze_existing_systems():
     else:
         analysis["nervous_system"]["exists"] = False
         print("   ❌ Not found")
-    
+
     # 2. Gan Ying Bus analysis
     print("\n2. Gan Ying Bus (whitemagic/core/resonance/gan_ying.py)")
     gy_file = PROJECT_ROOT / "whitemagic/core/resonance/gan_ying.py"
@@ -273,7 +277,7 @@ def analyze_existing_systems():
     else:
         analysis["gan_ying_bus"]["exists"] = False
         print("   ❌ Not found")
-    
+
     # 3. Blackboard pattern analysis
     print("\n3. CrossCampaignBlackboard (scripts/deploy_grand_army.py)")
     bb_file = PROJECT_ROOT / "scripts/deploy_grand_army.py"
@@ -297,7 +301,7 @@ def analyze_existing_systems():
             analysis["blackboard_pattern"]["exists"] = False
     else:
         analysis["blackboard_pattern"]["exists"] = False
-    
+
     return analysis
 
 
@@ -307,13 +311,13 @@ def create_integration_architecture():
     print("  CREATING UNIFIED NERVOUS SYSTEM ARCHITECTURE")
     print("="*70)
     print()
-    
+
     # Instantiate unified system
     unified = UnifiedNervousSystem()
-    
+
     # Demonstrate integration
     unified.demonstrate_integration()
-    
+
     return unified
 
 
@@ -323,7 +327,7 @@ def generate_integration_report(analysis, unified):
     print("  GENERATING INTEGRATION REPORT")
     print("="*70)
     print()
-    
+
     report = f"""# Unified Nervous System - Integration Report
 **Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
 **Campaign**: B002  
@@ -596,13 +600,13 @@ The unified nervous system successfully synthesizes three independent communicat
 
 **Status**: ✅ B002 COMPLETE - Foundation ready for all biological integrations
 """
-    
+
     # Save report
     report_path = REPORTS_DIR / "unified_nervous_system_integration.md"
     report_path.write_text(report)
-    
+
     print(f"✅ Report saved: {report_path}")
-    
+
     return report
 
 
@@ -611,16 +615,16 @@ def main():
     print("  B002: UNIFIED NERVOUS SYSTEM SYNTHESIS")
     print("="*70)
     print()
-    
+
     # Phase 1: Analyze existing systems
     analysis = analyze_existing_systems()
-    
+
     # Phase 2: Create integration architecture
     unified = create_integration_architecture()
-    
+
     # Phase 3: Generate report
     generate_integration_report(analysis, unified)
-    
+
     print("\n" + "="*70)
     print("✅ B002 COMPLETE - Unified Nervous System Operational")
     print("="*70)
@@ -632,7 +636,7 @@ def main():
     print("  - Bidirectional bridges: Active")
     print("  - Integration: Complete")
     print()
-    
+
     return 0
 
 

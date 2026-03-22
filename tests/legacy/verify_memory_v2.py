@@ -18,10 +18,10 @@ sys.path.append(str(ROOT_DIR.parent))
 def ingest_sample_files(mm):
     """Ingest a few markdown files from recovery_abc to populate DB."""
     print("\n📥 Ingesting sample artifacts...")
-    
+
     # Target some interesting files
     targets = list(PROJECT_MEM_DIR.glob("recovery_abc/**/*.md"))[:10]
-    
+
     count = 0
     for fpath in targets:
         try:
@@ -37,7 +37,7 @@ def ingest_sample_files(mm):
             print(f"   - Ingested: {title}")
         except Exception as e:
             print(f"   ⚠️ Failed to ingest {fpath.name}: {e}")
-            
+
     print(f"   Total ingested: {count}")
 
 
@@ -71,11 +71,11 @@ def run_probe():
         )
         mem_id = str(create_res).replace(".md", "")
         print(f"   ✅ Created Memory ID: {mem_id}")
-        
+
         # 4. Verify Holographic Coordinates
         print("\n📐 Probe 3: Verifying Holographic Coordinates...")
         full_mem = mm.get_memory(mem_id)
-        
+
         coords = full_mem.get("metadata", {}).get("holographic_coords")
         if coords:
             print(f"   ✅ Coordinates Found: {coords}")
@@ -90,7 +90,7 @@ def run_probe():
             # if self.holographic:
             #    coords = self.holographic.index_memory(...)
             #    if coords: self.backend.store_coords(...)
-            
+
             # They are stored in backend.store_coords, not necessarily in memory.metadata object immediately without reload?
             # Let's check backend.
             coords_map = mm.unified.backend.get_all_coords()

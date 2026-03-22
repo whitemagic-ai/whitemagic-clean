@@ -147,7 +147,9 @@ class MeshClient:
         # Emit to Gan Ying bus instead
         try:
             from whitemagic.core.resonance.gan_ying_enhanced import (
-                get_bus, ResonanceEvent, EventType,
+                EventType,
+                ResonanceEvent,
+                get_bus,
             )
             bus = get_bus()
             bus.emit(ResonanceEvent(

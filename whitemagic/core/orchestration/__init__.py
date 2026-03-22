@@ -13,9 +13,11 @@ orchestration system.
 
 from whitemagic.core.orchestration.session_startup import (
     SessionStartupOrchestrator,
-    get_orchestrator as get_session_orchestrator,
     session_status,
     start_session,
+)
+from whitemagic.core.orchestration.session_startup import (
+    get_orchestrator as get_session_orchestrator,
 )
 from whitemagic.core.orchestration.unified_orchestrator import (
     OrchestrationEvent,

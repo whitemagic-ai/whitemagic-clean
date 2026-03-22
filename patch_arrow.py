@@ -1,6 +1,6 @@
 import re
 
-with open('whitemagic-rust/src/arrow_bridge.rs', 'r') as f:
+with open('whitemagic-rust/src/arrow_bridge.rs') as f:
     content = f.read()
 
 replacement = """pub fn arrow_encode_memories<'py>(py: Python<'py>, json_str: &str) -> PyResult<Bound<'py, pyo3::types::PyBytes>> {

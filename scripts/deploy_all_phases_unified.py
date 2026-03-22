@@ -29,21 +29,21 @@ class CampaignResult:
     """Results from a single campaign deployment"""
     campaign_id: str
     phase: int
-    
+
     # Cycle state
     zodiac: str = ""
     element: str = ""
     pipeline_phase: str = ""
     tactic: str = ""
-    
+
     # Victory
     victory_before: str = "0/0"
     victory_after: str = "0/0"
     victory_delta: int = 0
-    
+
     # Timing
     duration_sec: float = 0.0
-    
+
     # Status
     status: str = "pending"
     notes: str = ""
@@ -55,16 +55,16 @@ class PhaseReport:
     phase_num: int
     phase_name: str
     campaigns: list[str]
-    
+
     results: list[CampaignResult] = field(default_factory=list)
-    
+
     start_time: datetime = field(default_factory=datetime.now)
     end_time: datetime | None = None
-    
+
     @property
     def total_victories(self) -> int:
         return sum(r.victory_delta for r in self.results)
-    
+
     @property
     def duration_sec(self) -> float:
         if self.end_time:
@@ -88,13 +88,13 @@ def check_campaign_victory(campaign_id: str, campaigns_dir: Path) -> tuple[int, 
     campaign_file = campaigns_dir / f"{campaign_id}.md"
     if not campaign_file.exists():
         return (0, 0)
-    
+
     content = campaign_file.read_text()
-    
+
     total = 0
     met = 0
     in_victory = False
-    
+
     for line in content.split('\n'):
         if '## Victory Conditions' in line:
             in_victory = True
@@ -106,7 +106,7 @@ def check_campaign_victory(campaign_id: str, campaigns_dir: Path) -> tuple[int, 
                 total += 1
                 if '[x]' in line.lower() or '[✓]' in line:
                     met += 1
-    
+
     return (total, met)
 
 
@@ -118,19 +118,19 @@ def deploy_campaign(
     use_gana: bool = True
 ) -> CampaignResult:
     """Deploy a single campaign with unified cycle"""
-    
+
     print(f"\n{'─'*70}")
     print(f"🎖️  Campaign: {campaign_id}")
     print(f"{'─'*70}")
-    
+
     start_time = time.time()
-    
+
     # Advance unified cycle
     state = cycle.advance_grand_cycle()
-    
+
     # Check victory before
     total_vc, met_before = check_campaign_victory(campaign_id, campaigns_dir)
-    
+
     result = CampaignResult(
         campaign_id=campaign_id,
         phase=phase_num,
@@ -140,11 +140,11 @@ def deploy_campaign(
         tactic=state.recommended_tactic,
         victory_before=f"{met_before}/{total_vc}",
     )
-    
+
     print(f"📊 Cycle State: {state.zodiac_sign.value.upper()} → {state.wu_xing_element.value.upper()} → {state.pipeline_phase.value.upper()}")
     print(f"🎯 Tactic: {state.recommended_tactic}")
     print(f"📋 Victory: {met_before}/{total_vc} conditions met")
-    
+
     # Simulate deployment with appropriate gana
     if use_gana:
         gana_map = {
@@ -159,24 +159,24 @@ def deploy_campaign(
         gana = gana_map.get(state.pipeline_phase.value, "gana_ox")
         print(f"🔧 Using: {gana}")
         time.sleep(0.2)  # Simulate gana work
-    
+
     # Check victory after (in real deployment, this would show actual progress)
     _, met_after = check_campaign_victory(campaign_id, campaigns_dir)
-    
+
     result.victory_after = f"{met_after}/{total_vc}"
     result.victory_delta = met_after - met_before
     result.duration_sec = time.time() - start_time
     result.status = "complete" if met_after == total_vc else "in_progress"
-    
+
     if result.victory_delta > 0:
         print(f"✅ Progress: +{result.victory_delta} victory conditions!")
     elif met_after == total_vc:
         print(f"🎉 Already complete: {met_after}/{total_vc}")
     else:
         print(f"📊 Status: {met_after}/{total_vc} conditions met")
-    
+
     print(f"⏱️  Duration: {result.duration_sec:.2f}s")
-    
+
     return result
 
 
@@ -188,23 +188,23 @@ def deploy_phase(
     campaigns_dir: Path
 ) -> PhaseReport:
     """Deploy an entire phase"""
-    
+
     print_header(f"PHASE {phase_num}: {phase_name}")
     print(f"Campaigns: {', '.join(campaigns)}\n")
-    
+
     report = PhaseReport(
         phase_num=phase_num,
         phase_name=phase_name,
         campaigns=campaigns,
     )
-    
+
     for campaign_id in campaigns:
         result = deploy_campaign(campaign_id, phase_num, cycle, campaigns_dir)
         report.results.append(result)
         time.sleep(0.1)  # Brief pause between campaigns
-    
+
     report.end_time = datetime.now()
-    
+
     # Phase summary
     print(f"\n{'─'*70}")
     print(f"📊 Phase {phase_num} Summary:")
@@ -212,31 +212,31 @@ def deploy_phase(
     print(f"   Total victories: +{report.total_victories}")
     print(f"   Duration: {report.duration_sec:.1f}s")
     print(f"{'─'*70}")
-    
+
     return report
 
 
 def generate_final_report(phase_reports: list[PhaseReport], output_dir: Path):
     """Generate comprehensive final report"""
-    
+
     print_header("GENERATING FINAL REPORT")
-    
+
     # Aggregate stats
     total_campaigns = sum(len(p.campaigns) for p in phase_reports)
     total_victories = sum(p.total_victories for p in phase_reports)
     total_duration = sum(p.duration_sec for p in phase_reports)
-    
+
     # Element distribution
     element_counts = {}
     phase_counts = {}
     tactic_counts = {}
-    
+
     for phase_report in phase_reports:
         for result in phase_report.results:
             element_counts[result.element] = element_counts.get(result.element, 0) + 1
             phase_counts[result.pipeline_phase] = phase_counts.get(result.pipeline_phase, 0) + 1
             tactic_counts[result.tactic] = tactic_counts.get(result.tactic, 0) + 1
-    
+
     # Create report
     report_lines = [
         "# Grand Unified Cycle Deployment Report",
@@ -259,31 +259,31 @@ def generate_final_report(phase_reports: list[PhaseReport], output_dir: Path):
         "### Wu Xing Element Distribution",
         "",
     ]
-    
+
     for element, count in sorted(element_counts.items()):
         pct = 100 * count / total_campaigns
         report_lines.append(f"- **{element.upper()}**: {count} campaigns ({pct:.1f}%)")
-    
+
     report_lines.extend([
         "",
         "### Pipeline Phase Distribution",
         "",
     ])
-    
+
     for phase, count in sorted(phase_counts.items()):
         pct = 100 * count / total_campaigns
         report_lines.append(f"- **{phase.upper()}**: {count} campaigns ({pct:.1f}%)")
-    
+
     report_lines.extend([
         "",
         "### Tactic Distribution",
         "",
     ])
-    
+
     for tactic, count in sorted(tactic_counts.items(), key=lambda x: -x[1]):
         pct = 100 * count / total_campaigns
         report_lines.append(f"- **{tactic}**: {count} campaigns ({pct:.1f}%)")
-    
+
     report_lines.extend([
         "",
         "---",
@@ -291,7 +291,7 @@ def generate_final_report(phase_reports: list[PhaseReport], output_dir: Path):
         "## Phase-by-Phase Results",
         "",
     ])
-    
+
     for phase_report in phase_reports:
         report_lines.extend([
             f"### Phase {phase_report.phase_num}: {phase_report.phase_name}",
@@ -302,16 +302,16 @@ def generate_final_report(phase_reports: list[PhaseReport], output_dir: Path):
             "| Campaign | Zodiac | Element | Pipeline | Victory | Delta | Status |",
             "|----------|--------|---------|----------|---------|-------|--------|",
         ])
-        
+
         for result in phase_report.results:
             report_lines.append(
                 f"| {result.campaign_id} | {result.zodiac[:3]} | "
                 f"{result.element[:4]} | {result.pipeline_phase[:4]} | "
                 f"{result.victory_after} | +{result.victory_delta} | {result.status} |"
             )
-        
+
         report_lines.append("")
-    
+
     report_lines.extend([
         "---",
         "",
@@ -367,13 +367,13 @@ def generate_final_report(phase_reports: list[PhaseReport], output_dir: Path):
         "*System: Grand Unified Cycle v1.0*  ",
         "*Status: OPERATIONAL ✅*",
     ])
-    
+
     # Write report
     report_file = output_dir / f"UNIFIED_CYCLE_DEPLOYMENT_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
     report_file.write_text('\n'.join(report_lines))
-    
+
     print(f"✅ Report saved: {report_file}")
-    
+
     # Also save JSON
     json_data = {
         'timestamp': datetime.now().isoformat(),
@@ -397,29 +397,29 @@ def generate_final_report(phase_reports: list[PhaseReport], output_dir: Path):
             for p in phase_reports
         ],
     }
-    
+
     json_file = output_dir / f"unified_cycle_deployment_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     json_file.write_text(json.dumps(json_data, indent=2))
-    
+
     print(f"✅ JSON saved: {json_file}")
-    
+
     return report_file
 
 
 def main():
     """Main deployment orchestrator"""
-    
+
     print("\n" + "🎖️ " * 35)
     print("  GRAND UNIFIED CYCLE DEPLOYMENT")
     print("  All Phases with MCP Gana Tools")
     print("🎖️ " * 35)
-    
+
     # Initialize
     cycle = get_grand_cycle()
     campaigns_dir = project_root / "campaigns"
     reports_dir = project_root / "reports"
     reports_dir.mkdir(exist_ok=True)
-    
+
     # Define all phases
     phases = [
         (1, "Quick Wins", ["IL005", "V009", "G004"]),
@@ -428,23 +428,23 @@ def main():
         (4, "F-Series", ["F001", "F002"]),
         (5, "V-Series", ["V001", "V002", "V003", "V004", "V005"]),
     ]
-    
+
     phase_reports = []
-    
+
     # Deploy each phase
     for phase_num, phase_name, campaign_ids in phases:
         report = deploy_phase(phase_num, phase_name, campaign_ids, cycle, campaigns_dir)
         phase_reports.append(report)
         time.sleep(0.5)  # Pause between phases
-    
+
     # Generate final report
     print_header("ALL PHASES COMPLETE")
     report_file = generate_final_report(phase_reports, reports_dir)
-    
+
     # Final summary
     total_campaigns = sum(len(p.campaigns) for p in phase_reports)
     total_victories = sum(p.total_victories for p in phase_reports)
-    
+
     print(f"\n{'='*70}")
     print("  🎉 DEPLOYMENT COMPLETE!")
     print(f"{'='*70}")
@@ -454,7 +454,7 @@ def main():
     print(f"     Victories: +{total_victories}")
     print(f"\n  📄 Report: {report_file.name}")
     print(f"\n{'='*70}\n")
-    
+
     return 0
 
 

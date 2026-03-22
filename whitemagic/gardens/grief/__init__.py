@@ -180,7 +180,9 @@ class GriefGarden(BaseGarden, GanYingMixin):
 
         # Circuit breaker status
         try:
-            from whitemagic.tools.circuit_breaker import get_all_breaker_stats  # type: ignore[attr-defined]
+            from whitemagic.tools.circuit_breaker import (
+                get_all_breaker_stats,  # type: ignore[attr-defined]
+            )
             snapshot["circuit_breakers"] = get_all_breaker_stats()
         except Exception:
             snapshot["circuit_breakers"] = {"unavailable": True}

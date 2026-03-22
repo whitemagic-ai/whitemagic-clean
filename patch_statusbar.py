@@ -1,11 +1,11 @@
 
-with open('nexus/src/components/status/StatusBar.tsx', 'r') as f:
+with open('nexus/src/components/status/StatusBar.tsx') as f:
     content = f.read()
 
 # Add a check for IPC status
 if "get_ipc_status" not in content:
     content = content.replace('import { useNexusStore } from "../../store/nexus";', 'import { useNexusStore } from "../../store/nexus";\nimport { invoke } from "@tauri-apps/api/core";')
-    
+
     # We can fetch status on mount
     injection = """
   useEffect(() => {

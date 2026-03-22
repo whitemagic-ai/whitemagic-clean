@@ -1,8 +1,8 @@
 """Tests for StateBoard Bridge (Leap 7a)."""
 
 from whitemagic.core.acceleration.state_board_bridge import (
-    BreakerState,
     BoardSnapshot,
+    BreakerState,
     Guna,
     HarmonySnapshot,
     Quadrant,

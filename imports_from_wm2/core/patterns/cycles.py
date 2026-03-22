@@ -18,15 +18,15 @@ class CyclePhase(Enum):
 
 class Cycle(Protocol):
     """Base protocol for all cycles."""
-    
+
     def advance(self) -> None:
         """Advance to next phase."""
         ...
-    
+
     def get_phase(self) -> CyclePhase:
         """Get current phase."""
         ...
-    
+
     def reset(self) -> None:
         """Reset to initial phase."""
         ...

@@ -6,8 +6,11 @@ simulations. Part of v22 Intelligence Matrix.
 """
 
 import math
+from collections.abc import Callable
+from typing import Any
+
 import numpy as np
-from typing import List, Dict, Any, Callable
+
 
 class QuantumEngine:
     """Simulates quantum algorithms for graph and search optimization."""
@@ -16,7 +19,7 @@ class QuantumEngine:
         self.coherence_time = 1.0
         self.interference_threshold = 0.1
 
-    def grover_search(self, items: List[Any], oracle: Callable[[Any], bool], iterations: int = None) -> List[Any]:
+    def grover_search(self, items: list[Any], oracle: Callable[[Any], bool], iterations: int = None) -> list[Any]:
         """
         Grover's Amplification algorithm for O(√N) search.
         
@@ -28,30 +31,30 @@ class QuantumEngine:
         N = len(items)
         if N == 0:
             return []
-        
+
         if iterations is None:
             iterations = int((math.pi / 4) * math.sqrt(N))
-            
+
         # Initial uniform superposition
         amplitudes = np.full(N, 1.0 / math.sqrt(N))
-        
+
         for _ in range(iterations):
             # 1. Oracle: Flip sign of target
             for i, item in enumerate(items):
                 if oracle(item):
                     amplitudes[i] *= -1
-            
+
             # 2. Diffusion: Reflect about the mean
             mean = np.mean(amplitudes)
             amplitudes = 2 * mean - amplitudes
-            
+
         # Select top probability candidates
         probabilities = amplitudes ** 2
         indices = np.argsort(probabilities)[::-1]
-        
+
         return [items[i] for i in indices if probabilities[i] > (1.0 / N)]
 
-    def superposition_walk(self, graph: Dict[str, List[str]], start_node: str, hops: int = 2) -> Dict[str, float]:
+    def superposition_walk(self, graph: dict[str, list[str]], start_node: str, hops: int = 2) -> dict[str, float]:
         """
         Explores multiple graph paths simultaneously using amplitude distribution.
         
@@ -62,7 +65,7 @@ class QuantumEngine:
         """
         # Node ID -> Complex Amplitude
         state = {start_node: 1.0 + 0j}
-        
+
         for _ in range(hops):
             next_state = {}
             for node, amplitude in state.items():
@@ -70,19 +73,19 @@ class QuantumEngine:
                 if not neighbors:
                     next_state[node] = next_state.get(node, 0j) + amplitude
                     continue
-                
+
                 # Distribute amplitude across neighbors (superposition)
                 branch_amplitude = amplitude / math.sqrt(len(neighbors))
                 for neighbor in neighbors:
                     # Interference: amplitudes add up (constructive or destructive)
                     next_state[neighbor] = next_state.get(neighbor, 0j) + branch_amplitude
-            
+
             state = next_state
-            
+
         # Collapse to probabilities
         return {node: abs(amp)**2 for node, amp in state.items()}
 
-    def interference_fusion(self, results: List[Dict[str, float]]) -> Dict[str, float]:
+    def interference_fusion(self, results: list[dict[str, float]]) -> dict[str, float]:
         """
         Fuses multiple search/walk results using constructive interference.
         """
@@ -92,10 +95,10 @@ class QuantumEngine:
                 # Weighted interference: stronger signals amplify exponentially
                 current = fused.get(node, 0.0)
                 fused[node] = math.sqrt(current**2 + prob**2)
-                
+
         # Re-normalize
         total = sum(fused.values())
         if total > 0:
             fused = {k: v/total for k, v in fused.items()}
-            
+
         return fused

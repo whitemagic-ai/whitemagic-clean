@@ -8,10 +8,11 @@ Based on learnings:
 - Third pass: 200K × 200 = 40M sims (4x first pass, safe)
 """
 
-import hyperevolution_core as rust
-import time
 import json
+import time
 from pathlib import Path
+
+import hyperevolution_core as rust
 
 print("=" * 80)
 print("THIRD PASS - SAFE & OPTIMIZED")

@@ -1,8 +1,10 @@
 import pytest
-from whitemagic.tools.registry import TOOL_REGISTRY
+
 from whitemagic.tools.dispatch_table import DISPATCH_TABLE
-from whitemagic.tools.unified_api import call_tool
 from whitemagic.tools.envelope import is_enveloped
+from whitemagic.tools.registry import TOOL_REGISTRY
+from whitemagic.tools.unified_api import call_tool
+
 
 @pytest.mark.parametrize("tool_def", TOOL_REGISTRY)
 def test_tool_registered_has_handler(tool_def):
@@ -19,7 +21,7 @@ def test_tool_conforms_to_envelope(tool_def):
     """
     # Some tools might fail in CI if they require external services,
     # but the envelope structure should still be checked on success/error.
-    
+
     # We only test tools that support dry_run safely or are pure read.
     # Note: capabilities and manifest are perfect test cases.
     if tool_def.name in ["capabilities", "manifest", "state.paths"]:

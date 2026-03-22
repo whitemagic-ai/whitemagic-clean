@@ -11,25 +11,25 @@ import os; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 try:
     from whitemagic.core.ganas.base import GanaCall
-    from whitemagic.core.ganas.western_quadrant import NetGana
     from whitemagic.core.ganas.southern_quadrant import ExtendedNetGana
+    from whitemagic.core.ganas.western_quadrant import NetGana
 except ImportError as e:
     print(f"ImportError: {e}")
     sys.exit(1)
 
 async def test_integration():
     print("=== Testing Integration (Async DB Access) ===")
-    
+
     # 1. Test NetGana (West) - Global Stats
     print("\n[1] Testing NetGana (West)...")
     net = NetGana()
     call = GanaCall(task="detect_patterns", state_vector={})
-    
+
     # This should NOT hang if the fix works
     result = await net.invoke(call)
     print("✓ NetGana returned successfully")
     print(f"Result keys: {result.output.keys()}")
-    
+
     # 2. Test ExtendedNetGana (South) - Search
     print("\n[2] Testing ExtendedNetGana (South)...")
     extended = ExtendedNetGana()

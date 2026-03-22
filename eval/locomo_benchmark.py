@@ -203,7 +203,7 @@ def generate_test_corpus(db_path: Path, n_questions: int = 200, seed: int = 42) 
         r'\w+\s*=\s*\w|self\.|logger\.|print\(|assert |raise |try:|except|'
         r'@\w|{\s*$|\[\s*$|\(\s*$)',
     )
-    
+
     # Get embedding engine for validation
     try:
         from whitemagic.core.memory.embeddings import get_embedding_engine
@@ -212,7 +212,7 @@ def generate_test_corpus(db_path: Path, n_questions: int = 200, seed: int = 42) 
     except Exception:
         embed_available = False
         embed_engine = None
-    
+
     open_domain_candidates = []
     for mem in memories[per_type:per_type * 5]:  # Wider search range
         content = mem["content"]
@@ -235,7 +235,7 @@ def generate_test_corpus(db_path: Path, n_questions: int = 200, seed: int = 42) 
         ]
         if not good_sentences:
             continue
-            
+
         # Pick the best sentence (one that actually represents the memory content)
         # Prefer sentences that mention the title or key concepts
         title_words = set(w.lower() for w in re.findall(r'[A-Za-z]{4,}', mem["title"]) if len(w) > 4)
@@ -253,16 +253,16 @@ def generate_test_corpus(db_path: Path, n_questions: int = 200, seed: int = 42) 
             if '=' in s or '(' in s or '{' in s:
                 score -= 3
             scored_sentences.append((score, s))
-        
+
         scored_sentences.sort(reverse=True)
-        
+
         # Try top sentences, validate via embedding if possible
         for score, sentence in scored_sentences[:3]:
             query = re.sub(r'[^A-Za-z0-9\s]', ' ', sentence).strip()
             query = re.sub(r'\s+', ' ', query)
             if len(query) < 30:  # Require substantial queries
                 continue
-            
+
             # VALIDATION: Check if query actually matches memory via embedding
             if embed_available and embed_engine:
                 try:
@@ -281,14 +281,14 @@ def generate_test_corpus(db_path: Path, n_questions: int = 200, seed: int = 42) 
                                 continue
                 except Exception:
                     pass  # Skip validation if it fails
-            
+
             # Passed validation - use this query
             open_domain_candidates.append((mem, query, score))
             break  # Move to next memory
-        
+
         if len(open_domain_candidates) >= per_type:
             break
-    
+
     # Add validated open-domain questions
     for mem, query, score in open_domain_candidates[:per_type]:
         questions.append(TestQuestion(
@@ -587,33 +587,33 @@ def retrieve_title_boosted(query: str, limit: int = 20) -> list[dict]:
     relevant keywords.
     """
     try:
-        from whitemagic.core.search.title_boosted_vector import _title_match_score
         from whitemagic.core.memory.embeddings import get_embedding_engine
         from whitemagic.core.memory.unified import get_unified_memory
-        
+        from whitemagic.core.search.title_boosted_vector import _title_match_score
+
         # Get embedding engine
         engine = get_embedding_engine()
         if not engine.available():
             return retrieve_vector(query, limit)
-        
+
         # VECTOR SEARCH: Get candidates from embedding engine
         # Use lower min_similarity to get more candidates for re-ranking
         vector_results = engine.search_similar(query, limit=limit * 10, min_similarity=0.01)
-        
+
         if not vector_results:
             return retrieve_vector(query, limit)
-        
+
         # Fetch full memory details and apply title boost
         get_unified_memory()
         scored_results = []
-        
+
         for r in vector_results:
             mem_id = r.get('id') or r.get('memory_id')
             vec_sim = r.get('similarity', 0)
-            
+
             if not mem_id:
                 continue
-            
+
             # Get memory details from backend
             try:
                 from whitemagic.core.memory.sqlite_backend import SQLiteBackend
@@ -623,16 +623,16 @@ def retrieve_title_boosted(query: str, limit: int = 20) -> list[dict]:
                     continue
             except Exception:
                 continue
-            
+
             title = getattr(mem, 'title', '') or getattr(mem, 'content', '')[:100]
-            
+
             # Calculate title match score
             title_match = _title_match_score(query, title)
-            
+
             # Combined score: vector_sim boosted by title match
             title_boost = 1.0  # Aggressive boost for open-domain queries
             combined_score = vec_sim * (1 + title_boost * title_match)
-            
+
             scored_results.append({
                 'id': mem_id,
                 'title': str(title)[:100],
@@ -641,10 +641,10 @@ def retrieve_title_boosted(query: str, limit: int = 20) -> list[dict]:
                 'title_match_score': title_match,
                 'combined_score': combined_score,
             })
-        
+
         # Sort by combined score and return top results
         scored_results.sort(key=lambda x: x['combined_score'], reverse=True)
-        
+
         return [{"id": r["id"], "title": r["title"], "score": r["combined_score"]} for r in scored_results[:limit]]
     except Exception as e:
         logger.warning(f"Title-boosted search error: {e}")
@@ -658,7 +658,7 @@ def retrieve_title_first(query: str, limit: int = 20) -> list[dict]:
     backend = _get_backend()
     results = []
     seen = set()
-    
+
     # 1. Exact or partial title match via SQL (fastest for single-hop)
     try:
         with backend.pool.connection() as conn:
@@ -687,7 +687,7 @@ def retrieve_title_first(query: str, limit: int = 20) -> list[dict]:
             if r["id"] not in seen:
                 results.append(r)
                 seen.add(r["id"])
-                
+
     return results[:limit]
 
 def retrieve_adaptive(query: str, limit: int = 20) -> list[dict]:
@@ -695,22 +695,22 @@ def retrieve_adaptive(query: str, limit: int = 20) -> list[dict]:
     # 1. Query classification
     title_words = ["summary", "report", "handoff", "plan", "roadmap", "architecture", "audit", "test"]
     open_words = ["metaphor", "implementation", "actual", "theme", "insight", "emergence", "concept", "logic"]
-    
+
     query_lower = query.lower()
     title_score = sum(1 for w in title_words if w in query_lower)
     open_score = sum(1 for w in open_words if w in query_lower)
-    
+
     # Special case: Handoff/System queries often target specific titles
     if "handoff" in query_lower or "test" in query_lower:
         return retrieve_title_first(query, limit)
 
-    # REFINED LOGIC (v21.2): 
+    # REFINED LOGIC (v21.2):
     if title_score > 0 or len(query) < 45:
         return retrieve_title_first(query, limit)
-    
+
     if open_score >= 1 or len(query) > 120:
         return retrieve_content_expanded(query, limit)
-    
+
     # Default to content_expanded for better recall in ambiguous cases
     return retrieve_content_expanded(query, limit)
 
@@ -724,10 +724,10 @@ def retrieve_content_expanded(query: str, limit: int = 20) -> list[dict]:
     try:
         from whitemagic.core.memory.embeddings import get_embedding_engine
         engine = get_embedding_engine()
-        
+
         # 1. Semantic Search (Extremely Deep pool)
         semantic_results = engine.search_similar(query, limit=limit * 50)
-        
+
         # 2. Keyword Search (FTS5) - Multiple patterns
         keyword_results = []
         try:
@@ -737,7 +737,7 @@ def retrieve_content_expanded(query: str, limit: int = 20) -> list[dict]:
                 words = [w.lower() for w in re.findall(r'\w+', query) if len(w) > 2]
                 phrase_query = f'"{query}"'
                 broad_query = ' OR '.join([f'"{w}"*' for w in words]) if words else f'"{query}"*'
-                
+
                 rows = conn.execute("""
                     SELECT id, title, content, importance as score
                     FROM memories_fts
@@ -751,25 +751,25 @@ def retrieve_content_expanded(query: str, limit: int = 20) -> list[dict]:
         # 3. RRF Fusion with precise boosting
         scores = {}
         id_map = {}
-        
+
         for i, r in enumerate(semantic_results):
             rid = r.get("id", r.get("memory_id", ""))
             if rid:
                 scores[rid] = scores.get(rid, 0) + (1.0 / (i + 60))
                 id_map[rid] = r
-        
+
         for i, r in enumerate(keyword_results):
             rid = r.get("id", "")
             if rid:
                 scores[rid] = scores.get(rid, 0) + (5.0 / (i + 60))
                 if rid not in id_map:
                     id_map[rid] = r
-                
+
                 title_lower = r.get("title", "").lower()
                 query_lower = query.lower()
                 if query_lower in title_lower or query_lower.replace(" ", "_") in title_lower:
                     scores[rid] *= 5.0
-                
+
                 for w in words:
                     if w in title_lower:
                         scores[rid] *= 1.2
@@ -777,9 +777,11 @@ def retrieve_content_expanded(query: str, limit: int = 20) -> list[dict]:
         # 4. Zig-Accelerated Holographic Reranking (VC16)
         sorted_ids = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)
         top_candidates = sorted_ids[:limit * 2]
-        
+
         try:
-            from whitemagic.core.acceleration.simd_holographic import holographic_5d_distance
+            from whitemagic.core.acceleration.simd_holographic import (
+                holographic_5d_distance,
+            )
             # In a real scenario, we'd fetch the 5D coords for top candidates
             # and use Zig to compute distances to the query centroid.
             # Here we simulate the logic boost.
@@ -795,7 +797,7 @@ def retrieve_content_expanded(query: str, limit: int = 20) -> list[dict]:
 
         sorted_ids = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)
         return [id_map[sid] for sid in sorted_ids[:limit]]
-        
+
     except Exception as e:
         logger.warning(f"Content-expanded search error: {e}")
         return retrieve_vector(query, limit)

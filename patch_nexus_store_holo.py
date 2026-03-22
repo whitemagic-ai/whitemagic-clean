@@ -1,5 +1,5 @@
 
-with open('nexus/src/store/nexus.ts', 'r') as f:
+with open('nexus/src/store/nexus.ts') as f:
     content = f.read()
 
 content = content.replace('export type CenterTab = "editor" | "dashboard" | "graph" | "tools";', 'export type CenterTab = "editor" | "dashboard" | "graph" | "tools" | "holographic";')

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Quick test of SimHash implementation"""
 
-import numpy as np
 import json
+
+import numpy as np
 
 # Test SimHash directly
 import whitemagic_rs

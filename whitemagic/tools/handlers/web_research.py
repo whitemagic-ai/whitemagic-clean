@@ -87,7 +87,7 @@ def handle_web_search_and_read(**kwargs: Any) -> dict[str, Any]:
     max_fetch = int(kwargs.get("max_fetch", 3))
     max_chars_per_page = int(kwargs.get("max_chars_per_page", 15_000))
 
-    from whitemagic.gardens.browser.web_research import web_search, web_fetch
+    from whitemagic.gardens.browser.web_research import web_fetch, web_search
 
     async def _search_and_read() -> dict[str, Any]:
         # Step 1: Search

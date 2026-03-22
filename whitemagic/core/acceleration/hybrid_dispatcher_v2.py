@@ -8,19 +8,20 @@ Features:
 - Integration-ready API
 """
 
-import subprocess
-import whitemagic_rust as rs
-import time
-import threading
 import json
 import queue
+import subprocess
+import threading
+import time
 from collections import deque
-from concurrent.futures import ThreadPoolExecutor, Future
+from collections.abc import Generator
+from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Generator
+
+import whitemagic_rust as rs
 
 KOKA_DIR = Path(__file__).parent.parent.parent.parent / "whitemagic-koka"
 _DEFAULT_PARALLEL_CALL_TIMEOUT_S = 8.0

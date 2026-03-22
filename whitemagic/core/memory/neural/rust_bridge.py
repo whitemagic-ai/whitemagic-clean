@@ -60,7 +60,7 @@ def parallel_grep(
                 content = file.read_text(errors="ignore")
                 if re.search(pattern, content, re.IGNORECASE):
                     results.append(str(file))
-            except IOError:
+            except OSError:
                 pass
 
     return results
@@ -143,7 +143,7 @@ def extract_todos(directory: str) -> list[str]:
             content = file.read_text(errors="ignore")
             for match in re.finditer(r"#\s*TODO[:\s]*(.*)", content, re.IGNORECASE):
                 todos.append(f"{file}: {match.group(1)}")
-        except IOError:
+        except OSError:
             pass
 
     return todos

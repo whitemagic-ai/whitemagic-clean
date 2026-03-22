@@ -2,13 +2,6 @@
 from collections.abc import Callable
 from typing import Any
 
-from whitemagic.core.bridge.adaptive import (
-    adapt_response,
-    prat_get_context,
-    prat_invoke,
-    prat_list_morphologies,
-    prat_status,
-)
 from whitemagic.core.bridge.agent import manage_agent_collaboration
 from whitemagic.core.bridge.archaeology import (
     archaeology_daily_digest,
@@ -27,27 +20,6 @@ from whitemagic.core.bridge.archaeology import (
 )
 from whitemagic.core.bridge.autonomous import run_autonomous_cycle
 from whitemagic.core.bridge.benchmark import run_benchmarks
-from whitemagic.core.bridge.collaboration import (
-    garden_sangha_workspace_info,
-    profile_get_profile,
-    profile_update_preferences,
-    sangha_chat_read,
-    sangha_chat_send,
-    sangha_lock_acquire,
-    sangha_lock_list,
-    sangha_lock_release,
-    windsurf_backup,
-    windsurf_merge_backups,
-)
-from whitemagic.core.bridge.dharma import (
-    dharma_check_boundaries,
-    dharma_evaluate_ethics,
-    dharma_get_ethical_score,
-    dharma_get_guidance,
-    dharma_list_principles,
-    dharma_verify_consent,
-)
-from whitemagic.core.bridge.gana import gana_invoke
 from whitemagic.core.bridge.garden import (
     garden_activate,
     garden_garden_activate,
@@ -71,19 +43,6 @@ from whitemagic.core.bridge.meditation import (
     meditation_pause,
     meditation_reflect,
 )
-from whitemagic.core.bridge.memory import (
-    manage_memories,
-    memory_create,
-    memory_delete,
-    memory_list,
-    memory_read,
-    memory_search,
-    memory_update,
-    parallel_search,
-)
-from whitemagic.core.bridge.metrics import get_metrics_summary, track_metric
-from whitemagic.core.bridge.optimization import optimize_cache, optimize_models
-from whitemagic.core.bridge.pattern import detect_patterns
 from whitemagic.core.bridge.reasoning import apply_reasoning_methods
 from whitemagic.core.bridge.rust import (
     enable_rust_acceleration,
@@ -131,6 +90,48 @@ from whitemagic.core.bridge.zodiac import (
     zodiac_list_cores,
     zodiac_run_cycle,
 )
+
+from whitemagic.core.bridge.adaptive import (
+    adapt_response,
+    prat_get_context,
+    prat_invoke,
+    prat_list_morphologies,
+    prat_status,
+)
+from whitemagic.core.bridge.collaboration import (
+    garden_sangha_workspace_info,
+    profile_get_profile,
+    profile_update_preferences,
+    sangha_chat_read,
+    sangha_chat_send,
+    sangha_lock_acquire,
+    sangha_lock_list,
+    sangha_lock_release,
+    windsurf_backup,
+    windsurf_merge_backups,
+)
+from whitemagic.core.bridge.dharma import (
+    dharma_check_boundaries,
+    dharma_evaluate_ethics,
+    dharma_get_ethical_score,
+    dharma_get_guidance,
+    dharma_list_principles,
+    dharma_verify_consent,
+)
+from whitemagic.core.bridge.gana import gana_invoke
+from whitemagic.core.bridge.memory import (
+    manage_memories,
+    memory_create,
+    memory_delete,
+    memory_list,
+    memory_read,
+    memory_search,
+    memory_update,
+    parallel_search,
+)
+from whitemagic.core.bridge.metrics import get_metrics_summary, track_metric
+from whitemagic.core.bridge.optimization import optimize_cache, optimize_models
+from whitemagic.core.bridge.pattern import detect_patterns
 
 # === Routers implemented here to avoid circular imports if they were in separate files ===
 

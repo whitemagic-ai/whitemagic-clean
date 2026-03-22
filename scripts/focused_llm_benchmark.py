@@ -15,30 +15,30 @@ from pathlib import Path
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
 from whitemagic.inference.llm_meta_harness import (
-    get_meta_harness,
     EnhancementMode,
+    get_meta_harness,
 )
 
 
 async def run_focused_benchmark():
     """Run focused benchmark with key enhancement modes."""
-    
+
     print("\n" + "="*80)
     print("Focused LLM Enhancement Benchmark")
     print("="*80 + "\n")
-    
+
     model_name = "qwen2.5-coder:1.5b"
     print(f"Model: {model_name}")
-    
+
     harness = get_meta_harness(model_name)
-    
+
     if not harness.is_available:
         print("❌ LLM not available")
         print("Make sure Ollama is running: ollama serve")
         return None
-    
+
     print("✅ Meta-harness loaded\n")
-    
+
     # Focus on 4 key modes
     modes = [
         EnhancementMode.DIRECT,           # Baseline
@@ -46,7 +46,7 @@ async def run_focused_benchmark():
         EnhancementMode.CHAIN_OF_THOUGHT, # Reasoning
         EnhancementMode.FULL_STACK,       # All enhancements
     ]
-    
+
     # 8 representative test cases
     test_cases = [
         {
@@ -90,19 +90,19 @@ async def run_focused_benchmark():
             "keywords": ["366"],
         },
     ]
-    
+
     print(f"Test Cases: {len(test_cases)}")
     print(f"Enhancement Modes: {len(modes)}")
     print(f"Total queries: {len(test_cases) * len(modes)}")
     print(f"Estimated time: {len(test_cases) * len(modes) * 18 / 60:.0f} minutes\n")
     print("="*80 + "\n")
-    
+
     results = []
     start_time = time.time()
-    
+
     for i, test_case in enumerate(test_cases, 1):
         print(f"[{i}/{len(test_cases)}] {test_case['category']}: {test_case['query'][:50]}...")
-        
+
         for mode in modes:
             try:
                 query_start = time.time()
@@ -113,12 +113,12 @@ async def run_focused_benchmark():
                     temperature=0.7,
                 )
                 query_time = (time.time() - query_start) * 1000
-                
+
                 # Score answer
                 answer_lower = response.answer.lower()
                 keywords_found = sum(1 for kw in test_case['keywords'] if kw.lower() in answer_lower)
                 accuracy = 0.5 + (keywords_found / len(test_case['keywords']) * 0.5)
-                
+
                 results.append({
                     "category": test_case['category'],
                     "query": test_case['query'],
@@ -128,9 +128,9 @@ async def run_focused_benchmark():
                     "latency_ms": query_time,
                     "tokens": response.tokens_used,
                 })
-                
+
                 print(f"  {mode.value:20s} | Acc: {accuracy:.2f} | {query_time:6.0f}ms | {response.tokens_used:3d} tokens")
-                
+
             except Exception as e:
                 print(f"  {mode.value:20s} | ERROR: {str(e)[:50]}")
                 results.append({
@@ -142,11 +142,11 @@ async def run_focused_benchmark():
                     "latency_ms": 0.0,
                     "tokens": 0,
                 })
-        
+
         print()
-    
+
     total_time = time.time() - start_time
-    
+
     # Aggregate results
     by_mode = {}
     for result in results:
@@ -158,12 +158,12 @@ async def run_focused_benchmark():
                 'total_latency': 0.0,
                 'total_tokens': 0,
             }
-        
+
         by_mode[mode]['count'] += 1
         by_mode[mode]['total_accuracy'] += result.get('accuracy', 0.0)
         by_mode[mode]['total_latency'] += result.get('latency_ms', 0.0)
         by_mode[mode]['total_tokens'] += result.get('tokens', 0)
-    
+
     # Calculate averages
     for mode, stats in by_mode.items():
         count = stats['count']
@@ -171,42 +171,42 @@ async def run_focused_benchmark():
             stats['avg_accuracy'] = stats['total_accuracy'] / count
             stats['avg_latency'] = stats['total_latency'] / count
             stats['avg_tokens'] = stats['total_tokens'] / count
-    
+
     # Print summary
     print("="*80)
     print("BENCHMARK SUMMARY")
     print("="*80 + "\n")
-    
+
     print(f"Total time: {total_time:.1f}s ({total_time/60:.1f} minutes)")
     print(f"Queries completed: {len(results)}")
     print()
-    
+
     print("Results by Enhancement Mode:")
     print(f"{'Mode':<25} {'Accuracy':>10} {'Latency (ms)':>15} {'Tokens':>10}")
     print("-" * 80)
-    
+
     sorted_modes = sorted(by_mode.items(), key=lambda x: x[1]['avg_accuracy'], reverse=True)
-    
+
     for mode, stats in sorted_modes:
         print(f"{mode:<25} "
               f"{stats['avg_accuracy']:>9.1%} "
               f"{stats['avg_latency']:>14.0f} "
               f"{stats['avg_tokens']:>10.0f}")
-    
+
     print()
-    
+
     # Calculate improvement
     if 'direct' in by_mode and 'full_stack' in by_mode:
         baseline = by_mode['direct']['avg_accuracy']
         enhanced = by_mode['full_stack']['avg_accuracy']
         improvement = ((enhanced - baseline) / baseline * 100) if baseline > 0 else 0
-        
+
         print("Enhancement Impact:")
         print(f"  Baseline (direct):     {baseline:.1%}")
         print(f"  Full-stack enhanced:   {enhanced:.1%}")
         print(f"  Improvement:           {improvement:+.1f}%")
         print()
-    
+
     # Save results
     output = {
         "model": model_name,
@@ -217,23 +217,23 @@ async def run_focused_benchmark():
         "results": results,
         "aggregated": by_mode,
     }
-    
+
     output_dir = Path("reports")
     output_dir.mkdir(exist_ok=True)
-    
+
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     json_path = output_dir / f"focused_benchmark_{timestamp}.json"
-    
+
     with open(json_path, "w") as f:
         json.dump(output, f, indent=2)
-    
+
     print(f"Results saved to: {json_path}")
-    
+
     # Generate markdown report
     md_path = output_dir / f"focused_benchmark_{timestamp}.md"
     generate_markdown_report(output, md_path)
     print(f"Markdown report: {md_path}")
-    
+
     return output
 
 
@@ -255,10 +255,10 @@ def generate_markdown_report(results, output_path):
         "| Mode | Accuracy | Latency (ms) | Tokens |",
         "|------|----------|--------------|--------|",
     ]
-    
+
     by_mode = results['aggregated']
     sorted_modes = sorted(by_mode.items(), key=lambda x: x[1]['avg_accuracy'], reverse=True)
-    
+
     for mode, stats in sorted_modes:
         lines.append(
             f"| {mode} | "
@@ -266,13 +266,13 @@ def generate_markdown_report(results, output_path):
             f"{stats['avg_latency']:.0f} | "
             f"{stats['avg_tokens']:.0f} |"
         )
-    
+
     # Enhancement impact
     if 'direct' in by_mode and 'full_stack' in by_mode:
         baseline = by_mode['direct']['avg_accuracy']
         enhanced = by_mode['full_stack']['avg_accuracy']
         improvement = ((enhanced - baseline) / baseline * 100) if baseline > 0 else 0
-        
+
         lines.extend([
             "",
             "## Enhancement Impact",
@@ -282,7 +282,7 @@ def generate_markdown_report(results, output_path):
             f"- **Improvement**: {improvement:+.1f}%",
             "",
         ])
-    
+
     lines.extend([
         "## Key Findings",
         "",
@@ -296,7 +296,7 @@ def generate_markdown_report(results, output_path):
         "",
         "*Generated by WhiteMagic Focused LLM Benchmark*",
     ])
-    
+
     output_path.write_text("\n".join(lines))
 
 

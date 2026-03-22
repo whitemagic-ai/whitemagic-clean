@@ -100,7 +100,7 @@ print(f"{'='*80}")
 
 for i in range(3):
     app_id = str(uuid.uuid4())
-    
+
     app = PatternApplication(
         application_id=app_id,
         pattern_id=pattern_id,
@@ -110,11 +110,11 @@ for i in range(3):
         context={"iteration": i+2}
     )
     loop.record_application(app)
-    
+
     # Varying outcomes
     success = i < 2  # First 2 succeed, last one fails
     gain = 3.1 + (i * 0.1) if success else 0.0
-    
+
     out = PatternOutcome(
         application_id=app_id,
         pattern_id=pattern_id,
@@ -126,7 +126,7 @@ for i in range(3):
         metrics={"iteration": i+2, "success": success}
     )
     loop.record_outcome(out)
-    
+
     print(f"\n  Application {i+2}: {'✅ Success' if success else '❌ Failed'}")
     if success:
         print(f"    Performance gain: {gain:.2f}x")

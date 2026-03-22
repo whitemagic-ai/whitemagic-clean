@@ -1,6 +1,6 @@
 import re
 
-with open('nexus/src/components/status/StatusBar.tsx', 'r') as f:
+with open('nexus/src/components/status/StatusBar.tsx') as f:
     content = f.read()
 
 # Fix the unused Activity import error by making sure the UI was actually injected

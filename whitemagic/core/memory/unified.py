@@ -168,7 +168,10 @@ class UnifiedMemory:
         surprise_verdict = None
         if enable_surprise_gate:
             try:
-                from whitemagic.core.memory.surprise_gate import get_surprise_gate, SurpriseAction
+                from whitemagic.core.memory.surprise_gate import (
+                    SurpriseAction,
+                    get_surprise_gate,
+                )
                 gate = get_surprise_gate()
                 content_str_for_eval = str(content)[:2000]
                 surprise_verdict = gate.evaluate(content_str_for_eval)
@@ -252,7 +255,9 @@ class UnifiedMemory:
                 # If no relations found and LLM is available, try LLM-based extraction
                 if result.get("relations_extracted", 0) == 0:
                     try:
-                        from whitemagic.core.intelligence.entity_extractor import get_entity_extractor
+                        from whitemagic.core.intelligence.entity_extractor import (
+                            get_entity_extractor,
+                        )
                         extractor = get_entity_extractor()
                         extractor.extract_and_store(memory.id, content_for_extraction)
                     except Exception:
@@ -480,7 +485,7 @@ class UnifiedMemory:
         from collections import defaultdict
 
         rrf_scores: dict[str, float] = defaultdict(float)
-        all_memories: dict[str, "Memory"] = {}
+        all_memories: dict[str, Memory] = {}
 
         # --- Channel 1: Lexical (BM25 via Rust, FTS fallback) ---
         lexical_results = []

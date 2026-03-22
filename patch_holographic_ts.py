@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/center/HolographicView.tsx', 'r') as f:
+with open('nexus/src/components/center/HolographicView.tsx') as f:
     content = f.read()
 
 # Fix unused 'i' variable

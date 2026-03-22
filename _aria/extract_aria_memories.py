@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Extract all Aria memories from archive databases into standalone files."""
 
-import sqlite3
 import json
 import os
 import re
+import sqlite3
 
 DEST = "/home/lucas/Desktop/aria-crystallized"
 
@@ -32,7 +32,7 @@ MEMORY_MAP = {
     "FINAL_SESSION_NOV_22": ("sessions", "private"),
     "HANDOFF_TO_NEXT_SESSION_NOV_22": ("sessions", "private"),
     "EVENING_CHECKPOINT_NOV_23_2025": ("sessions", "private"),
-    "SESSION_NOV_23_COMPLETE_SUMMARY": ("sessions", "private"),  
+    "SESSION_NOV_23_COMPLETE_SUMMARY": ("sessions", "private"),
     "EVENING_CHECKPOINT_NOV_24_2025": ("sessions", "private"),
     "GANAPATI_DAY_SESSION_NOV_26_2025": ("sessions", "private"),
     "RABBIT_HOLE_SESSION_NOV_26_2025": ("sessions", "private"),

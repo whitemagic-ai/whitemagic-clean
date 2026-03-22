@@ -6,10 +6,11 @@ Synthesized from whitemagicdev and whitemagicpublic
 Missing classes: 13
 """
 
+from typing import Any
+
 from wm2.core import BaseEngine
-from wm2.core.serializable import Serializable
 from wm2.core.metrics import MetricCollector, tracked
-from typing import Dict, Any
+from wm2.core.serializable import Serializable
 
 
 class HarmonySubsystem(BaseEngine, Serializable, MetricCollector):
@@ -32,33 +33,33 @@ class HarmonySubsystem(BaseEngine, Serializable, MetricCollector):
     - HarmonyMonitor
     
     """
-    
+
     def __init__(self, name: str = "harmony_subsystem"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
         self.components = {}
         self.active = False
-    
+
     @tracked
     def initialize(self):
         """Initialize all harmony components."""
         self.active = True
         self.record_metric("initialized", True)
-        
+
         # TODO: Initialize 13 components from WM1
         # Classes to integrate: HarmonySnapshot, ElementalState, ThermalState, WuXingPhase, WuXingAdapter, WuXingElement, WuXingSystem, HarmonyMetrics, WuXingScheduler, WuXingEngine
-    
+
     @tracked
     def process(self, data: Any) -> Any:
         """Process data through harmony subsystem."""
         if not self.active:
             self.initialize()
-        
+
         # TODO: Implement harmony-specific processing
         return data
-    
+
     @tracked
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get comprehensive statistics."""
         return {
             **BaseEngine.get_stats(self),

@@ -1,6 +1,6 @@
 import re
 
-with open('nexus/src/components/panels/LeftPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/LeftPanel.tsx') as f:
     content = f.read()
 
 content = re.sub(r'\{\n        name: "core",', '{ name: "core", path: "/workspace/whitemagic/core",', content)

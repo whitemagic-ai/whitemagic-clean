@@ -4,15 +4,16 @@
 Maps existing tags to the 28 Lunar Mansions based on semantic alignment.
 """
 
-import sys
 import logging
-from pathlib import Path
+import sys
 from datetime import datetime
+from pathlib import Path
 
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 import sqlite3
+
 from whitemagic.config.paths import DB_PATH
 from whitemagic.core.ganas.base import LunarMansion
 
@@ -44,7 +45,7 @@ TAG_GANA_MAPPING = {
     LunarMansion.WINNOWING_BASKET: [  # Separation - filtering, categorization
         "filter", "separate", "categorize", "classify", "sort", "winnowing"
     ],
-    
+
     # === Southern Quadrant - Vermilion Bird (Summer/Radiance) ===
     LunarMansion.GHOST: [  # Introspection - reflection, analysis, debugging
         "introspection", "reflection", "debug", "analyze", "ghost", "hidden"
@@ -56,7 +57,7 @@ TAG_GANA_MAPPING = {
         "philosophy", "wisdom", "illumination", "enlighten", "star", "guide"
     ],
     LunarMansion.EXTENDED_NET: [  # Connectivity - networks, associations, sessions
-        "cascade_transcript", "windsurf_session", "session", "connection", "network", 
+        "cascade_transcript", "windsurf_session", "session", "connection", "network",
         "association", "link", "graph", "mesh"
     ],
     LunarMansion.WINGS: [  # Expansion - growth, deployment, scaling
@@ -68,7 +69,7 @@ TAG_GANA_MAPPING = {
     LunarMansion.ABUNDANCE: [  # Surplus - resources, memory, storage
         "abundance", "resource", "memory", "storage", "surplus", "wealth"
     ],
-    
+
     # === Western Quadrant - White Tiger (Autumn/Harvest) ===
     LunarMansion.STRADDLING_LEGS: [  # Balance - equilibrium, harmony
         "balance", "equilibrium", "harmony", "wu_xing", "wu xing", "straddle"
@@ -91,7 +92,7 @@ TAG_GANA_MAPPING = {
     LunarMansion.THREE_STARS: [  # Judgment - evaluation, testing, decisions
         "judgment", "evaluate", "test", "decision", "three_stars", "verdict", "qa"
     ],
-    
+
     # === Northern Quadrant - Black Tortoise (Winter/Storage) ===
     LunarMansion.DIPPER: [  # Governance - leadership, dharma, rules
         "governance", "dharma", "rule", "policy", "dipper", "lead", "guide"
@@ -127,13 +128,13 @@ def populate_ganas(dry_run: bool = False) -> dict:
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    
+
     results = {"total_assigned": 0, "ganas_populated": 0, "details": {}}
-    
+
     for mansion, tags in TAG_GANA_MAPPING.items():
         const_name = gana_constellation_name(mansion)
         total_members = 0
-        
+
         for tag in tags:
             # Get memories with this tag (excluding quarantined)
             cur.execute("""
@@ -143,7 +144,7 @@ def populate_ganas(dry_run: bool = False) -> dict:
                 WHERE t.tag = ? AND m.memory_type != 'quarantined'
             """, (tag,))
             memory_ids = [row[0] for row in cur.fetchall()]
-            
+
             if memory_ids:
                 if not dry_run:
                     for mid in memory_ids:
@@ -153,16 +154,16 @@ def populate_ganas(dry_run: bool = False) -> dict:
                             VALUES (?, ?, ?, ?)
                         """, (mid, const_name, 0.85, datetime.now().isoformat()))
                 total_members += len(memory_ids)
-        
+
         if total_members > 0:
             results["ganas_populated"] += 1
             results["total_assigned"] += total_members
             results["details"][const_name] = total_members
             logger.info(f"{mansion.pinyin} ({mansion.meaning}): {total_members} memories")
-    
+
     if not dry_run:
         conn.commit()
-    
+
     conn.close()
     return results
 
@@ -171,7 +172,7 @@ def verify_28_ganas() -> dict:
     """Verify all 28 Gana constellations exist."""
     conn = sqlite3.connect(str(DB_PATH))
     cur = conn.cursor()
-    
+
     cur.execute("""
         SELECT constellation_name,
                COUNT(CASE WHEN memory_id NOT GLOB '__gana_placeholder__*' THEN 1 END) as members
@@ -180,7 +181,7 @@ def verify_28_ganas() -> dict:
         GROUP BY constellation_name
     """)
     gana_consts = {row[0]: row[1] for row in cur.fetchall()}
-    
+
     missing = []
     populated = []
     for mansion in LunarMansion:
@@ -189,27 +190,27 @@ def verify_28_ganas() -> dict:
             missing.append(mansion.pinyin)
         else:
             populated.append((mansion.pinyin, gana_consts[const_name]))
-    
+
     conn.close()
     return {"total": len(gana_consts), "populated": populated, "missing": missing}
 
 
 if __name__ == "__main__":
     logger.info("=== POPULATING 28 GANA CONSTELLATIONS ===")
-    
+
     # Populate
     logger.info("\n--- Phase 1: Populate Ganas with tagged memories ---")
     results = populate_ganas(dry_run=False)
     logger.info(f"\nTotal assigned: {results['total_assigned']}")
     logger.info(f"Ganas populated: {results['ganas_populated']}/28")
-    
+
     # Verify
     logger.info("\n--- Phase 2: Verify 28 Ganas ---")
     verify = verify_28_ganas()
     logger.info(f"Total Gana constellations: {verify['total']}")
-    
+
     if verify['missing']:
         logger.warning(f"Missing Ganas: {verify['missing']}")
-    
+
     for pinyin, count in verify['populated']:
         logger.info(f"  {pinyin}: {count} members")

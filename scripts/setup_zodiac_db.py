@@ -1,12 +1,13 @@
 import sqlite3
 from pathlib import Path
 
+
 def setup_zodiac_table():
     db_path = Path("/home/lucas/.whitemagic/memory/whitemagic.db")
     if not db_path.exists():
         print(f"Database not found at {db_path}")
         return
-        
+
     conn = sqlite3.connect(db_path)
     try:
         conn.execute("""

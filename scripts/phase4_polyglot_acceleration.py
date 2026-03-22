@@ -67,12 +67,12 @@ fn {func}(data: Vec<u8>) -> PyResult<Vec<u8>> {{
 }}
 ''' for func in category['functions']
     ])
-    
+
     exports = "\n    ".join([
         f'm.add_function(wrap_pyfunction!({func}, m)?)?;'
         for func in category['functions']
     ])
-    
+
     return f'''// WM2 Polyglot: {category['name'].title()}
 // {'=' * (16 + len(category['name']))}
 // High-performance {category['name']} operations
@@ -101,7 +101,7 @@ fn {func}[T: DType](data: Tensor[T]) -> Tensor[T]:
     return data
 ''' for func in category['functions']
     ])
-    
+
     return f'''# WM2 Polyglot: {category['name'].title()}
 # {'=' * (16 + len(category['name']))}
 # High-performance {category['name']} operations with GPU
@@ -125,7 +125,7 @@ def create_cargo_toml(categories: list) -> str:
         for cat in categories
         if cat["language"] == "Rust"
     ]
-    
+
     return f'''[workspace]
 members = [
 {chr(10).join(members)}
@@ -140,16 +140,16 @@ codegen-units = 1
 def main():
     print("🚀 Creating polyglot acceleration modules...")
     print()
-    
+
     rust_dir = WM2_ROOT / "polyglot" / "rust"
     mojo_dir = WM2_ROOT / "polyglot" / "mojo"
     rust_dir.mkdir(parents=True, exist_ok=True)
     mojo_dir.mkdir(parents=True, exist_ok=True)
-    
+
     rust_count = 0
     mojo_count = 0
     total_files = 0
-    
+
     for category in categories:
         if category.get("status"):
             print(f"   {category['status']} {category['name']}")
@@ -157,18 +157,18 @@ def main():
             print(f"      Speedup: {category['speedup']}")
             print()
             continue
-        
+
         if category["language"] == "Rust":
             # Create Rust module
             module_dir = rust_dir / f"wm2-{category['name']}"
             module_dir.mkdir(parents=True, exist_ok=True)
-            
+
             src_dir = module_dir / "src"
             src_dir.mkdir(parents=True, exist_ok=True)
-            
+
             lib_rs = src_dir / "lib.rs"
             lib_rs.write_text(create_rust_module(category))
-            
+
             cargo_toml = module_dir / "Cargo.toml"
             cargo_toml.write_text(f'''[package]
 name = "wm2-{category['name']}"
@@ -188,29 +188,29 @@ opt-level = 3
 lto = true
 codegen-units = 1
 ''')
-            
+
             rust_count += 1
             print(f"   ✅ {category['name']} (Rust)")
-            
+
         elif category["language"] == "Mojo":
             # Create Mojo module
             module_file = mojo_dir / f"{category['name']}.mojo"
             module_file.write_text(create_mojo_module(category))
-            
+
             mojo_count += 1
             print(f"   ✅ {category['name']} (Mojo)")
-        
+
         print(f"      Files: {category['files']}")
         print(f"      Speedup: {category['speedup']}")
         print(f"      Functions: {', '.join(category['functions'])}")
         print()
-        
+
         total_files += category['files']
-    
+
     # Create Cargo workspace
     workspace_cargo = rust_dir / "Cargo.toml"
     workspace_cargo.write_text(create_cargo_toml(categories))
-    
+
     print("=" * 80)
     print("PHASE 4 COMPLETE")
     print("=" * 80)

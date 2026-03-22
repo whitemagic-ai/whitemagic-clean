@@ -1,6 +1,6 @@
 
-import sys
 import os
+import sys
 
 # Add project root to path
 sys.path.append(os.getcwd())
@@ -11,11 +11,11 @@ try:
     import whitemagic_rs
     print(f"✅ Rust Module Imported: {whitemagic_rs}")
     print(f"   Docstring: {whitemagic_rs.__doc__}")
-    
+
     # Try a simple function if available
     if hasattr(whitemagic_rs, 'sum_as_string'):
         print(f"   Test Function: {whitemagic_rs.sum_as_string(2, 2)}")
-        
+
 except ImportError as e:
     print(f"❌ Failed to import whitemagic_rs: {e}")
     # Check if .so file exists

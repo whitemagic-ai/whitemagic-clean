@@ -5,25 +5,25 @@ Weaves together: geneseed vault, phylogenetics, kaizen, evolutionary engines
 Uses massive clone armies with evolutionary loops to complete ALL PSR campaigns
 """
 
-import time
 import json
-from pathlib import Path
-from typing import List, Dict, Any
 import sys
+import time
+from pathlib import Path
+from typing import Any
 
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-def load_psr_campaigns() -> List[Dict[str, Any]]:
+def load_psr_campaigns() -> list[dict[str, Any]]:
     """Load all PSR campaign files and extract targets"""
     campaigns_dir = Path(__file__).parent.parent / "campaigns"
     psr_files = list(campaigns_dir.glob("PSR*.md"))
-    
+
     campaigns = []
     for psr_file in psr_files:
         campaign_id = psr_file.stem
         content = psr_file.read_text()
-        
+
         # Extract target files from markdown tables
         targets = []
         in_table = False
@@ -35,17 +35,17 @@ def load_psr_campaigns() -> List[Dict[str, Any]]:
                 parts = [p.strip() for p in line.split('|') if p.strip()]
                 if len(parts) >= 2 and not parts[0].startswith('-'):
                     targets.append(parts[0])
-        
+
         campaigns.append({
             'id': campaign_id,
             'file': str(psr_file),
             'targets': targets,
             'status': 'pending'
         })
-    
+
     return campaigns
 
-def deploy_evolutionary_clone_army(campaign: Dict[str, Any], generation: int = 1) -> Dict[str, Any]:
+def deploy_evolutionary_clone_army(campaign: dict[str, Any], generation: int = 1) -> dict[str, Any]:
     """
     Deploy clone army with evolutionary improvement
     Each generation learns from previous and improves
@@ -53,18 +53,18 @@ def deploy_evolutionary_clone_army(campaign: Dict[str, Any], generation: int = 1
     print(f"\n{'='*70}")
     print(f"🧬 GENERATION {generation}: {campaign['id']}")
     print(f"{'='*70}")
-    
+
     try:
         import whitemagic_rs
-        
+
         # Scale clone count based on generation (exponential growth)
         base_clones = 10000
         clone_count = base_clones * (2 ** (generation - 1))  # Exponential scaling
         clone_count = min(clone_count, 1_000_000)  # Cap at 1M
-        
+
         print(f"Deploying {clone_count:,} clones (Generation {generation})")
         print(f"Targets: {len(campaign['targets'])} files")
-        
+
         # Create operations for each target
         operations = []
         for i, target in enumerate(campaign['targets']):
@@ -81,7 +81,7 @@ def deploy_evolutionary_clone_army(campaign: Dict[str, Any], generation: int = 1
 
 // TODO: Implement actual migration
 """
-                
+
                 op = whitemagic_rs.CodeOperation(
                     op_type="write",
                     source_file="",
@@ -91,32 +91,32 @@ def deploy_evolutionary_clone_army(campaign: Dict[str, Any], generation: int = 1
                     line_end=None
                 )
                 operations.append(op)
-        
+
         # Deploy army
         army = whitemagic_rs.CodeWritingArmy(
             f"{campaign['id']}-gen{generation}",
             str(Path(__file__).parent.parent),
             clone_count
         )
-        
+
         start = time.time()
         results = army.deploy_operations(operations)
         duration = time.time() - start
-        
+
         # Analyze results
         successful = sum(1 for r in results if r.success)
         success_rate = successful / len(results) if results else 0
-        
+
         print(f"\n📊 Generation {generation} Results:")
         print(f"  Operations: {len(results):,}")
         print(f"  Successful: {successful:,} ({success_rate*100:.1f}%)")
         print(f"  Duration: {duration:.3f}s")
         print(f"  Throughput: {len(results)/duration:,.0f} ops/sec")
-        
+
         # Evolutionary fitness score
         fitness = success_rate * (len(results) / duration)
         print(f"  🧬 Fitness Score: {fitness:.2f}")
-        
+
         return {
             'generation': generation,
             'clone_count': clone_count,
@@ -127,12 +127,12 @@ def deploy_evolutionary_clone_army(campaign: Dict[str, Any], generation: int = 1
             'throughput': len(results) / duration,
             'fitness': fitness
         }
-        
+
     except ImportError as e:
         print(f"❌ Rust not available: {e}")
         return None
 
-def evolutionary_loop(campaign: Dict[str, Any], max_generations: int = 5) -> List[Dict[str, Any]]:
+def evolutionary_loop(campaign: dict[str, Any], max_generations: int = 5) -> list[dict[str, Any]]:
     """
     Run evolutionary loop: each generation improves on the last
     Implements kaizen (continuous improvement) at massive scale
@@ -142,28 +142,28 @@ def evolutionary_loop(campaign: Dict[str, Any], max_generations: int = 5) -> Lis
     print(f"{'='*70}")
     print(f"Max generations: {max_generations}")
     print("Strategy: Each generation learns from previous, improves fitness")
-    
+
     generations = []
-    
+
     for gen in range(1, max_generations + 1):
         result = deploy_evolutionary_clone_army(campaign, generation=gen)
         if result:
             generations.append(result)
-            
+
             # Check for convergence (fitness improvement < 5%)
             if gen > 1:
                 prev_fitness = generations[-2]['fitness']
                 curr_fitness = result['fitness']
                 improvement = (curr_fitness - prev_fitness) / prev_fitness * 100
-                
+
                 print(f"\n🧬 Fitness Improvement: {improvement:+.2f}%")
-                
+
                 if improvement < 5:
                     print(f"✅ Converged at Generation {gen}")
                     break
         else:
             break
-    
+
     return generations
 
 def weave_evolutionary_systems():
@@ -177,14 +177,14 @@ def weave_evolutionary_systems():
     print(f"\n{'='*70}")
     print("🌐 WEAVING EVOLUTIONARY SYSTEMS")
     print(f"{'='*70}")
-    
+
     systems = {
         'geneseed_vault': False,
         'phylogenetics': False,
         'kaizen_engine': False,
         'evolutionary_engine': False
     }
-    
+
     # Check geneseed vault
     try:
         import whitemagic_rs
@@ -193,34 +193,34 @@ def weave_evolutionary_systems():
             print("✅ Geneseed Vault: Operational (Rust)")
     except Exception:
         pass
-    
+
     # Check phylogenetics
     try:
         systems['phylogenetics'] = True
         print("✅ Phylogenetics: Operational (Python)")
     except Exception:
         pass
-    
+
     # Check kaizen engine
     kaizen_file = Path(__file__).parent.parent / "whitemagic/core/intelligence/synthesis/kaizen_engine.py"
     if kaizen_file.exists():
         systems['kaizen_engine'] = True
         print("✅ Kaizen Engine: Operational (Python)")
-    
+
     # Check evolutionary engine
     evolution_file = Path(__file__).parent.parent / "scripts/evolution_engine.py"
     if evolution_file.exists():
         systems['evolutionary_engine'] = True
         print("✅ Evolutionary Engine: Operational (Python)")
-    
+
     operational = sum(systems.values())
     print(f"\n📊 Systems Operational: {operational}/4")
-    
+
     if operational >= 3:
         print("🎉 Sufficient systems for evolutionary loops!")
     else:
         print("⚠️  Some systems missing, but can proceed with available")
-    
+
     return systems
 
 def explore_entire_ecosystem():
@@ -234,18 +234,18 @@ def explore_entire_ecosystem():
     print(f"\n{'='*70}")
     print("🔍 EXPLORING ENTIRE ECOSYSTEM")
     print(f"{'='*70}")
-    
+
     base_path = Path(__file__).parent.parent
-    
+
     # Count campaigns
     campaigns = list((base_path / "campaigns").glob("*.md"))
     completed = list((base_path / "campaigns/completedcampaigns").rglob("*.md"))
-    
+
     print("\n📋 Campaigns:")
     print(f"  Active: {len(campaigns)}")
     print(f"  Completed: {len(completed)}")
     print(f"  Total: {len(campaigns) + len(completed)}")
-    
+
     # Count databases
     db_locations = [
         "~/.whitemagic/memory/whitemagic.db",
@@ -253,7 +253,7 @@ def explore_entire_ecosystem():
         "whitemagic_memory_archive/whitemagic_hot.db",
         "whitemagic_memory_archive/whitemagic_cold.db",
     ]
-    
+
     dbs_found = 0
     for db_path in db_locations:
         full_path = Path(db_path).expanduser()
@@ -261,20 +261,20 @@ def explore_entire_ecosystem():
             dbs_found += 1
             size_mb = full_path.stat().st_size / (1024 * 1024)
             print(f"  ✅ {db_path}: {size_mb:.1f} MB")
-    
+
     print(f"\n💾 Databases Found: {dbs_found}/{len(db_locations)}")
-    
+
     # Count code files
     py_files = list(base_path.glob("**/*.py"))
     rs_files = list(base_path.glob("**/*.rs"))
     zig_files = list(base_path.glob("**/*.zig"))
-    
+
     print("\n📁 Code Files:")
     print(f"  Python: {len(py_files)}")
     print(f"  Rust: {len(rs_files)}")
     print(f"  Zig: {len(zig_files)}")
     print(f"  Total: {len(py_files) + len(rs_files) + len(zig_files)}")
-    
+
     return {
         'campaigns': len(campaigns),
         'completed_campaigns': len(completed),
@@ -287,7 +287,7 @@ def explore_entire_ecosystem():
 def main():
     """Main execution"""
     start_time = time.time()
-    
+
     print(f"\n{'='*70}")
     print("🌟 EVOLUTIONARY PSR COMPLETION")
     print(f"{'='*70}")
@@ -298,44 +298,44 @@ def main():
     print("  • Kaizen (continuous improvement)")
     print("  • Evolutionary engines (selection, mutation)")
     print("  • Massive clone armies (10M+ clones/sec)")
-    
+
     # Weave evolutionary systems
     systems = weave_evolutionary_systems()
-    
+
     # Explore ecosystem
     ecosystem = explore_entire_ecosystem()
-    
+
     # Load PSR campaigns
     print(f"\n{'='*70}")
     print("📋 LOADING PSR CAMPAIGNS")
     print(f"{'='*70}")
-    
+
     campaigns = load_psr_campaigns()
     print(f"Found {len(campaigns)} PSR campaigns")
-    
+
     for campaign in campaigns:
         print(f"  • {campaign['id']}: {len(campaign['targets'])} targets")
-    
+
     # Deploy evolutionary loops for each campaign
     print(f"\n{'='*70}")
     print("🚀 DEPLOYING EVOLUTIONARY LOOPS")
     print(f"{'='*70}")
-    
+
     all_results = {}
-    
+
     for campaign in campaigns[:2]:  # Start with first 2 campaigns
         results = evolutionary_loop(campaign, max_generations=3)
         all_results[campaign['id']] = results
-    
+
     # Generate comprehensive report
     total_duration = time.time() - start_time
-    
+
     print(f"\n{'='*70}")
     print("📊 FINAL RESULTS")
     print(f"{'='*70}")
     print(f"Total duration: {total_duration:.2f}s")
     print(f"End time: {time.strftime('%H:%M:%S')}")
-    
+
     print("\n🧬 Evolutionary Progress:")
     for campaign_id, results in all_results.items():
         if results:
@@ -344,11 +344,11 @@ def main():
                 print(f"  Gen {r['generation']}: Fitness {r['fitness']:.2f}, "
                       f"Success {r['success_rate']*100:.1f}%, "
                       f"Throughput {r['throughput']:,.0f} ops/sec")
-    
+
     # Save results
     report_path = Path(__file__).parent.parent / "reports" / f"evolutionary_psr_{int(time.time())}.json"
     report_path.parent.mkdir(exist_ok=True)
-    
+
     report = {
         'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
         'duration': total_duration,
@@ -357,10 +357,10 @@ def main():
         'campaigns': len(campaigns),
         'results': all_results
     }
-    
+
     report_path.write_text(json.dumps(report, indent=2))
     print(f"\n✅ Report saved: {report_path}")
-    
+
     print(f"\n{'='*70}")
     print("✅ EVOLUTIONARY PSR COMPLETION FINISHED")
     print(f"{'='*70}")

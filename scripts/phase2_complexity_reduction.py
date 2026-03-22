@@ -72,7 +72,7 @@ targets = [
 def create_simplified_template(target: dict) -> str:
     """Create WM2 simplified template."""
     file_path = Path(target["path"])
-    
+
     return f'''"""
 WM2 Simplified: {target['path']}
 {'=' * (16 + len(target['path']))}
@@ -124,40 +124,40 @@ class Simplified{file_path.stem.title().replace('_', '')}(BaseEngine, Serializab
 def main():
     print("🔍 Analyzing top 10 complex modules...")
     print()
-    
+
     total_reduction = 0
     simplified_count = 0
-    
+
     for target in targets:
         file_path = PROJECT_ROOT / target["path"]
-        
+
         if not file_path.exists():
             print(f"   ⚠️  Not found: {target['path']}")
             continue
-        
+
         # Get original size
         original_lines = len(file_path.read_text(encoding='utf-8').splitlines())
-        
+
         # Create simplified template
         wm2_path = WM2_ROOT / "simplified" / target["path"].replace("whitemagic/", "")
         wm2_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         template = create_simplified_template(target)
         wm2_path.write_text(template)
-        
+
         simplified_lines = len(template.splitlines())
         actual_reduction = original_lines - simplified_lines
-        
+
         print(f"   ✅ {file_path.name}")
         print(f"      Original: {original_lines:,} LOC")
         print(f"      Simplified: {simplified_lines} LOC")
         print(f"      Reduction: {actual_reduction:,} LOC ({actual_reduction/original_lines*100:.1f}%)")
         print(f"      Strategy: {target['strategy']}")
         print()
-        
+
         total_reduction += target["reduction"]
         simplified_count += 1
-    
+
     print("=" * 80)
     print("PHASE 2 COMPLETE")
     print("=" * 80)

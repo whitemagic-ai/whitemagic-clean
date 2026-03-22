@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/panels/RightPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/RightPanel.tsx') as f:
     content = f.read()
 
 # Add event listener for inline context injection
@@ -9,7 +9,7 @@ injection = """
       setTab("chat");
       
       const { file, selection, range } = e.detail;
-      const contextMsg = `I am looking at \`${file}\`${range ? ` (lines ${range.startLineNumber}-${range.endLineNumber})` : ''}.`;
+      const contextMsg = `I am looking at \\`${file}\\`${range ? ` (lines ${range.startLineNumber}-${range.endLineNumber})` : ''}.`;
       
       setInput(prev => prev + (prev ? '\\n' : '') + contextMsg);
       
@@ -29,7 +29,7 @@ injection = """
 if "open-ai-chat-with-context" not in content:
     content = content.replace("const scrollToBottom = () => {", injection + "\n  const scrollToBottom = () => {")
     content = content.replace('<input\n                  type="text"', '<input\n                  id="ai-chat-input"\n                  type="text"')
-    
+
     with open('nexus/src/components/panels/RightPanel.tsx', 'w') as f:
         f.write(content)
     print("Patched RightPanel with Cmd+L event listener")

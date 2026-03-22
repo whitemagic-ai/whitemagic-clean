@@ -3,6 +3,7 @@
 
 import asyncio
 
+
 class TimescaleSync:
     def __init__(self):
         self.loops = {

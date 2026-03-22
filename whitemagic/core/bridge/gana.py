@@ -4,7 +4,10 @@ from uuid import uuid4
 
 from whitemagic.core.bridge.utils import logger
 from whitemagic.tools.envelope import normalize_raw
-from whitemagic.tools.gana_native_contract import build_native_gana_details, normalize_native_gana_result
+from whitemagic.tools.gana_native_contract import (
+    build_native_gana_details,
+    normalize_native_gana_result,
+)
 
 
 def gana_invoke(

@@ -4,9 +4,9 @@ Deep Verification Audit
 Rigorously verifies "Victory" claims by inspecting the actual codebase and database state.
 Trusts nothing. Verifies everything.
 """
-import sqlite3
-import re
 import os
+import re
+import sqlite3
 from pathlib import Path
 
 # Configuration
@@ -19,17 +19,17 @@ def check_sql_injection():
     suspicious = []
     # Exclude tests, migrations, archives, and venv
     exclude_dirs = ["tests", "migrations", "venv", ".git", "_archives", "whitemagic_memory_archive", ".venv"]
-    
+
     pattern = re.compile(r'(execute|cursor)\s*\(\s*f["\'](SELECT|INSERT|UPDATE|DELETE|DROP|ALTER)', re.IGNORECASE)
-    
+
     for root, dirs, files in os.walk(ROOT):
         # Modify dirs in-place to prune traversal
         dirs[:] = [d for d in dirs if d not in exclude_dirs]
-        
+
         # Check if current root is inside an excluded directory path (extra safety)
         if any(ex in str(Path(root)) for ex in exclude_dirs):
             continue
-            
+
         for file in files:
             if file.endswith(".py"):
                 path = Path(root) / file
@@ -39,7 +39,7 @@ def check_sql_injection():
                         suspicious.append(str(path.relative_to(ROOT)))
                 except Exception:
                     pass
-    
+
     if not suspicious:
         print("  ✅ CLEAN: No f-string SQL execution patterns found.")
         return True
@@ -55,10 +55,10 @@ def check_deduplication():
     if not DB_PATH.exists():
         print("  ❌ FAILED: Database not found.")
         return False
-        
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
+
     # Check for exact content hash duplicates in active memory
     cursor.execute("""
         SELECT content_hash, COUNT(*) 
@@ -69,7 +69,7 @@ def check_deduplication():
     """)
     dupes = cursor.fetchall()
     conn.close()
-    
+
     if not dupes:
         print("  ✅ CLEAN: 0 exact content duplicates in active memory.")
         return True
@@ -90,14 +90,14 @@ def check_embeddings():
     print("Verifying F001 (Embeddings)...")
     if not DB_PATH.exists():
         return False
-        
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
+
     # Check coverage
     cursor.execute("SELECT COUNT(*) FROM memories WHERE memory_type != 'quarantined'")
     total = cursor.fetchone()[0]
-    
+
     # Check for memory_embeddings (correct V15 table)
     try:
         cursor.execute("SELECT COUNT(*) FROM memory_embeddings")
@@ -122,10 +122,10 @@ def check_embeddings():
                 return False
 
     conn.close()
-    
+
     pct = (has_embedding / total * 100) if total > 0 else 0
     print(f"  ℹ️  Coverage: {has_embedding}/{total} ({pct:.1f}%)")
-    
+
     if pct > 99.0:
         print("  ✅ CLEAN: >99% embedding coverage.")
         return True
@@ -138,22 +138,22 @@ def check_entity_graph():
     print("Verifying IL005 (Entity Graph)...")
     if not DB_PATH.exists():
         return False
-        
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
+
     cursor.execute("SELECT COUNT(*) FROM associations")
     total = cursor.fetchone()[0]
-    
+
     # Use correct column name: relation_type
     cursor.execute("SELECT COUNT(*) FROM associations WHERE relation_type != 'associated_with'")
     typed = cursor.fetchone()[0]
-    
+
     conn.close()
-    
+
     pct = (typed / total * 100) if total > 0 else 0
     print(f"  ℹ️  Typed Edges: {typed}/{total} ({pct:.1f}%)")
-    
+
     if typed > 1000: # Arbitrary threshold for "success"
         print("  ✅ PASS: Significant typed association graph exists.")
         return True
@@ -168,7 +168,7 @@ def check_campaign_parsing():
     if not path.exists():
         print("  ❌ FAILED: V010 file missing.")
         return False
-        
+
     content = path.read_text()
     # Check for the header the parser expects
     if "## Victory Conditions" in content and not re.search(r'^## Victory Conditions\s*$', content, re.MULTILINE):
@@ -178,12 +178,12 @@ def check_campaign_parsing():
 
 if __name__ == "__main__":
     print("=== DEEP VERIFICATION AUDIT ===\n")
-    
+
     il001 = check_sql_injection()
     il004 = check_deduplication()
     f001 = check_embeddings()
     il005 = check_entity_graph()
     v010 = check_campaign_parsing()
-    
+
     score = sum([il001, il004, f001, il005]) # v010 is meta-check
     print(f"\nAudit Score: {score}/4 Functional Checks")

@@ -6,10 +6,11 @@ Defines the structure for a "Thought Trace" — a unit of reasoning that can be
 scored and stored in the Thought Galaxy for recursive self-improvement.
 """
 
+import json
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Dict, Any
-import json
+from typing import Any
+
 
 @dataclass
 class CognitiveEpisode:
@@ -27,13 +28,13 @@ class CognitiveEpisode:
 
     # The Outcome
     outcome_score: float = 0.0  # -1.0 (fail) to +1.0 (breakthrough)
-    outcome_metrics: Dict[str, Any] = field(default_factory=dict) # e.g. {"tests_passed": True}
+    outcome_metrics: dict[str, Any] = field(default_factory=dict) # e.g. {"tests_passed": True}
 
     # Associations
-    related_memory_ids: List[str] = field(default_factory=list)
-    tags: List[str] = field(default_factory=list)
+    related_memory_ids: list[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize to dictionary."""
         return {
             "id": self.id,
@@ -49,7 +50,7 @@ class CognitiveEpisode:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'CognitiveEpisode':
+    def from_dict(cls, data: dict[str, Any]) -> 'CognitiveEpisode':
         """Deserialize from dictionary."""
         # Handle timestamp conversion
         if isinstance(data.get("timestamp"), str):

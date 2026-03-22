@@ -3,7 +3,6 @@ LoCoMo V020 Enhanced Benchmark Specification
 Based on LoCoMo paper best practices + BERTScore semantic evaluation
 """
 
-from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -23,13 +22,13 @@ class EvaluatedAnswer:
     question_id: str
     answer: str
     confidence: float
-    source_memory_ids: List[str]
+    source_memory_ids: list[str]
     reasoning: str
-    
+
     # Diagnostic fields
     retrieval_depth: int = 0  # How many hops/memories accessed
-    reasoning_chain: List[str] = field(default_factory=list)
-    uncertainty_flags: List[str] = field(default_factory=list)
+    reasoning_chain: list[str] = field(default_factory=list)
+    uncertainty_flags: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -38,20 +37,20 @@ class BenchmarkQuestion:
     question_id: str
     question_type: QuestionType
     question: str
-    
+
     # Multiple acceptable answers for semantic matching
-    expected_answers: List[str]
-    acceptable_keywords: List[str]  # Key concepts that must appear
-    
-    source_memory_ids: List[str]
+    expected_answers: list[str]
+    acceptable_keywords: list[str]  # Key concepts that must appear
+
+    source_memory_ids: list[str]
     difficulty: str  # easy, medium, hard, expert
-    
+
     # Evaluation weights
     semantic_weight: float = 0.7  # BERTScore similarity
     factual_weight: float = 0.3   # Keyword/concept coverage
-    
+
     # Hints for multi-hop (not shown to AI, used for scoring)
-    required_connections: Optional[List[Tuple[str, str]]] = None
+    required_connections: list[tuple[str, str]] | None = None
 
 
 class SemanticScorer:
@@ -63,12 +62,12 @@ class SemanticScorer:
     - Contextual understanding
     - Partial credit for incomplete but correct answers
     """
-    
+
     def __init__(self, model: str = "microsoft/deberta-large-mnli"):
         self.model = model
         self._embedder = None
-    
-    def score(self, predicted: str, references: List[str]) -> Dict[str, float]:
+
+    def score(self, predicted: str, references: list[str]) -> dict[str, float]:
         """
         Compute semantic similarity scores.
         
@@ -79,21 +78,21 @@ class SemanticScorer:
         """
         # Placeholder - would use bert-score library
         # bertscore = bert_score.score([predicted], [references], ...)
-        
+
         # Fallback: keyword + n-gram overlap
         pred_tokens = set(predicted.lower().split())
         best_score = 0.0
-        
+
         for ref in references:
             ref_tokens = set(ref.lower().split())
             overlap = len(pred_tokens & ref_tokens)
-            
+
             precision = overlap / len(pred_tokens) if pred_tokens else 0
             recall = overlap / len(ref_tokens) if ref_tokens else 0
             f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
-            
+
             best_score = max(best_score, f1)
-        
+
         return {
             "semantic_f1": round(best_score, 3),
             "keyword_coverage": 0.0,  # Would check for required concepts
@@ -109,15 +108,15 @@ class LoCoMoV020Benchmark:
     3. Calibration assessment (confidence vs accuracy)
     4. Diagnostic metrics (retrieval depth, reasoning chains)
     """
-    
+
     def __init__(self):
         self.scorer = SemanticScorer()
-        self.questions: List[BenchmarkQuestion] = []
-        
-    def generate_test_suite(self) -> List[BenchmarkQuestion]:
+        self.questions: list[BenchmarkQuestion] = []
+
+    def generate_test_suite(self) -> list[BenchmarkQuestion]:
         """Generate comprehensive test suite."""
         suite = []
-        
+
         # SINGLE-HOP: Direct lookups (20 questions)
         suite.extend([
             BenchmarkQuestion(
@@ -133,7 +132,7 @@ class LoCoMoV020Benchmark:
             ),
             # ... more single-hop
         ])
-        
+
         # MULTI-HOP: Relationship questions (25 questions)
         suite.extend([
             BenchmarkQuestion(
@@ -152,7 +151,7 @@ class LoCoMoV020Benchmark:
             ),
             # ... more multi-hop
         ])
-        
+
         # ADVERSARIAL: Questions with false premises (10 questions)
         suite.extend([
             BenchmarkQuestion(
@@ -170,7 +169,7 @@ class LoCoMoV020Benchmark:
             ),
             # ... more adversarial
         ])
-        
+
         # CALIBRATION: Confidence assessment questions (10 questions)
         suite.extend([
             BenchmarkQuestion(
@@ -188,10 +187,10 @@ class LoCoMoV020Benchmark:
             ),
             # ... more calibration
         ])
-        
+
         return suite
-    
-    def evaluate_submission(self, answers: List[EvaluatedAnswer]) -> Dict:
+
+    def evaluate_submission(self, answers: list[EvaluatedAnswer]) -> dict:
         """
         Comprehensive evaluation with diagnostics.
         """
@@ -201,26 +200,26 @@ class LoCoMoV020Benchmark:
             "calibration": {},
             "diagnostics": {}
         }
-        
+
         # Score by type
         for qtype in QuestionType:
             type_answers = [a for a in answers if self._get_type(a.question_id) == qtype]
             if type_answers:
                 results["by_type"][qtype.value] = self._score_type(type_answers)
-        
+
         # Calibration analysis
         results["calibration"] = self._analyze_calibration(answers)
-        
+
         # Diagnostic metrics
         results["diagnostics"] = {
             "avg_retrieval_depth": sum(a.retrieval_depth for a in answers) / len(answers),
             "avg_confidence": sum(a.confidence for a in answers) / len(answers),
             "uncertainty_admission_rate": len([a for a in answers if a.confidence < 0.5]) / len(answers)
         }
-        
+
         return results
-    
-    def _analyze_calibration(self, answers: List[EvaluatedAnswer]) -> Dict:
+
+    def _analyze_calibration(self, answers: list[EvaluatedAnswer]) -> dict:
         """
         Assess if AI's confidence matches actual accuracy.
         
@@ -238,7 +237,7 @@ class LoCoMoV020Benchmark:
             "0.5-0.7": {"predicted": 0.60, "actual": []},
             "<0.5": {"predicted": 0.30, "actual": []}
         }
-        
+
         # Bin answers by confidence
         for answer in answers:
             conf = answer.confidence
@@ -252,7 +251,7 @@ class LoCoMoV020Benchmark:
                 confidence_bins["0.5-0.7"]["actual"].append(1 if answer.answer != "NOT_FOUND" else 0)
             else:
                 confidence_bins["<0.5"]["actual"].append(1 if answer.answer != "NOT_FOUND" else 0)
-        
+
         # Calculate calibration error
         calibration_errors = []
         for bin_name, data in confidence_bins.items():
@@ -260,7 +259,7 @@ class LoCoMoV020Benchmark:
                 actual_acc = sum(data["actual"]) / len(data["actual"])
                 error = abs(data["predicted"] - actual_acc)
                 calibration_errors.append(error)
-        
+
         return {
             "expected_calibration_error": sum(calibration_errors) / len(calibration_errors) if calibration_errors else 0,
             "is_well_calibrated": sum(calibration_errors) / len(calibration_errors) < 0.1 if calibration_errors else False,

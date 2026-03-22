@@ -21,7 +21,7 @@ import logging
 import threading
 import time
 from collections import OrderedDict
-from typing import Any, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class QueryCache:
         key_str = "|".join(key_parts)
         return hashlib.sha256(key_str.encode()).hexdigest()[:16]
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """Get value from cache if not expired."""
         with self._lock:
             if key not in self._cache:
@@ -75,7 +75,7 @@ class QueryCache:
             self.hits += 1
             return value
 
-    def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:
+    def set(self, key: str, value: Any, ttl: int | None = None) -> None:
         """Set value in cache with TTL."""
         if ttl is None:
             ttl = self.default_ttl
@@ -158,7 +158,7 @@ class QueryCache:
 
 
 # Global cache instance
-_query_cache: Optional[QueryCache] = None
+_query_cache: QueryCache | None = None
 _cache_lock = threading.Lock()
 
 

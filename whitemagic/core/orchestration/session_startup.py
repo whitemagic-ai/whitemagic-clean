@@ -316,7 +316,9 @@ class SessionStartupOrchestrator:
 
     def start_awareness(self) -> None:
         try:
-            from whitemagic.autonomous.continuous_awareness import get_awareness  # type: ignore[import-not-found]
+            from whitemagic.autonomous.continuous_awareness import (
+                get_awareness,  # type: ignore[import-not-found]
+            )
             awareness = get_awareness()
             self._run_with_timeout("continuous_awareness", awareness.observe_once, timeout_s=1.0)
             logger.info("👁️ Continuous Awareness activation triggered")
@@ -556,7 +558,9 @@ class SessionStartupOrchestrator:
         results: list[SystemStatus] = []
 
         def run_briefing() -> None:
-            from whitemagic.core.intelligence.insight_pipeline import get_insight_pipeline
+            from whitemagic.core.intelligence.insight_pipeline import (
+                get_insight_pipeline,
+            )
             pipeline = get_insight_pipeline()
             briefing = pipeline.generate_briefing(serendipity_count=3)
 

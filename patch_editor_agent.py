@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/center/MonacoEditor.tsx', 'r') as f:
+with open('nexus/src/components/center/MonacoEditor.tsx') as f:
     content = f.read()
 
 # Add inline agent command (Cmd+L like Windsurf)
@@ -23,7 +23,7 @@ injection = """
 
 if "KeyL" not in content:
     content = content.replace("state.saveFile(state.activeFile);\n      }\n    });", "state.saveFile(state.activeFile);\n      }\n    });" + injection)
-    
+
     with open('nexus/src/components/center/MonacoEditor.tsx', 'w') as f:
         f.write(content)
     print("Patched MonacoEditor with Cmd+L inline agent shortcut")

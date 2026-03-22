@@ -1,7 +1,6 @@
 """Tests for memory CRUD operations via call_tool."""
 from uuid import uuid4
 
-
 from tests.conftest import assert_envelope_shape
 
 

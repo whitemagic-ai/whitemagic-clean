@@ -216,7 +216,9 @@ def tier3_tokio():
 
     try:
         from whitemagic.optimization.rust_accelerators import (
-            tokio_deploy_clones, tokio_clone_bench, tokio_clone_stats,
+            tokio_clone_bench,
+            tokio_clone_stats,
+            tokio_deploy_clones,
         )
     except ImportError:
         print("  ✗ Tokio not available")
@@ -289,12 +291,16 @@ def tier4_parallel_engines():
         return cd.detect().to_dict() if cd.detect() else {}
 
     def _emergence_scan():
-        from whitemagic.core.intelligence.agentic.emergence_engine import get_emergence_engine
+        from whitemagic.core.intelligence.agentic.emergence_engine import (
+            get_emergence_engine,
+        )
         ee = get_emergence_engine()
         return {"insights": len(ee.scan())}
 
     def _novelty_detection():
-        from whitemagic.core.intelligence.agentic.novelty_detector import NoveltyDetector
+        from whitemagic.core.intelligence.agentic.novelty_detector import (
+            NoveltyDetector,
+        )
         nd = NoveltyDetector()
         return nd.detect("Test content about holographic memory coordinates in 5D space")
 
@@ -313,22 +319,30 @@ def tier4_parallel_engines():
         return fuse_signals_with_fusion(signals={}, clusters={}, memories={}, agg={})
 
     def _multispectral():
-        from whitemagic.core.intelligence.agentic.multi_spectral_reasoner import MultiSpectralReasoner
+        from whitemagic.core.intelligence.agentic.multi_spectral_reasoner import (
+            MultiSpectralReasoner,
+        )
         msr = MultiSpectralReasoner()
         return msr.reason("What patterns emerge?")
 
     def _elemental_opt():
-        from whitemagic.core.intelligence.elemental_optimization import ElementalOptimizer
+        from whitemagic.core.intelligence.elemental_optimization import (
+            ElementalOptimizer,
+        )
         opt = ElementalOptimizer()
         return opt.get_optimization_strategy("exploration")
 
     def _guideline_evolution():
-        from whitemagic.core.patterns.emergence.guideline_evolution import GuidelineEvolution
+        from whitemagic.core.patterns.emergence.guideline_evolution import (
+            GuidelineEvolution,
+        )
         ge = GuidelineEvolution()
         return {"pending": len(ge.get_pending_proposals())}
 
     def _pattern_consciousness():
-        from whitemagic.core.patterns.pattern_consciousness.autonomous_learner import AutonomousLearner
+        from whitemagic.core.patterns.pattern_consciousness.autonomous_learner import (
+            AutonomousLearner,
+        )
         al = AutonomousLearner()
         return {"learner": type(al).__name__}
 
@@ -455,7 +469,7 @@ def tier6_integration():
 
     # Memory store → embed → search roundtrip (if available)
     try:
-        from whitemagic.core.memory.unified import UnifiedMemory, MemoryType
+        from whitemagic.core.memory.unified import MemoryType, UnifiedMemory
         um = UnifiedMemory()
 
         def _store_search_cycle():
@@ -469,8 +483,8 @@ def tier6_integration():
 
     # Tokio + Arrow combined: deploy clones AND encode results
     try:
-        from whitemagic.optimization.rust_accelerators import tokio_deploy_clones
         import whitemagic_rs as rs
+        from whitemagic.optimization.rust_accelerators import tokio_deploy_clones
 
         def _tokio_arrow_pipeline():
             result = tokio_deploy_clones("Full pipeline test", 100)

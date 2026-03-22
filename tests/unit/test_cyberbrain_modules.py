@@ -7,10 +7,10 @@ Tests for CyberBrains-inspired modules:
   - BicameralReasoner (dual-hemisphere reasoning)
 """
 
-import pytest
 from datetime import datetime
 from unittest.mock import MagicMock
 
+import pytest
 
 # ---------------------------------------------------------------------------
 # Temporal Scheduler Tests
@@ -21,7 +21,8 @@ class TestTemporalScheduler:
 
     def _make_event(self, event_type_name: str, source: str = "test"):
         from whitemagic.core.resonance.gan_ying_enhanced import (
-            EventType, ResonanceEvent,
+            EventType,
+            ResonanceEvent,
         )
         et = EventType[event_type_name]
         return ResonanceEvent(
@@ -33,8 +34,11 @@ class TestTemporalScheduler:
         )
 
     def test_classify_fast_events(self):
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
 
         assert classify_event(EventType.THREAT_DETECTED) == TemporalLane.FAST
         assert classify_event(EventType.SYSTEM_STARTED) == TemporalLane.FAST
@@ -42,8 +46,11 @@ class TestTemporalScheduler:
         assert classify_event(EventType.BOUNDARY_VIOLATED) == TemporalLane.FAST
 
     def test_classify_slow_events(self):
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
 
         assert classify_event(EventType.MEMORY_CONSOLIDATED) == TemporalLane.SLOW
         assert classify_event(EventType.PATTERN_DETECTED) == TemporalLane.SLOW
@@ -51,15 +58,21 @@ class TestTemporalScheduler:
         assert classify_event(EventType.LEARNING_COMPLETED) == TemporalLane.SLOW
 
     def test_classify_medium_default(self):
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
 
         assert classify_event(EventType.MEMORY_CREATED) == TemporalLane.MEDIUM
         assert classify_event(EventType.JOY_TRIGGERED) == TemporalLane.MEDIUM
         assert classify_event(EventType.ORACLE_CAST) == TemporalLane.MEDIUM
 
     def test_fast_events_dispatch_immediately(self):
-        from whitemagic.core.resonance.temporal_scheduler import TemporalScheduler, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            TemporalScheduler,
+        )
 
         mock_bus = MagicMock()
         scheduler = TemporalScheduler(bus=mock_bus)
@@ -71,7 +84,10 @@ class TestTemporalScheduler:
         mock_bus.emit.assert_called_once_with(event)
 
     def test_medium_events_queue(self):
-        from whitemagic.core.resonance.temporal_scheduler import TemporalScheduler, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            TemporalScheduler,
+        )
 
         mock_bus = MagicMock()
         scheduler = TemporalScheduler(bus=mock_bus)
@@ -85,7 +101,10 @@ class TestTemporalScheduler:
         assert scheduler.get_queue_depth(TemporalLane.MEDIUM) == 1
 
     def test_force_lane_override(self):
-        from whitemagic.core.resonance.temporal_scheduler import TemporalScheduler, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            TemporalScheduler,
+        )
 
         mock_bus = MagicMock()
         scheduler = TemporalScheduler(bus=mock_bus)
@@ -98,7 +117,10 @@ class TestTemporalScheduler:
         mock_bus.emit.assert_called_once()
 
     def test_flush_all(self):
-        from whitemagic.core.resonance.temporal_scheduler import TemporalScheduler, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            TemporalScheduler,
+        )
 
         mock_bus = MagicMock()
         scheduler = TemporalScheduler(bus=mock_bus)
@@ -145,7 +167,10 @@ class TestTemporalScheduler:
         assert not scheduler.is_running
 
     def test_pre_flush_hook(self):
-        from whitemagic.core.resonance.temporal_scheduler import TemporalScheduler, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            TemporalScheduler,
+        )
 
         mock_bus = MagicMock()
         scheduler = TemporalScheduler(bus=mock_bus)
@@ -171,7 +196,10 @@ class TestSalienceArbiter:
     """Tests for the salience scoring and arbitration system."""
 
     def _make_event(self, event_type_name: str, confidence: float = 0.8):
-        from whitemagic.core.resonance.gan_ying_enhanced import EventType, ResonanceEvent
+        from whitemagic.core.resonance.gan_ying_enhanced import (
+            EventType,
+            ResonanceEvent,
+        )
         et = EventType[event_type_name]
         return ResonanceEvent(
             source="test",
@@ -415,7 +443,10 @@ class TestMaturityGates:
         assert MaturityStage.COLLECTIVE < MaturityStage.LOGOS
 
     def test_stage_capabilities_defined(self):
-        from whitemagic.core.governance.maturity_gates import _STAGE_CAPABILITIES, MaturityStage
+        from whitemagic.core.governance.maturity_gates import (
+            _STAGE_CAPABILITIES,
+            MaturityStage,
+        )
 
         for stage in MaturityStage:
             assert stage in _STAGE_CAPABILITIES
@@ -463,14 +494,20 @@ class TestMaturityGates:
         assert engine.is_capable("memory.create") is True
 
     def test_require_stage(self):
-        from whitemagic.core.governance.maturity_gates import MaturityEngine, MaturityStage
+        from whitemagic.core.governance.maturity_gates import (
+            MaturityEngine,
+            MaturityStage,
+        )
 
         engine = MaturityEngine()
         # Should always reach at least SEED
         assert engine.require_stage(MaturityStage.SEED) is True
 
     def test_logos_not_yet_reached(self):
-        from whitemagic.core.governance.maturity_gates import MaturityEngine, MaturityStage
+        from whitemagic.core.governance.maturity_gates import (
+            MaturityEngine,
+            MaturityStage,
+        )
 
         engine = MaturityEngine()
         report = engine.assess()
@@ -566,7 +603,10 @@ class TestTemporalSalienceIntegration:
     """Test that the temporal scheduler and salience arbiter wire together."""
 
     def _make_event(self, event_type_name: str, confidence: float = 0.8):
-        from whitemagic.core.resonance.gan_ying_enhanced import EventType, ResonanceEvent
+        from whitemagic.core.resonance.gan_ying_enhanced import (
+            EventType,
+            ResonanceEvent,
+        )
         et = EventType[event_type_name]
         return ResonanceEvent(
             source="integration_test",
@@ -577,8 +617,11 @@ class TestTemporalSalienceIntegration:
         )
 
     def test_salience_as_pre_flush_hook(self):
-        from whitemagic.core.resonance.temporal_scheduler import TemporalScheduler, TemporalLane
         from whitemagic.core.resonance.salience_arbiter import SalienceArbiter
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            TemporalScheduler,
+        )
 
         mock_bus = MagicMock()
         scheduler = TemporalScheduler(bus=mock_bus)

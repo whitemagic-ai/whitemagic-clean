@@ -30,6 +30,7 @@ if "whitemagic.config.paths" in sys.modules:
 # Without this, SQLite cannot create the DB file in CI where ~/.whitemagic
 # doesn't pre-exist.
 from whitemagic.config.paths import ensure_paths
+
 ensure_paths()
 
 

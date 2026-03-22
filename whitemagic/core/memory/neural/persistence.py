@@ -5,9 +5,9 @@ Created: December 2, 2025 (Hanuman Tuesday).
 import json
 from pathlib import Path
 
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
-
 from whitemagic.core.memory.neural.neural_memory import NeuralMemory
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 class NeuralMemoryStore:

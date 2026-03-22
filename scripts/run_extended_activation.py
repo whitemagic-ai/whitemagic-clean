@@ -400,7 +400,9 @@ def step_causal_mining():
 def step_emergence_scan():
     banner(10, "🌊", "EMERGENCE SCAN")
     try:
-        from whitemagic.core.intelligence.agentic.emergence_engine import get_emergence_engine
+        from whitemagic.core.intelligence.agentic.emergence_engine import (
+            get_emergence_engine,
+        )
         engine = get_emergence_engine()
         engine.start()
         start = time.perf_counter()
@@ -496,7 +498,9 @@ def step_multispectral_reasoning():
 def step_novelty_detection():
     banner(14, "🆕", "NOVELTY DETECTION")
     try:
-        from whitemagic.core.patterns.emergence.novelty_detector import get_novelty_detector
+        from whitemagic.core.patterns.emergence.novelty_detector import (
+            get_novelty_detector,
+        )
         detector = get_novelty_detector()
 
         test_contents = [
@@ -591,12 +595,16 @@ def step_pattern_consciousness():
     banner(17, "🧬", "PATTERN CONSCIOUSNESS STATUS")
     try:
         try:
-            from whitemagic.core.patterns.pattern_consciousness.autonomous_learner import AutonomousLearner
+            from whitemagic.core.patterns.pattern_consciousness.autonomous_learner import (
+                AutonomousLearner,
+            )
             learner = AutonomousLearner()
         except Exception:
             learner = None
         try:
-            from whitemagic.core.patterns.pattern_consciousness.pattern_engine_enhanced import EnhancedPatternEngine
+            from whitemagic.core.patterns.pattern_consciousness.pattern_engine_enhanced import (
+                EnhancedPatternEngine,
+            )
             engine = EnhancedPatternEngine()
         except Exception:
             engine = None
@@ -621,7 +629,9 @@ def step_pattern_consciousness():
 def step_guideline_evolution():
     banner(18, "📜", "GUIDELINE EVOLUTION")
     try:
-        from whitemagic.core.patterns.emergence.guideline_evolution import GuidelineEvolution
+        from whitemagic.core.patterns.emergence.guideline_evolution import (
+            GuidelineEvolution,
+        )
         evolver = GuidelineEvolution()
         pending = evolver.get_pending_proposals()
         result = {
@@ -640,7 +650,9 @@ def step_guideline_evolution():
 def step_elemental_optimization():
     banner(19, "⚖️", "ELEMENTAL OPTIMIZATION")
     try:
-        from whitemagic.core.intelligence.elemental_optimization import ElementalOptimizer
+        from whitemagic.core.intelligence.elemental_optimization import (
+            ElementalOptimizer,
+        )
         optimizer = ElementalOptimizer()
         tasks = ["exploration", "analysis", "consolidation", "refinement", "reflection"]
         results = []

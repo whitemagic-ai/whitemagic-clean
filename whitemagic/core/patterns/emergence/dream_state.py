@@ -61,7 +61,9 @@ class DreamState:
             pass
 
         try:
-            from whitemagic.emergence.detector import EmergenceDetector  # type: ignore[import-not-found]
+            from whitemagic.emergence.detector import (
+                EmergenceDetector,  # type: ignore[import-not-found]
+            )
             self.emergence_detector = EmergenceDetector()
             logger.info("🌟 Dream State connected to Emergence Detector")
         except ImportError:
@@ -173,7 +175,7 @@ class DreamState:
             line_no = p.get("line_no", 0)
             if file_path and os.path.exists(file_path):
                 try:
-                    with open(file_path, "r", errors="ignore") as f:
+                    with open(file_path, errors="ignore") as f:
                         lines = f.readlines()
                         # Extract 10 lines around the match
                         start = max(0, line_no - 5)

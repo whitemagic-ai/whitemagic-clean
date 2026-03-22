@@ -38,14 +38,15 @@ import hashlib
 import logging
 import os
 import threading
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -448,7 +449,7 @@ class HermitCrab:
 
         try:
             entries = []
-            with open(self._ledger_path, "r", encoding="utf-8") as f:
+            with open(self._ledger_path, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if line:

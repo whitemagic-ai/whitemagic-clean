@@ -1,5 +1,5 @@
 
-with open('whitemagic-rust/src/ipc_bridge.rs', 'r') as f:
+with open('whitemagic-rust/src/ipc_bridge.rs') as f:
     content = f.read()
 
 # Fix feature flags, "python" is what we use in lib.rs for other python modules

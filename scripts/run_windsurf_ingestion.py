@@ -3,11 +3,12 @@
 import sys
 import time
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from ingest_windsurf_optimized import batch_ingest_optimized
 
 SESSIONS = [
-    {"id": "d4e1e68d-f993-4730-9477-26b54f3f4e46", "date": "2026-02-15", 
+    {"id": "d4e1e68d-f993-4730-9477-26b54f3f4e46", "date": "2026-02-15",
      "title": "Polyglot Synthesis Loop", "tags": ["windsurf", "feb15", "polyglot"]},
     {"id": "124c9ac3-8c7f-4aa6-8d4e-9acd23b2bc77", "date": "2026-02-15",
      "title": "Gene Library Expansion", "tags": ["windsurf", "feb15", "evolution"]},

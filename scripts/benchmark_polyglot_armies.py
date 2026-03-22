@@ -8,7 +8,6 @@ import json
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, Tuple
 
 SCRIPT_DIR = Path(__file__).parent
 ARMIES = {
@@ -21,13 +20,13 @@ ARMIES = {
     "julia": SCRIPT_DIR / "army_julia.sh",
 }
 
-def test_army(language: str, script_path: Path, clone_count: int) -> Tuple[bool, float, Dict]:
+def test_army(language: str, script_path: Path, clone_count: int) -> tuple[bool, float, dict]:
     """Test a single army script and measure throughput"""
     task = {
         "task": f"{language}_test",
         "clone_count": clone_count
     }
-    
+
     start_time = time.time()
     try:
         result = subprocess.run(
@@ -37,18 +36,18 @@ def test_army(language: str, script_path: Path, clone_count: int) -> Tuple[bool,
             text=True,
             timeout=30
         )
-        
+
         elapsed = time.time() - start_time
-        
+
         if result.returncode != 0:
             return False, elapsed, {"error": result.stderr}
-        
+
         try:
             output = json.loads(result.stdout)
             return True, elapsed, output
         except json.JSONDecodeError:
             return False, elapsed, {"error": "Invalid JSON output", "stdout": result.stdout[:200]}
-            
+
     except subprocess.TimeoutExpired:
         elapsed = time.time() - start_time
         return False, elapsed, {"error": "Timeout"}
@@ -56,7 +55,7 @@ def test_army(language: str, script_path: Path, clone_count: int) -> Tuple[bool,
         elapsed = time.time() - start_time
         return False, elapsed, {"error": str(e)}
 
-def run_benchmark(clone_count: int = 10000) -> Dict:
+def run_benchmark(clone_count: int = 10000) -> dict:
     """Run benchmark across all polyglot armies"""
     print(f"\n{'='*70}")
     print("  POLYGLOT ARMY AGGREGATE THROUGHPUT BENCHMARK")
@@ -64,22 +63,22 @@ def run_benchmark(clone_count: int = 10000) -> Dict:
     print(f"  Clone count per army: {clone_count:,}")
     print(f"  Total armies: {len(ARMIES)}")
     print(f"  Total clones: {clone_count * len(ARMIES):,}\n")
-    
+
     results = {}
     total_clones = 0
     total_time = 0
     successful_armies = 0
-    
+
     for language, script_path in ARMIES.items():
         print(f"  [{language.upper():>8}] ", end="", flush=True)
-        
+
         if not script_path.exists():
             print("❌ Script not found")
             results[language] = {"status": "missing", "throughput": 0}
             continue
-        
+
         success, elapsed, output = test_army(language, script_path, clone_count)
-        
+
         if success:
             throughput = clone_count / elapsed if elapsed > 0 else 0
             print(f"✅ {elapsed:.3f}s → {throughput:,.0f} clones/sec")
@@ -99,10 +98,10 @@ def run_benchmark(clone_count: int = 10000) -> Dict:
                 "error": output.get("error", "Unknown"),
                 "throughput": 0
             }
-    
+
     # Calculate aggregate metrics
     aggregate_throughput = total_clones / total_time if total_time > 0 else 0
-    
+
     print(f"\n{'='*70}")
     print("  AGGREGATE RESULTS")
     print(f"{'='*70}\n")
@@ -113,7 +112,7 @@ def run_benchmark(clone_count: int = 10000) -> Dict:
     print("\n  Target: 2,000,000 clones/sec")
     print(f"  Achievement: {(aggregate_throughput / 2_000_000 * 100):.1f}%")
     print(f"\n{'='*70}\n")
-    
+
     return {
         "clone_count_per_army": clone_count,
         "total_armies": len(ARMIES),
@@ -128,19 +127,19 @@ def run_benchmark(clone_count: int = 10000) -> Dict:
 
 if __name__ == "__main__":
     import sys
-    
+
     clone_count = int(sys.argv[1]) if len(sys.argv) > 1 else 10000
-    
+
     benchmark_results = run_benchmark(clone_count)
-    
+
     # Save results
     output_file = SCRIPT_DIR.parent / "reports" / "polyglot_throughput_benchmark.json"
     output_file.parent.mkdir(exist_ok=True)
-    
+
     with open(output_file, "w") as f:
         json.dump(benchmark_results, f, indent=2)
-    
+
     print(f"  Results saved to: {output_file}\n")
-    
+
     # Exit with success if we hit target
     sys.exit(0 if benchmark_results["aggregate_throughput"] >= 2_000_000 else 1)

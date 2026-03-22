@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from .cdp import CDPConnection, CDPResponse, connect_to_chrome
@@ -33,7 +33,7 @@ class ActionResult:
     value: str | None = None
     error: str | None = None
     duration_ms: float = 0.0
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -138,7 +138,7 @@ class BrowserActions:
         try:
             await asyncio.wait_for(loaded.wait(), timeout=timeout)
             return True
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return False
         finally:
             self.cdp.off("Page.loadEventFired", on_load)
@@ -573,7 +573,7 @@ class BrowserSession:
         if self._cdp:
             await self._cdp.disconnect()
 
-    async def __aenter__(self) -> 'BrowserSession':
+    async def __aenter__(self) -> BrowserSession:
         await self.connect()
         return self
 

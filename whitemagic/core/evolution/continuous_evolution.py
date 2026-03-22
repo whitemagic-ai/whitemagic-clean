@@ -11,15 +11,14 @@ Runs the recursive evolution cycle automatically:
 This is the self-improving loop that runs continuously.
 """
 
-import time
 import json
-from pathlib import Path
-from typing import Dict, List, Optional
-from datetime import datetime
 import logging
+import time
+from datetime import datetime
+from pathlib import Path
 
-from .autodidactic_loop import AutodidacticLoop
 from .adaptive_integration import AdaptiveIntegration
+from .autodidactic_loop import AutodidacticLoop
 from .meta_learning import MetaLearningEngine
 
 logger = logging.getLogger(__name__)
@@ -68,7 +67,7 @@ class ContinuousEvolutionEngine:
         with open(self.state_file, 'w') as f:
             json.dump(state, f, indent=2)
 
-    def run_single_cycle(self) -> Dict:
+    def run_single_cycle(self) -> dict:
         """Run one complete evolution cycle"""
         cycle_start = time.time()
         self.cycle_count += 1
@@ -203,7 +202,7 @@ class ContinuousEvolutionEngine:
 
         return results
 
-    def run_continuous(self, max_cycles: Optional[int] = None):
+    def run_continuous(self, max_cycles: int | None = None):
         """Run continuous evolution loop"""
         self.running = True
         cycles_run = 0
@@ -243,7 +242,7 @@ class ContinuousEvolutionEngine:
         logger.info("Stopping continuous evolution...")
         self.running = False
 
-    def get_status(self) -> Dict:
+    def get_status(self) -> dict:
         """Get current evolution status"""
         summary = self.integration.get_integration_summary()
         meta_summary = self.meta_learning.get_meta_learning_summary()
@@ -266,7 +265,7 @@ class SelfDirectedEvolution:
         self.meta_learning = MetaLearningEngine()
         self.evolution = ContinuousEvolutionEngine()
 
-    def identify_needs(self) -> Dict:
+    def identify_needs(self) -> dict:
         """Analyze current state and identify what the system needs"""
 
         # Get current state
@@ -334,7 +333,7 @@ class SelfDirectedEvolution:
 
         return needs
 
-    def generate_action_plan(self) -> List[Dict]:
+    def generate_action_plan(self) -> list[dict]:
         """Generate concrete action plan based on identified needs"""
         needs = self.identify_needs()
 

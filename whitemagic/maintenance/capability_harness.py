@@ -159,7 +159,9 @@ class CapabilityHarness:
 
         # Try to import zodiac
         try:
-            from whitemagic.gardens.connection.zodiac_cores import ZodiacCores  # type: ignore[attr-defined]
+            from whitemagic.gardens.connection.zodiac_cores import (
+                ZodiacCores,  # type: ignore[attr-defined]
+            )
             cores = ZodiacCores()
             return {
                 "cores_available": len(cores.cores) if hasattr(cores, "cores") else 0,
@@ -180,7 +182,9 @@ class CapabilityHarness:
 
         # Check for emergence detector
         try:
-            from whitemagic.emergence.detector import EmergenceDetector  # type: ignore[import-not-found]
+            from whitemagic.emergence.detector import (
+                EmergenceDetector,  # type: ignore[import-not-found]
+            )
             detector = EmergenceDetector()
             return {
                 "emergence_operational": True,

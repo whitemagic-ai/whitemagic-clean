@@ -1,10 +1,11 @@
 import os
 
+
 def setup_v005_unified_nervous_system():
     print("=== V005: Unified Nervous System ===")
     uns_path = "/home/lucas/Desktop/whitemagicdev/whitemagic/core/cyberbrain/nervous_system.py"
     os.makedirs(os.path.dirname(uns_path), exist_ok=True)
-    
+
     with open(uns_path, "w") as f:
         f.write("""# Unified Nervous System
 # Ties together 7 biological subsystems (Immune, Genetic, Dream, Metabolism, Consciousness, Resonance, Emergence)
@@ -50,7 +51,7 @@ class UnifiedNervousSystem:
 def setup_v004_locomo_accuracy():
     print("=== V004: LoCoMo Accuracy Improvements ===")
     locomo_path = "/home/lucas/Desktop/whitemagicdev/whitemagic/core/memory/locomo_enhancements.py"
-    
+
     with open(locomo_path, "w") as f:
         f.write("""# LoCoMo Accuracy Improvements
 # Implements Vector search, Beam search, Temporal indexing

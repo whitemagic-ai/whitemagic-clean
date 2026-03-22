@@ -3,6 +3,7 @@
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 print("Testing search_memories handler directly...")
@@ -34,19 +35,19 @@ except Exception as e:
 print("\nTesting via dispatch table...")
 try:
     from whitemagic.tools.dispatch_table import DISPATCH_TABLE
-    
+
     handler = DISPATCH_TABLE.get("search_memories")
     print(f"search_memories handler: {handler}")
     if handler:
         result = handler(query="test", limit=5)
         print(f"  Result: {type(result)}, status={result.get('status') if isinstance(result, dict) else 'N/A'}")
-    
+
     handler = DISPATCH_TABLE.get("serendipity_surface")
     print(f"serendipity_surface handler: {handler}")
     if handler:
         result = handler()
         print(f"  Result: {type(result)}, status={result.get('status') if isinstance(result, dict) else 'N/A'}")
-        
+
 except Exception as e:
     print(f"✗ Dispatch table test failed: {e}")
     import traceback

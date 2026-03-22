@@ -1,5 +1,5 @@
 
-with open("whitemagic/core/acceleration/hybrid_dispatcher_v2.py", "r") as f:
+with open("whitemagic/core/acceleration/hybrid_dispatcher_v2.py") as f:
     content = f.read()
 
 # Fix get_predecessor instance method

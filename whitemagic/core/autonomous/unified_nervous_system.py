@@ -17,12 +17,14 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from whitemagic.core.dreaming.background_dreamer import get_background_dreamer
+from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Optional
-from collections import defaultdict
+from typing import Any
+
+from whitemagic.core.dreaming.background_dreamer import get_background_dreamer
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +54,7 @@ class BiologicalEvent:
     """An event on the unified nervous system."""
     event_type: str
     source: BiologicalSubsystem
-    target: Optional[BiologicalSubsystem]
+    target: BiologicalSubsystem | None
     payload: dict[str, Any] = field(default_factory=dict)
     priority: EventPriority = EventPriority.NORMAL
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
@@ -65,7 +67,7 @@ class SubsystemRegistration:
     subsystem: BiologicalSubsystem
     handlers: dict[str, list[Callable[[BiologicalEvent], Any]]] = field(default_factory=lambda: defaultdict(list))
     active: bool = True
-    last_heartbeat: Optional[str] = None
+    last_heartbeat: str | None = None
 
 
 class UnifiedNervousSystem:
@@ -107,7 +109,7 @@ class UnifiedNervousSystem:
         event_type: str,
         source: BiologicalSubsystem,
         payload: dict[str, Any],
-        target: Optional[BiologicalSubsystem] = None,
+        target: BiologicalSubsystem | None = None,
         priority: EventPriority = EventPriority.NORMAL,
     ) -> BiologicalEvent:
         """Emit an event to the nervous system."""
@@ -171,8 +173,8 @@ class UnifiedNervousSystem:
 
     def get_event_history(
         self,
-        event_type: Optional[str] = None,
-        source: Optional[BiologicalSubsystem] = None,
+        event_type: str | None = None,
+        source: BiologicalSubsystem | None = None,
         limit: int = 100,
     ) -> list[BiologicalEvent]:
         """Query event history."""
@@ -372,7 +374,7 @@ class CrossSubsystemPatterns:
 
 
 # Singleton accessor
-_nervous_system: Optional[UnifiedNervousSystem] = None
+_nervous_system: UnifiedNervousSystem | None = None
 
 
 def get_nervous_system() -> UnifiedNervousSystem:

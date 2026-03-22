@@ -7,7 +7,7 @@ import atexit
 import functools
 from collections.abc import Callable, Coroutine
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, TypeVar, Union
+from typing import Any, TypeVar
 
 T = TypeVar("T")
 
@@ -33,7 +33,7 @@ class AsyncCompat:
             cls._executor.shutdown(wait=True)
             cls._executor = None
 
-def async_compat(func: Callable[..., T]) -> Callable[..., Union[T, Coroutine[Any, Any, T]]]:
+def async_compat(func: Callable[..., T]) -> Callable[..., T | Coroutine[Any, Any, T]]:
     """Decorator that makes a function work in both sync and async contexts.
 
     Usage:

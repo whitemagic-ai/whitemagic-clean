@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import re
 
-
 from whitemagic.core.acceleration.simd_cosine import batch_cosine
 
 

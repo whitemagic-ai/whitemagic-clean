@@ -28,7 +28,7 @@ if not os.environ.get("WM_DEBUG"):
     logger.setLevel(logging.WARNING)
 
 
-def collect() -> "list[ToolDefinition]":
+def collect() -> list[ToolDefinition]:
     """Discover all domain modules and collect their TOOLS lists."""
     all_tools: list[ToolDefinition] = []
     package_path = __path__  # type: ignore[name-defined]

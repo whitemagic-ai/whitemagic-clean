@@ -1,6 +1,7 @@
 """Fast SimHash with Rust backend (PSR-015)."""
 import hashlib
 import logging
+
 logger = logging.getLogger(__name__)
 try:
     from whitemagic_rs import SimhashLSH as _RustLSH

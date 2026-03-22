@@ -61,9 +61,9 @@ class InfiniteGauntletV7:
                 logger.error(f"Error profiling {label}: {e}")
                 break
             times.append(time.perf_counter_ns() - start)
-        
+
         if not times: return
-        
+
         median = statistics.median(times)
         p99 = sorted(times)[int(len(times) * 0.99)]
         logger.info(f"  Result: median={self._fmt_ns(median)}, p99={self._fmt_ns(p99)}")
@@ -80,20 +80,20 @@ class InfiniteGauntletV7:
         logger.info("⚛️ Quantum Verification: Grover O(√N) vs Classical O(N)...")
         from whitemagic.core.intelligence.quantum_engine import QuantumEngine
         engine = QuantumEngine()
-        
+
         # Test with N=1000 items
         items = list(range(1000))
         target = 777
         def oracle(x):
             return x == target
-        
+
         # 1. Classical Search (Simulated average)
-        
+
         # 2. Quantum Grover
         start = time.perf_counter_ns()
         engine.grover_search(items, oracle)
         quantum_duration = time.perf_counter_ns() - start
-        
+
         # Grover for N=1000 does approx 25 iterations (pi/4 * sqrt(1000))
         # Total ops = 25 * (oracle + diffusion)
         logger.info(f"  Quantum Duration: {self._fmt_ns(quantum_duration)}")
@@ -108,13 +108,15 @@ class InfiniteGauntletV7:
     async def test_nervous_system(self):
         """Verify Unified Nervous System pulse latency."""
         logger.info("🧠 Nervous System: Pulse Latency & Event Bus...")
-        from whitemagic.core.intelligence.nervous_system_v21 import get_nervous_system_v21
+        from whitemagic.core.intelligence.nervous_system_v21 import (
+            get_nervous_system_v21,
+        )
         ns = await get_nervous_system_v21()
-        
+
         start = time.perf_counter_ns()
         pulse_res = await ns.pulse()
         duration = time.perf_counter_ns() - start
-        
+
         logger.info(f"  Pulse Duration: {self._fmt_ns(duration)}")
         self.results.append({
             "label": "Nervous System Pulse",
@@ -125,13 +127,13 @@ class InfiniteGauntletV7:
 
     def run_all(self):
         logger.info("🎬 Starting The Infinite Gauntlet v7 (Apotheosis Edition)...")
-        
+
         # 1. Core Dispatch Overhead
         from whitemagic.tools.dispatch_table import DISPATCH_TABLE
         tools = list(DISPATCH_TABLE.keys())
         if tools:
             self.profile_nanoseconds("Dispatch Table Lookup", lambda: DISPATCH_TABLE.get(tools[0]), iterations=50000)
-        
+
         # 2. 5D Holographic Encoding (Mojo/Rust optimized)
         from whitemagic.core.intelligence.hologram.encoder import CoordinateEncoder
         encoder = CoordinateEncoder()
@@ -139,7 +141,9 @@ class InfiniteGauntletV7:
         self.profile_nanoseconds("5D Holographic Encode", lambda: encoder.encode(test_mem), iterations=1000)
 
         # 3. Quantum-Inspired Serendipity
-        from whitemagic.core.intelligence.synthesis.serendipity_engine import SerendipityEngine
+        from whitemagic.core.intelligence.synthesis.serendipity_engine import (
+            SerendipityEngine,
+        )
         se = SerendipityEngine()
         self.profile_nanoseconds("Quantum Serendipity Surface", lambda: se.surface(mode="quantum", count=1), iterations=10)
 

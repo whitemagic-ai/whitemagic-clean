@@ -5,7 +5,7 @@ Created: December 2, 2025 (Hanuman Tuesday).
 
 import logging
 from datetime import datetime
-from typing import Any, Union
+from typing import Any
 
 from whitemagic.core.memory.neural.neural_memory import NeuralMemory
 
@@ -34,7 +34,7 @@ class NeuralMemoryEventType:
     CLONE_SEARCH_COMPLETE = "neural.clone.search_complete"
 
 
-def emit_event(event_type: Union[str, EventType], data: dict[str, Any], confidence: float = 0.9) -> None:
+def emit_event(event_type: str | EventType, data: dict[str, Any], confidence: float = 0.9) -> None:
     """Emit event to Gan Ying bus if available."""
     if not GAN_YING_AVAILABLE:
         return

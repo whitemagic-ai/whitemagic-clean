@@ -24,21 +24,21 @@ import hashlib
 import logging
 import re
 import threading
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum, auto
 from pathlib import Path
 from typing import Any
 
 from whitemagic.config.paths import WM_ROOT
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
 # Singleton instance
-_watcher_instance: "SemanticFileWatcher" | None = None
+_watcher_instance: SemanticFileWatcher | None = None
 _watcher_lock = threading.Lock()
 
 
@@ -57,7 +57,7 @@ class FileEvent:
 
     event_type: FileEventType
     path: str
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     old_path: str | None = None  # For MOVED events
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -156,7 +156,7 @@ class SemanticFileWatcher:
         """Save configuration to disk."""
         data = {
             "version": "1.0",
-            "updated": datetime.now(timezone.utc).isoformat(),
+            "updated": datetime.now(UTC).isoformat(),
             "watches": {path: config.to_dict() for path, config in self._watches.items()},
         }
         self.config_path.write_text(_json_dumps(data, indent=2))
@@ -377,7 +377,7 @@ class SemanticFileWatcher:
             from watchdog.observers import Observer
 
             class Handler(FileSystemEventHandler):
-                def __init__(self, watcher: 'SemanticFileWatcher') -> None:
+                def __init__(self, watcher: SemanticFileWatcher) -> None:
                     self.watcher = watcher
 
                 def _should_ignore(self, path: str) -> bool:

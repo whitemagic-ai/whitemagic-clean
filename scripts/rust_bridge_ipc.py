@@ -13,8 +13,9 @@ Reads JSON commands from stdin, writes JSON responses to stdout.
 import json
 import sys
 import time
-import numpy as np
 from typing import Any
+
+import numpy as np
 
 Any  # Use Any in type hints
 
@@ -38,14 +39,14 @@ def cosine_similarity(a: list[float], b: list[float]) -> float:
             return float(accel.cosine_similarity(vec_a, vec_b))
         except Exception as e:
             print(f"Rust acceleration failed: {e}, using numpy", file=sys.stderr)
-    
+
     # Fallback to numpy
     vec_a = np.array(a, dtype=np.float32)
     vec_b = np.array(b, dtype=np.float32)
     dot = np.dot(vec_a, vec_b)
     norm_a = np.linalg.norm(vec_a)
     norm_b = np.linalg.norm(vec_b)
-    
+
     if norm_a == 0 or norm_b == 0:
         return 0.0
     return float(dot / (norm_a * norm_b))
@@ -76,7 +77,7 @@ def process_command(cmd: dict) -> dict:
     """Process a single command and return response."""
     op = cmd.get("op", "unknown")
     start = time.perf_counter()
-    
+
     try:
         if op == "cosine":
             a = cmd.get("a", [1.0, 2.0, 3.0])
@@ -88,7 +89,7 @@ def process_command(cmd: dict) -> dict:
                 "rust_accelerated": ACCEL_AVAILABLE,
                 "elapsed_ms": elapsed
             }
-        
+
         elif op == "batch_cosine":
             queries = cmd.get("queries", [[1.0, 2.0]])
             vectors = cmd.get("vectors", [[1.0, 2.0], [3.0, 4.0]])
@@ -99,7 +100,7 @@ def process_command(cmd: dict) -> dict:
                 "rust_accelerated": ACCEL_AVAILABLE,
                 "elapsed_ms": elapsed
             }
-        
+
         elif op == "serialize":
             data = cmd.get("data", {"test": "object"})
             result = json_serialize(data)
@@ -109,20 +110,20 @@ def process_command(cmd: dict) -> dict:
                 "rust_accelerated": ACCEL_AVAILABLE,
                 "elapsed_ms": elapsed
             }
-        
+
         elif op == "stats":
             return {
                 "rust_available": ACCEL_AVAILABLE,
                 "commands_processed": 0,  # Would track in production
                 "total_time_ms": 0.0
             }
-        
+
         elif op == "quit":
             return {"status": "stopped"}
-        
+
         else:
             return {"error": f"unknown op: {op}"}
-    
+
     except Exception as e:
         return {"error": str(e)}
 
@@ -136,20 +137,20 @@ def main():
         "rust_available": ACCEL_AVAILABLE,
         "features": ["cosine_similarity", "batch_cosine", "json_serialize"]
     }), flush=True)
-    
+
     while True:
         try:
             line = input()
             if not line:
                 continue
-            
+
             cmd = json.loads(line)
             response = process_command(cmd)
             print(json.dumps(response), flush=True)
-            
+
             if cmd.get("op") == "quit":
                 break
-        
+
         except EOFError:
             break
         except json.JSONDecodeError as e:

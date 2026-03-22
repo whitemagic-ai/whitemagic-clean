@@ -18,13 +18,13 @@ import logging
 from collections.abc import Callable
 from datetime import datetime
 from typing import Any
-from whitemagic.cascade.holographic_context import get_holographic_injector
 
 from whitemagic.cascade.context_synthesizer import (
     ContextSynthesizer,
     UnifiedContext,
     get_context_synthesizer,
 )
+from whitemagic.cascade.holographic_context import get_holographic_injector
 
 logger = logging.getLogger(__name__)
 
@@ -604,7 +604,6 @@ class AdaptiveToolPortal:
         # Try Rust-accelerated search first
         try:
             import whitemagic_rs
-
             from whitemagic.config.paths import MEMORY_DIR
 
             # Search memory directories using Rust parallel_grep

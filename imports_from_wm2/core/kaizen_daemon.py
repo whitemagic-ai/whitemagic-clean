@@ -6,18 +6,18 @@ Continuous self-improvement loop
 
 import time
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any
 
 
 class KaizenDaemon:
     """Autonomous continuous improvement daemon."""
-    
+
     def __init__(self):
         self.running = False
         self.cycle_count = 0
         self.improvements = []
-    
-    def observe(self) -> Dict[str, Any]:
+
+    def observe(self) -> dict[str, Any]:
         """Observe current system state."""
         return {
             "timestamp": datetime.now().isoformat(),
@@ -32,34 +32,34 @@ class KaizenDaemon:
                 "Improve documentation",
             ],
         }
-    
-    def orient(self, observations: Dict[str, Any]) -> Dict[str, Any]:
+
+    def orient(self, observations: dict[str, Any]) -> dict[str, Any]:
         """Orient and prioritize opportunities."""
         opportunities = observations.get("opportunities", [])
-        
+
         return {
             "priorities": [
                 {"task": opp, "impact": "high", "effort": "medium"}
                 for opp in opportunities
             ],
         }
-    
-    def decide(self, orientation: Dict[str, Any]) -> Dict[str, Any]:
+
+    def decide(self, orientation: dict[str, Any]) -> dict[str, Any]:
         """Decide on actions to take."""
         priorities = orientation.get("priorities", [])
-        
+
         return {
             "actions": [
                 {"type": "refactor", "target": p["task"]}
                 for p in priorities[:3]  # Top 3
             ],
         }
-    
-    def act(self, decisions: Dict[str, Any]) -> Dict[str, Any]:
+
+    def act(self, decisions: dict[str, Any]) -> dict[str, Any]:
         """Execute decided actions."""
         actions = decisions.get("actions", [])
         results = []
-        
+
         for action in actions:
             # Execute action (placeholder)
             results.append({
@@ -67,22 +67,22 @@ class KaizenDaemon:
                 "status": "simulated",
                 "improvement": 0.05,
             })
-        
+
         return {"results": results}
-    
-    def validate(self, results: Dict[str, Any]) -> Dict[str, Any]:
+
+    def validate(self, results: dict[str, Any]) -> dict[str, Any]:
         """Validate improvements."""
         return {
             "validated": True,
             "improvements": results.get("results", []),
         }
-    
-    def learn(self, validation: Dict[str, Any]) -> None:
+
+    def learn(self, validation: dict[str, Any]) -> None:
         """Learn from validation results."""
         if validation.get("validated"):
             self.improvements.extend(validation.get("improvements", []))
-    
-    def meditate_cycle(self) -> Dict[str, Any]:
+
+    def meditate_cycle(self) -> dict[str, Any]:
         """Execute one OODA loop cycle."""
         observations = self.observe()
         orientation = self.orient(observations)
@@ -90,26 +90,26 @@ class KaizenDaemon:
         actions = self.act(decisions)
         validation = self.validate(actions)
         self.learn(validation)
-        
+
         self.cycle_count += 1
-        
+
         return {
             "cycle": self.cycles_completed,
             "improvements": self.improvements_made,
             "status": "complete",
         }
-    
+
     def run(self, max_cycles: int = None):
         """Run the kaizen daemon."""
         self.running = True
-        
+
         print("=" * 80)
         print("KAIZEN DAEMON STARTED")
         print("=" * 80)
         print(f"Cycle interval: {self.cycle_interval}s")
         print(f"Max cycles: {max_cycles or 'Infinite'}")
         print()
-        
+
         try:
             while self.running:
                 try:
@@ -117,18 +117,18 @@ class KaizenDaemon:
                 except Exception as e:
                     print(f"\n⚠️  Cycle error: {e}")
                     print("   Continuing to next cycle...")
-                
+
                 if max_cycles and self.cycles_completed >= max_cycles:
                     break
-                
+
                 if self.running:  # Check if still running before sleep
                     time.sleep(self.cycle_interval)
-        
+
         except KeyboardInterrupt:
             print("\n\n⏸️  Kaizen daemon stopped by user")
         except Exception as e:
             print(f"\n\n❌ Fatal error: {e}")
-        
+
         finally:
             self.running = False
             print("\n=" * 80)

@@ -29,7 +29,10 @@ def conduct(prompt: str, iterations: int, clones: int, completion: str, garden: 
     click.echo()
 
     try:
-        from whitemagic.orchestration.conductor import ConductorConfig, ConductorOrchestrator
+        from whitemagic.orchestration.conductor import (
+            ConductorConfig,
+            ConductorOrchestrator,
+        )
 
         config = ConductorConfig(
             max_iterations=iterations,
@@ -77,7 +80,10 @@ def conduct_ritual(intention: str, cycles: int, threshold: float, ritual_name: s
     click.echo()
 
     try:
-        from whitemagic.gardens.practice.ritual_conductor import PracticeRitualConductor, RitualConfig
+        from whitemagic.gardens.practice.ritual_conductor import (
+            PracticeRitualConductor,
+            RitualConfig,
+        )
 
         config = RitualConfig(ritual_name=ritual_name, max_cycles=cycles, deepening_threshold=threshold)
         conductor = PracticeRitualConductor(config)
@@ -144,7 +150,9 @@ def iteration_stats() -> None:
     click.echo("=" * 50)
 
     try:
-        from whitemagic.core.intelligence.agentic.coherence_persistence import get_coherence
+        from whitemagic.core.intelligence.agentic.coherence_persistence import (
+            get_coherence,
+        )
         coherence = get_coherence()
         stats_data = coherence.get_iteration_stats()
         click.echo("\n🧠 Coherence & Rate Limiting:")
@@ -197,7 +205,9 @@ def continuous_status() -> None:
 def inject_context() -> None:
     """Show what memory context would be injected (v4.3.0)."""
     try:
-        from whitemagic.core.intelligence.agentic.memory_injector import get_memory_injector
+        from whitemagic.core.intelligence.agentic.memory_injector import (
+            get_memory_injector,
+        )
         injector = get_memory_injector()
         context_data = injector.inject()
 

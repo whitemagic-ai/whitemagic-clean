@@ -19,10 +19,11 @@ from __future__ import annotations
 import asyncio
 import logging
 import threading
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum, auto
-from typing import Any, Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -257,14 +258,18 @@ class UnifiedOrchestrator:
         logger.info("  🧠 Bootstrapping memory metabolism...")
 
         try:
-            from whitemagic.core.intelligence.reconsolidation import get_reconsolidation_engine
+            from whitemagic.core.intelligence.reconsolidation import (
+                get_reconsolidation_engine,
+            )
             self._reconsolidation = get_reconsolidation_engine()
             logger.info("     ✓ Reconsolidation engine online")
         except ImportError as e:
             logger.debug(f"     ⚠ Reconsolidation not available: {e}")
 
         try:
-            from whitemagic.core.dreaming.narrative_compressor import get_narrative_compressor
+            from whitemagic.core.dreaming.narrative_compressor import (
+                get_narrative_compressor,
+            )
             self._narrative_compressor = get_narrative_compressor()
             logger.info("     ✓ Narrative compressor online")
         except ImportError as e:

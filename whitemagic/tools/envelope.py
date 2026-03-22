@@ -13,8 +13,6 @@ Design goals:
 from __future__ import annotations
 
 import base64
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from collections.abc import Iterable, Mapping, MutableMapping
 from dataclasses import asdict, is_dataclass
 from datetime import date, datetime
@@ -23,6 +21,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from whitemagic.tools.contract import ENVELOPE_VERSION, TOOL_CONTRACT_VERSION
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 _RESERVED_KEYS = {
     "status",

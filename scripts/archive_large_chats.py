@@ -16,14 +16,14 @@ def archive_large_files(threshold_mb=10):
 
     files = list(CASCADE_DIR.glob("*.pb"))
     archived_count = 0
-    
+
     for f in files:
         size_mb = f.stat().st_size / (1024 * 1024)
         if size_mb > threshold_mb:
             print(f"Archiving {f.name} ({size_mb:.2f} MB)...")
             shutil.move(str(f), str(ARCHIVE_DIR / f.name))
             archived_count += 1
-            
+
     print(f"\nSuccessfully archived {archived_count} files.")
 
 if __name__ == "__main__":

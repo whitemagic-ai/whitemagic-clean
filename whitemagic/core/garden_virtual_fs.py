@@ -26,7 +26,7 @@ class VirtualNode:
     physical_path: str | None = None  # None for directories
     node_type: str = "directory"  # "directory" or "file"
     garden: str = ""
-    children: dict[str, "VirtualNode"] = field(default_factory=dict)
+    children: dict[str, VirtualNode] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
 
 

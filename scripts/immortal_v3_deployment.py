@@ -44,7 +44,7 @@ import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 # Setup paths
 ROOT = Path(__file__).resolve().parent.parent
@@ -80,7 +80,7 @@ class ZodiacArmyMapping:
     element: str
     modality: str
     synergy_score: float
-    specialties: List[str]
+    specialties: list[str]
 
 
 @dataclass
@@ -99,38 +99,38 @@ class DeploymentStats:
 @dataclass
 class Blackboard:
     """Shared intelligence board for clone coordination"""
-    findings: List[Dict[str, Any]] = field(default_factory=list)
-    patterns: List[Dict[str, Any]] = field(default_factory=list)
-    implementations: Dict[str, Any] = field(default_factory=dict)
-    reviews: List[Dict[str, Any]] = field(default_factory=list)
-    
-    def post_finding(self, clone_id: str, finding: Dict[str, Any]):
+    findings: list[dict[str, Any]] = field(default_factory=list)
+    patterns: list[dict[str, Any]] = field(default_factory=list)
+    implementations: dict[str, Any] = field(default_factory=dict)
+    reviews: list[dict[str, Any]] = field(default_factory=list)
+
+    def post_finding(self, clone_id: str, finding: dict[str, Any]):
         """Clone posts a finding"""
         self.findings.append({
             'clone_id': clone_id,
             'timestamp': time.time(),
             'finding': finding
         })
-    
-    def get_relevant_patterns(self, context: str) -> List[Dict]:
+
+    def get_relevant_patterns(self, context: str) -> list[dict]:
         """Get patterns relevant to context"""
         return [p for p in self.patterns if context in str(p)]
 
 
 class ImmortalV3Commander:
     """Ultimate clone army commander with polyglot optimization"""
-    
+
     def __init__(self, zodiac_ui: bool = True, blackboard: bool = True):
         self.zodiac_ui = zodiac_ui
         self.blackboard = Blackboard() if blackboard else None
         self.stats = DeploymentStats()
         self.rust_available = self._check_rust()
         self.koka_available = self._check_koka()
-        
+
         # Update stats
         self.stats.rust_available = self.rust_available
         self.stats.koka_available = self.koka_available
-    
+
     def _check_rust(self) -> bool:
         """Check if Rust bridge is available"""
         try:
@@ -138,7 +138,7 @@ class ImmortalV3Commander:
             return True
         except ImportError:
             return False
-    
+
     def _check_koka(self) -> bool:
         """Check if Koka runtime is available"""
         import subprocess
@@ -151,7 +151,7 @@ class ImmortalV3Commander:
             return result.returncode == 0
         except (FileNotFoundError, subprocess.TimeoutExpired):
             return False
-    
+
     def print_banner(self):
         """Print beautiful zodiac banner"""
         if not self.zodiac_ui:
@@ -159,7 +159,7 @@ class ImmortalV3Commander:
             print("  IMMORTAL CLONE ARMY v3 - ULTIMATE POLYGLOT DEPLOYMENT")
             print("="*80)
             return
-        
+
         print("\n" + "="*80)
         print(f"  {YIN_YANG} IMMORTAL CLONE ARMY v3 {YIN_YANG}")
         print("  Ultimate Polyglot Deployment System")
@@ -188,20 +188,20 @@ class ImmortalV3Commander:
         print()
         print("="*80)
         print()
-    
+
     def progress_bar(self, current: int, total: int, width: int = 50) -> str:
         """Generate yin-yang progress bar"""
         if total == 0:
             return f"[{PROGRESS_EMPTY * width}] 0%"
-        
+
         filled = int(width * current / total)
         empty = width - filled
         bar = PROGRESS_FULL * filled + PROGRESS_EMPTY * empty
         percent = 100 * current / total
-        
+
         return f"[{bar}] {percent:.1f}% {YIN_YANG}"
-    
-    async def deploy_rust_tokio(self, tasks: List[str], strategy: str = "direct") -> Tuple[List[Any], float]:
+
+    async def deploy_rust_tokio(self, tasks: list[str], strategy: str = "direct") -> tuple[list[Any], float]:
         """Deploy using Rust tokio core (825K clones/sec) via tokio_deploy_clones"""
         if not self.rust_available:
             return [], 0.0
@@ -229,13 +229,13 @@ class ImmortalV3Commander:
             results = [{'task_id': task, 'success': True, 'throughput': 0} for task in tasks]
 
         return results, duration
-    
-    async def deploy_python_fallback(self, tasks: List[str]) -> Tuple[List[Any], float]:
+
+    async def deploy_python_fallback(self, tasks: list[str]) -> tuple[list[Any], float]:
         """Python fallback deployment (18K clones/sec)"""
         start = time.time()
-        
+
         # Simple async task execution
-        async def execute_task(task_id: str) -> Dict[str, Any]:
+        async def execute_task(task_id: str) -> dict[str, Any]:
             # Simulate clone execution
             await asyncio.sleep(0.001)  # 1ms per clone
             return {
@@ -243,16 +243,16 @@ class ImmortalV3Commander:
                 'success': True,
                 'result': f"Completed {task_id}"
             }
-        
+
         results = await asyncio.gather(*[execute_task(t) for t in tasks])
         duration = time.time() - start
-        
+
         return results, duration
-    
-    async def deploy_campaign(self, campaign: Any, clone_count: int = 10000) -> Dict[str, Any]:
+
+    async def deploy_campaign(self, campaign: Any, clone_count: int = 10000) -> dict[str, Any]:
         """Deploy clones for a single campaign"""
         campaign_name = campaign.name
-        
+
         if self.zodiac_ui:
             # Select zodiac army based on campaign characteristics
             zodiac = self._select_zodiac_army(campaign)
@@ -260,10 +260,10 @@ class ImmortalV3Commander:
             print(f"\n{symbol} Deploying {clone_count:,} clones for: {campaign_name}")
         else:
             print(f"\nDeploying {clone_count:,} clones for: {campaign_name}")
-        
+
         # Generate tasks from campaign
         tasks = [f"{campaign_name}_clone_{i}" for i in range(clone_count)]
-        
+
         # Deploy using best available backend
         if self.rust_available:
             results, duration = await self.deploy_rust_tokio(tasks)
@@ -271,14 +271,14 @@ class ImmortalV3Commander:
         else:
             results, duration = await self.deploy_python_fallback(tasks)
             backend = "Python"
-        
+
         throughput = len(tasks) / duration if duration > 0 else 0
-        
+
         # Update stats
         self.stats.total_clones += len(tasks)
         self.stats.deployment_time += duration
         self.stats.campaigns_executed += 1
-        
+
         # Print results
         if self.zodiac_ui:
             progress = self.progress_bar(len(results), len(tasks))
@@ -288,7 +288,7 @@ class ImmortalV3Commander:
             print(f"  Throughput: {throughput:,.0f} clones/sec")
         else:
             print(f"  Completed in {duration:.3f}s ({throughput:,.0f} clones/sec)")
-        
+
         return {
             'campaign': campaign_name,
             'clones': len(tasks),
@@ -297,11 +297,11 @@ class ImmortalV3Commander:
             'backend': backend,
             'results': results
         }
-    
+
     def _select_zodiac_army(self, campaign: Any) -> str:
         """Select best zodiac army for campaign"""
         name = campaign.name.lower()
-        
+
         # Simple heuristic based on campaign name
         if 'rust' in name or 'onnx' in name:
             return 'aquarius'  # Tokio (innovation)
@@ -317,24 +317,24 @@ class ImmortalV3Commander:
             return 'leo'  # Lieutenant (leadership)
         else:
             return 'aries'  # Immortal (default)
-    
-    async def deploy_all_campaigns(self, campaigns: List[Any], clones_per_campaign: int = 10000) -> List[Dict]:
+
+    async def deploy_all_campaigns(self, campaigns: list[Any], clones_per_campaign: int = 10000) -> list[dict]:
         """Deploy on all campaigns with Sun Bin multi-column strategy"""
         print(f"\n{YIN_YANG} SUN BIN MULTI-COLUMN DEPLOYMENT {YIN_YANG}")
         print(f"Campaigns: {len(campaigns)}")
         print(f"Clones per campaign: {clones_per_campaign:,}")
         print(f"Total clones: {len(campaigns) * clones_per_campaign:,}")
         print()
-        
+
         results = []
         for i, campaign in enumerate(campaigns, 1):
             if self.zodiac_ui:
                 print(f"\n{'─'*80}")
                 print(f"Campaign {i}/{len(campaigns)}")
-            
+
             result = await self.deploy_campaign(campaign, clones_per_campaign)
             results.append(result)
-            
+
             # Post findings to blackboard
             if self.blackboard:
                 self.blackboard.post_finding(
@@ -345,10 +345,10 @@ class ImmortalV3Commander:
                         'backend': result['backend']
                     }
                 )
-        
+
         return results
-    
-    def print_final_stats(self, results: List[Dict]):
+
+    def print_final_stats(self, results: list[dict]):
         """Print final deployment statistics"""
         print("\n" + "="*80)
         print(f"  {YIN_YANG} DEPLOYMENT COMPLETE {YIN_YANG}")
@@ -356,33 +356,33 @@ class ImmortalV3Commander:
         print()
         print(f"  Total Clones Deployed: {self.stats.total_clones:,}")
         print(f"  Total Duration: {self.stats.deployment_time:.3f}s")
-        
+
         avg_throughput = self.stats.total_clones / self.stats.deployment_time if self.stats.deployment_time > 0 else 0
         print(f"  Average Throughput: {avg_throughput:,.0f} clones/sec")
         print(f"  Campaigns Executed: {self.stats.campaigns_executed}")
         print()
-        
+
         # Backend breakdown
         rust_clones = sum(r['clones'] for r in results if r['backend'] == 'Rust Tokio')
         python_clones = sum(r['clones'] for r in results if r['backend'] == 'Python')
-        
+
         print("  Backend Breakdown:")
         if rust_clones > 0:
             print(f"    🦀 Rust Tokio: {rust_clones:,} clones")
         if python_clones > 0:
             print(f"    🐍 Python: {python_clones:,} clones")
         print()
-        
+
         # Performance comparison
         baseline_throughput = 18157  # deploy_grand_army.py baseline
         improvement = avg_throughput / baseline_throughput if baseline_throughput > 0 else 0
-        
+
         print("  Performance vs Baseline:")
         print(f"    Baseline (deploy_grand_army.py): {baseline_throughput:,} clones/sec")
         print(f"    Immortal v3: {avg_throughput:,.0f} clones/sec")
         print(f"    Improvement: {improvement:.1f}× faster")
         print()
-        
+
         # Blackboard summary
         if self.blackboard:
             print("  Blackboard Intelligence:")
@@ -390,14 +390,14 @@ class ImmortalV3Commander:
             print(f"    Patterns: {len(self.blackboard.patterns)}")
             print(f"    Implementations: {len(self.blackboard.implementations)}")
             print()
-        
+
         print("="*80)
 
 
 async def main():
     """Main entry point"""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Immortal Clone Army v3")
     parser.add_argument('--campaigns', action='store_true', help='Deploy on all campaigns')
     parser.add_argument('--zodiac-ui', action='store_true', default=True, help='Use zodiac UI')
@@ -405,45 +405,45 @@ async def main():
     parser.add_argument('--clones', type=int, default=10000, help='Clones per campaign')
     parser.add_argument('--scale', type=int, help='Massive scale test (e.g., 1000000)')
     parser.add_argument('--benchmark', action='store_true', help='Run benchmark suite')
-    
+
     args = parser.parse_args()
-    
+
     zodiac_ui = args.zodiac_ui and not args.no_zodiac_ui
-    
+
     # Create commander
     commander = ImmortalV3Commander(zodiac_ui=zodiac_ui, blackboard=True)
     commander.print_banner()
-    
+
     if args.campaigns:
         # Load campaigns
         campaigns = load_all_campaigns(ROOT / "campaigns")
         print(f"Loaded {len(campaigns)} campaigns")
-        
+
         # Deploy on all campaigns
         results = await commander.deploy_all_campaigns(campaigns, args.clones)
         commander.print_final_stats(results)
-    
+
     elif args.scale:
         # Massive scale test
         print(f"\n{YIN_YANG} MASSIVE SCALE TEST: {args.scale:,} CLONES {YIN_YANG}\n")
-        
+
         tasks = [f"clone_{i}" for i in range(args.scale)]
-        
+
         if commander.rust_available:
             results, duration = await commander.deploy_rust_tokio(tasks)
             backend = "Rust Tokio"
         else:
             results, duration = await commander.deploy_python_fallback(tasks)
             backend = "Python"
-        
+
         throughput = args.scale / duration if duration > 0 else 0
-        
+
         print(f"  Backend: {backend}")
         print(f"  Clones: {args.scale:,}")
         print(f"  Duration: {duration:.3f}s")
         print(f"  Throughput: {throughput:,.0f} clones/sec")
         print()
-    
+
     else:
         print("Use --campaigns to deploy on all campaigns")
         print("Use --scale 1000000 to test massive scale")

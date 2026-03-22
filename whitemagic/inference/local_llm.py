@@ -14,9 +14,9 @@ Usage:
 """
 
 import logging
-import requests
 import time
-from typing import Dict, Optional, List
+
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class LocalLLM:
     def is_available(self) -> bool:
         return self._available
 
-    def complete(self, prompt: str, stop: Optional[List[str]] = None, max_tokens: int = 512, temperature: float = 0.7) -> str:
+    def complete(self, prompt: str, stop: list[str] | None = None, max_tokens: int = 512, temperature: float = 0.7) -> str:
         """Generate a completion."""
         if not self._available:
             return "Error: Local LLM (Ollama) not available. Run 'ollama serve'."
@@ -77,7 +77,7 @@ class LocalLLM:
             logger.error(f"Local LLM inference failed: {e}")
             return f"Error: {e}"
 
-    def chat(self, messages: List[Dict[str, str]], temperature: float = 0.7) -> str:
+    def chat(self, messages: list[dict[str, str]], temperature: float = 0.7) -> str:
         """Chat completion."""
         if not self._available:
             return "Error: Local LLM (Ollama) not available."
@@ -101,7 +101,7 @@ class LocalLLM:
             logger.error(f"Local LLM chat failed: {e}")
             return f"Error: {e}"
 
-    def classify(self, text: str, categories: List[str]) -> str:
+    def classify(self, text: str, categories: list[str]) -> str:
         """
         Classify text into one of the provided categories using constrained generation
         or simple prompting (fallback).

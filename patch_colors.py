@@ -1,5 +1,5 @@
 
-with open('nexus/tailwind.config.js', 'r') as f:
+with open('nexus/tailwind.config.js') as f:
     content = f.read()
 
 # Make sure we have the full color palette from the previous dashboards

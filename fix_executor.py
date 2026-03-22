@@ -1,5 +1,5 @@
 
-with open("whitemagic/autonomous/executor/continuous_executor.py", "r") as f:
+with open("whitemagic/autonomous/executor/continuous_executor.py") as f:
     content = f.read()
 
 # Add rust imports

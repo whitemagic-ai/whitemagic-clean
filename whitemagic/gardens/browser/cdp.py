@@ -12,11 +12,12 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Awaitable, Callable
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 # Optional websockets import
 WebSocketClientProtocol = Any
@@ -61,7 +62,7 @@ class CDPEvent:
 
     method: str
     params: dict[str, Any] = field(default_factory=dict)
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -118,7 +119,7 @@ class CDPConnection:
         if self._ws:
             await self._ws.close()
 
-    async def __aenter__(self) -> 'CDPConnection':
+    async def __aenter__(self) -> CDPConnection:
         await self.connect()
         return self
 
@@ -158,7 +159,7 @@ class CDPConnection:
         # Wait for response
         try:
             return await asyncio.wait_for(future, timeout=30.0)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             del self._pending[msg_id]
             return CDPResponse(id=msg_id, error={"message": "Timeout waiting for response"})
 

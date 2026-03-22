@@ -13,7 +13,7 @@ Concepts:
 import ast
 import logging
 import re
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ class SpeculativeExecutor:
     def __init__(self, local_llm=None):
         self.local_llm = local_llm
 
-    def check_python_syntax(self, code: str) -> Tuple[bool, Optional[str]]:
+    def check_python_syntax(self, code: str) -> tuple[bool, str | None]:
         """
         Cheap check: Does it parse as valid Python?
         Returns (valid, error_message).
@@ -38,7 +38,7 @@ class SpeculativeExecutor:
         except Exception as e:
             return False, f"ParseError: {e}"
 
-    def check_security_heuristics(self, code: str) -> Tuple[bool, List[str]]:
+    def check_security_heuristics(self, code: str) -> tuple[bool, list[str]]:
         """
         Fast regex scan for obvious security issues (SQLi, hardcoded secrets).
         """
@@ -58,7 +58,7 @@ class SpeculativeExecutor:
 
         return len(issues) == 0, issues
 
-    def speculative_repair(self, code: str, error: str) -> Optional[str]:
+    def speculative_repair(self, code: str, error: str) -> str | None:
         """
         Attempt to repair code using Local LLM if available.
         """
@@ -79,7 +79,7 @@ class SpeculativeExecutor:
             return match.group(1)
         return None
 
-    def validate(self, content: str, language: str = "python") -> Dict[str, Any]:
+    def validate(self, content: str, language: str = "python") -> dict[str, Any]:
         """
         Run full validation pipeline.
         """

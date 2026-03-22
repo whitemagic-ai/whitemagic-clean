@@ -1,15 +1,15 @@
 import re
 
-with open('nexus/src/store/editor.ts', 'r') as f:
+with open('nexus/src/store/editor.ts') as f:
     content = f.read()
 
 # Add a save function
 if "saveFile: (path: string) => Promise<void>;" not in content:
     content = content.replace("updateContent: (path: string, content: string) => void;", "updateContent: (path: string, content: string) => void;\n  saveFile: (path: string) => Promise<void>;")
-    
+
     # Needs to import invoke
     content = content.replace('import { create } from "zustand";', 'import { create } from "zustand";\nimport { invoke } from "@tauri-apps/api/core";')
-    
+
     save_impl = """
   updateContent: (path, content) =>
     set((state) => ({

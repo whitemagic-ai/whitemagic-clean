@@ -8,10 +8,11 @@ Total exception handlers: 2133
 Exception hierarchies: 4
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from wm2.core import BaseEngine
-from wm2.core.serializable import Serializable
 from wm2.core.metrics import MetricCollector, tracked
+from wm2.core.serializable import Serializable
 
 
 # Base WM2 Exceptions
@@ -49,54 +50,54 @@ class ExceptionSubsystem(BaseEngine, Serializable, MetricCollector):
     - Error recovery strategies
     - Exception statistics
     """
-    
+
     def __init__(self, name: str = "exception_subsystem"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
-        self.exceptions_caught: List[Dict[str, Any]] = []
+        self.exceptions_caught: list[dict[str, Any]] = []
         self.active = False
-    
+
     @tracked
     def initialize(self):
         """Initialize exception subsystem."""
         self.active = True
         self.record_metric("initialized", True)
-    
+
     @tracked
-    def handle_exception(self, exc: Exception, context: Optional[Dict[str, Any]] = None):
+    def handle_exception(self, exc: Exception, context: dict[str, Any] | None = None):
         """Handle and log an exception."""
         if not self.active:
             self.initialize()
-        
+
         exc_info = {
             "type": type(exc).__name__,
             "message": str(exc),
             "context": context or {},
         }
-        
+
         self.exceptions_caught.append(exc_info)
         self.record_metric("exceptions_handled", len(self.exceptions_caught))
-    
+
     @tracked
-    def get_exception_stats(self) -> Dict[str, Any]:
+    def get_exception_stats(self) -> dict[str, Any]:
         """Get exception statistics."""
         if not self.exceptions_caught:
             return {"total": 0}
-        
+
         # Count by type
         type_counts = {}
         for exc in self.exceptions_caught:
             exc_type = exc["type"]
             type_counts[exc_type] = type_counts.get(exc_type, 0) + 1
-        
+
         return {
             "total": len(self.exceptions_caught),
             "by_type": type_counts,
             "most_common": max(type_counts.items(), key=lambda x: x[1])[0] if type_counts else None,
         }
-    
+
     @tracked
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get comprehensive statistics."""
         return {
             **BaseEngine.get_stats(self),

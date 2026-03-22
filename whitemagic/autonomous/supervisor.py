@@ -6,10 +6,10 @@ The "Supervisor Loop" that handles routine managerial prompts automatically.
 Monitors agent state and triggers Standard Operating Procedures (SOPs).
 """
 
-import logging
 import json
+import logging
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 from whitemagic.core.intelligence.prompt_classifier import PromptClassifier
 from whitemagic.core.memory.thought_galaxy import ThoughtGalaxy
@@ -21,12 +21,12 @@ class Supervisor:
     Auto-prompting supervisor that triggers SOPs based on context.
     """
 
-    def __init__(self, sop_dir: str | Path, thought_galaxy: Optional[ThoughtGalaxy] = None):
+    def __init__(self, sop_dir: str | Path, thought_galaxy: ThoughtGalaxy | None = None):
         self.sop_dir = Path(sop_dir)
         self.classifier = PromptClassifier()
         self.thought_galaxy = thought_galaxy
-        self.enabled_sops: Dict[str, bool] = {}
-        self.sop_cache: Dict[str, Dict] = {}
+        self.enabled_sops: dict[str, bool] = {}
+        self.sop_cache: dict[str, dict] = {}
 
         self._load_sops()
 
@@ -69,7 +69,7 @@ class Supervisor:
             p = self.sop_dir / f"{d['name']}.json"
             p.write_text(json.dumps(d, indent=2))
 
-    def suggest_sop(self, context: Dict[str, Any]) -> List[str]:
+    def suggest_sop(self, context: dict[str, Any]) -> list[str]:
         """
         Suggest SOPs to run based on current context.
         Returns list of SOP names.
@@ -88,7 +88,7 @@ class Supervisor:
 
         return suggestions
 
-    def get_sop_prompt(self, sop_name: str, context: Dict[str, Any]) -> Optional[str]:
+    def get_sop_prompt(self, sop_name: str, context: dict[str, Any]) -> str | None:
         """Render the prompt for a specific SOP."""
         sop = self.sop_cache.get(sop_name)
         if not sop:
@@ -105,7 +105,7 @@ class Supervisor:
         if sop_name in self.sop_cache:
             self.enabled_sops[sop_name] = enabled
 
-    def status(self) -> Dict[str, Any]:
+    def status(self) -> dict[str, Any]:
         """Return supervisor status."""
         return {
             "sops_loaded": len(self.sop_cache),

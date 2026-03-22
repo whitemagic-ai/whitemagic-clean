@@ -1,5 +1,5 @@
 
-with open("whitemagic-rust/src/continuous_daemon.rs", "r") as f:
+with open("whitemagic-rust/src/continuous_daemon.rs") as f:
     content = f.read()
 
 # Make the daemon actually wire to the consolidation engine
@@ -27,7 +27,7 @@ content = content.replace(
 }"""
 )
 
-# No easy way to instantiate ConsolidationEngine directly in the daemon without pyo3 context, 
+# No easy way to instantiate ConsolidationEngine directly in the daemon without pyo3 context,
 # so we will just invoke an async function that mimics the behavior for now.
 
 content = content.replace(

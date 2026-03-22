@@ -1,5 +1,5 @@
 
-with open("tests/unit/autonomous/executor/test_continuous_executor.py", "r") as f:
+with open("tests/unit/autonomous/executor/test_continuous_executor.py") as f:
     content = f.read()
 
 content = content.replace(

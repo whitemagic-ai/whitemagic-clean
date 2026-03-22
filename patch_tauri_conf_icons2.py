@@ -1,6 +1,6 @@
 import json
 
-with open('nexus/src-tauri/tauri.conf.json', 'r') as f:
+with open('nexus/src-tauri/tauri.conf.json') as f:
     data = json.load(f)
 
 # Clear app properties that might require icons

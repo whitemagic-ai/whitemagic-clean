@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Minimal test for Rust ONNX embedder crash"""
 import sys
+
 sys.path.insert(0, '.')
 
-from whitemagic_rs import arrow_onnx_embed, onnx_embedder_info
 import pyarrow as pa
+
+from whitemagic_rs import arrow_onnx_embed, onnx_embedder_info
 
 print("ONNX Info:", onnx_embedder_info())
 
@@ -24,11 +26,11 @@ print("Calling arrow_onnx_embed...")
 try:
     result = arrow_onnx_embed(arrow_bytes, "models/bge-small-en-v1.5.onnx", False)
     print(f"Success! Output bytes: {len(result)}")
-    
+
     # Convert list to bytes if needed
     if isinstance(result, list):
         result = bytes(result)
-    
+
     # Decode
     import io
     with pa.ipc.open_file(io.BytesIO(result)) as reader:

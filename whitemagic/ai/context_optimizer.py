@@ -223,6 +223,7 @@ class ContextOptimizer:
         # 2. Get Memories
         try:
             import time
+
             from whitemagic.core.memory.unified import get_unified_memory
             um = get_unified_memory()
             results = um.search(query, limit=memory_limit)

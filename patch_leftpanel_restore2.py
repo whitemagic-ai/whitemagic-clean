@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/panels/LeftPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/LeftPanel.tsx') as f:
     content = f.read()
 
 # Add back the tab bar that was removed by the crude string replacement

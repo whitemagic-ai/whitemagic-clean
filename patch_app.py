@@ -1,5 +1,5 @@
 
-with open('nexus/src/App.tsx', 'r') as f:
+with open('nexus/src/App.tsx') as f:
     content = f.read()
 
 content = content.replace("import CommandPalette from \"./components/CommandPalette\";", "import CommandPalette from \"./components/CommandPalette\";\nimport AppWithPalette from \"./components/AppWithPalette\";")

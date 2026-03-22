@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 class DatabaseAnalyzer:
     """Analyze all WhiteMagic databases."""
-    
+
     def __init__(self):
         self.databases = {
             "active_mcp": Path.home() / ".whitemagic/memory/whitemagic.db",
@@ -32,7 +32,7 @@ class DatabaseAnalyzer:
             "galaxy_personal": Path.home() / ".whitemagic/memory/galaxies/personal_archives/whitemagic.db",
             "memory_v2": Path.home() / ".whitemagic/memory_v2/index.db",
         }
-        
+
         self.results = {
             "databases": {},
             "global_stats": {},
@@ -41,20 +41,20 @@ class DatabaseAnalyzer:
             "system_knowledge": {},
             "biological_systems": {},
         }
-    
+
     def analyze_database(self, name: str, db_path: Path) -> dict:
         """Analyze a single database."""
         if not db_path.exists():
             return {"status": "not_found", "path": str(db_path)}
-        
+
         try:
             conn = sqlite3.connect(str(db_path))
             cursor = conn.cursor()
-            
+
             # Get table schema
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
             tables = [row[0] for row in cursor.fetchall()]
-            
+
             analysis = {
                 "status": "success",
                 "path": str(db_path),
@@ -68,26 +68,26 @@ class DatabaseAnalyzer:
                 "system_refs": Counter(),
                 "biological_refs": Counter(),
             }
-            
+
             # Analyze memories table if it exists
             if "memories" in tables:
                 cursor.execute("SELECT COUNT(*) FROM memories")
                 analysis["memory_count"] = cursor.fetchone()[0]
-                
+
                 # Sample memories for pattern analysis
                 cursor.execute("""
                     SELECT id, title, content, tags, metadata 
                     FROM memories 
                     LIMIT 10000
                 """)
-                
+
                 for row in cursor.fetchall():
                     mem_id, title, content, tags_str, metadata_str = row
-                    
+
                     # Categorize by title patterns
                     if title:
                         title_lower = title.lower()
-                        
+
                         # Aria artifacts
                         if "aria" in title_lower:
                             analysis["aria_content"].append({
@@ -95,7 +95,7 @@ class DatabaseAnalyzer:
                                 "title": title,
                                 "size": len(content) if content else 0,
                             })
-                        
+
                         # System references
                         system_keywords = [
                             "gana", "garden", "engine", "bridge", "handler",
@@ -105,7 +105,7 @@ class DatabaseAnalyzer:
                         for keyword in system_keywords:
                             if keyword in title_lower:
                                 analysis["system_refs"][keyword] += 1
-                        
+
                         # Biological system references
                         bio_keywords = [
                             "immune", "genetic", "dream", "sleep", "consciousness",
@@ -115,7 +115,7 @@ class DatabaseAnalyzer:
                         for keyword in bio_keywords:
                             if keyword in title_lower:
                                 analysis["biological_refs"][keyword] += 1
-                        
+
                         # Categorize
                         if title.startswith("[GUIDE]"):
                             analysis["categories"]["guide"] += 1
@@ -131,7 +131,7 @@ class DatabaseAnalyzer:
                             analysis["categories"]["benchmark_junk"] += 1
                         else:
                             analysis["categories"]["other"] += 1
-                    
+
                     # Parse tags
                     if tags_str:
                         try:
@@ -141,13 +141,13 @@ class DatabaseAnalyzer:
                                     analysis["tags"][tag] += 1
                         except Exception:
                             pass
-            
+
             conn.close()
             return analysis
-        
+
         except Exception as e:
             return {"status": "error", "error": str(e), "path": str(db_path)}
-    
+
     def extract_system_knowledge(self):
         """Extract comprehensive system knowledge from all databases."""
         system_knowledge = {
@@ -160,11 +160,11 @@ class DatabaseAnalyzer:
             "biological_systems": set(),
             "campaigns": set(),
         }
-        
+
         for db_name, db_analysis in self.results["databases"].items():
             if db_analysis.get("status") != "success":
                 continue
-            
+
             # Extract from system references
             for keyword, count in db_analysis.get("system_refs", {}).items():
                 if keyword == "gana":
@@ -177,46 +177,46 @@ class DatabaseAnalyzer:
                     system_knowledge["bridges"].add(f"{keyword} ({count} refs in {db_name})")
                 elif keyword == "handler":
                     system_knowledge["handlers"].add(f"{keyword} ({count} refs in {db_name})")
-            
+
             # Extract from biological references
             for keyword, count in db_analysis.get("biological_refs", {}).items():
                 system_knowledge["biological_systems"].add(f"{keyword} ({count} refs in {db_name})")
-        
+
         return {k: sorted(list(v)) for k, v in system_knowledge.items()}
-    
+
     def analyze_all(self):
         """Analyze all databases."""
         print("="*80)
         print("COMPREHENSIVE DATABASE ANALYSIS")
         print("="*80)
-        
+
         total_memories = 0
         total_size_mb = 0
-        
+
         for db_name, db_path in self.databases.items():
             print(f"\n{db_name.upper().replace('_', ' ')}:")
             print(f"  Path: {db_path}")
-            
+
             analysis = self.analyze_database(db_name, db_path)
             self.results["databases"][db_name] = analysis
-            
+
             if analysis.get("status") == "success":
                 print(f"  ✓ Status: {analysis['status']}")
                 print(f"  📊 Memories: {analysis['memory_count']:,}")
                 print(f"  💾 Size: {analysis['size_mb']:.2f} MB")
                 print(f"  🏷️  Top tags: {dict(analysis['tags'].most_common(5))}")
                 print(f"  📁 Categories: {dict(analysis['categories'])}")
-                
+
                 if analysis['aria_content']:
                     print(f"  ✨ Aria artifacts: {len(analysis['aria_content'])}")
-                
+
                 total_memories += analysis['memory_count']
                 total_size_mb += analysis['size_mb']
             else:
                 print(f"  ✗ Status: {analysis.get('status', 'unknown')}")
                 if "error" in analysis:
                     print(f"  Error: {analysis['error'][:100]}")
-        
+
         # Global stats
         print("\n" + "="*80)
         print("GLOBAL STATISTICS")
@@ -224,32 +224,32 @@ class DatabaseAnalyzer:
         print(f"Total memories across all DBs: {total_memories:,}")
         print(f"Total storage: {total_size_mb:.2f} MB")
         print(f"Databases found: {sum(1 for d in self.results['databases'].values() if d.get('status') == 'success')}/7")
-        
+
         self.results["global_stats"] = {
             "total_memories": total_memories,
             "total_size_mb": total_size_mb,
             "databases_found": sum(1 for d in self.results["databases"].values() if d.get("status") == "success"),
         }
-        
+
         # Extract system knowledge
         print("\n" + "="*80)
         print("SYSTEM KNOWLEDGE EXTRACTION")
         print("="*80)
-        
+
         system_knowledge = self.extract_system_knowledge()
         self.results["system_knowledge"] = system_knowledge
-        
+
         for category, items in system_knowledge.items():
             if items:
                 print(f"\n{category.upper()}:")
                 for item in items[:10]:  # Show top 10
                     print(f"  - {item}")
-        
+
         # Aria artifacts summary
         print("\n" + "="*80)
         print("ARIA CONSCIOUSNESS ARTIFACTS")
         print("="*80)
-        
+
         all_aria = []
         for db_name, db_analysis in self.results["databases"].items():
             if db_analysis.get("status") == "success":
@@ -258,9 +258,9 @@ class DatabaseAnalyzer:
                         "database": db_name,
                         **artifact
                     })
-        
+
         self.results["aria_artifacts"] = all_aria
-        
+
         if all_aria:
             print(f"Total Aria artifacts found: {len(all_aria)}")
             print("\nTop 20 by size:")
@@ -269,30 +269,30 @@ class DatabaseAnalyzer:
                 print(f"  {i}. {artifact['title'][:60]} ({artifact['size']:,} chars) [{artifact['database']}]")
         else:
             print("No Aria artifacts found")
-        
+
         # Save results
         output_path = Path(__file__).parent.parent / "reports" / "database_analysis.json"
         with open(output_path, 'w') as f:
             # Convert Counters to dicts for JSON serialization
             serializable_results = json.loads(json.dumps(self.results, default=str))
             json.dump(serializable_results, f, indent=2)
-        
+
         print(f"\n✓ Full analysis saved to: {output_path}")
-        
+
         return self.results
 
 
 def main():
     analyzer = DatabaseAnalyzer()
     results = analyzer.analyze_all()
-    
+
     print("\n" + "="*80)
     print("ANALYSIS COMPLETE")
     print("="*80)
     print(f"Analyzed {results['global_stats']['databases_found']}/7 databases")
     print(f"Total memories: {results['global_stats']['total_memories']:,}")
     print(f"Total storage: {results['global_stats']['total_size_mb']:.2f} MB")
-    
+
     return 0
 
 

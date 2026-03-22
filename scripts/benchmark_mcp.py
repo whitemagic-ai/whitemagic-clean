@@ -58,7 +58,7 @@ def bench_metadata():
     section("1. SERVER METADATA & INSTRUCTIONS")
 
     def test_server_creation():
-        from whitemagic.run_mcp_lean import server, _VERSION
+        from whitemagic.run_mcp_lean import _VERSION, server
         assert server.name == "WhiteMagic Core"
         assert server.version == _VERSION
         assert server.website_url is not None
@@ -108,8 +108,9 @@ def bench_schema():
         return "28/28 with SVG data-URI icons"
 
     def test_task_optional_tools():
-        from whitemagic.run_mcp_lean import list_tools, _SLOW_GANAS
         import mcp.types as types
+
+        from whitemagic.run_mcp_lean import _SLOW_GANAS, list_tools
         tools = asyncio.run(list_tools())
         task_tools = [t for t in tools if t.execution and t.execution.taskSupport == types.TASK_OPTIONAL]
         assert len(task_tools) == len(_SLOW_GANAS)
@@ -331,8 +332,9 @@ def bench_http():
         return "StreamableHTTPServerTransport + Starlette + Uvicorn available"
 
     def test_http_transport_creation():
-        from mcp.server.streamable_http import StreamableHTTPServerTransport
         import uuid
+
+        from mcp.server.streamable_http import StreamableHTTPServerTransport
         transport = StreamableHTTPServerTransport(
             mcp_session_id=str(uuid.uuid4()),
             is_json_response_enabled=True,

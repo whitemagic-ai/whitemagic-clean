@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/center/MonacoEditor.tsx', 'r') as f:
+with open('nexus/src/components/center/MonacoEditor.tsx') as f:
     content = f.read()
 
 # Add save file command
@@ -20,7 +20,7 @@ injection = """
 
 if "handleEditorDidMount" not in content:
     content = content.replace("const currentFile = openFiles.find((f) => f.path === activeFile);", injection + "\n  const currentFile = openFiles.find((f) => f.path === activeFile);")
-    
+
     # Add onMount prop to Editor
     content = content.replace("<Editor", "<Editor\n        onMount={handleEditorDidMount}")
 

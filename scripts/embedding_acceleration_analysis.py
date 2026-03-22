@@ -5,8 +5,8 @@ Analyzes current embedding bottlenecks and proposes acceleration strategies
 using shadow clones, MCP ganas, polyglot cores, and other advanced systems.
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -18,17 +18,17 @@ def analyze_bottlenecks():
     print("\n" + "=" * 80)
     print("🔍 EMBEDDING BOTTLENECK ANALYSIS")
     print("=" * 80)
-    
+
     print("\n📊 Current Performance:")
     print("   Rate: ~2.3 embeddings/second")
     print("   Time for 98K memories: ~11.8 hours")
     print("   Batch size: 50 memories")
     print("   Model: BAAI/bge-small-en-v1.5 (384 dims)")
-    
+
     print("\n🔍 Identified Bottlenecks:")
-    
+
     bottlenecks = []
-    
+
     # 1. Model loading overhead
     bottlenecks.append({
         "name": "Model Loading",
@@ -37,7 +37,7 @@ def analyze_bottlenecks():
         "current": "Single model instance",
         "optimization": "Keep model loaded, reuse across batches",
     })
-    
+
     # 2. Batch size
     bottlenecks.append({
         "name": "Small Batch Size",
@@ -46,7 +46,7 @@ def analyze_bottlenecks():
         "current": "50 memories per batch",
         "optimization": "Increase to 256-512 with proper memory management",
     })
-    
+
     # 3. Sequential processing
     bottlenecks.append({
         "name": "Sequential Processing",
@@ -55,7 +55,7 @@ def analyze_bottlenecks():
         "current": "1 worker, sequential batches",
         "optimization": "Multi-process shadow clone army (4-8 workers)",
     })
-    
+
     # 4. Database writes
     bottlenecks.append({
         "name": "Database Write Latency",
@@ -64,7 +64,7 @@ def analyze_bottlenecks():
         "current": "Synchronous writes after each batch",
         "optimization": "Async writes, batch commits, WAL mode",
     })
-    
+
     # 5. CPU governor
     bottlenecks.append({
         "name": "CPU Governor (powersave)",
@@ -73,7 +73,7 @@ def analyze_bottlenecks():
         "current": "powersave governor",
         "optimization": "Switch to performance governor during embedding",
     })
-    
+
     # 6. Memory fetching
     bottlenecks.append({
         "name": "Memory Fetching",
@@ -82,13 +82,13 @@ def analyze_bottlenecks():
         "current": "SQL query per batch",
         "optimization": "Prefetch larger chunks, use memory-mapped DB",
     })
-    
+
     for i, b in enumerate(bottlenecks, 1):
         print(f"\n{i}. {b['name']} (Impact: {b['impact']})")
         print(f"   Current: {b['current']}")
         print(f"   Issue: {b['description']}")
         print(f"   Fix: {b['optimization']}")
-    
+
     return bottlenecks
 
 def propose_acceleration_strategies():
@@ -96,9 +96,9 @@ def propose_acceleration_strategies():
     print("\n" + "=" * 80)
     print("🚀 ACCELERATION STRATEGIES")
     print("=" * 80)
-    
+
     strategies = []
-    
+
     # Strategy 1: Shadow Clone Army (Multi-Process)
     strategies.append({
         "name": "Shadow Clone Army Parallelization",
@@ -119,7 +119,7 @@ Expected: 2.3 → 9-18 embeddings/sec (4-8x speedup)
 Time: 11.8 hours → 1.5-3 hours
         """.strip(),
     })
-    
+
     # Strategy 2: Larger Batch Sizes
     strategies.append({
         "name": "Optimized Batch Sizing",
@@ -138,7 +138,7 @@ Expected: 2.3 → 4.6-6.9 embeddings/sec (2-3x speedup)
 Time: 11.8 hours → 4-6 hours
         """.strip(),
     })
-    
+
     # Strategy 3: CPU Governor Optimization
     strategies.append({
         "name": "CPU Performance Mode",
@@ -158,7 +158,7 @@ Expected: 2.3 → 3.0-3.5 embeddings/sec (1.3-1.5x speedup)
 Time: 11.8 hours → 8-9 hours
         """.strip(),
     })
-    
+
     # Strategy 4: Polyglot Acceleration (Rust/Zig)
     strategies.append({
         "name": "Polyglot Core Acceleration",
@@ -179,7 +179,7 @@ Expected: 2.3 → 2.8-3.5 embeddings/sec (1.2-1.5x speedup)
 Time: 11.8 hours → 8-10 hours
         """.strip(),
     })
-    
+
     # Strategy 5: MCP Gana Orchestration
     strategies.append({
         "name": "MCP Gana Distributed Orchestration",
@@ -203,7 +203,7 @@ Expected: 2.3 → 3.5-4.6 embeddings/sec (1.5-2x speedup)
 Time: 11.8 hours → 6-8 hours
         """.strip(),
     })
-    
+
     # Strategy 6: Combined Approach
     strategies.append({
         "name": "COMBINED: All Strategies Together",
@@ -225,7 +225,7 @@ Expected: 2.3 → 23-69 embeddings/sec (10-30x speedup)
 Time: 11.8 hours → 24-70 minutes (0.4-1.2 hours)
         """.strip(),
     })
-    
+
     for i, s in enumerate(strategies, 1):
         print(f"\n{'=' * 80}")
         print(f"Strategy {i}: {s['name']}")
@@ -233,7 +233,7 @@ Time: 11.8 hours → 24-70 minutes (0.4-1.2 hours)
         print(f"System: {s['system']}")
         print(f"Expected Speedup: {s['speedup']}")
         print(f"\n{s['description']}")
-    
+
     return strategies
 
 def recommend_implementation():
@@ -241,26 +241,26 @@ def recommend_implementation():
     print("\n" + "=" * 80)
     print("💡 RECOMMENDED IMPLEMENTATION")
     print("=" * 80)
-    
+
     print("\n🎯 Phase 1: Quick Wins (Implement Now)")
     print("   1. Increase batch size to 256 (2-3x speedup)")
     print("   2. Enable CPU performance mode (1.3-1.5x speedup)")
     print("   3. Optimize DB writes (async, batch commits)")
     print("   Expected: 2.3 → 6-10 embeddings/sec")
     print("   Time: 11.8 hours → 2.7-4.5 hours")
-    
+
     print("\n🎯 Phase 2: Shadow Clone Army (Next)")
     print("   4. Deploy 4-8 parallel workers")
     print("   5. Distribute work across workers")
     print("   Expected: 6-10 → 24-80 embeddings/sec")
     print("   Time: 2.7-4.5 hours → 20-70 minutes")
-    
+
     print("\n🎯 Phase 3: Advanced Optimization (Later)")
     print("   6. Polyglot core acceleration (Rust/Zig)")
     print("   7. MCP gana orchestration")
     print("   Expected: 24-80 → 30-120 embeddings/sec")
     print("   Time: 20-70 minutes → 14-55 minutes")
-    
+
     print("\n✅ Immediate Action:")
     print("   Implement Phase 1 (quick wins) right now")
     print("   Run 5-10 min embedding sessions with 6-10x speedup")
@@ -272,11 +272,11 @@ def main():
     print("=" * 80)
     print("\nAnalyzing current performance and proposing acceleration strategies")
     print("using shadow clones, MCP ganas, polyglot cores, and other systems...")
-    
+
     analyze_bottlenecks()
     propose_acceleration_strategies()
     recommend_implementation()
-    
+
     print("\n" + "=" * 80)
     print("✅ ANALYSIS COMPLETE")
     print("=" * 80)

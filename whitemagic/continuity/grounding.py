@@ -5,15 +5,15 @@ Provides real-time context awareness: Time, System Stats, Resource Usage, and Se
 import logging
 import os
 import platform
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import psutil
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class GroundingSystem:
 
     def get_system_state(self) -> SystemState:
         """Capture current system reality."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         local_now = datetime.now()
 
         load_avg = [0.0, 0.0, 0.0]

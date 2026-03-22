@@ -41,7 +41,6 @@ from typing import Any, cast
 
 import numpy as np
 
-
 logger = logging.getLogger(__name__)
 
 # Embedding dimension (384 for both all-MiniLM-L6-v2 and BAAI/bge-small-en-v1.5)
@@ -819,8 +818,9 @@ class EmbeddingEngine:
         """
         # Try Rust SimHash LSH first (50× faster for large N, proper cosine similarity)
         try:
-            import whitemagic_rust
             import json
+
+            import whitemagic_rust
 
             # Load cached embeddings directly (no DB queries needed!)
             ids, vectors = self._load_vec_cache()

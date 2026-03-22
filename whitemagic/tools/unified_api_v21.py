@@ -6,9 +6,9 @@ circuit breaker validation, and improved error handling.
 
 import asyncio
 import logging
-from typing import Any, Dict
+from typing import Any
 
-from .willow_health_check import willow_pre_check, get_willow_health_checker
+from .willow_health_check import get_willow_health_checker, willow_pre_check
 
 logger = logging.getLogger(__name__)
 
@@ -66,9 +66,9 @@ WILLOW_TOOLS = {
     "fool_guard_dare_to_die", "grimoire_auto_status"
 }
 
-async def execute_tool_v21(tool_name: str, **kwargs: Any) -> Dict[str, Any]:
+async def execute_tool_v21(tool_name: str, **kwargs: Any) -> dict[str, Any]:
     """V21 enhanced tool execution with Willow health checks."""
-    
+
     # Check if this is a Willow tool
     if tool_name in WILLOW_TOOLS:
         # Perform pre-check
@@ -80,10 +80,10 @@ async def execute_tool_v21(tool_name: str, **kwargs: Any) -> Dict[str, Any]:
                 "recovery_available": True,
                 "suggestion": "Try again in 30 seconds or run willow_health_check"
             }
-    
+
     # Get timeout
     timeout = TIMEOUT_CONFIG_V21.get(tool_name, 30)
-    
+
     try:
         # Execute with timeout
         if asyncio.iscoroutinefunction(_execute_tool_internal):
@@ -96,17 +96,17 @@ async def execute_tool_v21(tool_name: str, **kwargs: Any) -> Dict[str, Any]:
                 asyncio.to_thread(_execute_tool_internal, tool_name, **kwargs),
                 timeout=timeout
             )
-            
+
         return result
-        
-    except asyncio.TimeoutError:
+
+    except TimeoutError:
         logger.warning(f"⏰ Tool {tool_name} timed out after {timeout}s")
-        
+
         # For Willow tools, trigger health check on timeout
         if tool_name in WILLOW_TOOLS:
             checker = get_willow_health_checker()
             await checker.check_willow_health(force=True)
-            
+
         return {
             "status": "error",
             "error": f"Tool {tool_name} timed out after {timeout} seconds",
@@ -115,19 +115,19 @@ async def execute_tool_v21(tool_name: str, **kwargs: Any) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"❌ Tool {tool_name} failed: {e}")
         return {
-            "status": "error", 
+            "status": "error",
             "error": str(e)
         }
 
-def _execute_tool_internal(tool_name: str, **kwargs: Any) -> Dict[str, Any]:
+def _execute_tool_internal(tool_name: str, **kwargs: Any) -> dict[str, Any]:
     """Internal tool execution - same as original unified_api."""
     # Import the handler mapping
     from .prat_router import get_gana_for_tool
-    
+
     gana_name = get_gana_for_tool(tool_name)
     if not gana_name:
         return {"status": "error", "error": f"Unknown tool: {tool_name}"}
-    
+
     # Try Koka first for certain ganas
     if gana_name in ["gana_willow", "gana_ghost", "gana_winnowing_basket"]:
         try:
@@ -137,33 +137,33 @@ def _execute_tool_internal(tool_name: str, **kwargs: Any) -> Dict[str, Any]:
                 return koka_result
         except Exception as e:
             logger.debug(f"Koka handler failed for {tool_name}: {e}")
-    
+
     # Fall back to Python handler
     try:
         handler_module_name = f".handlers.{gana_name.replace('gana_', '')}"
         handler_module = __import__(handler_module_name, fromlist=[''])
         handler_name = f"handle_{tool_name.replace('.', '_')}"
         handler = getattr(handler_module, handler_name)
-        
+
         if asyncio.iscoroutinefunction(handler):
             # This shouldn't happen with sync wrapper, but just in case
             import asyncio
             return asyncio.run(handler(**kwargs))
         else:
             return handler(**kwargs)
-            
+
     except (ImportError, AttributeError) as e:
         return {"status": "error", "error": f"Handler not found for {tool_name}: {e}"}
     except Exception as e:
         return {"status": "error", "error": f"Handler execution failed for {tool_name}: {e}"}
 
 # Health check endpoint
-async def willow_health_check_endpoint() -> Dict[str, Any]:
+async def willow_health_check_endpoint() -> dict[str, Any]:
     """Public endpoint for Willow health status."""
     checker = get_willow_health_checker()
     health = await checker.check_willow_health()
     recommendations = await checker.get_willow_recommendations()
-    
+
     return {
         "status": "success",
         "health": {
@@ -178,11 +178,11 @@ async def willow_health_check_endpoint() -> Dict[str, Any]:
     }
 
 # Recovery endpoint
-async def willow_recovery_endpoint() -> Dict[str, Any]:
+async def willow_recovery_endpoint() -> dict[str, Any]:
     """Public endpoint for Willow recovery."""
     checker = get_willow_health_checker()
     recovered = await checker.attempt_recovery()
-    
+
     return {
         "status": "success",
         "recovered": recovered,
@@ -192,7 +192,7 @@ async def willow_recovery_endpoint() -> Dict[str, Any]:
 # V21 API exports
 __all__ = [
     "execute_tool_v21",
-    "willow_health_check_endpoint", 
+    "willow_health_check_endpoint",
     "willow_recovery_endpoint",
     "TIMEOUT_CONFIG_V21",
     "WILLOW_TOOLS"

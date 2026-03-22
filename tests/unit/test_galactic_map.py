@@ -6,9 +6,9 @@ Tests for the Galactic Map system:
   - Serialization round-trip
 """
 
-import pytest
 from datetime import datetime
 
+import pytest
 
 # ---------------------------------------------------------------------------
 # Galactic Zone Classification
@@ -18,31 +18,31 @@ class TestGalacticZones:
     """Tests for zone classification from galactic distance."""
 
     def test_core_zone(self):
-        from whitemagic.core.memory.galactic_map import classify_zone, GalacticZone
+        from whitemagic.core.memory.galactic_map import GalacticZone, classify_zone
         assert classify_zone(0.0) == GalacticZone.CORE
         assert classify_zone(0.10) == GalacticZone.CORE
         assert classify_zone(0.14) == GalacticZone.CORE
 
     def test_inner_rim_zone(self):
-        from whitemagic.core.memory.galactic_map import classify_zone, GalacticZone
+        from whitemagic.core.memory.galactic_map import GalacticZone, classify_zone
         assert classify_zone(0.15) == GalacticZone.INNER_RIM
         assert classify_zone(0.30) == GalacticZone.INNER_RIM
         assert classify_zone(0.39) == GalacticZone.INNER_RIM
 
     def test_mid_band_zone(self):
-        from whitemagic.core.memory.galactic_map import classify_zone, GalacticZone
+        from whitemagic.core.memory.galactic_map import GalacticZone, classify_zone
         assert classify_zone(0.40) == GalacticZone.MID_BAND
         assert classify_zone(0.50) == GalacticZone.MID_BAND
         assert classify_zone(0.64) == GalacticZone.MID_BAND
 
     def test_outer_rim_zone(self):
-        from whitemagic.core.memory.galactic_map import classify_zone, GalacticZone
+        from whitemagic.core.memory.galactic_map import GalacticZone, classify_zone
         assert classify_zone(0.65) == GalacticZone.OUTER_RIM
         assert classify_zone(0.75) == GalacticZone.OUTER_RIM
         assert classify_zone(0.84) == GalacticZone.OUTER_RIM
 
     def test_far_edge_zone(self):
-        from whitemagic.core.memory.galactic_map import classify_zone, GalacticZone
+        from whitemagic.core.memory.galactic_map import GalacticZone, classify_zone
         assert classify_zone(0.85) == GalacticZone.FAR_EDGE
         assert classify_zone(0.95) == GalacticZone.FAR_EDGE
         assert classify_zone(1.0) == GalacticZone.FAR_EDGE
@@ -163,9 +163,10 @@ class TestNoDeletePolicy:
 
     def test_delete_redirects_to_archive(self):
         """The delete() method should now redirect to archive_to_edge()."""
-        from whitemagic.core.memory.sqlite_backend import SQLiteBackend
         import tempfile
         from pathlib import Path
+
+        from whitemagic.core.memory.sqlite_backend import SQLiteBackend
 
         with tempfile.TemporaryDirectory() as tmpdir:
             db_path = Path(tmpdir) / "test.db"
@@ -193,10 +194,11 @@ class TestNoDeletePolicy:
 
     def test_archive_to_edge_preserves_content(self):
         """archive_to_edge should keep the memory but push it to the galactic edge."""
-        from whitemagic.core.memory.sqlite_backend import SQLiteBackend
-        from whitemagic.core.memory.unified_types import Memory, MemoryType
         import tempfile
         from pathlib import Path
+
+        from whitemagic.core.memory.sqlite_backend import SQLiteBackend
+        from whitemagic.core.memory.unified_types import Memory, MemoryType
 
         with tempfile.TemporaryDirectory() as tmpdir:
             db_path = Path(tmpdir) / "test.db"
@@ -226,10 +228,11 @@ class TestNoDeletePolicy:
 
     def test_batch_update_galactic(self):
         """batch_update_galactic should update multiple memories at once."""
-        from whitemagic.core.memory.sqlite_backend import SQLiteBackend
-        from whitemagic.core.memory.unified_types import Memory, MemoryType
         import tempfile
         from pathlib import Path
+
+        from whitemagic.core.memory.sqlite_backend import SQLiteBackend
+        from whitemagic.core.memory.unified_types import Memory, MemoryType
 
         with tempfile.TemporaryDirectory() as tmpdir:
             db_path = Path(tmpdir) / "test.db"

@@ -1,12 +1,12 @@
 import hashlib
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 
 @dataclass

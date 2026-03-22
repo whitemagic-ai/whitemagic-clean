@@ -1,10 +1,11 @@
 import os
 
+
 def setup_g001_funnel():
     print("=== G001: Funnel Architecture Implementation ===")
     funnel_path = "/home/lucas/Desktop/whitemagicdev/whitemagic/core/acceleration/funnel.py"
     os.makedirs(os.path.dirname(funnel_path), exist_ok=True)
-    
+
     with open(funnel_path, "w") as f:
         f.write("""# Zero-burn file processing system
 import hashlib
@@ -35,7 +36,7 @@ class FunnelArchitecture:
 def setup_g002_skeletonization():
     print("=== G002: Skeletonization Engine Implementation ===")
     skel_path = "/home/lucas/Desktop/whitemagicdev/whitemagic/core/acceleration/skeletonization.py"
-    
+
     with open(skel_path, "w") as f:
         f.write("""# AST context compression system
 import ast

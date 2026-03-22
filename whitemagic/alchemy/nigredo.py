@@ -11,7 +11,7 @@ Usage:
     category, score = classifier.classify(memory_content, memory_title)
 """
 
-from typing import Tuple
+
 
 class NigredoClassifier:
     """Classifies memories for transmutation."""
@@ -24,7 +24,7 @@ class NigredoClassifier:
         "golden rule", "lesson learned", "post-mortem", "root cause"
     ]
 
-    def classify(self, content: str, title: str = "") -> Tuple[str, float]:
+    def classify(self, content: str, title: str = "") -> tuple[str, float]:
         """
         Returns (Category, Confidence).
         Categories: 'Novelty', 'Routine', 'Noise'.

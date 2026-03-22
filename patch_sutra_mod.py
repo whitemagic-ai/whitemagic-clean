@@ -1,6 +1,6 @@
 import re
 
-with open('whitemagic-rust/src/sutra_kernel/mod.rs', 'r') as f:
+with open('whitemagic-rust/src/sutra_kernel/mod.rs') as f:
     content = f.read()
 
 replacement = """pub fn sutra_kernel(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {

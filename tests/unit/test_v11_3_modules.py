@@ -10,9 +10,7 @@ Regression tests for v11.3 modules:
 import json
 import time
 
-
 from tests.conftest import assert_envelope_shape
-
 
 # =========================================================================
 # 1. Memory Lifecycle Manager
@@ -52,7 +50,8 @@ class TestMemoryLifecycle:
 
     def test_flush_count_triggers_sweep(self):
         from whitemagic.core.memory.lifecycle import (
-            MemoryLifecycleManager, LifecycleConfig,
+            LifecycleConfig,
+            MemoryLifecycleManager,
         )
         mgr = MemoryLifecycleManager(config=LifecycleConfig(sweep_interval_sweeps=2))
         # Simulate slow-lane flushes
@@ -95,7 +94,8 @@ class TestHomeostaticLoop:
 
     def test_action_to_dict_serializable(self):
         from whitemagic.harmony.homeostatic_loop import (
-            HomeostaticAction, ActionLevel,
+            ActionLevel,
+            HomeostaticAction,
         )
         action = HomeostaticAction(
             dimension="error_rate", level=ActionLevel.ADVISE,
@@ -107,7 +107,8 @@ class TestHomeostaticLoop:
 
     def test_attach_detach_lifecycle(self):
         from whitemagic.harmony.homeostatic_loop import (
-            HomeostaticLoop, HomeostaticConfig,
+            HomeostaticConfig,
+            HomeostaticLoop,
         )
         loop = HomeostaticLoop(config=HomeostaticConfig(check_interval_s=0.05))
         loop.attach()
@@ -143,10 +144,12 @@ class TestMaturityCheck:
         assert result is None
 
     def test_error_response_structure(self):
-        from whitemagic.tools.maturity_check import check_maturity_for_tool
         # Force a low maturity by testing with a tool that requires LOGOS (6)
         # which no real system reaches
-        from whitemagic.tools.maturity_check import _MATURITY_REQUIREMENTS
+        from whitemagic.tools.maturity_check import (
+            _MATURITY_REQUIREMENTS,
+            check_maturity_for_tool,
+        )
         _MATURITY_REQUIREMENTS["_test_logos_tool"] = 6
         try:
             result = check_maturity_for_tool("_test_logos_tool")
@@ -258,7 +261,7 @@ class TestDharmaYAMLDirectory:
 
     def test_last_write_wins_override(self, tmp_path):
         """A user rule with the same name as a built-in replaces it."""
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
 
         rules_dir = tmp_path / "rules.d"
         rules_dir.mkdir()
@@ -378,7 +381,7 @@ class TestToolDependencyGraph:
         assert chain.index("vote.create") < chain.index("vote.cast")
 
     def test_edge_type_filter(self):
-        from whitemagic.tools.dependency_graph import ToolDependencyGraph, EdgeType
+        from whitemagic.tools.dependency_graph import EdgeType, ToolDependencyGraph
         graph = ToolDependencyGraph()
         requires = graph.next_steps("vote.create", edge_type=EdgeType.REQUIRES)
         _suggests = graph.next_steps("vote.create", edge_type=EdgeType.SUGGESTS)

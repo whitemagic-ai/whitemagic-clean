@@ -11,12 +11,13 @@ Storage: $WM_STATE_ROOT/gratitude/ledger.jsonl
 import logging
 import threading
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +39,9 @@ class GratitudeEvent:
     tx_hash: str = ""
     verified: bool = False
     timestamp: float = field(default_factory=time.time)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
@@ -51,7 +52,7 @@ class GratitudeLedger:
     Thread-safe. Persists to JSONL file under WM_STATE_ROOT.
     """
 
-    def __init__(self, ledger_path: Optional[Path] = None):
+    def __init__(self, ledger_path: Path | None = None):
         if ledger_path is None:
             from whitemagic.config.paths import WM_ROOT
             ledger_dir = WM_ROOT / "gratitude"
@@ -62,7 +63,7 @@ class GratitudeLedger:
             self._path.parent.mkdir(parents=True, exist_ok=True)
 
         self._lock = threading.Lock()
-        self._events: List[GratitudeEvent] = []
+        self._events: list[GratitudeEvent] = []
         self._load()
 
     def _load(self) -> None:
@@ -70,7 +71,7 @@ class GratitudeLedger:
         if not self._path.exists():
             return
         try:
-            with open(self._path, "r", encoding="utf-8") as f:
+            with open(self._path, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if line:
@@ -89,7 +90,7 @@ class GratitudeLedger:
             except Exception as exc:
                 logger.warning(f"Failed to persist gratitude event: {exc}")
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Aggregate gratitude statistics."""
         with self._lock:
             total_xrp = sum(e.amount for e in self._events if e.currency == "XRP")
@@ -98,7 +99,7 @@ class GratitudeLedger:
             unique_senders = len(set(e.sender for e in self._events if e.sender))
             unique_agents = len(set(e.agent_id for e in self._events if e.agent_id))
 
-            by_channel: Dict[str, int] = {}
+            by_channel: dict[str, int] = {}
             for e in self._events:
                 by_channel[e.channel] = by_channel.get(e.channel, 0) + 1
 
@@ -112,7 +113,7 @@ class GratitudeLedger:
                 "by_channel": by_channel,
             }
 
-    def get_recent(self, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_recent(self, limit: int = 10) -> list[dict[str, Any]]:
         """Get most recent gratitude events."""
         with self._lock:
             recent = self._events[-limit:]
@@ -126,7 +127,7 @@ class GratitudeLedger:
                 for e in self._events
             )
 
-    def get_agent_contribution(self, agent_id: str) -> Dict[str, Any]:
+    def get_agent_contribution(self, agent_id: str) -> dict[str, Any]:
         """Get total contribution for an agent."""
         with self._lock:
             agent_events = [e for e in self._events if e.agent_id == agent_id]
@@ -143,7 +144,7 @@ class GratitudeLedger:
 # Singleton
 # ---------------------------------------------------------------------------
 
-_ledger: Optional[GratitudeLedger] = None
+_ledger: GratitudeLedger | None = None
 _ledger_lock = threading.Lock()
 
 

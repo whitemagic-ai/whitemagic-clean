@@ -23,8 +23,8 @@ import re
 import sqlite3
 import subprocess
 import sys
-import time
 import threading
+import time
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
@@ -50,10 +50,10 @@ try:
     import whitemagic_rs as _rs
     rs = _rs
     from whitemagic.optimization.rust_accelerators import (
-        tokio_clone_bench,
-        tokio_deploy_clones,
         keyword_extract_batch,
         minhash_find_duplicates,
+        tokio_clone_bench,
+        tokio_deploy_clones,
     )
     RUST_OK = True
 except ImportError:
@@ -73,10 +73,12 @@ except ImportError:
     local_llm = None
 
 # Metrics tracker
-from whitemagic.agents.campaign_metrics import new_tracker  # noqa: E402
 from whitemagic.agents.campaign_loader import (  # noqa: E402
-    load_all_campaigns, Campaign, victory_report,
+    Campaign,
+    load_all_campaigns,
+    victory_report,
 )
+from whitemagic.agents.campaign_metrics import new_tracker  # noqa: E402
 from whitemagic.agents.progress_tracker import (  # noqa: E402
     YinYangCycleTracker,
 )
@@ -1229,7 +1231,7 @@ def lt_gamma_polyglot_armies(conn: sqlite3.Connection):
     with tracker.track_objective("gamma", "polyglot_armies",
                                  lieutenant="lt_gamma_5", phases_total=3) as obj:
         print_phase(1, 3, "Inventorying polyglot army capabilities...")
-        
+
         polyglot_scripts = {
             "rust": PROJECT_ROOT / "scripts" / "army_rust.sh",
             "go": PROJECT_ROOT / "scripts" / "army_go.sh",
@@ -1239,7 +1241,7 @@ def lt_gamma_polyglot_armies(conn: sqlite3.Connection):
             "haskell": PROJECT_ROOT / "scripts" / "army_haskell.sh",
             "julia": PROJECT_ROOT / "scripts" / "army_julia.sh",
         }
-        
+
         available_armies = {}
         for lang, script_path in polyglot_scripts.items():
             if script_path.exists() and os.access(script_path, os.X_OK):
@@ -1255,13 +1257,13 @@ def lt_gamma_polyglot_armies(conn: sqlite3.Connection):
         print(f"         Found {len(available_armies)} executable polyglot armies: {', '.join(available_armies.keys())}")
 
         print_phase(2, 3, "Deploying polyglot scouts for specialized tasks...")
-        
+
         results = {}
-        
+
         for lang, script_path in available_armies.items():
             try:
                 task = json.dumps({"task": "status", "clone_count": 100})
-                
+
                 start_time = time.time()
                 proc = subprocess.run(
                     [str(script_path)],
@@ -1271,7 +1273,7 @@ def lt_gamma_polyglot_armies(conn: sqlite3.Connection):
                     check=False
                 )
                 duration = (time.time() - start_time) * 1000
-                
+
                 if proc.returncode == 0:
                     try:
                         output = json.loads(proc.stdout)
@@ -1285,25 +1287,25 @@ def lt_gamma_polyglot_armies(conn: sqlite3.Connection):
                         results[lang] = {"status": "error", "error": "Invalid JSON output", "raw": proc.stdout[:100]}
                 else:
                     results[lang] = {"status": "error", "error": f"Exit code {proc.returncode}", "stderr": proc.stderr[:100]}
-                    
+
             except Exception as e:
                 results[lang] = {"status": "error", "error": str(e)}
 
         obj.phases_completed = 2
-        
+
         print_phase(3, 3, "Synthesizing polyglot intelligence...")
-        
+
         active_count = sum(1 for r in results.values() if r["status"] == "active")
-        
+
         obj.record_finding(
             f"Deployed {active_count}/{len(polyglot_scripts)} polyglot armies",
             severity="info",
             category="polyglot_status",
             details=results
         )
-        
+
         obj.phases_completed = 3
-        print(f"         Active: {active_count} ({', '.join(lang for lang, r in results.items() if r['status'] == 'active')})")        
+        print(f"         Active: {active_count} ({', '.join(lang for lang, r in results.items() if r['status'] == 'active')})")
         return results
 
 
@@ -2127,7 +2129,7 @@ def _auto_verify_victory(campaign: Campaign, conn: sqlite3.Connection):
             go_army = (PROJECT_ROOT / "scripts" / "army_go.sh").exists()
             zig_army = (PROJECT_ROOT / "scripts" / "army_zig.sh").exists()
             mojo_army = (PROJECT_ROOT / "scripts" / "army_mojo.sh").exists()
-            
+
             if "rust army script" in desc:
                 campaign.mark_victory(i, rust_army)
             elif "go army script" in desc:
@@ -2173,7 +2175,7 @@ def _auto_verify_victory(campaign: Campaign, conn: sqlite3.Connection):
             tg_path = PROJECT_ROOT / "whitemagic" / "core" / "memory" / "thought_galaxy.py"
             ce_path = PROJECT_ROOT / "whitemagic" / "core" / "memory" / "cognitive_episode.py"
             ts_path = PROJECT_ROOT / "whitemagic" / "core" / "intelligence" / "thought_scorer.py"
-            
+
             if "cognitiveepisode" in desc:
                 campaign.mark_victory(i, ce_path.exists())
             elif "thought galaxy" in desc and "created" in desc:
@@ -2188,7 +2190,7 @@ def _auto_verify_victory(campaign: Campaign, conn: sqlite3.Connection):
         elif campaign.codename == "G004":
             sup_path = PROJECT_ROOT / "whitemagic" / "autonomous" / "supervisor.py"
             pc_path = PROJECT_ROOT / "whitemagic" / "core" / "intelligence" / "prompt_classifier.py"
-            
+
             if "prompt taxonomy" in desc:
                 campaign.mark_victory(i, pc_path.exists())
             elif "supervisor engine" in desc:
@@ -2203,7 +2205,7 @@ def _auto_verify_victory(campaign: Campaign, conn: sqlite3.Connection):
         elif campaign.codename == "G007":
             wx_path = PROJECT_ROOT / "whitemagic" / "core" / "wuxing_scheduler.py"
             pe_path = PROJECT_ROOT / "whitemagic" / "autonomous" / "phase_enforcer.py"
-            
+
             if "wuxingscheduler" in desc:
                 campaign.mark_victory(i, wx_path.exists())
             elif "phase enforcer" in desc:
@@ -2216,7 +2218,7 @@ def _auto_verify_victory(campaign: Campaign, conn: sqlite3.Connection):
         elif campaign.codename == "V005":
             ns_path = PROJECT_ROOT / "whitemagic" / "core" / "nervous_system.py"
             boot_path = PROJECT_ROOT / "whitemagic" / "core" / "bootstrap_organs.py"
-            
+
             if "nervous_system.py" in desc:
                 campaign.mark_victory(i, ns_path.exists())
             elif "bootstrap" in desc or "organ registry" in desc:
@@ -2240,7 +2242,7 @@ def _auto_verify_victory(campaign: Campaign, conn: sqlite3.Connection):
         elif campaign.codename == "V007":
             report_path = REPORTS_DIR / "archaeological_deep_dig.md"
             scout_path = PROJECT_ROOT / "scripts" / "scout_v007_archaeology.py"
-            
+
             if "report" in desc:
                 campaign.mark_victory(i, report_path.exists())
             elif "scan all" in desc or "extracted" in desc:
@@ -2254,7 +2256,7 @@ def _auto_verify_victory(campaign: Campaign, conn: sqlite3.Connection):
         elif campaign.codename == "V008":
             report_path = REPORTS_DIR / "memory_deep_audit.md"
             audit_path = PROJECT_ROOT / "scripts" / "audit_databases.py"
-            
+
             if "report" in desc:
                 campaign.mark_victory(i, report_path.exists())
             elif "audit" in desc or "classify" in desc:
@@ -2268,7 +2270,7 @@ def _auto_verify_victory(campaign: Campaign, conn: sqlite3.Connection):
         elif campaign.codename == "V009":
             report_path = REPORTS_DIR / "windsurf_ingestion.md"
             script_path = PROJECT_ROOT / "scripts" / "extract_and_ingest_windsurf.py"
-            
+
             if "report" in desc:
                 campaign.mark_victory(i, report_path.exists())
             elif "extract" in desc or "ingest" in desc:
@@ -3155,7 +3157,10 @@ def run_yin_yang_cycle(campaigns: list[Campaign], conn: sqlite3.Connection,
                 # Ralph escalation: spawn dare-to-die corps on stuck campaigns
                 print(f"\n  ⚡ RALPH ESCALATION — stagnant for {stagnant_cycles} cycles")
                 try:
-                    from scripts.ralph_loop import run_ralph_loop, extract_verification_commands
+                    from scripts.ralph_loop import (
+                        extract_verification_commands,
+                        run_ralph_loop,
+                    )
                     stuck = [c for c in campaigns if not all(vc.met for vc in c.victory_conditions)]
                     ralph_victories = 0
                     for campaign in stuck[:3]:  # limit to 3 campaigns per escalation
@@ -3591,14 +3596,14 @@ if __name__ == "__main__":
         workflow = WorkflowTimer("operation_iron_lotus")
         workflow.start_workflow()
         preflight(workflow)
-        
+
         with workflow.phase("army_alpha"):
             run_army_alpha()
         with workflow.phase("army_beta"):
             run_army_beta()
         with workflow.phase("army_gamma"):
             run_army_gamma()
-            
+
         workflow.end_workflow()
         # Generate victory report from built-in campaigns
         print("\n" + "="*70)
@@ -3612,7 +3617,7 @@ if __name__ == "__main__":
         workflow = WorkflowTimer(f"army_{args.army}")
         workflow.start_workflow()
         preflight(workflow)
-        
+
         with workflow.phase("execution"):
             if args.army == "alpha":
                 run_army_alpha()
@@ -3620,7 +3625,7 @@ if __name__ == "__main__":
                 run_army_beta()
             elif args.army == "gamma":
                 run_army_gamma()
-                
+
         workflow.end_workflow()
         # Generate victory report from built-in campaigns
         print("\n" + "="*70)
@@ -3634,15 +3639,15 @@ if __name__ == "__main__":
         workflow = WorkflowTimer("sun_bin_campaigns")
         workflow.start_workflow()
         preflight(workflow)
-        
+
         with workflow.phase("setup"):
             print_header("SUN BIN STRATEGY — MULTI-COLUMN CAMPAIGN EXECUTION")
             active_campaigns = load_all_campaigns(CAMPAIGNS_DIR)
-            
+
             if not active_campaigns:
                 print("No campaigns found in campaigns/")
                 sys.exit(0)
-            
+
             # Filter campaigns if --filter specified
             if args.filter:
                 filter_codes = [c.strip() for c in args.filter.split(",")]
@@ -3665,13 +3670,13 @@ if __name__ == "__main__":
                 run_campaigns_sun_bin(active_campaigns, time_limit=args.time_limit, use_yin_yang=True)
             else:
                 run_campaigns_sun_bin(active_campaigns, time_limit=args.time_limit)
-        
+
         with workflow.phase("reporting"):
             # Generate victory report from campaigns
             vr_path = REPORTS_DIR / f"victory_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
             vr_path.write_text(victory_report(active_campaigns))
             print(f"\n  Victory report: {vr_path}")
-            
+
         workflow.end_workflow()
         workflow.print_report()
         sys.exit(0)

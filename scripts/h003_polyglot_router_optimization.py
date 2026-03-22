@@ -22,11 +22,11 @@ from whitemagic.agents.unified_zodiac_army import get_unified_commander
 async def execute_campaign():
     """Execute H003 campaign with all 20 VCs"""
     commander = get_unified_commander()
-    
+
     print("\n" + "="*100)
     print("🌟 H003: POLYGLOT ROUTER CORE OPTIMIZATION")
     print("="*100)
-    
+
     phases = [
         ("Phase 1: Profiling", 5, 50, [
             "Profile _route_operation() overhead and measure routing latency",
@@ -57,15 +57,15 @@ async def execute_campaign():
             "Implement automatic A/B testing for routing strategies"
         ])
     ]
-    
+
     all_results = []
     start_time = time.time()
-    
+
     for phase_name, num_vcs, clones_per_army, objectives in phases:
         print(f"\n{'='*100}")
         print(f"📊 {phase_name.upper()} - {num_vcs} Victory Conditions")
         print(f"{'='*100}")
-        
+
         for i, objective in enumerate(objectives, 1):
             print(f"\n🎯 VC {phase_name.split()[1]}.{i}: {objective}")
             deployment = await commander.deploy_unified(
@@ -75,13 +75,13 @@ async def execute_campaign():
             )
             all_results.append(deployment)
             print(f"   ✅ {deployment.total_clones} clones, {deployment.victories} victories, {deployment.synergy_score:.1%} synergy")
-    
+
     # Generate report
     elapsed = time.time() - start_time
     total_clones = sum(d.total_clones for d in all_results)
     total_victories = sum(d.victories for d in all_results)
     avg_synergy = sum(d.synergy_score for d in all_results) / len(all_results)
-    
+
     print(f"\n\n{'='*100}")
     print("📊 H003 CAMPAIGN COMPLETE - FINAL REPORT")
     print(f"{'='*100}")
@@ -92,7 +92,7 @@ async def execute_campaign():
     print(f"   Avg Synergy: {avg_synergy:.1%}")
     print(f"   Duration: {elapsed:.2f}s")
     print(f"   Throughput: {total_clones/elapsed:.1f} clones/sec")
-    
+
     report_path = project_root / "reports" / f"h003_campaign_results_{int(time.time())}.json"
     report_path.write_text(json.dumps({
         'campaign': 'H003',

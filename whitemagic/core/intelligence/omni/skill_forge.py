@@ -45,7 +45,7 @@ class SkillForge:
         count = 0
         for skill_file in self.skill_library_path.glob("*.json"):
             try:
-                with open(skill_file, "r") as f:
+                with open(skill_file) as f:
                     data = json.load(f)
 
                 # Reconstruct ExecutionChain

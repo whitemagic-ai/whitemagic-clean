@@ -9,11 +9,11 @@ Eliminates command injection vulnerabilities by:
 - Applying resource limits
 """
 
-from typing import Any
 import logging
 import shlex
 import subprocess
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 

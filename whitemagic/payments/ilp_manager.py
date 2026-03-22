@@ -19,13 +19,14 @@ import json
 import logging
 import threading
 import uuid
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ class PaymentRecord:
     state: PaymentState = PaymentState.PENDING
     amount_sent: int = 0
     amount_delivered: int = 0
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     completed_at: str = ""
     memo: str = ""
     service_type: str = ""       # e.g., "oms_purchase", "shelter_compute", "research"
@@ -243,7 +244,7 @@ class ILPManager:
             record.state = PaymentState.COMPLETED
             record.amount_sent = amount
             record.amount_delivered = amount
-            record.completed_at = datetime.now(timezone.utc).isoformat()
+            record.completed_at = datetime.now(UTC).isoformat()
             record.receipt_hash = hashlib.sha256(
                 f"{payment_id}:{destination}:{amount}".encode()
             ).hexdigest()[:16]

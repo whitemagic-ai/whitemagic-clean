@@ -25,7 +25,7 @@ sys.path.insert(0, str(ROOT))
 def _load_tools() -> list:
     """Collect all ToolDefinitions from registry_defs + dispatch table stubs."""
     from whitemagic.tools.registry_defs import collect
-    from whitemagic.tools.tool_types import ToolDefinition, ToolCategory, ToolSafety
+    from whitemagic.tools.tool_types import ToolCategory, ToolDefinition, ToolSafety
     tools = collect()
     known = {t.name for t in tools}
 

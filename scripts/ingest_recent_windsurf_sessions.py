@@ -5,11 +5,11 @@ Ingest Recent Windsurf Sessions
 Systematically ingest missing Windsurf conversations from Feb 10-17
 """
 
+import hashlib
 import json
 import sqlite3
-import hashlib
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 DB_PATH = Path.home() / ".whitemagic" / "memory" / "whitemagic.db"
 
@@ -82,25 +82,25 @@ def check_exists(session_id: str) -> bool:
 
 def ingest_session(session: dict, content: str) -> dict:
     """Ingest a session into WhiteMagic DB."""
-    
+
     if not content or len(content) < 100:
         return {"status": "skipped", "reason": "content_too_short"}
-    
+
     # Check if already exists
     if check_exists(session["id"]):
         return {"status": "skipped", "reason": "already_exists"}
-    
+
     # Generate memory
     memory_id = hashlib.sha256(session["id"].encode()).hexdigest()[:16]
     now = datetime.now().isoformat()
     c_hash = content_hash(content)
-    
+
     title = f"Windsurf Session: {session['title']}"
-    
+
     # Store in DB
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA journal_mode=WAL")
-    
+
     try:
         conn.execute(
             """INSERT INTO memories (id, content, memory_type, title, created_at,
@@ -122,32 +122,32 @@ def ingest_session(session: dict, content: str) -> dict:
                 }),
             ),
         )
-        
+
         # Add tags
         for tag in session["tags"]:
             conn.execute(
                 "INSERT OR IGNORE INTO tags (memory_id, tag) VALUES (?, ?)",
                 (memory_id, tag),
             )
-        
+
         conn.commit()
-        
+
         # Rebuild FTS
         try:
             conn.execute("INSERT INTO memories_fts(memories_fts) VALUES('rebuild')")
             conn.commit()
         except:
             pass
-        
+
         conn.close()
-        
+
         return {
             "status": "success",
             "memory_id": memory_id,
             "title": title,
             "content_length": len(content),
         }
-        
+
     except Exception as e:
         conn.close()
         return {"status": "error", "error": str(e)}
@@ -157,18 +157,18 @@ def main():
     print("INGESTING RECENT WINDSURF SESSIONS")
     print("=" * 80)
     print()
-    
+
     print(f"Target DB: {DB_PATH}")
     print(f"Sessions to process: {len(SESSIONS)}")
     print()
-    
+
     results = []
-    
+
     for session in SESSIONS:
         print(f"Processing: {session['title']}")
         print(f"  ID: {session['id']}")
         print(f"  Date: {session['date']}")
-        
+
         # For now, mark as pending trajectory_search
         result = {
             "session": session,
@@ -177,7 +177,7 @@ def main():
         results.append(result)
         print("  Status: Pending trajectory_search")
         print()
-    
+
     print("=" * 80)
     print("EXTRACTION PLAN")
     print("=" * 80)
@@ -189,7 +189,7 @@ def main():
     print("4. Verify ingestion")
     print()
     print(f"Total sessions: {len(SESSIONS)}")
-    
+
     # Save plan
     plan_path = Path(__file__).parent.parent / "reports" / "windsurf_ingestion_plan.json"
     plan_path.write_text(json.dumps({"sessions": SESSIONS, "results": results}, indent=2))

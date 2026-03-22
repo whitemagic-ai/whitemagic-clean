@@ -14,7 +14,6 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-
 # ═══════════════════════════════════════════════════════════════
 # 1. JIT Memory Researcher
 # ═══════════════════════════════════════════════════════════════
@@ -145,19 +144,25 @@ class TestNarrativeCompression(unittest.TestCase):
         mod._compressor = None
 
     def test_singleton(self):
-        from whitemagic.core.dreaming.narrative_compressor import get_narrative_compressor
+        from whitemagic.core.dreaming.narrative_compressor import (
+            get_narrative_compressor,
+        )
         nc1 = get_narrative_compressor()
         nc2 = get_narrative_compressor()
         self.assertIs(nc1, nc2)
 
     def test_cluster_memories_empty(self):
-        from whitemagic.core.dreaming.narrative_compressor import get_narrative_compressor
+        from whitemagic.core.dreaming.narrative_compressor import (
+            get_narrative_compressor,
+        )
         nc = get_narrative_compressor()
         clusters = nc._cluster_memories([])
         self.assertEqual(clusters, [])
 
     def test_cluster_memories_groups_by_tags(self):
-        from whitemagic.core.dreaming.narrative_compressor import get_narrative_compressor
+        from whitemagic.core.dreaming.narrative_compressor import (
+            get_narrative_compressor,
+        )
         nc = get_narrative_compressor(min_cluster_size=2)
         candidates = [
             {"id": f"m{i}", "title": f"Memory {i}", "content": "content",
@@ -170,7 +175,9 @@ class TestNarrativeCompression(unittest.TestCase):
         self.assertGreaterEqual(clusters[0].size, 2)
 
     def test_cluster_skips_small_groups(self):
-        from whitemagic.core.dreaming.narrative_compressor import get_narrative_compressor
+        from whitemagic.core.dreaming.narrative_compressor import (
+            get_narrative_compressor,
+        )
         nc = get_narrative_compressor(min_cluster_size=10)
         candidates = [
             {"id": f"m{i}", "title": f"Memory {i}", "content": "content",
@@ -182,7 +189,8 @@ class TestNarrativeCompression(unittest.TestCase):
 
     def test_generate_title(self):
         from whitemagic.core.dreaming.narrative_compressor import (
-            NarrativeCluster, get_narrative_compressor,
+            NarrativeCluster,
+            get_narrative_compressor,
         )
         nc = get_narrative_compressor()
         cluster = NarrativeCluster(shared_tags={"topic_a", "topic_b"}, size=10)
@@ -191,7 +199,9 @@ class TestNarrativeCompression(unittest.TestCase):
         self.assertIn("10 memories", title)
 
     def test_get_stats(self):
-        from whitemagic.core.dreaming.narrative_compressor import get_narrative_compressor
+        from whitemagic.core.dreaming.narrative_compressor import (
+            get_narrative_compressor,
+        )
         nc = get_narrative_compressor()
         stats = nc.get_stats()
         self.assertIn("total_compressions", stats)
@@ -588,7 +598,10 @@ class TestCognitiveModes(unittest.TestCase):
             self.assertIn("description", d)
 
     def test_all_modes_have_profiles(self):
-        from whitemagic.core.intelligence.cognitive_modes import MODE_PROFILES, CognitiveMode
+        from whitemagic.core.intelligence.cognitive_modes import (
+            MODE_PROFILES,
+            CognitiveMode,
+        )
         for mode in CognitiveMode:
             self.assertIn(mode, MODE_PROFILES)
 

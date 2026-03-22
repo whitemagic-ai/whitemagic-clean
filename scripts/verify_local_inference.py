@@ -7,8 +7,8 @@ Tests the cohesive operation of:
 3. SpeculativeExecutor (Syntax/Security)
 """
 
-import sys
 import os
+import sys
 import time
 
 # Add project root to path
@@ -17,6 +17,7 @@ sys.path.insert(0, os.getcwd())
 from whitemagic.inference.local_embedder import LocalEmbedder
 from whitemagic.inference.local_llm import LocalLLM
 from whitemagic.optimization.speculative_exec import SpeculativeExecutor
+
 
 def verify_g006():
     print("=== G006: Local Inference Layer Verification ===\n")
@@ -45,17 +46,17 @@ def verify_g006():
     llm = LocalLLM(model="phi3:mini")
     if llm.is_available:
         print(f"   Connected to Ollama at {llm.base_url}")
-        
+
         # Test Completion
         prompt = "Explain 'Wu Wei' in one sentence."
         print(f"   Prompt: '{prompt}'")
         resp = llm.complete(prompt, max_tokens=64)
         print(f"   Response: '{resp.strip()}'")
-        
+
         # Test Classification
         cat = llm.classify("The system encountered a SQL syntax error in the database.", ["security", "performance", "bug"])
         print(f"   Classification: '{cat}' (Expected: bug/security)")
-        
+
         if resp and cat != "unknown":
              print("   ✅ Success: LLM generation and classification working")
         else:
@@ -66,7 +67,7 @@ def verify_g006():
     # 3. Speculative Execution
     print("\n3. Testing Speculative Execution...")
     spec = SpeculativeExecutor(local_llm=llm if llm.is_available else None)
-    
+
     # Valid Code
     code_valid = "def hello():\n    print('Hello World')"
     res_valid = spec.validate(code_valid)

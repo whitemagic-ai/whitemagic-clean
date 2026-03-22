@@ -6,8 +6,8 @@ Transfer all missing systems, classes, and capabilities from dev/public to WM2
 """
 
 import json
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
 
 PROJECT_ROOT = Path(__file__).parent.parent
 WM2_ROOT = Path.home() / "Desktop" / "WM2"
@@ -74,10 +74,10 @@ synthesized_count = 0
 for subsystem, classes in categorized.items():
     if not classes or len(classes) == 0:
         continue
-    
+
     subsystem_dir = WM2_ROOT / "synthesized" / subsystem
     subsystem_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Create a unified module for this subsystem
     template = f'''"""
 WM2 Synthesized: {subsystem.title()} Subsystem
@@ -142,10 +142,10 @@ class {subsystem.title()}Subsystem(BaseEngine, Serializable, MetricCollector):
 {chr(10).join(f"# - {cls}" for cls in classes[:50])}
 {"# ..." if len(classes) > 50 else ""}
 '''
-    
+
     module_path = subsystem_dir / f"{subsystem}_subsystem.py"
     module_path.write_text(template)
-    
+
     print(f"   ✅ {subsystem}: {len(classes)} classes → {module_path.relative_to(WM2_ROOT)}")
     synthesized_count += 1
 
@@ -157,7 +157,7 @@ WM2 Master Integration
 ======================
 Integrates all synthesized subsystems from WM1
 
-Generated: {datetime.now(timezone.utc).isoformat()}
+Generated: {datetime.now(UTC).isoformat()}
 """
 
 from wm2.core import BaseEngine
@@ -222,7 +222,7 @@ print()
 # Generate synthesis report
 report = f"""# WM2 Capability Synthesis Report
 
-**Generated**: {datetime.now(timezone.utc).isoformat()}
+**Generated**: {datetime.now(UTC).isoformat()}
 
 ## Summary
 

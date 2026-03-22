@@ -5,7 +5,7 @@ try:
         elixir_bridge_status,
         elixir_cascade_execute,
         elixir_cascade_pipeline,
-        has_elixir
+        has_elixir,
     )
 except ImportError:
     has_elixir = False
@@ -99,44 +99,45 @@ except ImportError:
     def mojo_status() -> dict:
         return {"status": "error", "message": "Mojo bridge not available."}
 
+from .dispatch_bridge import DispatchBridge, get_dispatch
+from .event_ring_bridge import EventRingBridge, get_event_ring
 from .mojo_bridge import (
     mojo_batch_encode,
     mojo_neuro_score,
     mojo_quantize,
     mojo_status,
 )
+
 # Unified SIMD bridge (replaces 6 individual modules)
 from .simd_unified import (
+    # Vector batch operations
+    batch_centroid,
     # Cosine operations
     batch_cosine,
+    batch_normalize,
+    batch_topk_cosine,
     cosine_similarity,
     # Distance operations
     cosine_similarity_zig,
-    pairwise_distance_matrix,
-    top_k_nearest,
+    # Keyword extraction
+    extract_keywords,
+    # Constellation operations
+    grid_density_scan,
     # Holographic 5D operations
     holographic_5d_centroid,
     holographic_5d_distance,
     holographic_5d_knn,
-    # Constellation operations
-    grid_density_scan,
-    # Keyword extraction
-    extract_keywords,
-    # Vector batch operations
-    batch_centroid,
-    batch_normalize,
-    batch_topk_cosine,
-    # Status functions
-    simd_status,
+    pairwise_distance_matrix,
     simd_constellation_status,
     simd_distance_status,
     simd_holographic_status,
     simd_keywords_status,
+    # Status functions
+    simd_status,
     simd_vector_batch_status,
+    top_k_nearest,
 )
 from .state_board_bridge import StateBoardBridge, get_state_board
-from .event_ring_bridge import EventRingBridge, get_event_ring
-from .dispatch_bridge import DispatchBridge, get_dispatch
 
 __all__ = [
     "cosine_similarity", "batch_cosine", "simd_status",

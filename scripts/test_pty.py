@@ -1,8 +1,9 @@
-import pty
 import os
+import pty
 
 master, slave = pty.openpty()
 import subprocess
+
 proc = subprocess.Popen(
     ['/home/lucas/Desktop/whitemagicdev/whitemagic-koka/batch_ipc'],
     stdin=slave,

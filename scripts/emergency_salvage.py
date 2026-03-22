@@ -3,12 +3,12 @@
 Emergency Ingest: Current Conversation
 Pulls metadata of the most recent Cascade session into WhiteMagic.
 """
-import json
-import sqlite3
 import hashlib
+import json
 import os
+import sqlite3
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
 
 DB_PATH = Path.home() / ".whitemagic" / "memory" / "whitemagic.db"
 CASCADE_DIR = Path.home() / ".codeium" / "windsurf" / "cascade"
@@ -22,15 +22,15 @@ def get_latest_pb():
 def ingest_metadata(pb_path):
     pb_id = pb_path.stem
     title = f"Windsurf Emergency Salvage: {pb_id}"
-    now = datetime.now(timezone.utc).isoformat()
-    content = f"# Windsurf Emergency Salvage\n\n**File**: {pb_path}\n**Last Modified**: {datetime.fromtimestamp(pb_path.stat().st_mtime, timezone.utc).isoformat()}\n**Size**: {pb_path.stat().st_size / 1024 / 1024:.2f} MB\n\nThis session was active during recurring IDE crashes on 2026-03-20."
+    now = datetime.now(UTC).isoformat()
+    content = f"# Windsurf Emergency Salvage\n\n**File**: {pb_path}\n**Last Modified**: {datetime.fromtimestamp(pb_path.stat().st_mtime, UTC).isoformat()}\n**Size**: {pb_path.stat().st_size / 1024 / 1024:.2f} MB\n\nThis session was active during recurring IDE crashes on 2026-03-20."
     content_hash = hashlib.sha256(content.encode()).hexdigest()
-    
+
     conn = sqlite3.connect(str(DB_PATH))
     conn.execute("PRAGMA journal_mode=WAL")
-    
+
     memory_id = hashlib.sha256(pb_id.encode()).hexdigest()[:16]
-    
+
     try:
         conn.execute(
             """INSERT OR REPLACE INTO memories (id, content, memory_type, title, created_at,

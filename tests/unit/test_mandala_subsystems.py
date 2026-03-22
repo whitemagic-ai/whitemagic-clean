@@ -17,7 +17,6 @@ import pytest
 
 from tests.conftest import assert_envelope_shape
 
-
 # =========================================================================
 # 1. Harmony Vector
 # =========================================================================
@@ -67,6 +66,7 @@ class TestHarmonyVector:
 
     def test_snapshot_dict_is_serializable(self):
         import json
+
         from whitemagic.harmony.vector import HarmonyVector
         hv = HarmonyVector()
         hv.record_call("tool", duration_s=0.05, success=True)
@@ -118,7 +118,7 @@ class TestDharmaRulesEngine:
         assert len(rules) >= 6  # at least the default set
 
     def test_destructive_action_triggers_warn(self):
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
         engine = DharmaRulesEngine()
         d = engine.evaluate({"tool": "drop_table", "description": "delete everything"})
         # Haskell primary returns BLOCK; Python fallback returns WARN — both valid
@@ -126,7 +126,7 @@ class TestDharmaRulesEngine:
         assert d.score < 1.0
 
     def test_benign_action_passes(self):
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
         engine = DharmaRulesEngine()
         d = engine.evaluate({"tool": "get_status", "description": "check system health"})
         # Haskell primary may return WARN for unknown tools; Python returns LOG
@@ -134,7 +134,7 @@ class TestDharmaRulesEngine:
         assert d.score >= 0.0  # Haskell may score stricter than Python
 
     def test_secure_profile_blocks_writes(self):
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
         engine = DharmaRulesEngine(active_profile="secure")
         d = engine.evaluate({"tool": "create_memory", "safety": "WRITE"})
         # Both backends should restrict writes in secure profile
@@ -142,7 +142,7 @@ class TestDharmaRulesEngine:
         assert d.score < 1.0
 
     def test_creative_profile_relaxes_writes(self):
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
         engine = DharmaRulesEngine(active_profile="creative")
         d = engine.evaluate({"tool": "create_memory", "safety": "WRITE"})
         # Creative rule fires as LOG, but default mass_mutation rule also fires
@@ -167,7 +167,7 @@ class TestDharmaRulesEngine:
         assert "decision" in trace[-1]
 
     def test_add_rule_at_runtime(self):
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
         engine = DharmaRulesEngine()
         initial_count = len(engine.get_rules())
         engine.add_rule({
@@ -187,6 +187,7 @@ class TestDharmaRulesEngine:
 
     def test_decision_to_dict_serializable(self):
         import json
+
         from whitemagic.dharma.rules import DharmaRulesEngine
         engine = DharmaRulesEngine()
         d = engine.evaluate({"tool": "delete", "description": "remove data"})
@@ -239,6 +240,7 @@ class TestKarmaLedger:
 
     def test_report_structure(self):
         import json
+
         from whitemagic.dharma.karma_ledger import KarmaLedger
         ledger = KarmaLedger()
         ledger.record("tool_a", declared_safety="READ", actual_writes=1, success=True)
@@ -275,7 +277,7 @@ class TestCircuitBreaker:
         assert b.status()["state"] == "closed"
 
     def test_opens_after_threshold_failures(self):
-        from whitemagic.tools.circuit_breaker import CircuitBreaker, BreakerConfig
+        from whitemagic.tools.circuit_breaker import BreakerConfig, CircuitBreaker
         b = CircuitBreaker("test_tool", config=BreakerConfig(failure_threshold=3, window_seconds=60))
         b.record_failure()
         b.record_failure()
@@ -287,7 +289,8 @@ class TestCircuitBreaker:
 
     def test_calm_response_is_structured(self):
         import json
-        from whitemagic.tools.circuit_breaker import CircuitBreaker, BreakerConfig
+
+        from whitemagic.tools.circuit_breaker import BreakerConfig, CircuitBreaker
         b = CircuitBreaker("fail_tool", config=BreakerConfig(failure_threshold=1))
         b.record_failure()
         resp = b.calm_response()
@@ -297,7 +300,7 @@ class TestCircuitBreaker:
         json.dumps(resp)
 
     def test_half_open_probe_succeeds(self):
-        from whitemagic.tools.circuit_breaker import CircuitBreaker, BreakerConfig
+        from whitemagic.tools.circuit_breaker import BreakerConfig, CircuitBreaker
         b = CircuitBreaker("test_tool", config=BreakerConfig(
             failure_threshold=1, cooldown_seconds=0.01  # tiny cooldown
         ))
@@ -311,7 +314,7 @@ class TestCircuitBreaker:
         assert b.status()["state"] == "closed"
 
     def test_half_open_probe_fails_reopens(self):
-        from whitemagic.tools.circuit_breaker import CircuitBreaker, BreakerConfig
+        from whitemagic.tools.circuit_breaker import BreakerConfig, CircuitBreaker
         b = CircuitBreaker("test_tool", config=BreakerConfig(
             failure_threshold=1, cooldown_seconds=0.01
         ))
@@ -329,7 +332,7 @@ class TestCircuitBreaker:
         assert b1 is b2
 
     def test_registry_tripped_list(self):
-        from whitemagic.tools.circuit_breaker import BreakerRegistry, BreakerConfig
+        from whitemagic.tools.circuit_breaker import BreakerConfig, BreakerRegistry
         reg = BreakerRegistry(default_config=BreakerConfig(failure_threshold=1))
         b = reg.get("bad_tool")
         b.record_failure()
@@ -353,6 +356,7 @@ class TestGnosisPortal:
 
     def test_snapshot_is_serializable(self):
         import json
+
         from whitemagic.tools.gnosis import gnosis_snapshot
         snap = gnosis_snapshot()
         json.dumps(snap)  # must not raise

@@ -7,8 +7,8 @@ Migrate the 5 largest modules to WM2 unified framework
 
 import ast
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -34,10 +34,10 @@ def analyze_module(module_path: Path):
     try:
         content = module_path.read_text(encoding='utf-8')
         tree = ast.parse(content)
-        
+
         classes = []
         functions = []
-        
+
         for node in ast.walk(tree):
             if isinstance(node, ast.ClassDef):
                 # Check if it's a manager/engine/handler pattern
@@ -54,7 +54,7 @@ def analyze_module(module_path: Path):
                         "name": node.name,
                         "line": node.lineno,
                     })
-        
+
         return {
             "classes": classes,
             "functions": functions,
@@ -66,10 +66,10 @@ def analyze_module(module_path: Path):
 def generate_migration_template(module_name: str, analysis: dict):
     """Generate WM2 migration template."""
     classes = analysis.get("classes", [])
-    
+
     if not classes:
         return None
-    
+
     template = f'''"""
 WM2 Migration: {module_name}
 {'=' * (15 + len(module_name))}
@@ -80,7 +80,7 @@ from wm2.core import BaseEngine, BaseManager, BaseHandler
 from typing import Dict, Any
 
 '''
-    
+
     for cls in classes[:3]:  # Top 3 classes
         base_class = f"Base{cls['type'].title()}"
         template += f'''
@@ -98,59 +98,59 @@ class {cls['name']}({base_class}):
             # TODO: Add specific stats
         }}
 '''
-    
+
     return template
 
 def main():
     migrations = []
-    
+
     for module_rel in TOP_MODULES:
         module_path = PROJECT_ROOT / module_rel
-        
+
         if not module_path.exists():
             print(f"⚠️  Not found: {module_rel}")
             continue
-        
+
         print(f"Analyzing: {module_rel}")
         analysis = analyze_module(module_path)
-        
+
         if "error" in analysis:
             print(f"   Error: {analysis['error']}")
             continue
-        
+
         print(f"   Classes: {len(analysis['classes'])}")
         print(f"   Migratable functions: {len(analysis['functions'])}")
         print(f"   Lines: {analysis['lines']:,}")
-        
+
         # Generate migration template
         template = generate_migration_template(module_rel, analysis)
-        
+
         if template:
             # Save to WM2
             wm2_path = WM2_ROOT / "migrated" / module_rel.replace("whitemagic/", "").replace("scripts/", "")
             wm2_path.parent.mkdir(parents=True, exist_ok=True)
             wm2_path.write_text(template)
-            
+
             migrations.append({
                 "module": module_rel,
                 "wm2_path": str(wm2_path.relative_to(WM2_ROOT)),
                 "classes": len(analysis['classes']),
                 "lines": analysis['lines'],
             })
-            
+
             print(f"   ✅ Template: {wm2_path.relative_to(WM2_ROOT)}")
-        
+
         print()
-    
+
     # Generate migration summary
     summary = f"""# WM2 Migration Summary
 
-**Generated**: {datetime.now(timezone.utc).isoformat()}
+**Generated**: {datetime.now(UTC).isoformat()}
 
 ## Migrated Modules
 
 """
-    
+
     for mig in migrations:
         summary += f"""
 ### {mig['module']}
@@ -160,7 +160,7 @@ def main():
 - **Original Lines**: {mig['lines']:,}
 - **Status**: Template created, manual review needed
 """
-    
+
     summary += f"""
 
 ## Migration Progress
@@ -178,10 +178,10 @@ def main():
 4. Wire into WM2 framework
 5. Deprecate WM1 versions
 """
-    
+
     summary_path = WM2_ROOT / "MIGRATION_SUMMARY.md"
     summary_path.write_text(summary)
-    
+
     print("─" * 80)
     print("MIGRATION COMPLETE")
     print("─" * 80)

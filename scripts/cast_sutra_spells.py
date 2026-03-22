@@ -6,16 +6,17 @@ Uses the WhiteMagic MCP Grimoire to systematically execute auto-repair, code-gen
 """
 import subprocess
 
+
 def main():
     print("Casting Grimoire Sutras for autonomous self-improvement...")
-    
+
     # Check if we can run some known python patches/repairs as spells
     scripts = [
-        "auto_resolve_redundancy.py", 
+        "auto_resolve_redundancy.py",
         "auto_archive_dead_code.py",
         "execute_grand_integration_sprint.py"
     ]
-    
+
     for s in scripts:
         print(f"\n[SUTRA] Running {s}...")
         try:

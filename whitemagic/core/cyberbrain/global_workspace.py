@@ -1,7 +1,8 @@
 # Cyberbrain Global Workspace
 # Adapting from MandalaOS/Cyberbrain concepts
 import time
-from typing import Dict, Any
+from typing import Any
+
 
 class GlobalWorkspace:
     """
@@ -12,7 +13,7 @@ class GlobalWorkspace:
         self.events = []
         self.active_core = None
 
-    def publish_event(self, core_id: str, event_type: str, payload: Dict[str, Any], salience: float):
+    def publish_event(self, core_id: str, event_type: str, payload: dict[str, Any], salience: float):
         event = {
             "timestamp": time.time(),
             "core": core_id,

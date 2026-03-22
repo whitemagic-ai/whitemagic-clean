@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/panels/BottomPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/BottomPanel.tsx') as f:
     content = f.read()
 
 # Replace the old terminal panel with the new XTermTerminal

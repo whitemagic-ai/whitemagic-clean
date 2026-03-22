@@ -18,7 +18,6 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-
 CASCADE_DIR = Path.home() / ".codeium" / "windsurf" / "cascade"
 
 

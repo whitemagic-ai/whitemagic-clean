@@ -38,7 +38,11 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Count only, skip encoding")
     args = parser.parse_args()
 
-    from whitemagic.core.memory.embeddings import get_embedding_engine, MODEL_NAME, _pack_embedding
+    from whitemagic.core.memory.embeddings import (
+        MODEL_NAME,
+        _pack_embedding,
+        get_embedding_engine,
+    )
 
     engine = get_embedding_engine()
     if not engine.available():

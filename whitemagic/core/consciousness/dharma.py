@@ -31,7 +31,7 @@ class DharmaProtocol:
 
     def __new__(cls) -> DharmaProtocol:
         if cls._instance is None:
-            cls._instance = super(DharmaProtocol, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             cls._instance._init()
         return cls._instance
 

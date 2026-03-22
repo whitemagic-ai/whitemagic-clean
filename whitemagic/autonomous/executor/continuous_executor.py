@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import logging
 import shlex
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -17,6 +15,7 @@ from typing import Any
 from uuid import uuid4
 
 from whitemagic.config.paths import WM_ROOT
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 

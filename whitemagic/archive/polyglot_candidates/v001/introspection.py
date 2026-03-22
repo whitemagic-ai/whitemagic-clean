@@ -40,7 +40,10 @@ from whitemagic.config.paths import (
     WM_ROOT,
 )
 from whitemagic.tools.contract import ENV_VARS, ENVELOPE_VERSION, TOOL_CONTRACT_VERSION
-from whitemagic.tools.tool_surface import get_callable_tool_definitions, get_surface_counts
+from whitemagic.tools.tool_surface import (
+    get_callable_tool_definitions,
+    get_surface_counts,
+)
 
 
 def _has_module(name: str) -> bool:
@@ -167,7 +170,7 @@ def state_summary(*, include_sizes: bool = True) -> dict[str, Any]:
 
 
 def manifest(*, format: str = "summary", include_schemas: bool = False) -> dict[str, Any]:
-    from whitemagic.tools.errors import ToolExecutionError, ErrorCode
+    from whitemagic.tools.errors import ErrorCode, ToolExecutionError
 
     if format not in ["summary", "whitemagic", "mcp"]:
         raise ToolExecutionError(

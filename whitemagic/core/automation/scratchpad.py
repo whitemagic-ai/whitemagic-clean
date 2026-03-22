@@ -27,7 +27,7 @@ class Scratchpad:
     def _load(self) -> list[dict]:
         if self.file_path.exists():
             try:
-                with open(self.file_path, "r") as f:
+                with open(self.file_path) as f:
                     return json.load(f)  # type: ignore[no-any-return]
             except Exception:
                 return []

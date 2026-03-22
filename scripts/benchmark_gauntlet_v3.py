@@ -138,7 +138,7 @@ def tier1_core():
     print("\n═══ TIER 1: Core Baselines ═══")
 
     # Memory store
-    from whitemagic.core.memory.unified import UnifiedMemory, MemoryType
+    from whitemagic.core.memory.unified import MemoryType, UnifiedMemory
     um = UnifiedMemory()
 
     bench("Memory store (SHORT_TERM)", lambda: um.store(
@@ -203,7 +203,9 @@ def tier2_arrow():
     # Rust Arrow encode/decode directly
     try:
         from whitemagic.optimization.rust_accelerators import (
-            arrow_available, arrow_encode_memories, arrow_decode_memories,
+            arrow_available,
+            arrow_decode_memories,
+            arrow_encode_memories,
         )
         if arrow_available():
             sample = _json.dumps([{
@@ -236,7 +238,9 @@ def tier3_tokio():
 
     try:
         from whitemagic.optimization.rust_accelerators import (
-            tokio_deploy_clones, tokio_clone_bench, tokio_clone_stats,
+            tokio_clone_bench,
+            tokio_clone_stats,
+            tokio_deploy_clones,
         )
 
         # Clone deployment benchmark
@@ -293,7 +297,9 @@ def tier4_iceoryx():
 
     try:
         from whitemagic.optimization.rust_accelerators import (
-            ipc_bridge_init, ipc_bridge_publish, ipc_bridge_status,
+            ipc_bridge_init,
+            ipc_bridge_publish,
+            ipc_bridge_status,
         )
         # Verify the bridge is actually available
         if ipc_bridge_status() is None:

@@ -83,7 +83,9 @@ class FeedbackController:
 
         # 2. Inject into Autonomous Awareness (lazy import — module is optional)
         try:
-            from whitemagic.autonomous.continuous_awareness import get_awareness  # type: ignore[import-not-found]
+            from whitemagic.autonomous.continuous_awareness import (
+                get_awareness,  # type: ignore[import-not-found]
+            )
             awareness = get_awareness()
             awareness.inject_insight(f"BREAKTHROUGH: {pattern} (Confidence: {event.confidence})")
         except Exception as e:

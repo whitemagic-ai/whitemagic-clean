@@ -18,8 +18,9 @@ Usage:
 
 import logging
 import re
-from whitemagic.utils.fast_regex import compile as re_compile
 from typing import Any
+
+from whitemagic.utils.fast_regex import compile as re_compile
 
 logger = logging.getLogger(__name__)
 
@@ -101,11 +102,10 @@ def sanitize_tool_args(tool_name: str, kwargs: dict[str, Any]) -> dict[str, Any]
     if tool_name not in _CONTENT_SCAN_EXEMPT:
         # Try Haskell boundary detection first (stricter, exhaustive pattern matching)
         try:
-            from whitemagic.utils.fast_json import dumps_str as _fj_dumps_str
-
             from whitemagic.core.acceleration.haskell_bridge import (
                 haskell_check_boundaries,
             )
+            from whitemagic.utils.fast_json import dumps_str as _fj_dumps_str
             args_str = _fj_dumps_str(kwargs, default=str)[:10000]
             violations = haskell_check_boundaries(tool_name, "", args_str)
             if violations:

@@ -6,14 +6,14 @@ Phase 1: Core Commands for Production Readiness
 import logging
 import os
 import sys
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from datetime import datetime
 from importlib.util import find_spec
 from pathlib import Path
 from typing import Any
 
 import click
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +114,9 @@ except ImportError:
 
 # Hardware CLI commands (v4.11.0 - Hardware Awareness)
 try:
-    from whitemagic.cli.hardware_commands import hardware  # type: ignore[import-not-found]
+    from whitemagic.cli.hardware_commands import (
+        hardware,  # type: ignore[import-not-found]
+    )
     HAS_HARDWARE_CLI = True
 except ImportError:
     HAS_HARDWARE_CLI = False
@@ -166,9 +168,9 @@ except ImportError:
 # New CLI Commands (Phase 27 - Infrastructure)
 try:
     from whitemagic.cli.cli_commands_optimization import optimization_cli
-    from whitemagic.cli.cli_commands_thought import thought_cli
-    from whitemagic.cli.cli_commands_supervisor import supervisor_cli
     from whitemagic.cli.cli_commands_phase import phase_cli
+    from whitemagic.cli.cli_commands_supervisor import supervisor_cli
+    from whitemagic.cli.cli_commands_thought import thought_cli
     HAS_NEW_INFRA = True
 except ImportError:
     HAS_NEW_INFRA = False
@@ -230,7 +232,11 @@ def main(
             pass
 
 # --- Enhanced Commands (Rich Enabled) --- (PSR-028: status/health/doctor extracted to cli/commands/diagnostics_commands.py)
-from whitemagic.cli.commands.diagnostics_commands import register_diagnostics_commands, status_command  # noqa: E402
+from whitemagic.cli.commands.diagnostics_commands import (  # noqa: E402
+    register_diagnostics_commands,
+    status_command,
+)
+
 register_diagnostics_commands(main)
 
 
@@ -492,10 +498,12 @@ def get_memory():  # type: ignore[return]
 
 # --- Gana System --- (PSR-028: extracted to cli/commands/gana_commands.py)
 from whitemagic.cli.commands.gana_commands import gana_group  # noqa: E402
+
 main.add_command(gana_group)
 
 # --- Dharma System --- (PSR-028: extracted to cli/commands/dharma_commands.py)
 from whitemagic.cli.commands.dharma_commands import dharma_group  # noqa: E402
+
 main.add_command(dharma_group)
 
 # --- Local ML (Enhanced) ---
@@ -603,10 +611,12 @@ def systemmap_command() -> None:
 
 # --- Wisdom & Reasoning --- (PSR-028: extracted to cli/commands/wisdom_commands.py)
 from whitemagic.cli.commands.wisdom_commands import wisdom_group  # noqa: E402
+
 main.add_command(wisdom_group)
 
 # --- Maintenance Commands --- (PSR-028: extracted to cli/commands/maintenance_commands.py)
 from whitemagic.cli.commands.maintenance_commands import maintenance_group  # noqa: E402
+
 main.add_command(maintenance_group)
 
 # --- Core Memory Commands ---
@@ -652,6 +662,7 @@ def remember(ctx, content: str, title: str | None, tags: str | None, memory_type
 
 # --- Scratchpad Commands --- (PSR-028: extracted to cli/commands/scratchpad_commands.py)
 from whitemagic.cli.commands.scratchpad_commands import scratchpad  # noqa: E402
+
 main.add_command(scratchpad)
 
 # --- Session Commands --- (PSR-028: session group kept inline — single command, low value to extract)
@@ -954,7 +965,10 @@ def tools(ctx, json_output: bool) -> None:
     click.echo("  whitemagic <command> --help")
 
 # === RESONANCE / HEALTH COMMANDS === (PSR-028: extracted to cli/commands/health_commands.py)
-from whitemagic.cli.commands.health_commands import register_health_commands  # noqa: E402
+from whitemagic.cli.commands.health_commands import (
+    register_health_commands,  # noqa: E402
+)
+
 register_health_commands(main)
 
 @main.command(name="memory-list")
@@ -1074,6 +1088,7 @@ def matrix_seen(limit: int):
 
 # --- Balance Commands --- (PSR-028: extracted to cli/commands/balance_commands.py)
 from whitemagic.cli.commands.balance_commands import balance  # noqa: E402
+
 main.add_command(balance)
 
 
@@ -1124,11 +1139,15 @@ def manifest() -> None:
 
 # === SHADOW CLONE ARMY COMMANDS === (PSR-028: extracted to cli/commands/army_commands.py)
 from whitemagic.cli.commands.army_commands import army  # noqa: E402
+
 main.add_command(army)
 
 
 # === CONDUCTOR COMMANDS === (PSR-028: extracted to cli/commands/conductor_commands.py)
-from whitemagic.cli.commands.conductor_commands import register_conductor_commands  # noqa: E402
+from whitemagic.cli.commands.conductor_commands import (
+    register_conductor_commands,  # noqa: E402
+)
+
 register_conductor_commands(main)
 
 @main.command()
@@ -1201,6 +1220,7 @@ def observe() -> None:
 
 # --- Dream Daemon Commands --- (PSR-028: extracted to cli/commands/dream_commands.py)
 from whitemagic.cli.commands.dream_commands import dream_group  # noqa: E402
+
 main.add_command(dream_group)
 
 # --- Extension Registration ---
@@ -1380,6 +1400,7 @@ if HAS_RUST_CLI:
 
 # ── Vault CLI ───────────────────────────────────────────────── (PSR-028: extracted to cli/commands/vault_commands.py)
 from whitemagic.cli.commands.vault_commands import vault_group  # noqa: E402
+
 main.add_command(vault_group)
 
 

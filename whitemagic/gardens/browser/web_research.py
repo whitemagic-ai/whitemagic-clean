@@ -22,7 +22,7 @@ import re
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import quote_plus, urlparse
 
@@ -64,7 +64,7 @@ class FetchResult:
     status_code: int = 0
     duration_ms: float = 0.0
     error: str | None = None
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     @property
     def success(self) -> bool:
@@ -111,7 +111,7 @@ class SearchResponse:
     total_results: int = 0
     duration_ms: float = 0.0
     error: str | None = None
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     @property
     def success(self) -> bool:
@@ -161,7 +161,7 @@ class ResearchReport:
     sources_fetched: int = 0
     duration_ms: float = 0.0
     error: str | None = None
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -445,7 +445,8 @@ async def web_search(
                 # DuckDuckGo wraps URLs in redirects, extract actual URL
                 if isinstance(href, str) and "uddg=" in href:
                     # Extract from redirect: //duckduckgo.com/l/?uddg=ENCODED_URL&...
-                    from urllib.parse import parse_qs, urlparse as _urlparse
+                    from urllib.parse import parse_qs
+                    from urllib.parse import urlparse as _urlparse
                     parsed = _urlparse(href)
                     params = parse_qs(parsed.query)
                     actual_urls = params.get("uddg", [])
@@ -692,7 +693,7 @@ def _emit_research_event(topic: str, num_findings: int, duration_ms: float) -> N
                 "topic": topic,
                 "findings": num_findings,
                 "duration_ms": round(duration_ms, 1),
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
             confidence=0.8,
         ))
@@ -734,7 +735,7 @@ class BrowserSessionManager:
             self._session = BrowserSession()
             try:
                 await self._session.connect()
-                self._created_at = datetime.now(timezone.utc).isoformat()
+                self._created_at = datetime.now(UTC).isoformat()
             except Exception as e:
                 self._session = None
                 raise RuntimeError(f"Cannot connect to Chrome: {e}. "

@@ -41,12 +41,12 @@ REPORTS_DIR.mkdir(exist_ok=True)
 try:
     import whitemagic_rs as rs
     from whitemagic.optimization.rust_accelerators import (
-        tokio_clone_bench,
-        tokio_deploy_clones,
-        tokio_clone_stats,
         keyword_extract,
         keyword_extract_batch,
         minhash_find_duplicates,
+        tokio_clone_bench,
+        tokio_clone_stats,
+        tokio_deploy_clones,
     )
     RUST_OK = True
 except ImportError:

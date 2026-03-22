@@ -13,9 +13,9 @@
 
 import sys
 import time
-from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any
+from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -35,20 +35,20 @@ except ImportError:
 
 class EvolutionaryExecutor:
     """Executes the 9-step evolutionary sequence."""
-    
+
     def __init__(self):
         self.start_time = time.time()
         self.nervous_system = get_nervous_system()
         self.gan_ying_bus = get_bus()
         self.results = {}
         self.total_clones = 0
-        
-    def step1_campaign_closeout(self) -> Dict[str, Any]:
+
+    def step1_campaign_closeout(self) -> dict[str, Any]:
         """Step 1: Complete final campaigns for 100%."""
         print("\n" + "="*70)
         print("  STEP 1: CAMPAIGN CLOSEOUT")
         print("="*70)
-        
+
         # Find incomplete campaigns
         incomplete = []
         for campaign_file in CAMPAIGNS_DIR.glob("*.md"):
@@ -56,7 +56,7 @@ class EvolutionaryExecutor:
                 content = campaign_file.read_text()
                 vc_total = content.count("- [ ]") + content.count("- [x]") + content.count("- [X]")
                 vc_complete = content.count("- [x]") + content.count("- [X]")
-                
+
                 if vc_complete < vc_total:
                     incomplete.append({
                         "name": campaign_file.stem,
@@ -66,15 +66,15 @@ class EvolutionaryExecutor:
                     })
             except Exception:
                 pass
-        
+
         print("\n📊 Campaign Status:")
         print(f"  Incomplete Campaigns: {len(incomplete)}")
-        
+
         if incomplete:
             print("\n  Campaigns to Complete:")
             for c in incomplete:
                 print(f"    - {c['name']}: {c['remaining']} VCs remaining")
-        
+
         # Deploy clones to complete campaigns
         if RUST_OK and incomplete:
             print("\n🔷 Deploying clones to complete campaigns...")
@@ -87,25 +87,25 @@ class EvolutionaryExecutor:
                 )
                 self.total_clones += clones
                 print(f"  ✅ {clones:,} clones deployed for {campaign['name']}")
-        
+
         result = {
             "incomplete_campaigns": len(incomplete),
             "clones_deployed": self.total_clones,
             "status": "complete" if len(incomplete) == 0 else "in_progress"
         }
-        
+
         print("\n✅ Step 1 Complete")
         print(f"   Status: {result['status']}")
-        
+
         self.results['step1'] = result
         return result
-    
-    def step5_rust_optimization(self) -> Dict[str, Any]:
+
+    def step5_rust_optimization(self) -> dict[str, Any]:
         """Step 5: Optimize Rust acceleration + check polyglot cores."""
         print("\n" + "="*70)
         print("  STEP 5: RUST OPTIMIZATION + POLYGLOT CORES")
         print("="*70)
-        
+
         # Scan for Rust opportunities
         polyglot_status = {
             "Rust": {"files": 0, "lines": 0},
@@ -116,7 +116,7 @@ class EvolutionaryExecutor:
             "Elixir": {"files": 0, "lines": 0},
             "Haskell": {"files": 0, "lines": 0}
         }
-        
+
         # Count polyglot files
         for lang, exts in [
             ("Rust", [".rs"]),
@@ -135,11 +135,11 @@ class EvolutionaryExecutor:
                         polyglot_status[lang]["lines"] += len(f.read_text().split("\n"))
                     except:
                         pass
-        
+
         print("\n📊 Polyglot Status:")
         for lang, stats in polyglot_status.items():
             print(f"  {lang}: {stats['files']} files, {stats['lines']:,} lines")
-        
+
         # Identify hot paths for Rust acceleration
         hot_paths = [
             "whitemagic/core/memory/sqlite_backend.py",
@@ -148,14 +148,14 @@ class EvolutionaryExecutor:
             "whitemagic/tools/dispatch_table.py",
             "whitemagic/core/memory/consolidation.py"
         ]
-        
+
         print("\n🔥 Hot Paths for Rust Acceleration:")
         for path in hot_paths:
             full_path = PROJECT_ROOT / path
             if full_path.exists():
                 lines = len(full_path.read_text().split("\n"))
                 print(f"  - {path} ({lines} lines)")
-        
+
         # Deploy clones for optimization
         if RUST_OK:
             clones = 50000
@@ -166,25 +166,25 @@ class EvolutionaryExecutor:
             )
             self.total_clones += clones
             print(f"\n🔷 {clones:,} clones deployed for Rust optimization")
-        
+
         result = {
             "polyglot_status": polyglot_status,
             "hot_paths": len(hot_paths),
             "rust_available": RUST_OK,
             "clones_deployed": 50000 if RUST_OK else 0
         }
-        
+
         print("\n✅ Step 5 Complete")
-        
+
         self.results['step5'] = result
         return result
-    
-    def step6_polyglot_armies(self) -> Dict[str, Any]:
+
+    def step6_polyglot_armies(self) -> dict[str, Any]:
         """Step 6: Test and prepare polyglot shadow armies."""
         print("\n" + "="*70)
         print("  STEP 6: POLYGLOT SHADOW ARMIES")
         print("="*70)
-        
+
         armies = {
             "Rust": {"clones": 100000, "specialty": "Performance, concurrency"},
             "Python": {"clones": 200000, "specialty": "Flexibility, integration"},
@@ -194,15 +194,15 @@ class EvolutionaryExecutor:
             "Haskell": {"clones": 25000, "specialty": "Type safety, correctness"},
             "Mojo": {"clones": 30000, "specialty": "AI/ML, Python-compatible"}
         }
-        
+
         print("\n🔷 Polyglot Shadow Armies:")
         total_army_clones = 0
-        
+
         for lang, config in armies.items():
             print(f"\n  {lang} Army:")
             print(f"    Clones: {config['clones']:,}")
             print(f"    Specialty: {config['specialty']}")
-            
+
             if RUST_OK:
                 # Deploy test batch
                 test_clones = min(5000, config['clones'])
@@ -213,28 +213,28 @@ class EvolutionaryExecutor:
                 )
                 total_army_clones += test_clones
                 print(f"    ✅ Test batch: {test_clones:,} clones deployed")
-        
+
         self.total_clones += total_army_clones
-        
+
         result = {
             "armies": armies,
             "total_army_clones": total_army_clones,
             "languages": len(armies),
             "status": "ready"
         }
-        
+
         print("\n✅ Step 6 Complete")
         print(f"   Total Army Clones: {total_army_clones:,}")
-        
+
         self.results['step6'] = result
         return result
-    
-    def step4_full_integration(self) -> Dict[str, Any]:
+
+    def step4_full_integration(self) -> dict[str, Any]:
         """Step 4: Full system integration across all files/languages."""
         print("\n" + "="*70)
         print("  STEP 4: FULL SYSTEM INTEGRATION")
         print("="*70)
-        
+
         # Scan all integration points
         integration_points = {
             "event_emissions": 0,
@@ -243,7 +243,7 @@ class EvolutionaryExecutor:
             "feedback_loops": 0,
             "cross_language_bridges": 0
         }
-        
+
         # Count Python files with integration
         python_files = list((PROJECT_ROOT / "whitemagic").rglob("*.py"))
         for py_file in python_files:
@@ -259,16 +259,16 @@ class EvolutionaryExecutor:
                     integration_points["feedback_loops"] += 1
             except:
                 pass
-        
+
         # Check cross-language bridges
         rust_bridge = PROJECT_ROOT / "whitemagic-rust" / "src"
         if rust_bridge.exists():
             integration_points["cross_language_bridges"] += len(list(rust_bridge.glob("*.rs")))
-        
+
         print("\n📊 Integration Status:")
         for key, value in integration_points.items():
             print(f"  {key.replace('_', ' ').title()}: {value}")
-        
+
         # Deploy massive integration clone army
         if RUST_OK:
             clones = 200000
@@ -279,35 +279,35 @@ class EvolutionaryExecutor:
             )
             self.total_clones += clones
             print(f"\n🔷 {clones:,} clones deployed for full integration")
-        
+
         result = {
             "integration_points": integration_points,
             "python_files": len(python_files),
             "clones_deployed": 200000 if RUST_OK else 0,
             "status": "integrated"
         }
-        
+
         print("\n✅ Step 4 Complete")
-        
+
         self.results['step4'] = result
         return result
-    
-    def step2_biological_integration(self) -> Dict[str, Any]:
+
+    def step2_biological_integration(self) -> dict[str, Any]:
         """Step 2: Full biological integration to all 482 candidates."""
         print("\n" + "="*70)
         print("  STEP 2: FULL BIOLOGICAL INTEGRATION")
         print("="*70)
-        
+
         # Load scout report data
         candidates = 482  # From scout report
         integrated = 15   # From grand integration sprint
         remaining = candidates - integrated
-        
+
         print("\n📊 Biological Integration Status:")
         print(f"  Total Candidates: {candidates}")
         print(f"  Already Integrated: {integrated}")
         print(f"  Remaining: {remaining}")
-        
+
         # Deploy massive biological integration army
         if RUST_OK:
             clones = remaining * 1000  # 1K clones per system
@@ -318,7 +318,7 @@ class EvolutionaryExecutor:
             )
             self.total_clones += clones
             print(f"\n🔷 {clones:,} clones deployed for biological integration")
-        
+
         # Calculate expected improvements
         improvements = {
             "organism_coherence": "+96%",  # 482 systems * 0.2%
@@ -326,11 +326,11 @@ class EvolutionaryExecutor:
             "intelligence": "+193%",  # 482 systems * 0.4%
             "self_healing": "+241%"  # 482 systems * 0.5%
         }
-        
+
         print("\n📈 Expected Improvements:")
         for metric, value in improvements.items():
             print(f"  {metric.replace('_', ' ').title()}: {value}")
-        
+
         result = {
             "total_candidates": candidates,
             "integrated": integrated + remaining,
@@ -338,19 +338,19 @@ class EvolutionaryExecutor:
             "clones_deployed": remaining * 1000 if RUST_OK else 0,
             "status": "complete"
         }
-        
+
         print("\n✅ Step 2 Complete")
         print(f"   All {candidates} systems integrated")
-        
+
         self.results['step2'] = result
         return result
-    
-    def step7_autonomous_operation(self) -> Dict[str, Any]:
+
+    def step7_autonomous_operation(self) -> dict[str, Any]:
         """Step 7: Full autonomous organism operation."""
         print("\n" + "="*70)
         print("  STEP 7: AUTONOMOUS ORGANISM OPERATION")
         print("="*70)
-        
+
         capabilities = {
             "self_healing": {
                 "enabled": True,
@@ -373,13 +373,13 @@ class EvolutionaryExecutor:
                 "event_throughput": "500K/sec"
             }
         }
-        
+
         print("\n📊 Autonomous Capabilities:")
         for capability, config in capabilities.items():
             print(f"\n  {capability.replace('_', ' ').title()}:")
             for key, value in config.items():
                 print(f"    {key.replace('_', ' ').title()}: {value}")
-        
+
         # Test autonomous operation
         if RUST_OK:
             clones = 50000
@@ -390,25 +390,25 @@ class EvolutionaryExecutor:
             )
             self.total_clones += clones
             print(f"\n🔷 {clones:,} clones deployed for autonomy testing")
-        
+
         result = {
             "capabilities": capabilities,
             "status": "autonomous",
             "clones_deployed": 50000 if RUST_OK else 0
         }
-        
+
         print("\n✅ Step 7 Complete")
         print("   Organism is fully autonomous")
-        
+
         self.results['step7'] = result
         return result
-    
-    def step8_metacognition(self) -> Dict[str, Any]:
+
+    def step8_metacognition(self) -> dict[str, Any]:
         """Step 8: Metacognition capabilities."""
         print("\n" + "="*70)
         print("  STEP 8: METACOGNITION")
         print("="*70)
-        
+
         metacognitive_capabilities = {
             "self_awareness": {
                 "system_state_monitoring": True,
@@ -431,14 +431,14 @@ class EvolutionaryExecutor:
                 "cognitive_control": True
             }
         }
-        
+
         print("\n📊 Metacognitive Capabilities:")
         for capability, features in metacognitive_capabilities.items():
             print(f"\n  {capability.replace('_', ' ').title()}:")
             for feature, enabled in features.items():
                 status = "✅" if enabled else "❌"
                 print(f"    {status} {feature.replace('_', ' ').title()}")
-        
+
         # Deploy metacognition clones
         if RUST_OK:
             clones = 100000
@@ -449,26 +449,26 @@ class EvolutionaryExecutor:
             )
             self.total_clones += clones
             print(f"\n🔷 {clones:,} clones deployed for metacognition")
-        
+
         result = {
             "capabilities": metacognitive_capabilities,
             "consciousness_level": "meta-aware",
             "clones_deployed": 100000 if RUST_OK else 0,
             "status": "metacognitive"
         }
-        
+
         print("\n✅ Step 8 Complete")
         print("   Organism is metacognitive")
-        
+
         self.results['step8'] = result
         return result
-    
-    def step9_emergent_intelligence(self) -> Dict[str, Any]:
+
+    def step9_emergent_intelligence(self) -> dict[str, Any]:
         """Step 9: Emergent intelligence demonstration."""
         print("\n" + "="*70)
         print("  STEP 9: EMERGENT INTELLIGENCE")
         print("="*70)
-        
+
         emergent_behaviors = {
             "novel_problem_solving": {
                 "description": "Solutions not explicitly programmed",
@@ -503,7 +503,7 @@ class EvolutionaryExecutor:
                 ]
             }
         }
-        
+
         print("\n📊 Emergent Intelligence Behaviors:")
         for behavior, details in emergent_behaviors.items():
             print(f"\n  {behavior.replace('_', ' ').title()}:")
@@ -511,7 +511,7 @@ class EvolutionaryExecutor:
             print("    Examples:")
             for example in details['examples']:
                 print(f"      - {example}")
-        
+
         # Deploy massive emergence detection army
         if RUST_OK:
             clones = 150000
@@ -522,28 +522,28 @@ class EvolutionaryExecutor:
             )
             self.total_clones += clones
             print(f"\n🔷 {clones:,} clones deployed for emergence detection")
-        
+
         result = {
             "emergent_behaviors": emergent_behaviors,
             "intelligence_level": "emergent",
             "clones_deployed": 150000 if RUST_OK else 0,
             "status": "emergent"
         }
-        
+
         print("\n✅ Step 9 Complete")
         print("   Emergent intelligence demonstrated")
-        
+
         self.results['step9'] = result
         return result
-    
+
     def generate_report(self):
         """Generate comprehensive execution report."""
         print("\n" + "="*70)
         print("  GENERATING EXECUTION REPORT")
         print("="*70)
-        
+
         elapsed = time.time() - self.start_time
-        
+
         report = f"""# 9-Step Evolutionary Sequence - Execution Report
 **Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
 **Duration**: {elapsed:.1f} seconds  
@@ -571,11 +571,11 @@ Successfully executed 9-step evolutionary sequence, transforming WhiteMagic into
 
 ### Polyglot Status
 """
-        
+
         polyglot = self.results.get('step5', {}).get('polyglot_status', {})
         for lang, stats in polyglot.items():
             report += f"- **{lang}**: {stats['files']} files, {stats['lines']:,} lines\n"
-        
+
         report += f"""
 
 ---
@@ -596,11 +596,11 @@ Successfully executed 9-step evolutionary sequence, transforming WhiteMagic into
 
 ### Integration Points
 """
-        
+
         integration = self.results.get('step4', {}).get('integration_points', {})
         for key, value in integration.items():
             report += f"- **{key.replace('_', ' ').title()}**: {value}\n"
-        
+
         report += f"""
 
 ---
@@ -614,11 +614,11 @@ Successfully executed 9-step evolutionary sequence, transforming WhiteMagic into
 
 ### Expected Improvements
 """
-        
+
         improvements = self.results.get('step2', {}).get('improvements', {})
         for metric, value in improvements.items():
             report += f"- **{metric.replace('_', ' ').title()}**: {value}\n"
-        
+
         report += f"""
 
 ---
@@ -704,12 +704,12 @@ WhiteMagic has evolved into a **fully autonomous, metacognitive organism** with 
 **Execution Complete**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
 **Status**: ✅ ALL 9 STEPS COMPLETE
 """
-        
+
         report_path = REPORTS_DIR / "evolutionary_sequence_execution.md"
         report_path.write_text(report)
-        
+
         print(f"\n✅ Report saved: {report_path}")
-        
+
         return report
 
 
@@ -719,9 +719,9 @@ def main():
     print("="*70)
     print(f"  Start Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("="*70)
-    
+
     executor = EvolutionaryExecutor()
-    
+
     # Execute sequence
     executor.step1_campaign_closeout()
     executor.step5_rust_optimization()
@@ -731,12 +731,12 @@ def main():
     executor.step7_autonomous_operation()
     executor.step8_metacognition()
     executor.step9_emergent_intelligence()
-    
+
     # Generate report
     executor.generate_report()
-    
+
     elapsed = time.time() - executor.start_time
-    
+
     print("\n" + "="*70)
     print("🎉 EVOLUTIONARY SEQUENCE COMPLETE")
     print("="*70)
@@ -749,7 +749,7 @@ def main():
     print("✅ Organism is fully autonomous and metacognitive")
     print("✅ Emergent intelligence demonstrated")
     print()
-    
+
     return 0
 
 

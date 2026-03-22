@@ -165,7 +165,9 @@ class ConsolidationEngine:
                         continue
 
                     # Use MansionBridge for high-performance similarity (v5.2.0)
-                    from whitemagic.core.mansion_bridge import get_mansion_bridge  # type: ignore[import-not-found]
+                    from whitemagic.core.mansion_bridge import (
+                        get_mansion_bridge,  # type: ignore[import-not-found]
+                    )
                     bridge = get_mansion_bridge()
                     similarity = bridge.similarity(title1.lower(), title2.lower())
 

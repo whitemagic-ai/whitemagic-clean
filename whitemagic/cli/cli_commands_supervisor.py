@@ -6,8 +6,10 @@ wm supervisor status/enable/disable
 """
 
 import click
+
 from whitemagic.autonomous.supervisor import Supervisor
 from whitemagic.config import paths
+
 
 @click.group(name="supervisor")
 def supervisor_cli() -> None:

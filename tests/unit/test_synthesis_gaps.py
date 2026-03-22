@@ -173,6 +173,7 @@ class TestMeshAwareness:
 
     def test_process_redis_message_peer_discovered(self):
         import json
+
         from whitemagic.mesh.awareness import MeshAwareness
         aw = MeshAwareness()
         aw.process_redis_message(json.dumps({
@@ -186,6 +187,7 @@ class TestMeshAwareness:
 
     def test_process_redis_message_peer_left(self):
         import json
+
         from whitemagic.mesh.awareness import MeshAwareness
         aw = MeshAwareness()
         aw.register_peer("node-x", "addr")
@@ -226,7 +228,9 @@ class TestSalienceHomeostaticCoupling:
 
     def test_emit_to_arbiter(self):
         from whitemagic.harmony.homeostatic_loop import (
-            HomeostaticLoop, HomeostaticAction, ActionLevel,
+            ActionLevel,
+            HomeostaticAction,
+            HomeostaticLoop,
         )
         loop = HomeostaticLoop()
         action = HomeostaticAction(
@@ -289,7 +293,10 @@ class TestConsolidationBicameral:
         assert hasattr(c, "_bicameral_enrich")
 
     def test_bicameral_enrich_no_clusters(self):
-        from whitemagic.core.memory.consolidation import MemoryConsolidator, MemoryCluster
+        from whitemagic.core.memory.consolidation import (
+            MemoryCluster,
+            MemoryConsolidator,
+        )
         c = MemoryConsolidator()
         strategies = []
         # Should be a no-op with fewer than 2 clusters
@@ -301,7 +308,10 @@ class TestConsolidationBicameral:
         assert len(strategies) == 0
 
     def test_bicameral_enrich_finds_logical_links(self):
-        from whitemagic.core.memory.consolidation import MemoryConsolidator, MemoryCluster
+        from whitemagic.core.memory.consolidation import (
+            MemoryCluster,
+            MemoryConsolidator,
+        )
         c = MemoryConsolidator()
         strategies = []
         c._bicameral_enrich([
@@ -312,7 +322,10 @@ class TestConsolidationBicameral:
         assert len(logical) >= 1
 
     def test_bicameral_enrich_finds_creative_links(self):
-        from whitemagic.core.memory.consolidation import MemoryConsolidator, MemoryCluster
+        from whitemagic.core.memory.consolidation import (
+            MemoryCluster,
+            MemoryConsolidator,
+        )
         c = MemoryConsolidator()
         strategies = []
         c._bicameral_enrich([

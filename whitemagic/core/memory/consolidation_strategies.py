@@ -1,6 +1,7 @@
 """Consolidation strategy definitions extracted from consolidation.py (PSR-011)."""
 from enum import Enum
 
+
 class ConsolidationStrategy(Enum):
     SIMILARITY = "similarity"
     TEMPORAL = "temporal"

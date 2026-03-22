@@ -6,8 +6,8 @@ Compare deep scan results to identify what's missing from WM2
 """
 
 import json
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
 WM2_ROOT = Path.home() / "Desktop" / "WM2"

@@ -36,7 +36,7 @@ def analyze_for_serializable(file_path: Path) -> dict:
         content = file_path.read_text(encoding='utf-8')
         has_to_dict = bool(re.search(r'def\s+to_dict\s*\(', content))
         has_from_dict = bool(re.search(r'def\s+from_dict\s*\(', content))
-        
+
         return {
             'has_to_dict': has_to_dict,
             'has_from_dict': has_from_dict,
@@ -50,7 +50,7 @@ def analyze_for_metrics(file_path: Path) -> dict:
     try:
         content = file_path.read_text(encoding='utf-8')
         has_get_stats = bool(re.search(r'def\s+get_stats\s*\(', content))
-        
+
         return {
             'has_get_stats': has_get_stats,
             'can_migrate': has_get_stats,
@@ -61,44 +61,44 @@ def analyze_for_metrics(file_path: Path) -> dict:
 def main():
     print("🔍 Analyzing codebase for pattern unification opportunities...")
     print()
-    
+
     whitemagic_dir = PROJECT_ROOT / "whitemagic"
-    
+
     # Find all to_dict implementations
     serializable_candidates = []
     metrics_candidates = []
-    
+
     for py_file in whitemagic_dir.rglob("*.py"):
         if py_file.name.startswith("_") or "test" in str(py_file):
             continue
-        
+
         serial_analysis = analyze_for_serializable(py_file)
         if serial_analysis['can_migrate']:
             serializable_candidates.append(str(py_file.relative_to(PROJECT_ROOT)))
-        
+
         metrics_analysis = analyze_for_metrics(py_file)
         if metrics_analysis['can_migrate']:
             metrics_candidates.append(str(py_file.relative_to(PROJECT_ROOT)))
-    
+
     print("📊 Pattern Analysis:")
     print(f"   Serializable candidates: {len(serializable_candidates)}")
     print(f"   Metrics candidates: {len(metrics_candidates)}")
     print()
-    
+
     # Create migration templates for core components
     print("📝 Creating WM2 migration templates...")
     print()
-    
+
     migrated_count = 0
-    
+
     for manager_path in core_managers:
         file_path = PROJECT_ROOT / manager_path
         if not file_path.exists():
             continue
-        
+
         wm2_path = WM2_ROOT / "migrated" / manager_path.replace("whitemagic/", "")
         wm2_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         template = f'''"""
 WM2 Migration: {manager_path}
 {'=' * (15 + len(manager_path))}
@@ -128,19 +128,19 @@ class {file_path.stem.title().replace('_', '')}(BaseManager, Serializable, Metri
     
     # TODO: Migrate specific methods from WM1
 '''
-        
+
         wm2_path.write_text(template)
         migrated_count += 1
         print(f"   ✅ {wm2_path.relative_to(WM2_ROOT)}")
-    
+
     for engine_path in core_engines:
         file_path = PROJECT_ROOT / engine_path
         if not file_path.exists():
             continue
-        
+
         wm2_path = WM2_ROOT / "migrated" / engine_path.replace("whitemagic/", "")
         wm2_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         template = f'''"""
 WM2 Migration: {engine_path}
 {'=' * (15 + len(engine_path))}
@@ -176,11 +176,11 @@ class {file_path.stem.title().replace('_', '')}(BaseEngine, Serializable, Metric
     
     # TODO: Migrate specific methods from WM1
 '''
-        
+
         wm2_path.write_text(template)
         migrated_count += 1
         print(f"   ✅ {wm2_path.relative_to(WM2_ROOT)}")
-    
+
     print()
     print("=" * 80)
     print("PHASE 1 COMPLETE")

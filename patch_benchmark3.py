@@ -1,5 +1,5 @@
 
-with open('scripts/benchmark_mcp.py', 'r') as f:
+with open('scripts/benchmark_mcp.py') as f:
     content = f.read()
 
 # Fix the benchmark_mcp.py resource listing test length requirement

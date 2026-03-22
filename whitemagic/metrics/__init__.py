@@ -1,13 +1,12 @@
 import logging
-
 from datetime import datetime
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
-
-from typing import Optional, Dict, Any
-from .collector import MetricsCollector
+from typing import Any, Dict, Optional
 
 from whitemagic.config.paths import WM_ROOT
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+
+from .collector import MetricsCollector
+
 logger = logging.getLogger(__name__)
 
 # Global metrics collector instance
@@ -21,7 +20,7 @@ def get_tracker() -> MetricsCollector:
     return _tracker
 
 # Simple metric tracking function for backward compatibility
-def track_metric(category: str, metric: Optional[str] = None, value: float = 1.0, context: Optional[str] = "") -> Dict[str, Any]:
+def track_metric(category: str, metric: str | None = None, value: float = 1.0, context: str | None = "") -> dict[str, Any]:
     """Track a metric value and persist to JSONL."""
     if metric is None:
         metric = category

@@ -14,7 +14,7 @@ from __future__ import annotations
 from collections.abc import Generator
 from contextlib import contextmanager
 from contextvars import ContextVar
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 _NOW_OVERRIDE: ContextVar[datetime | None] = ContextVar("_wm_now_override", default=None)
 
@@ -22,7 +22,7 @@ _NOW_OVERRIDE: ContextVar[datetime | None] = ContextVar("_wm_now_override", defa
 def _normalize(dt: datetime) -> datetime:
     # Convert aware -> UTC naive for compatibility with legacy code.
     if dt.tzinfo is not None:
-        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+        dt = dt.astimezone(UTC).replace(tzinfo=None)
     return dt
 
 
@@ -39,7 +39,7 @@ def now() -> datetime:
     override = _NOW_OVERRIDE.get()
     if override is not None:
         return override
-    return datetime.now(timezone.utc).replace(tzinfo=None)
+    return datetime.now(UTC).replace(tzinfo=None)
 
 
 def utcnow() -> datetime:
@@ -47,7 +47,7 @@ def utcnow() -> datetime:
     if override is not None:
         # Override is stored as naive UTC; treat it as UTC for "utcnow".
         return override
-    return datetime.now(timezone.utc).replace(tzinfo=None)
+    return datetime.now(UTC).replace(tzinfo=None)
 
 
 def now_iso() -> str:

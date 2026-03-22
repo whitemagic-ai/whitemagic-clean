@@ -1,13 +1,13 @@
 """Tests for Dispatch Bridge (Leap 7c)."""
 
 from whitemagic.core.acceleration.dispatch_bridge import (
+    _HANDLER_TABLE,
+    _MATURITY_TABLE,
     DispatchBridge,
     DispatchResult,
     Maturity,
     ToolId,
     get_dispatch,
-    _MATURITY_TABLE,
-    _HANDLER_TABLE,
 )
 
 

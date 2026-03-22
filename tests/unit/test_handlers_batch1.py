@@ -7,7 +7,6 @@ Uses mocks for subsystem singletons to isolate handler logic.
 import unittest
 from unittest.mock import MagicMock, patch
 
-
 # =========================================================================
 # Dharma handlers
 # =========================================================================
@@ -135,22 +134,22 @@ class TestGovernorHandlers(unittest.TestCase):
 class TestMemoryHandlers(unittest.TestCase):
 
     def test_create_memory_missing_title(self):
-        from whitemagic.tools.handlers.memory import handle_create_memory
         from whitemagic.tools.errors import ToolExecutionError
+        from whitemagic.tools.handlers.memory import handle_create_memory
         with self.assertRaises(ToolExecutionError) as ctx:
             handle_create_memory(content="test content")
         self.assertIn("title", str(ctx.exception))
 
     def test_create_memory_missing_content(self):
-        from whitemagic.tools.handlers.memory import handle_create_memory
         from whitemagic.tools.errors import ToolExecutionError
+        from whitemagic.tools.handlers.memory import handle_create_memory
         with self.assertRaises(ToolExecutionError) as ctx:
             handle_create_memory(title="test title")
         self.assertIn("content", str(ctx.exception))
 
     def test_create_memory_empty_title(self):
-        from whitemagic.tools.handlers.memory import handle_create_memory
         from whitemagic.tools.errors import ToolExecutionError
+        from whitemagic.tools.handlers.memory import handle_create_memory
         with self.assertRaises(ToolExecutionError):
             handle_create_memory(title="   ", content="some content")
 

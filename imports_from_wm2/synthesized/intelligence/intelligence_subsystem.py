@@ -6,10 +6,11 @@ Synthesized from whitemagicdev and whitemagicpublic
 Missing classes: 5
 """
 
+from typing import Any
+
 from wm2.core import BaseEngine
-from wm2.core.serializable import Serializable
 from wm2.core.metrics import MetricCollector, tracked
-from typing import Dict, Any
+from wm2.core.serializable import Serializable
 
 
 class IntelligenceSubsystem(BaseEngine, Serializable, MetricCollector):
@@ -24,33 +25,33 @@ class IntelligenceSubsystem(BaseEngine, Serializable, MetricCollector):
     - EmergenceInsight
     
     """
-    
+
     def __init__(self, name: str = "intelligence_subsystem"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
         self.components = {}
         self.active = False
-    
+
     @tracked
     def initialize(self):
         """Initialize all intelligence components."""
         self.active = True
         self.record_metric("initialized", True)
-        
+
         # TODO: Initialize 5 components from WM1
         # Classes to integrate: EmergenceScorer, EmergenceEngine, EmergenceCapture, KaizenReport, EmergenceInsight
-    
+
     @tracked
     def process(self, data: Any) -> Any:
         """Process data through intelligence subsystem."""
         if not self.active:
             self.initialize()
-        
+
         # TODO: Implement intelligence-specific processing
         return data
-    
+
     @tracked
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get comprehensive statistics."""
         return {
             **BaseEngine.get_stats(self),

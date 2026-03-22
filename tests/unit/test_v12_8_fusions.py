@@ -12,8 +12,7 @@ Covers:
 """
 
 import unittest
-from unittest.mock import patch, MagicMock
-
+from unittest.mock import MagicMock, patch
 
 # =========================================================================
 # Fusion 10: Gana Chain → Harmony Vector
@@ -140,7 +139,10 @@ class TestPratAutoChainDetect(unittest.TestCase):
     def test_consecutive_calls_detected(self):
         """3+ consecutive same-Gana calls trigger chain detection."""
         from whitemagic.core.fusions import prat_auto_chain_detect
-        from whitemagic.tools.prat_resonance import get_resonance_state, ResonanceSnapshot
+        from whitemagic.tools.prat_resonance import (
+            ResonanceSnapshot,
+            get_resonance_state,
+        )
 
         state = get_resonance_state()
         state.reset()
@@ -165,7 +167,10 @@ class TestPratAutoChainDetect(unittest.TestCase):
     def test_mixed_history_no_chain(self):
         """Non-consecutive calls don't trigger chain."""
         from whitemagic.core.fusions import prat_auto_chain_detect
-        from whitemagic.tools.prat_resonance import get_resonance_state, ResonanceSnapshot
+        from whitemagic.tools.prat_resonance import (
+            ResonanceSnapshot,
+            get_resonance_state,
+        )
 
         state = get_resonance_state()
         state.reset()
@@ -188,7 +193,10 @@ class TestPratAutoChainDetect(unittest.TestCase):
     def test_two_consecutive_below_threshold(self):
         """2 consecutive calls: detected but below chain threshold."""
         from whitemagic.core.fusions import prat_auto_chain_detect
-        from whitemagic.tools.prat_resonance import get_resonance_state, ResonanceSnapshot
+        from whitemagic.tools.prat_resonance import (
+            ResonanceSnapshot,
+            get_resonance_state,
+        )
 
         state = get_resonance_state()
         state.reset()
@@ -209,7 +217,10 @@ class TestPratAutoChainDetect(unittest.TestCase):
 
     def test_session_call_count_tracked(self):
         from whitemagic.core.fusions import prat_auto_chain_detect
-        from whitemagic.tools.prat_resonance import get_resonance_state, ResonanceSnapshot
+        from whitemagic.tools.prat_resonance import (
+            ResonanceSnapshot,
+            get_resonance_state,
+        )
 
         state = get_resonance_state()
         state.reset()

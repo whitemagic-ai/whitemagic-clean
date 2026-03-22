@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/panels/SwarmOrchestrator.tsx', 'r') as f:
+with open('nexus/src/components/panels/SwarmOrchestrator.tsx') as f:
     content = f.read()
 
 content = content.replace('import { useState, useEffect } from "react";', 'import { useState } from "react";')

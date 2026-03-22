@@ -11,7 +11,6 @@ import os
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Unit tests — HTML processing, data classes, helpers
 # ---------------------------------------------------------------------------
@@ -110,7 +109,10 @@ class TestDataClasses:
         assert r.success is False
 
     def test_research_report_to_dict(self):
-        from whitemagic.gardens.browser.web_research import ResearchFinding, ResearchReport
+        from whitemagic.gardens.browser.web_research import (
+            ResearchFinding,
+            ResearchReport,
+        )
         report = ResearchReport(
             topic="AI",
             findings=[ResearchFinding(url="https://x.com", title="X", content="content here")],
@@ -150,7 +152,10 @@ class TestSynthesis:
     """Test synthesis generation."""
 
     def test_synthesize_with_findings(self):
-        from whitemagic.gardens.browser.web_research import ResearchFinding, _synthesize_findings
+        from whitemagic.gardens.browser.web_research import (
+            ResearchFinding,
+            _synthesize_findings,
+        )
         findings = [
             ResearchFinding(url="https://a.com", title="Source A", content="Content A", key_points=["Point 1"]),
             ResearchFinding(url="https://b.com", title="Source B", content="Content B", key_points=["Point 2"]),

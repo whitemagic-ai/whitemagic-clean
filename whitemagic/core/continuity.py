@@ -7,11 +7,12 @@ import json
 import logging
 import platform
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 try:
     import psutil
@@ -133,7 +134,7 @@ def get_current_session() -> dict[str, Any]:
 
     try:
         with file_lock(SESSION_FILE):
-            with open(SESSION_FILE, "r") as f:
+            with open(SESSION_FILE) as f:
                 return json.load(f) or {}
     except Exception as e:
         logger.info(f" Error reading session file: {e}")
@@ -151,7 +152,7 @@ def update_session(
         current: dict[str, Any] = {}
         if SESSION_FILE.exists():
             try:
-                with open(SESSION_FILE, "r") as f:
+                with open(SESSION_FILE) as f:
                     current = json.load(f) or {}
             except json.JSONDecodeError:
                 current = {}
@@ -210,7 +211,7 @@ def get_recent_events(limit: int = 10) -> list[dict[str, Any]]:
     events = []
     try:
         with file_lock(EVENTS_FILE):
-            with open(EVENTS_FILE, "r") as f:
+            with open(EVENTS_FILE) as f:
                 # Read last N lines efficiently? For MVP, read all and slice.
                 lines = f.readlines()
                 for line in lines[-limit:]:

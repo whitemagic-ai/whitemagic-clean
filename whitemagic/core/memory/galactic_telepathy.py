@@ -21,9 +21,9 @@ import logging
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
 from enum import Enum
+from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ class SyncConflict:
     memory_id: str
     source_galaxy: str
     target_galaxy: str
-    details: Dict[str, Any]
+    details: dict[str, Any]
     suggested_resolution: str
     auto_resolvable: bool = False
 
@@ -54,7 +54,7 @@ class EmbeddingBundle:
     """Embeddings to transfer with a memory."""
     memory_id: str
     model_name: str
-    vector: List[float]
+    vector: list[float]
     dimensions: int
     created_at: str
 
@@ -67,8 +67,8 @@ class AssociationBundle:
     relation_type: str
     strength: float
     direction: str
-    edge_type: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    edge_type: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -76,7 +76,7 @@ class SyncWatermark:
     """Tracks last sync point for incremental synchronization."""
     galaxy_pair: str  # "source:target" canonical ordering
     last_sync_timestamp: float
-    last_memory_id: Optional[str] = None
+    last_memory_id: str | None = None
     memories_synced_count: int = 0
     associations_synced_count: int = 0
     embeddings_synced_count: int = 0
@@ -97,7 +97,7 @@ class GalacticTelepathyEngine:
     def __init__(self, galaxy_manager: Any):
         self.gm = galaxy_manager
         self._sync_registry_path = Path.home() / ".whitemagic" / "sync_registry.json"
-        self._watermarks: Dict[str, SyncWatermark] = {}
+        self._watermarks: dict[str, SyncWatermark] = {}
         self._load_watermarks()
 
     def _load_watermarks(self) -> None:
@@ -141,11 +141,11 @@ class GalacticTelepathyEngine:
         self,
         source_galaxy: str,
         target_galaxy: str,
-        since_timestamp: Optional[float] = None,
+        since_timestamp: float | None = None,
         include_embeddings: bool = True,
         include_associations: bool = True,
         conflict_resolution: str = "timestamp_wins",  # or "source_wins", "manual"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Sync only memories changed since last sync (or given timestamp).
 
@@ -206,7 +206,7 @@ class GalacticTelepathyEngine:
 
         return results
 
-    def _get_modified_memories(self, um: Any, since_timestamp: float) -> List[Any]:
+    def _get_modified_memories(self, um: Any, since_timestamp: float) -> list[Any]:
         """Get memories modified since given timestamp."""
         try:
             with um.backend.pool.connection() as conn:
@@ -241,7 +241,7 @@ class GalacticTelepathyEngine:
         include_embeddings: bool,
         include_associations: bool,
         conflict_resolution: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Transfer single memory with full fidelity including associations and embeddings.
 
@@ -258,12 +258,12 @@ class GalacticTelepathyEngine:
             self._resolve_conflict(conflict, conflict_resolution, tgt_um)
 
         # Get embeddings before transfer
-        embeddings: List[EmbeddingBundle] = []
+        embeddings: list[EmbeddingBundle] = []
         if include_embeddings:
             embeddings = self._extract_embeddings(mem.id, src_um)
 
         # Get bidirectional associations
-        associations: List[AssociationBundle] = []
+        associations: list[AssociationBundle] = []
         if include_associations:
             associations = self._extract_associations(mem.id, src_um)
 
@@ -311,7 +311,7 @@ class GalacticTelepathyEngine:
             logger.error(f"Transfer failed for {mem.id}: {e}")
             return {"status": "error", "error": str(e)}
 
-    def _extract_embeddings(self, memory_id: str, um: Any) -> List[EmbeddingBundle]:
+    def _extract_embeddings(self, memory_id: str, um: Any) -> list[EmbeddingBundle]:
         """Extract all embeddings for a memory."""
         embeddings = []
         try:
@@ -344,7 +344,7 @@ class GalacticTelepathyEngine:
             logger.debug(f"Failed to extract embeddings for {memory_id}: {e}")
         return embeddings
 
-    def _extract_associations(self, memory_id: str, um: Any) -> List[AssociationBundle]:
+    def _extract_associations(self, memory_id: str, um: Any) -> list[AssociationBundle]:
         """Extract bidirectional associations for a memory."""
         associations = []
         try:
@@ -459,7 +459,7 @@ class GalacticTelepathyEngine:
         old_id: str,
         src_um: Any,
         tgt_um: Any
-    ) -> Optional[str]:
+    ) -> str | None:
         """Find new ID of memory transferred from source to target."""
         try:
             with tgt_um.backend.pool.connection() as conn:
@@ -505,7 +505,7 @@ class GalacticTelepathyEngine:
         mem: Any,
         src_um: Any,
         tgt_um: Any
-    ) -> Optional[SyncConflict]:
+    ) -> SyncConflict | None:
         """Detect if memory transfer would create a conflict."""
         try:
             # Check if memory with same content hash exists
@@ -573,8 +573,8 @@ class GalacticTelepathyEngine:
         target_mem: Any,
         src_um: Any,
         tgt_um: Any,
-        embeddings: List[EmbeddingBundle],
-        associations: List[AssociationBundle],
+        embeddings: list[EmbeddingBundle],
+        associations: list[AssociationBundle],
     ) -> None:
         """Record horizontal gene transfer event in phylogenetic record."""
         try:
@@ -597,9 +597,9 @@ class GalacticTelepathyEngine:
 
     def federated_sync(
         self,
-        galaxy_chain: List[str],
-        sync_options: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        galaxy_chain: list[str],
+        sync_options: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Multi-hop synchronization across galaxy chain.
 
@@ -641,7 +641,7 @@ class GalacticTelepathyEngine:
         self,
         galaxy: str,
         auto_resolve: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Resolve associations that were pending due to missing targets.
         Call this after batch transfers to connect memories.

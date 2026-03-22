@@ -3,7 +3,6 @@ Combines vector similarity, BM25 text matching, and graph PageRank
 using Reciprocal Rank Fusion (RRF) and learned weights.
 """
 
-from typing import List, Dict
 from dataclasses import dataclass
 
 
@@ -41,10 +40,10 @@ class HybridFusion:
         self.rrf_k = rrf_k
 
     def fuse_rrf(self,
-                 vector_results: List[Dict],
-                 bm25_results: List[Dict],
-                 graph_results: List[Dict],
-                 top_k: int = 20) -> List[RetrievalCandidate]:
+                 vector_results: list[dict],
+                 bm25_results: list[dict],
+                 graph_results: list[dict],
+                 top_k: int = 20) -> list[RetrievalCandidate]:
         """
         Reciprocal Rank Fusion: Combines rankings from multiple sources.
 
@@ -104,10 +103,10 @@ class HybridFusion:
         return sorted_candidates[:top_k]
 
     def fuse_convex(self,
-                    vector_results: List[Dict],
-                    bm25_results: List[Dict],
-                    graph_results: List[Dict],
-                    top_k: int = 20) -> List[RetrievalCandidate]:
+                    vector_results: list[dict],
+                    bm25_results: list[dict],
+                    graph_results: list[dict],
+                    top_k: int = 20) -> list[RetrievalCandidate]:
         """
         Convex combination fusion with learned weights.
         Normalizes each score to [0, 1] then combines.
@@ -122,7 +121,7 @@ class HybridFusion:
         graph_map = {r.get('id'): r.get('score', 0) for r in graph_results}
 
         # Normalize scores to [0, 1]
-        def normalize(scores: Dict) -> Dict:
+        def normalize(scores: dict) -> dict:
             if not scores:
                 return {}
             max_score = max(scores.values()) if scores else 1.0
@@ -240,7 +239,7 @@ class OptimalHybridSearcher:
 
         return fused
 
-    def _get_graph_results(self, query: str, limit: int) -> List[Dict]:
+    def _get_graph_results(self, query: str, limit: int) -> list[dict]:
         """Get graph-based results (PageRank-boosted neighbors)."""
         # Placeholder - would use graph_walker_hot_path
         return []

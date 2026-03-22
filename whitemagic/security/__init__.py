@@ -15,6 +15,15 @@ Provides security middleware and utilities:
 """
 
 # Tool gating - always available
+# Edgerunner Violet security layer
+from .engagement_tokens import (
+    EngagementToken,
+    EngagementTokenManager,
+    get_token_manager,
+)
+from .mcp_integrity import McpIntegrity, get_mcp_integrity
+from .model_signing import ModelSigningRegistry, ModelTrust, get_model_registry
+from .security_breaker import SecurityMonitor, get_security_monitor
 from .tool_gating import (
     TOOL_RISK_CLASSIFICATION,
     PathValidator,
@@ -23,12 +32,6 @@ from .tool_gating import (
     check_tool_execution,
     get_tool_gate,
 )
-
-# Edgerunner Violet security layer
-from .engagement_tokens import EngagementToken, EngagementTokenManager, get_token_manager
-from .mcp_integrity import McpIntegrity, get_mcp_integrity
-from .model_signing import ModelSigningRegistry, ModelTrust, get_model_registry
-from .security_breaker import SecurityMonitor, get_security_monitor
 
 __all__ = [
     # Tool gating

@@ -6,9 +6,10 @@ Tests the integration between Python and Rust implementations
 
 from pathlib import Path
 
+
 def create_integration_tests():
     """Create integration test suite"""
-    
+
     test_code = '''#[cfg(test)]
 mod integration_tests {
     use super::*;
@@ -96,10 +97,10 @@ mod integration_tests {
     }
 }
 '''
-    
+
     base_path = Path(__file__).parent.parent
     test_file = base_path / "whitemagic-rust" / "src" / "psr" / "integration_tests.rs"
-    
+
     test_file.write_text(test_code)
     print(f"✅ Created integration tests: {test_file}")
     print(f"   {len(test_code.split(chr(10)))} lines")
@@ -108,9 +109,9 @@ def main():
     print("\n" + "="*70)
     print("🧪 CREATING INTEGRATION TESTS")
     print("="*70)
-    
+
     create_integration_tests()
-    
+
     print("\n✅ Integration tests ready!")
     print("\nTo run tests:")
     print("  cd whitemagic-rust")

@@ -3,15 +3,14 @@ WhiteMagic Dream Daemon
 Purpose: Offline processing, memory consolidation, and system maintenance.
 Runs in the background when the system is "idle" (or continuously).
 """
-import time
 import logging
-import threading
+import os
 import signal
 import sys
-import os
-from pathlib import Path
+import threading
+import time
 from logging.handlers import RotatingFileHandler
-from typing import Optional
+from pathlib import Path
 
 # Logging configuration
 LOG_FILE = os.getenv("WM_DREAM_LOG_FILE", "whitemagic_dream.log")
@@ -34,7 +33,7 @@ class DreamDaemon:
     def __init__(self, interval_seconds: int = 600) -> None:
         self.interval = interval_seconds
         self.running = False
-        self.thread: Optional[threading.Thread] = None
+        self.thread: threading.Thread | None = None
         self._stop_event = threading.Event()
 
     def start(self) -> None:

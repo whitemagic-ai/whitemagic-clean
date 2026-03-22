@@ -17,7 +17,9 @@ def intelligence() -> None:
 def clone(count: int, prompt: str) -> None:
     """Deploy thought clones for parallel exploration."""
     try:
-        from whitemagic_extensions.edge import ThoughtCloneArmy  # type: ignore[import-not-found]
+        from whitemagic_extensions.edge import (
+            ThoughtCloneArmy,  # type: ignore[import-not-found]
+        )
 
         if count < 1 or count > 10:
             click.echo("✗ Clone count must be between 1 and 10")
@@ -42,7 +44,9 @@ def clone(count: int, prompt: str) -> None:
 def coherence() -> None:
     """Check current coherence level."""
     try:
-        from whitemagic_extensions.intelligence import CoherencePersistence  # type: ignore[import-not-found]
+        from whitemagic_extensions.intelligence import (
+            CoherencePersistence,  # type: ignore[import-not-found]
+        )
 
         cp = CoherencePersistence()
         stats = cp.get_iteration_stats()
@@ -126,7 +130,9 @@ def token_report() -> None:
 def solve(task: str, parallel: int) -> None:
     """Solve a problem using parallel cognition."""
     try:
-        from whitemagic_extensions.autonomous import ParallelCognition  # type: ignore[import-not-found]
+        from whitemagic_extensions.autonomous import (
+            ParallelCognition,  # type: ignore[import-not-found]
+        )
 
         click.echo(f"\n🤔 Solving: {task}\n")
         click.echo(f"Using {parallel} parallel approaches...\n")

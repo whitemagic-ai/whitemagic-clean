@@ -25,12 +25,13 @@ Usage:
 import logging
 from typing import Any, cast
 
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from whitemagic.optimization._rust_fallbacks import (
-    _galactic_batch_score_python,
-    _association_mine_python,
     PythonSpatialIndex5D,
+    _association_mine_python,
+    _galactic_batch_score_python,
 )
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 

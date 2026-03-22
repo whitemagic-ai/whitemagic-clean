@@ -4,12 +4,11 @@ Provides high-level Python API for all Koka runtime binaries.
 """
 
 import json
+import logging
 import os
 import queue
-import logging
 import subprocess
 import threading
-from typing import List, Dict
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
@@ -52,7 +51,7 @@ class KokaProcess:
             stdin.flush()
         else:
             raise RuntimeError(f"Koka process {self.name} has no stdin")
-            
+
         response = self._readline_with_timeout(timeout=timeout)
         if not response:
             raise TimeoutError(f"Koka bridge timed out waiting for response from {self.name}")
@@ -74,7 +73,7 @@ class KokaRuntime:
 
     def __init__(self, koka_dir: str = "./whitemagic-koka"):
         self.koka_dir = koka_dir
-        self.processes: Dict[str, KokaProcess] = {}
+        self.processes: dict[str, KokaProcess] = {}
 
     def start_unified_runtime(self) -> KokaProcess:
         """Start unified runtime v3."""
@@ -125,7 +124,7 @@ class KokaRuntime:
         self.processes["rust_bridge"] = koka_proc
         return koka_proc
 
-    def batch_write_embeddings(self, embeddings: List[List[float]], ids: List[int]) -> dict:
+    def batch_write_embeddings(self, embeddings: list[list[float]], ids: list[int]) -> dict:
         """Batch write embeddings via ring buffer."""
         if "ring_buffer" not in self.processes:
             self.start_ring_buffer()
@@ -147,7 +146,7 @@ class KokaRuntime:
             "event": event_type
         })
 
-    def cosine_similarity(self, a: List[float], b: List[float]) -> float:
+    def cosine_similarity(self, a: list[float], b: list[float]) -> float:
         """Compute cosine similarity via rust bridge."""
         if "rust_bridge" not in self.processes:
             self.start_rust_bridge()
@@ -227,14 +226,14 @@ async def koka_health_check() -> dict:
         koka_dir = runtime.koka_dir
         binaries = ["unified_runtime_v3", "ring_buffer", "rust_bridge"]
         missing = [b for b in binaries if not os.path.exists(f"{koka_dir}/{b}")]
-        
+
         if missing:
             return {
                 "status": "partial",
                 "missing_binaries": missing,
                 "message": f"Koka binaries missing: {missing}"
             }
-            
+
         return {
             "status": "success",
             "message": "Koka runtime binaries present"

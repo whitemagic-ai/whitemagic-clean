@@ -15,12 +15,12 @@ This bridges the abstract pipeline to concrete WhiteMagic operations.
 
 import re
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any
 
 from whitemagic.agents.tactical_pipeline import (
-    TacticalPipeline,
     ObjectiveRefinement,
     StrategySimulation,
+    TacticalPipeline,
 )
 
 
@@ -38,7 +38,7 @@ class PipelineIntegration:
         self.campaign_data = self._load_campaign()
         self.pipeline = TacticalPipeline(campaign_codename)
 
-    def _load_campaign(self) -> Dict[str, Any]:
+    def _load_campaign(self) -> dict[str, Any]:
         """Load campaign markdown file and parse metadata"""
         if not self.campaign_file.exists():
             raise FileNotFoundError(f"Campaign file not found: {self.campaign_file}")
@@ -63,7 +63,7 @@ class PipelineIntegration:
             'content': content,
         }
 
-    def _parse_sections(self, content: str) -> Dict[str, str]:
+    def _parse_sections(self, content: str) -> dict[str, str]:
         """Parse markdown sections"""
         sections = {}
         current_section = None
@@ -85,7 +85,7 @@ class PipelineIntegration:
 
     # ========== PHASE 1: SCOUT ==========
 
-    def scout_implementation(self) -> List[Dict[str, Any]]:
+    def scout_implementation(self) -> list[dict[str, Any]]:
         """
         Scout phase: Scan codebase/DB for current state
 
@@ -120,7 +120,7 @@ class PipelineIntegration:
 
         return findings
 
-    def _extract_targets(self) -> List[Dict[str, Any]]:
+    def _extract_targets(self) -> list[dict[str, Any]]:
         """Extract target files/patterns from campaign"""
         targets = []
 
@@ -139,7 +139,7 @@ class PipelineIntegration:
 
         return targets
 
-    def _scan_target(self, target: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def _scan_target(self, target: dict[str, Any]) -> dict[str, Any] | None:
         """Scan a specific target file/pattern"""
         # This would use grep_search or file reading
         # For now, return placeholder
@@ -149,7 +149,7 @@ class PipelineIntegration:
             'status': 'scanned',
         }
 
-    def _extract_metrics(self) -> List[str]:
+    def _extract_metrics(self) -> list[str]:
         """Extract metrics mentioned in campaign"""
         metrics = []
         content = self.campaign_data['content'].lower()
@@ -169,7 +169,7 @@ class PipelineIntegration:
 
         return metrics
 
-    def _measure_baseline(self, metric: str) -> Optional[Dict[str, Any]]:
+    def _measure_baseline(self, metric: str) -> dict[str, Any] | None:
         """Measure baseline for a metric"""
         # This would run actual benchmarks
         # For now, return placeholder
@@ -179,7 +179,7 @@ class PipelineIntegration:
             'value': 'to_be_measured',
         }
 
-    def _check_current_vcs(self) -> Dict[str, Any]:
+    def _check_current_vcs(self) -> dict[str, Any]:
         """Check current victory condition status"""
         vcs = self._extract_victory_conditions()
 
@@ -198,7 +198,7 @@ class PipelineIntegration:
             'percentage': 100 * met / total if total > 0 else 0,
         }
 
-    def _extract_victory_conditions(self) -> List[Dict[str, Any]]:
+    def _extract_victory_conditions(self) -> list[dict[str, Any]]:
         """Extract victory conditions from campaign"""
         vcs = []
 
@@ -218,7 +218,7 @@ class PipelineIntegration:
 
     # ========== PHASE 2: DISCOVER ==========
 
-    def discover_implementation(self, scout_findings: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def discover_implementation(self, scout_findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """
         Discover phase: Find patterns and identify gaps
 
@@ -263,7 +263,7 @@ class PipelineIntegration:
 
         return patterns
 
-    def _find_vague_vcs(self, vcs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _find_vague_vcs(self, vcs: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Identify vague victory conditions"""
         vague_keywords = ['optimize', 'improve', 'enhance', 'consider', 'explore', 'investigate']
         vague = []
@@ -291,7 +291,7 @@ class PipelineIntegration:
 
     # ========== PHASE 3: CLARIFY ==========
 
-    def clarify_implementation(self, discovered_patterns: List[Dict[str, Any]]) -> List[ObjectiveRefinement]:
+    def clarify_implementation(self, discovered_patterns: list[dict[str, Any]]) -> list[ObjectiveRefinement]:
         """
         Clarify phase: Transform vague → specific + measurable
 
@@ -323,7 +323,7 @@ class PipelineIntegration:
 
         return refinements
 
-    def _refine_vague_vc(self, vc: Dict[str, Any]) -> Optional[ObjectiveRefinement]:
+    def _refine_vague_vc(self, vc: dict[str, Any]) -> ObjectiveRefinement | None:
         """Refine a vague victory condition"""
         original = vc['text']
 
@@ -350,7 +350,7 @@ class PipelineIntegration:
             confidence=0.7,
         )
 
-    def _add_baseline_to_metric(self, metric: str) -> Optional[ObjectiveRefinement]:
+    def _add_baseline_to_metric(self, metric: str) -> ObjectiveRefinement | None:
         """Add baseline measurement to a metric"""
         return ObjectiveRefinement(
             original=f"Metric: {metric}",
@@ -362,7 +362,7 @@ class PipelineIntegration:
             confidence=0.8,
         )
 
-    def _add_implementation_phase(self) -> Optional[ObjectiveRefinement]:
+    def _add_implementation_phase(self) -> ObjectiveRefinement | None:
         """Add implementation phase to discovery-only campaign"""
         return ObjectiveRefinement(
             original="Discovery-only campaign",
@@ -374,7 +374,7 @@ class PipelineIntegration:
 
     # ========== PHASE 4: PLAN ==========
 
-    def plan_implementation(self, refined_objectives: List[ObjectiveRefinement]) -> List[StrategySimulation]:
+    def plan_implementation(self, refined_objectives: list[ObjectiveRefinement]) -> list[StrategySimulation]:
         """
         Plan phase: Generate strategies, simulate, rank by consensus
 
@@ -434,7 +434,7 @@ class PipelineIntegration:
 
     # ========== PHASE 5: EXECUTE ==========
 
-    def execute_implementation(self, strategy: StrategySimulation) -> Dict[str, Any]:
+    def execute_implementation(self, strategy: StrategySimulation) -> dict[str, Any]:
         """
         Execute phase: Deploy shadow clone armies with top strategy
 
@@ -451,7 +451,7 @@ class PipelineIntegration:
 
     # ========== PHASE 6: VERIFY ==========
 
-    def verify_implementation(self, execution_results: Dict[str, Any]) -> Dict[str, Any]:
+    def verify_implementation(self, execution_results: dict[str, Any]) -> dict[str, Any]:
         """
         Verify phase: Check victory conditions and measure results
 
@@ -473,7 +473,7 @@ class PipelineIntegration:
 
     # ========== PHASE 7: REFLECT ==========
 
-    def reflect_implementation(self, cycle_data: Dict[str, Any]) -> Dict[str, Any]:
+    def reflect_implementation(self, cycle_data: dict[str, Any]) -> dict[str, Any]:
         """
         Reflect phase: Learn from cycle, prepare for next iteration
 
@@ -514,7 +514,7 @@ class PipelineIntegration:
 
     # ========== FULL CYCLE EXECUTION ==========
 
-    def run_full_cycle(self) -> Dict[str, Any]:
+    def run_full_cycle(self) -> dict[str, Any]:
         """Execute one complete Yin-Yang cycle"""
         self.pipeline.start_cycle()
 

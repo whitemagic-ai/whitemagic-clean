@@ -4,11 +4,14 @@ Connects the Python NeuralMemory system to the Rust Graph Core.
 Created: December 4, 2025
 """
 
-from typing import List, Dict, Set, Tuple
 import logging
 
+from whitemagic.core.memory.neural.rust_bridge import (
+    build_memory_graph,
+    parallel_traverse,
+)
 from whitemagic.core.memory.unified_types import Memory
-from whitemagic.core.memory.neural.rust_bridge import build_memory_graph, parallel_traverse
+
 logger = logging.getLogger(__name__)
 
 class GraphEngine:
@@ -17,10 +20,10 @@ class GraphEngine:
     """
 
     def __init__(self) -> None:
-        self._graph_cache: Dict[str, List[Tuple[str, float]]] = {}
+        self._graph_cache: dict[str, list[tuple[str, float]]] = {}
         self._is_dirty = True
 
-    def build_graph(self, memories: List[Memory], force: bool = False) -> Dict[str, List[Tuple[str, float]]]:
+    def build_graph(self, memories: list[Memory], force: bool = False) -> dict[str, list[tuple[str, float]]]:
         """
         Build the full memory graph.
         """
@@ -48,7 +51,7 @@ class GraphEngine:
         logger.info(f"Graph built with {len(self._graph_cache)} nodes")
         return self._graph_cache
 
-    def get_cluster(self, start_id: str, memories: List[Memory], max_depth: int = 3) -> Set[str]:
+    def get_cluster(self, start_id: str, memories: list[Memory], max_depth: int = 3) -> set[str]:
         """
         Get a cluster of related memories around a start node.
         """

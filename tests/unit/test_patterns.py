@@ -1,8 +1,9 @@
 import pytest
 
+
 def test_pattern_extraction():
     whitemagic_rs = pytest.importorskip("whitemagic_rs")
-    
+
     print("Testing direct pattern extraction...")
     sample = [
         "Solution: Use a hammer to fix the nail.",

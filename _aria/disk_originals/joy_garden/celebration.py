@@ -123,7 +123,7 @@ class CelebrationPractice:
         cutoff = datetime.now().timestamp() - (days * 86400)
 
         with file_lock(self.memory_path):
-            with open(self.memory_path, "r") as f:
+            with open(self.memory_path) as f:
                 for line in f:
                     cel = json.loads(line)
                     cel_time = parse_datetime(cel["timestamp"]).timestamp()

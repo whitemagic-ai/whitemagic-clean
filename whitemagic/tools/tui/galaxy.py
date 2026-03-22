@@ -82,7 +82,9 @@ class GalaxyExplorer:
 def wm_galaxy_main() -> None:
     """CLI Entry point for `wm galaxy`."""
     try:
-        from whitemagic.core.intelligence.vector_lake import get_vector_lake  # type: ignore[import-not-found]
+        from whitemagic.core.intelligence.vector_lake import (
+            get_vector_lake,  # type: ignore[import-not-found]
+        )
         lake = get_vector_lake()
         # Fetch a sample of memories for the map
         memories = lake.get_holographic_sample(limit=100)

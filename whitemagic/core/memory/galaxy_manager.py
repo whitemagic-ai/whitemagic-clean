@@ -24,13 +24,13 @@ from __future__ import annotations
 import logging
 import threading
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
 from whitemagic.config.paths import MEMORY_DIR, WM_ROOT
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 

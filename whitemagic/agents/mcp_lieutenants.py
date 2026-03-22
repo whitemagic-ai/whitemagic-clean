@@ -15,7 +15,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from whitemagic.agents.lieutenants import Lieutenant, LieutenantDomain, LieutenantCorps
+from whitemagic.agents.lieutenants import Lieutenant, LieutenantCorps, LieutenantDomain
 from whitemagic.tools import call_tool
 
 logger = logging.getLogger(__name__)

@@ -13,11 +13,17 @@ from typing import Any
 
 try:
     from rich.console import Console
-    from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
-    from rich.live import Live
-    from rich.table import Table
-    from rich.panel import Panel
     from rich.layout import Layout
+    from rich.live import Live
+    from rich.panel import Panel
+    from rich.progress import (
+        BarColumn,
+        Progress,
+        SpinnerColumn,
+        TextColumn,
+        TimeElapsedColumn,
+    )
+    from rich.table import Table
     RICH_AVAILABLE = True
 except ImportError:
     RICH_AVAILABLE = False
@@ -26,7 +32,7 @@ except ImportError:
 
 class DeploymentMonitor:
     """Real-time monitoring for shadow clone deployments"""
-    
+
     def __init__(self, log_dir: Path):
         self.log_dir = log_dir
         self.log_dir.mkdir(parents=True, exist_ok=True)
@@ -34,7 +40,7 @@ class DeploymentMonitor:
         self.checkpoint_log = log_dir / f"checkpoint_{self.session_id}.jsonl"
         self.metrics_log = log_dir / f"metrics_{self.session_id}.jsonl"
         self.console = Console() if RICH_AVAILABLE else None
-        
+
         # Metrics
         self.start_time = time.time()
         self.campaign_stats = defaultdict(lambda: {
@@ -54,7 +60,7 @@ class DeploymentMonitor:
             "campaigns_completed": 0,
             "campaigns_total": 0,
         }
-    
+
     def log_checkpoint(self, event: str, data: dict[str, Any]):
         """Log a checkpoint event"""
         checkpoint = {
@@ -65,7 +71,7 @@ class DeploymentMonitor:
         }
         with open(self.checkpoint_log, "a") as f:
             f.write(json.dumps(checkpoint) + "\n")
-    
+
     def log_metric(self, metric_name: str, value: Any, campaign: str | None = None):
         """Log a metric"""
         metric = {
@@ -77,12 +83,12 @@ class DeploymentMonitor:
         }
         with open(self.metrics_log, "a") as f:
             f.write(json.dumps(metric) + "\n")
-    
+
     def update_campaign(self, campaign_code: str, **kwargs):
         """Update campaign stats"""
         stats = self.campaign_stats[campaign_code]
         stats.update(kwargs)
-        
+
         # Update global stats
         if "clones_deployed" in kwargs:
             self.global_stats["total_clones"] += kwargs["clones_deployed"]
@@ -90,7 +96,7 @@ class DeploymentMonitor:
             self.global_stats["total_findings"] += kwargs["findings"]
         if kwargs.get("phase") == "completed":
             self.global_stats["campaigns_completed"] += 1
-    
+
     def start_campaign(self, campaign_code: str, campaign_name: str, clone_count: int, vcs_total: int):
         """Mark campaign as started"""
         self.campaign_stats[campaign_code].update({
@@ -101,14 +107,14 @@ class DeploymentMonitor:
         })
         self.global_stats["campaigns_total"] += 1
         self.global_stats["total_vcs"] += vcs_total
-        
+
         self.log_checkpoint("campaign_start", {
             "campaign": campaign_code,
             "name": campaign_name,
             "clones": clone_count,
             "vcs": vcs_total,
         })
-    
+
     def complete_campaign(self, campaign_code: str, vcs_met: int, findings: int):
         """Mark campaign as completed"""
         stats = self.campaign_stats[campaign_code]
@@ -119,7 +125,7 @@ class DeploymentMonitor:
             "findings": findings,
         })
         self.global_stats["total_vcs_met"] += vcs_met
-        
+
         duration = stats["end_time"] - stats["start_time"]
         self.log_checkpoint("campaign_complete", {
             "campaign": campaign_code,
@@ -128,7 +134,7 @@ class DeploymentMonitor:
             "vcs_total": stats["vcs_total"],
             "findings": findings,
         })
-    
+
     def generate_progress_table(self) -> Table:
         """Generate rich table with campaign progress"""
         table = Table(title="Shadow Clone Deployment Progress")
@@ -138,11 +144,11 @@ class DeploymentMonitor:
         table.add_column("VCs", justify="right")
         table.add_column("Findings", justify="right", style="magenta")
         table.add_column("Duration", justify="right")
-        
+
         for code, stats in sorted(self.campaign_stats.items()):
             if stats["phase"] == "queued":
                 continue
-            
+
             phase_emoji = {
                 "recon": "🔍",
                 "deploy": "⚔️",
@@ -150,17 +156,17 @@ class DeploymentMonitor:
                 "verify": "✅",
                 "completed": "🎯",
             }.get(stats["phase"], "❓")
-            
+
             duration = ""
             if stats["start_time"]:
                 elapsed = (stats["end_time"] or time.time()) - stats["start_time"]
                 duration = f"{elapsed:.1f}s"
-            
+
             vcs_str = f"{stats['vcs_met']}/{stats['vcs_total']}"
             if stats['vcs_total'] > 0:
                 pct = int(stats['vcs_met'] / stats['vcs_total'] * 100)
                 vcs_str += f" ({pct}%)"
-            
+
             table.add_row(
                 code,
                 f"{phase_emoji} {stats['phase']}",
@@ -169,13 +175,13 @@ class DeploymentMonitor:
                 str(stats['findings']),
                 duration,
             )
-        
+
         return table
-    
+
     def generate_summary_panel(self) -> Panel:
         """Generate summary panel"""
         elapsed = time.time() - self.start_time
-        
+
         summary = f"""
 [bold cyan]Total Clones Deployed:[/] {self.global_stats['total_clones']:,}
 [bold green]Campaigns Completed:[/] {self.global_stats['campaigns_completed']}/{self.global_stats['campaigns_total']}
@@ -183,9 +189,9 @@ class DeploymentMonitor:
 [bold magenta]Total Findings:[/] {self.global_stats['total_findings']}
 [bold white]Elapsed Time:[/] {elapsed:.1f}s
         """.strip()
-        
+
         return Panel(summary, title="Deployment Summary", border_style="blue")
-    
+
     def print_status(self):
         """Print current status"""
         if RICH_AVAILABLE and self.console:
@@ -203,11 +209,11 @@ class DeploymentMonitor:
             print(f"VCs: {self.global_stats['total_vcs_met']}/{self.global_stats['total_vcs']}")
             print(f"Findings: {self.global_stats['total_findings']}")
             print()
-    
+
     def generate_final_report(self) -> str:
         """Generate final deployment report"""
         elapsed = time.time() - self.start_time
-        
+
         report = f"""# Shadow Clone Deployment Report
 **Session ID**: {self.session_id}
 **Duration**: {elapsed:.1f}s ({elapsed/60:.1f} minutes)
@@ -225,17 +231,17 @@ class DeploymentMonitor:
 | Campaign | Clones | VCs Met | Findings | Duration |
 |----------|--------|---------|----------|----------|
 """
-        
+
         for code, stats in sorted(self.campaign_stats.items()):
             if stats["phase"] == "queued":
                 continue
-            
+
             duration = ""
             if stats["start_time"] and stats["end_time"]:
                 duration = f"{stats['end_time'] - stats['start_time']:.1f}s"
-            
+
             report += f"| {code} | {stats['clones_deployed']:,} | {stats['vcs_met']}/{stats['vcs_total']} | {stats['findings']} | {duration} |\n"
-        
+
         report += f"""
 ## Checkpoint Log
 
@@ -248,30 +254,30 @@ See: `{self.metrics_log.name}`
 ## Next Steps
 
 """
-        
+
         # Identify incomplete campaigns
-        incomplete = [(code, stats) for code, stats in self.campaign_stats.items() 
+        incomplete = [(code, stats) for code, stats in self.campaign_stats.items()
                      if stats.get("vcs_met", 0) < stats.get("vcs_total", 1)]
-        
+
         if incomplete:
             report += "### Incomplete Campaigns\n\n"
             for code, stats in incomplete[:10]:
                 pct = int(stats.get("vcs_met", 0) / stats.get("vcs_total", 1) * 100)
                 report += f"- **{code}**: {pct}% complete ({stats.get('vcs_met', 0)}/{stats.get('vcs_total', 0)} VCs)\n"
-        
+
         return report
 
 
 if __name__ == "__main__":
     # Test the monitor
     monitor = DeploymentMonitor(Path("reports"))
-    
+
     monitor.start_campaign("TEST001", "Test Campaign", 10000, 5)
     monitor.update_campaign("TEST001", phase="deploy", clones_deployed=10000)
     time.sleep(1)
     monitor.update_campaign("TEST001", phase="scan", findings=3)
     time.sleep(1)
     monitor.complete_campaign("TEST001", vcs_met=3, findings=3)
-    
+
     monitor.print_status()
     print("\n" + monitor.generate_final_report())

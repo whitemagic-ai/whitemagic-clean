@@ -1,7 +1,8 @@
 """Compare Mojo vs Python performance"""
 import subprocess
-import time
 import sys
+import time
+
 
 def run_mojo():
     """Run Mojo benchmark and parse output."""

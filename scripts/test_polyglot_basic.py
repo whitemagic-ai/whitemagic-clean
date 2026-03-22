@@ -3,6 +3,7 @@
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 print("\n🔍 Testing Polyglot Memory System\n")
@@ -47,7 +48,7 @@ print("\n4. Testing simple search...")
 try:
     from whitemagic.core.memory.unified import UnifiedMemory
     um_old = UnifiedMemory()
-    
+
     # Just test that it initializes
     print(f"   ✅ UnifiedMemory initialized: {um_old.db_path}")
     print(f"   ✅ Memory count: {len(um_old.list_all())}")

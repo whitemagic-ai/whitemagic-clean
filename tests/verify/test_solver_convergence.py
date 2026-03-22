@@ -4,11 +4,14 @@ Validates that the solver selects optimal nodes while respecting causal/dharmic 
 """
 
 import pytest
+
 rich = pytest.importorskip("rich")
 
 import time
-from whitemagic.tools.unified_api import call_tool
+
 from rich.console import Console
+
+from whitemagic.tools.unified_api import call_tool
 
 console = Console()
 
@@ -18,15 +21,15 @@ def test_solver_basic():
     edges = [["Infra", "API"], ["API", "Frontend"]] # Causal chain
     scores = {"Infra": 0.1, "API": 0.2, "Frontend": 0.9} # High value on Frontend
     budget = 1
-    
+
     # Expected: "Infra" must be selected if "API" is, and "API" if "Frontend" is.
     # With budget 1, it should pick "Infra" (foundation) or nothing if scores are too low.
     # However, FW with budget might pick the 'root' if it's the only one allowed.
-    
+
     start = time.time()
     result = call_tool("solve_optimization", nodes=nodes, edges=edges, scores=scores, budget=budget)
     duration = time.time() - start
-    
+
     if result.get("status") == "success":
         details = result.get("details", {})
         selected = details.get("selected_nodes", [])
@@ -45,11 +48,11 @@ def test_solver_dharmic():
     # 6 nodes triggers the 'balanced_hexagram' invariant in DharmaConstraints
     nodes = [f"node_{i}" for i in range(6)]
     scores = {n: 1.0 for n in nodes}
-    
+
     start = time.time()
     result = call_tool("solve_optimization", nodes=nodes, scores=scores, budget=6)
     duration = time.time() - start
-    
+
     if result.get("status") == "success":
         details = result.get("details", {})
         selected = details.get("selected_nodes", [])

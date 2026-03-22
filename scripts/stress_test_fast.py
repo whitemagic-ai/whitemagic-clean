@@ -1,11 +1,12 @@
+import logging
+import random
 import time
 import uuid
-import random
-import logging
+from datetime import datetime
 from pathlib import Path
+
 from whitemagic.core.memory.sqlite_backend import SQLiteBackend
 from whitemagic.core.memory.unified_types import Memory, MemoryType
-from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("stress_test")
@@ -14,12 +15,12 @@ def run_stress_test(num_memories=1000, batch_size=100):
     db_path = Path("stress_test_fast.db")
     if db_path.exists():
         db_path.unlink()
-    
+
     backend = SQLiteBackend(db_path)
     logger.info(f"Starting FAST Stress Test ({num_memories} items) - v21 Polyglot Architecture")
-    
+
     start_time = time.perf_counter()
-    
+
     def generate_batch(size, offset):
         batch = []
         for i in range(size):
@@ -47,7 +48,7 @@ def run_stress_test(num_memories=1000, batch_size=100):
     end_time = time.perf_counter()
     duration = end_time - start_time
     logger.info(f"Test Complete: {total_inserted} memories in {duration:.2f}s ({total_inserted/duration:.2f} ops/s)")
-    
+
     if db_path.exists():
         db_path.unlink()
 

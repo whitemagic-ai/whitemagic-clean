@@ -10,7 +10,6 @@ G5: Consolidation → KG relations
 import unittest
 from unittest.mock import MagicMock, patch
 
-
 # =========================================================================
 # G1: Dream SERENDIPITY uses AssociationMiner
 # =========================================================================

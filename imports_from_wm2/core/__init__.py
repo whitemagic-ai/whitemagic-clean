@@ -4,13 +4,13 @@ WM2 Core - Unified Framework
 Distilled essence of WhiteMagic 1.0
 """
 
-from .base import BaseComponent, BaseEngine, BaseManager, BaseHandler
+from .base import BaseComponent, BaseEngine, BaseHandler, BaseManager
+from .lifecycle import FileBackedLifecycle, Lifecycle
 from .serialization import Serializable, serialize, serialize_stats
-from .lifecycle import Lifecycle, FileBackedLifecycle
 
 __all__ = [
     "BaseComponent",
-    "BaseEngine", 
+    "BaseEngine",
     "BaseManager",
     "BaseHandler",
     "Serializable",

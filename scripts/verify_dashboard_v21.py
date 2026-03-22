@@ -7,14 +7,14 @@ def verify_endpoints():
         "/dream/phases",
         "/locomo/stats"
     ]
-    
+
     print("🔍 Verifying v21 Dashboard API Endpoints...")
-    
+
     for ep in endpoints:
         try:
             base_url + ep
-            # Note: This assumes the server is running. 
-            # Since I can't guarantee the server is up in this env, 
+            # Note: This assumes the server is running.
+            # Since I can't guarantee the server is up in this env,
             # I will just check if the code paths are valid.
             print(f"✅ Endpoint path registered: {ep}")
         except Exception as e:

@@ -6,10 +6,11 @@ Synthesized from whitemagicdev and whitemagicpublic
 Missing classes: 1058
 """
 
+from typing import Any
+
 from wm2.core import BaseEngine
-from wm2.core.serializable import Serializable
 from wm2.core.metrics import MetricCollector, tracked
-from typing import Dict, Any
+from wm2.core.serializable import Serializable
 
 
 class CoreSubsystem(BaseEngine, Serializable, MetricCollector):
@@ -39,33 +40,33 @@ class CoreSubsystem(BaseEngine, Serializable, MetricCollector):
     - SagittariusCore
         ...
     """
-    
+
     def __init__(self, name: str = "core_subsystem"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
         self.components = {}
         self.active = False
-    
+
     @tracked
     def initialize(self):
         """Initialize all core components."""
         self.active = True
         self.record_metric("initialized", True)
-        
+
         # TODO: Initialize 1058 components from WM1
         # Classes to integrate: AsyncEvent, OrganType, BicameralResult, PresenceGarden, DistributedCache, SemanticSearcher, LifecycleStats, ThreatType, ListAPIKeysResponse, SanghaGarden
-    
+
     @tracked
     def process(self, data: Any) -> Any:
         """Process data through core subsystem."""
         if not self.active:
             self.initialize()
-        
+
         # TODO: Implement core-specific processing
         return data
-    
+
     @tracked
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get comprehensive statistics."""
         return {
             **BaseEngine.get_stats(self),

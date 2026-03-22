@@ -22,17 +22,17 @@ import base64
 import hashlib
 import logging
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+
 logger = logging.getLogger(__name__)
 
 try:
-    from nacl.signing import SigningKey, VerifyKey
     from nacl.encoding import RawEncoder
+    from nacl.signing import SigningKey, VerifyKey
     _NACL_AVAILABLE = True
 except ImportError:
     _NACL_AVAILABLE = False

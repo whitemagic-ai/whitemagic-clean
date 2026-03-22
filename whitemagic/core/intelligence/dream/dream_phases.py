@@ -1,6 +1,7 @@
 """Dream cycle phase definitions (PSR-011)."""
 from enum import Enum
 
+
 class DreamPhase(Enum):
     TRIAGE = "triage"
     CONSOLIDATION = "consolidation"

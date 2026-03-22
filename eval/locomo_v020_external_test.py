@@ -131,13 +131,13 @@ V020_TEST_CONFIG = {
 def generate_v020_prompt(questions_file: str, memory_sample_file: str) -> str:
     """Generate the complete V020 prompt for an external AI."""
     import json
-    
+
     with open(questions_file) as f:
         questions_data = json.load(f)
-    
+
     with open(memory_sample_file) as f:
         memories = json.load(f)
-    
+
     # Format questions with adversarial warnings
     questions_formatted = []
     for q in questions_data.get('questions', []):
@@ -147,17 +147,17 @@ def generate_v020_prompt(questions_file: str, memory_sample_file: str) -> str:
             warning = " [ADVERSARIAL - Check for false premise]"
         elif qtype == 'calibration':
             warning = " [CALIBRATION - Assess your uncertainty]"
-        
+
         questions_formatted.append(f"""### {q['question_id']} ({qtype}){warning}
 {q['question']}""")
-    
+
     # Format memories (subset for external AI)
     memory_subset = memories[:100] if len(memories) > 100 else memories
-    
+
     # Use string replacement instead of format to avoid JSON brace conflicts
     prompt = LOCOMO_V020_PROMPT.replace('{memory_corpus}', json.dumps(memory_subset, indent=2))
     prompt = prompt.replace('{questions}', '\n'.join(questions_formatted))
-    
+
     return prompt
 
 
@@ -167,11 +167,11 @@ if __name__ == "__main__":
         questions_file='/home/lucas/Desktop/whitemagicdev/eval/locomo_v020_test.json',
         memory_sample_file='/home/lucas/Desktop/whitemagicdev/eval/locomo_memory_sample.json'
     )
-    
+
     # Save to file
     with open('/home/lucas/Desktop/whitemagicdev/eval/locomo_v020_external_ai_prompt.txt', 'w') as f:
         f.write(prompt)
-    
+
     print("Generated V020 external AI prompt")
     print(f"Prompt length: {len(prompt)} characters")
     print("\nKey improvements over V019:")

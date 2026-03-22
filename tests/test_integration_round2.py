@@ -51,7 +51,8 @@ class TestAgentRegistry:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.agent_registry import (
-            handle_agent_register, handle_agent_heartbeat
+            handle_agent_heartbeat,
+            handle_agent_register,
         )
         reg = handle_agent_register(name="Test", agent_id="agent-test")
         assert reg["agent"]["heartbeat_count"] == 0
@@ -76,7 +77,8 @@ class TestAgentRegistry:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.agent_registry import (
-            handle_agent_register, handle_agent_list
+            handle_agent_list,
+            handle_agent_register,
         )
         handle_agent_register(name="Claude", agent_id="a1", capabilities=["code_review"])
         handle_agent_register(name="GPT-4", agent_id="a2", capabilities=["testing"])
@@ -94,7 +96,8 @@ class TestAgentRegistry:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.agent_registry import (
-            handle_agent_register, handle_agent_capabilities
+            handle_agent_capabilities,
+            handle_agent_register,
         )
         handle_agent_register(name="Claude", agent_id="a1", capabilities=["code_review", "testing"])
         result = handle_agent_capabilities(agent_id="a1")
@@ -106,7 +109,9 @@ class TestAgentRegistry:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.agent_registry import (
-            handle_agent_register, handle_agent_deregister, handle_agent_list
+            handle_agent_deregister,
+            handle_agent_list,
+            handle_agent_register,
         )
         handle_agent_register(name="Temp", agent_id="temp-1")
         assert handle_agent_list()["count"] == 1
@@ -135,8 +140,10 @@ class TestVoteOutcome:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.voting import (
-            handle_vote_create, handle_vote_cast, handle_vote_analyze,
-            handle_vote_record_outcome
+            handle_vote_analyze,
+            handle_vote_cast,
+            handle_vote_create,
+            handle_vote_record_outcome,
         )
         session = handle_vote_create(problem="Best DB?")
         sid = session["session_id"]
@@ -154,8 +161,10 @@ class TestVoteOutcome:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.voting import (
-            handle_vote_create, handle_vote_cast, handle_vote_analyze,
-            handle_vote_record_outcome
+            handle_vote_analyze,
+            handle_vote_cast,
+            handle_vote_create,
+            handle_vote_record_outcome,
         )
         session = handle_vote_create(problem="Caching strategy?")
         sid = session["session_id"]
@@ -171,8 +180,10 @@ class TestVoteOutcome:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.voting import (
-            handle_vote_create, handle_vote_cast, handle_vote_analyze,
-            handle_vote_record_outcome
+            handle_vote_analyze,
+            handle_vote_cast,
+            handle_vote_create,
+            handle_vote_record_outcome,
         )
 
         # Session 1: claude wins, outcome success
@@ -297,7 +308,8 @@ class TestPipeline:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.pipeline import (
-            handle_pipeline_create, handle_pipeline_status
+            handle_pipeline_create,
+            handle_pipeline_status,
         )
         created = handle_pipeline_create(steps=[{"tool": "task.list"}])
         pid = created["pipeline_id"]
@@ -311,7 +323,8 @@ class TestPipeline:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.pipeline import (
-            handle_pipeline_create, handle_pipeline_list
+            handle_pipeline_create,
+            handle_pipeline_list,
         )
         handle_pipeline_create(name="p1", steps=[{"tool": "task.list"}])
         handle_pipeline_create(name="p2", steps=[{"tool": "vote.list"}])
@@ -372,37 +385,58 @@ class TestTemporalClassification:
 
     def test_broker_disconnect_is_fast(self):
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
         assert classify_event(EventType.BROKER_DISCONNECTED) == TemporalLane.FAST
 
     def test_task_failed_is_fast(self):
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
         assert classify_event(EventType.TASK_FAILED) == TemporalLane.FAST
 
     def test_agent_deregistered_is_fast(self):
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
         assert classify_event(EventType.AGENT_DEREGISTERED) == TemporalLane.FAST
 
     def test_vote_consensus_is_slow(self):
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
         assert classify_event(EventType.VOTE_CONSENSUS_REACHED) == TemporalLane.SLOW
 
     def test_vote_session_closed_is_slow(self):
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
         assert classify_event(EventType.VOTE_SESSION_CLOSED) == TemporalLane.SLOW
 
     def test_task_created_is_medium(self):
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
         assert classify_event(EventType.TASK_CREATED) == TemporalLane.MEDIUM
 
     def test_broker_message_is_medium(self):
         from whitemagic.core.resonance.gan_ying_enhanced import EventType
-        from whitemagic.core.resonance.temporal_scheduler import classify_event, TemporalLane
+        from whitemagic.core.resonance.temporal_scheduler import (
+            TemporalLane,
+            classify_event,
+        )
         assert classify_event(EventType.BROKER_MESSAGE_PUBLISHED) == TemporalLane.MEDIUM
 
 

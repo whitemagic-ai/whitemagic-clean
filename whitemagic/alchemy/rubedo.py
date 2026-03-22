@@ -11,8 +11,8 @@ Usage:
 """
 
 import logging
-from typing import List, Dict, Any
 from collections import Counter
+from typing import Any
 
 # Import Local LLM for synthesis
 try:
@@ -33,7 +33,7 @@ class RubedoSynthesizer:
                 logger.warning("Local LLM not available. Rubedo will use heuristic synthesis.")
                 self.llm = None
 
-    def synthesize(self, clusters: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def synthesize(self, clusters: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """
         Turn clusters into rules.
         """
@@ -46,7 +46,7 @@ class RubedoSynthesizer:
 
         return golden_rules
 
-    def _synthesize_cluster(self, cluster: Dict[str, Any]) -> Dict[str, Any]:
+    def _synthesize_cluster(self, cluster: dict[str, Any]) -> dict[str, Any]:
         """
         Generate a rule for a single cluster.
         """

@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/center/HarmonyDashboard.tsx', 'r') as f:
+with open('nexus/src/components/center/HarmonyDashboard.tsx') as f:
     content = f.read()
 
 if "import WuXingWheel" not in content:

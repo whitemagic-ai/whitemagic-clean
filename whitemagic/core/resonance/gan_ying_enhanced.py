@@ -1,6 +1,6 @@
 import logging
-import threading
 import queue
+import threading
 from collections import defaultdict, deque
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -476,7 +476,9 @@ class GanYingBus:
             # Python fallback: stillness + dampening under lock
             with self._lock:
                 try:
-                    from whitemagic.core.consciousness.stillness import get_stillness_manager
+                    from whitemagic.core.consciousness.stillness import (
+                        get_stillness_manager,
+                    )
                     sm = get_stillness_manager()
                     if sm.is_still and event.source != "stillness_manager":
                         if not (event.event_type.value.startswith("system_") or

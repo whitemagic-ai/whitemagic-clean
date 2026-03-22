@@ -1,6 +1,6 @@
 import re
 
-with open('whitemagic/core/memory/sqlite_backend.py', 'r') as f:
+with open('whitemagic/core/memory/sqlite_backend.py') as f:
     content = f.read()
 
 # Make sure sutra_bridge is imported

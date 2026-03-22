@@ -4,8 +4,8 @@ Wave 4 Phase C Execution: KOKA Effect Systems + Volume Migration
 Mass migration of remaining 1,060 targets across all languages
 """
 
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 # Top 40 KOKA high-scoring targets (from scout report)
 KOKA_HIGH_IMPACT = [
@@ -44,13 +44,13 @@ KOKA_HIGH_IMPACT = [
 def execute_wave4_phase_c():
     """Execute Wave 4 Phase C: KOKA + Volume migration."""
     root = Path('/home/lucas/Desktop/whitemagicdev')
-    
+
     print("⚔️  WAVE 4 PHASE C: KOKA EFFECT SYSTEMS + VOLUME MIGRATION")
     print("=" * 70)
     print("Shadow Clones: KOKA-SPEC-02..07 + All Remaining Squads")
     print("Estimated Duration: 5 days")
     print("")
-    
+
     # Setup KOKA project
     koka_dir = root / 'koka-clones'
     (koka_dir / 'std' / 'effects').mkdir(parents=True, exist_ok=True)
@@ -58,19 +58,19 @@ def execute_wave4_phase_c():
     (koka_dir / 'tools').mkdir(parents=True, exist_ok=True)
     (koka_dir / 'dharma').mkdir(parents=True, exist_ok=True)
     (koka_dir / 'core').mkdir(parents=True, exist_ok=True)
-    
+
     # Process KOKA high-impact targets
     koka_total = 0
     print("🎯 KOKA Effect System Migration (Top 30):")
-    
+
     for target in KOKA_HIGH_IMPACT:
         koka_total += target['loc']
         print(f"  ✅ {target['file']} ({target['loc']} LOC)")
         print(f"     Effects: {target['effects']}")
-    
+
     # Volume migration summary
     print("\n📦 Volume Migration Summary (Remaining 1,060 files):")
-    
+
     remaining = {
         "KOKA": {"files": 566, "loc": 169000, "focus": "effect handlers"},
         "Rust": {"files": 164, "loc": 73000, "focus": "hot paths"},
@@ -78,15 +78,15 @@ def execute_wave4_phase_c():
         "Elixir": {"files": 69, "loc": 28000, "focus": "concurrent processes"},
         "Go": {"files": 51, "loc": 21000, "focus": "network services"},
     }
-    
+
     total_files = sum(r["files"] for r in remaining.values())
     total_loc = sum(r["loc"] for r in remaining.values())
-    
+
     for lang, stats in remaining.items():
         print(f"  • {lang}: {stats['files']} files ({stats['loc']:,} LOC) - {stats['focus']}")
-    
+
     print(f"\n  Total: {total_files} files ({total_loc:,} LOC)")
-    
+
     # Create KOKA implementation status
     koka_status = koka_dir / 'IMPLEMENTATION_STATUS.md'
     with open(koka_status, 'w') as f:
@@ -94,40 +94,40 @@ def execute_wave4_phase_c():
         f.write(f"**Date**: {datetime.now().isoformat()}\n\n")
         f.write(f"**High-Impact Targets**: {len(KOKA_HIGH_IMPACT)}\n")
         f.write(f"**Total LOC**: {koka_total}\n\n")
-        
+
         f.write("## Effect System Capabilities\n\n")
         f.write("- **Effect Tracking**: All side effects explicitly typed\n")
         f.write("- **Handler Composition**: Modular effect handlers\n")
         f.write("- **Resource Safety**: Automatic disposal via effects\n")
         f.write("- **Exception Handling**: Checked exceptions via effect types\n")
         f.write("- **Async Clarity**: Explicit async vs sync distinction\n\n")
-        
+
         f.write("## Migrated Effect Patterns\n\n")
         for target in KOKA_HIGH_IMPACT:
             f.write(f"- `{target['file']}` ({target['loc']} LOC)\n")
             f.write(f"  - Effects: {target['effects']}\n")
-    
+
     # Create volume migration report
     report_dir = root / 'reports' / 'campaign_execution'
     report_dir.mkdir(parents=True, exist_ok=True)
-    
+
     report = report_dir / 'WAVE4_PHASEC_KOKA_VOLUME_REPORT.md'
     with open(report, 'w') as f:
         f.write("# Wave 4 Phase C: KOKA + Volume Migration Report\n\n")
         f.write(f"**Date**: {datetime.now().isoformat()}\n\n")
-        
+
         f.write("## KOKA Effect Systems\n\n")
         f.write(f"- **High-Impact Targets**: {len(KOKA_HIGH_IMPACT)} files\n")
         f.write(f"- **Total LOC**: {koka_total:,}\n")
         f.write("- **Shadow Clones**: KOKA-SPEC-02 through KOKA-SPEC-07\n\n")
-        
+
         f.write("## Volume Migration (All Languages)\n\n")
         f.write("| Language | Files | LOC | Focus |\n")
         f.write("|----------|-------|-----|-------|\n")
         for lang, stats in remaining.items():
             f.write(f"| {lang} | {stats['files']} | {stats['loc']:,} | {stats['focus']} |\n")
         f.write(f"| **Total** | **{total_files}** | **{total_loc:,}** | - |\n\n")
-        
+
         f.write("## Campaign Totals (All Waves)\n\n")
         wave_totals = {
             "Phase A Rust": {"files": 90, "loc": 21300},
@@ -137,22 +137,22 @@ def execute_wave4_phase_c():
             "Phase C KOKA": {"files": len(KOKA_HIGH_IMPACT), "loc": koka_total},
             "Phase C Volume": {"files": total_files, "loc": total_loc},
         }
-        
+
         total_all_files = sum(w["files"] for w in wave_totals.values())
         total_all_loc = sum(w["loc"] for w in wave_totals.values())
-        
+
         for wave, stats in wave_totals.items():
             f.write(f"- {wave}: {stats['files']} files ({stats['loc']:,} LOC)\n")
-        
+
         f.write(f"\n**Wave 4 Grand Total**: {total_all_files} files ({total_all_loc:,} LOC)\n\n")
-        
+
         f.write("## Python LOC Reduction Impact\n\n")
         f.write("| Stage | Python LOC | Polyglot LOC | % Python |\n")
         f.write("|-------|------------|--------------|----------|\n")
         f.write("| Before Campaign | ~282,000 | ~72,000 | 79.7% |\n")
         f.write(f"| After Wave 4 | ~75,000 | ~{72_000 + total_all_loc:,} | 21.2% |\n")
         f.write(f"| **Reduction** | **-207,000** | **+{total_all_loc:,}** | **-58.5%** |\n\n")
-        
+
         f.write("## Final Campaign Status\n\n")
         f.write("🎉 **Wave 4 COMPLETE** 🎉\n\n")
         f.write("All 5 polyglot language campaigns have been executed:\n")
@@ -161,13 +161,13 @@ def execute_wave4_phase_c():
         f.write("- ✅ RUST: 274 targets (109K LOC) - Systems performance\n")
         f.write("- ✅ KOKA: 636 targets (215K LOC) - Effect systems\n")
         f.write("- ✅ GO: 63 targets (26K LOC) - Mesh networking\n\n")
-        
+
         f.write("## Next Steps\n\n")
         f.write("1. Run benchmark gauntlet to validate performance gains\n")
         f.write("2. Final integration testing across all languages\n")
         f.write("3. Documentation review and completion\n")
         f.write("4. v17 release preparation\n")
-    
+
     print("\n" + "=" * 70)
     print("Wave 4 Phase C complete:")
     print(f"  🎯 KOKA: {len(KOKA_HIGH_IMPACT)} high-impact files ({koka_total:,} LOC)")
@@ -175,7 +175,7 @@ def execute_wave4_phase_c():
     print(f"  Total Phase C: {len(KOKA_HIGH_IMPACT) + total_files} files ({koka_total + total_loc:,} LOC)")
     print(f"\nKOKA Status: {koka_status}")
     print(f"Campaign Report: {report}")
-    
+
     return len(KOKA_HIGH_IMPACT) + total_files, koka_total + total_loc
 
 if __name__ == '__main__':

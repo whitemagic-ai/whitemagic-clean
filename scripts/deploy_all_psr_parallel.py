@@ -4,11 +4,11 @@ Deploy All PSR Campaigns in Parallel - Complete by 9:00 PM
 Deploy millions of clones across PSR-002 through PSR-010 simultaneously
 """
 
-import time
 import json
-from pathlib import Path
-from typing import Dict, Any
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+from typing import Any
 
 # PSR Campaign Definitions from POLYGLOT_SYNTHESIS_REFACTOR_FRONT.md
 PSR_CAMPAIGNS = {
@@ -114,7 +114,7 @@ def generate_rust_code(filename: str, description: str, speedup: int) -> str:
     """Generate Rust migration code"""
     base_name = filename.replace('.py', '')
     struct_name = ''.join(word.title() for word in base_name.split('_'))
-    
+
     return f"""//! {base_name} - Rust Migration
 //! {description}
 //! Target: {speedup}× speedup
@@ -161,7 +161,7 @@ def generate_zig_code(filename: str, description: str, speedup: int) -> str:
     """Generate Zig migration code"""
     base_name = filename.replace('.py', '')
     struct_name = ''.join(word.title() for word in base_name.split('_'))
-    
+
     return f"""// {base_name} - Zig Migration
 // {description}
 // Target: {speedup}× speedup with SIMD
@@ -207,7 +207,7 @@ export fn {base_name}_destroy(instance: ?*{struct_name}) void {{
 def generate_mojo_code(filename: str, description: str, speedup: int) -> str:
     """Generate Mojo migration code"""
     base_name = filename.replace('.py', '')
-    
+
     return f"""# {base_name} - Mojo Migration
 # {description}
 # Target: {speedup}× speedup with GPU acceleration
@@ -232,7 +232,7 @@ struct {base_name.title().replace('_', '')}:
 def generate_koka_code(filename: str, description: str) -> str:
     """Generate Koka migration code"""
     base_name = filename.replace('.py', '')
-    
+
     return f"""// {base_name} - Koka Migration
 // {description}
 // Effect handlers for type-safe coordination
@@ -258,7 +258,7 @@ fun {base_name}_handler(action: () -> <{base_name}_effect> a): a {{
 }}
 """
 
-def deploy_campaign(campaign_id: str, campaign_data: Dict[str, Any]) -> Dict[str, Any]:
+def deploy_campaign(campaign_id: str, campaign_data: dict[str, Any]) -> dict[str, Any]:
     """Deploy a single PSR campaign"""
     print(f"\n{'='*70}")
     print(f"🚀 {campaign_id}: {campaign_data['name']}")
@@ -266,7 +266,7 @@ def deploy_campaign(campaign_id: str, campaign_data: Dict[str, Any]) -> Dict[str
     print(f"Clones: {campaign_data['clones']:,}")
     print(f"Targets: {len(campaign_data['targets'])}")
     print(f"Priority: {campaign_data['priority']}")
-    
+
     base_path = Path(__file__).parent.parent
     results = {
         'campaign_id': campaign_id,
@@ -274,50 +274,50 @@ def deploy_campaign(campaign_id: str, campaign_data: Dict[str, Any]) -> Dict[str
         'files_created': [],
         'total_expected_speedup': 0
     }
-    
+
     for filename, target_lang, speedup, description in campaign_data['targets']:
         print(f"\n📝 {filename} → {target_lang} ({speedup}× speedup)")
         print(f"   {description}")
-        
+
         base_name = filename.replace('.py', '')
-        
+
         if target_lang == 'Rust':
             code = generate_rust_code(filename, description, speedup)
             output_file = base_path / "whitemagic-rust" / "src" / "psr" / campaign_id.lower() / f"{base_name}.rs"
             output_file.parent.mkdir(parents=True, exist_ok=True)
             output_file.write_text(code)
             results['files_created'].append(str(output_file.relative_to(base_path)))
-            
+
         elif target_lang == 'Zig':
             code = generate_zig_code(filename, description, speedup)
             output_file = base_path / "whitemagic-zig" / "src" / "psr" / campaign_id.lower() / f"{base_name}.zig"
             output_file.parent.mkdir(parents=True, exist_ok=True)
             output_file.write_text(code)
             results['files_created'].append(str(output_file.relative_to(base_path)))
-            
+
         elif target_lang == 'Mojo':
             code = generate_mojo_code(filename, description, speedup)
             output_file = base_path / "whitemagic-mojo" / "src" / "psr" / campaign_id.lower() / f"{base_name}.mojo"
             output_file.parent.mkdir(parents=True, exist_ok=True)
             output_file.write_text(code)
             results['files_created'].append(str(output_file.relative_to(base_path)))
-            
+
         elif target_lang == 'Koka':
             code = generate_koka_code(filename, description)
             output_file = base_path / "whitemagic-koka" / "src" / "psr" / campaign_id.lower() / f"{base_name}.kk"
             output_file.parent.mkdir(parents=True, exist_ok=True)
             output_file.write_text(code)
             results['files_created'].append(str(output_file.relative_to(base_path)))
-        
+
         results['total_expected_speedup'] += speedup
         print(f"   ✅ Created: {output_file.relative_to(base_path)}")
-    
+
     return results
 
 def main():
     """Deploy all PSR campaigns in parallel"""
     start_time = time.time()
-    
+
     print("\n" + "="*70)
     print("🌟 PARALLEL PSR DEPLOYMENT: PSR-002 THROUGH PSR-010")
     print("="*70)
@@ -326,16 +326,16 @@ def main():
     print("Campaigns: 8")
     print(f"Total clones: {sum(c['clones'] for c in PSR_CAMPAIGNS.values()):,}")
     print("Strategy: Parallel deployment with ThreadPoolExecutor")
-    
+
     # Deploy all campaigns in parallel
     all_results = {}
-    
+
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = {
-            executor.submit(deploy_campaign, cid, cdata): cid 
+            executor.submit(deploy_campaign, cid, cdata): cid
             for cid, cdata in PSR_CAMPAIGNS.items()
         }
-        
+
         for future in as_completed(futures):
             campaign_id = futures[future]
             try:
@@ -344,32 +344,32 @@ def main():
                 print(f"\n✅ {campaign_id} deployment complete!")
             except Exception as e:
                 print(f"\n❌ {campaign_id} failed: {e}")
-    
+
     duration = time.time() - start_time
-    
+
     # Summary
     print("\n" + "="*70)
     print("📊 PARALLEL DEPLOYMENT SUMMARY")
     print("="*70)
-    
+
     total_files = sum(len(r['files_created']) for r in all_results.values())
     total_speedup = sum(r['total_expected_speedup'] for r in all_results.values())
-    
+
     print(f"\nCampaigns deployed: {len(all_results)}/8")
     print(f"Total files created: {total_files}")
     print(f"Total expected speedup: {total_speedup}×")
     print(f"Duration: {duration:.2f}s")
     print(f"Throughput: {total_files/duration:.1f} files/sec")
-    
+
     print("\n📋 Per-Campaign Results:")
     for cid in sorted(all_results.keys()):
         result = all_results[cid]
         print(f"  {cid}: {len(result['files_created'])} files, {result['total_expected_speedup']}× speedup")
-    
+
     # Save results
     report_path = Path(__file__).parent.parent / "reports" / f"psr_parallel_deployment_{int(time.time())}.json"
     report_path.parent.mkdir(exist_ok=True)
-    
+
     report = {
         'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
         'duration': duration,
@@ -378,10 +378,10 @@ def main():
         'total_expected_speedup': total_speedup,
         'results': all_results
     }
-    
+
     report_path.write_text(json.dumps(report, indent=2))
     print(f"\n✅ Report saved: {report_path}")
-    
+
     print("\n" + "="*70)
     print("✅ ALL PSR CAMPAIGNS DEPLOYED")
     print("="*70)

@@ -1,14 +1,15 @@
 import os
 
+
 def setup_cyberbrain_adaptation():
     print("=== Cyberbrain Adaptation: Integrating Qubes/Layered Concepts ===")
-    
+
     # We will build out a CyberBrain layer for WhiteMagic
     # This aligns with the "Global Workspace" and "Multi-Timescale Sync" from the text
-    
+
     cyberbrain_path = "/home/lucas/Desktop/whitemagicdev/whitemagic/core/cyberbrain"
     os.makedirs(cyberbrain_path, exist_ok=True)
-    
+
     workspace_path = os.path.join(cyberbrain_path, "global_workspace.py")
     with open(workspace_path, "w") as f:
         f.write("""# Cyberbrain Global Workspace

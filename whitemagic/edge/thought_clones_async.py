@@ -20,6 +20,8 @@ _tokio_deploy: Any = None
 try:
     from whitemagic.optimization.rust_accelerators import (
         tokio_clones_available,
+    )
+    from whitemagic.optimization.rust_accelerators import (
         tokio_deploy_clones as _imported_tokio_deploy,
     )
     _RUST_TOKIO = tokio_clones_available()
@@ -238,7 +240,7 @@ class AsyncThoughtCloneArmy:
                     },
                 )
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 logger.warning(f"Clone {clone_id} timed out")
                 raise
             except Exception as e:

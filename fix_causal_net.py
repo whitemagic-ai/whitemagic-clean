@@ -1,5 +1,5 @@
 
-with open("whitemagic/core/intelligence/synthesis/causal_net.py", "r") as f:
+with open("whitemagic/core/intelligence/synthesis/causal_net.py") as f:
     content = f.read()
 
 # Add a rust fast-path option to infer_dependencies

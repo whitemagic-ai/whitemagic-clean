@@ -16,13 +16,14 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass, field
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from importlib.util import find_spec
 from pathlib import Path
 from threading import Lock
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 try:
     import numpy as np
@@ -36,7 +37,7 @@ from whitemagic.utils.fileio import atomic_write, file_lock
 RUST_AVAILABLE = find_spec("whitemagic_rs") is not None
 
 # Singleton
-_index_instance: "EmbeddingIndex" | None = None
+_index_instance: EmbeddingIndex | None = None
 _index_lock = Lock()
 
 
@@ -49,7 +50,7 @@ class EmbeddingEntry:
     content_hash: str
     embedding: list[float]
     metadata: dict[str, Any] = field(default_factory=dict)
-    created: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class EmbeddingIndex:
@@ -96,7 +97,7 @@ class EmbeddingIndex:
         index_file = self.storage_path / "index.json"
         data = {
             "version": "1.0",
-            "updated": datetime.now(timezone.utc).isoformat(),
+            "updated": datetime.now(UTC).isoformat(),
             "total_entries": len(self._entries),
             "rust_available": RUST_AVAILABLE,
             "entries": [

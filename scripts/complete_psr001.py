@@ -4,48 +4,49 @@ Complete PSR-001 Memory Core
 Generates all remaining memory core implementations
 """
 
-from pathlib import Path
 import time
+from pathlib import Path
+
 
 class PSR001Completer:
     """Complete PSR-001 with all remaining files"""
-    
+
     def __init__(self, base_path: Path):
         self.base_path = base_path
         self.generated = []
-    
+
     def generate_all(self):
         """Generate all remaining PSR-001 files"""
         print("\n" + "="*70)
         print("🧠 PSR-001 MEMORY CORE - COMPLETE IMPLEMENTATION")
         print("="*70)
-        
+
         start = time.time()
-        
+
         # 1. Memory consolidation
         self._write_file("psr-001/memory_consolidation_v2.rs", self._memory_consolidation())
-        
+
         # 2. Memory decay
         self._write_file("psr-001/memory_decay_v2.rs", self._memory_decay())
-        
+
         # 3. Memory lifecycle
         self._write_file("psr-001/memory_lifecycle_v2.rs", self._memory_lifecycle())
-        
+
         # 4. Mindful forgetting
         self._write_file("psr-001/mindful_forgetting_v2.rs", self._mindful_forgetting())
-        
+
         # 5. Reconsolidation
         self._write_file("psr-001/reconsolidation_v2.rs", self._reconsolidation())
-        
+
         # 6. Dream cycle integration
         self._write_file("psr-001/dream_cycle_v2.rs", self._dream_cycle())
-        
+
         # 7. Phylogenetics (memory lineage)
         self._write_file("psr-001/memory_phylogenetics_v2.rs", self._memory_phylogenetics())
-        
+
         duration = time.time() - start
         self._print_summary(duration)
-    
+
     def _memory_consolidation(self) -> str:
         return """//! Memory Consolidation
 //! Consolidates short-term memories into long-term storage
@@ -130,7 +131,7 @@ impl MemoryConsolidation {
     }
 }
 """
-    
+
     def _memory_decay(self) -> str:
         return """//! Memory Decay
 //! Manages memory decay and forgetting curves
@@ -178,7 +179,7 @@ impl MemoryDecay {
     }
 }
 """
-    
+
     def _memory_lifecycle(self) -> str:
         return """//! Memory Lifecycle
 //! Tracks memory through its lifecycle stages
@@ -249,7 +250,7 @@ impl MemoryLifecycle {
     }
 }
 """
-    
+
     def _mindful_forgetting(self) -> str:
         return """//! Mindful Forgetting
 //! Intelligent forgetting based on relevance and importance
@@ -318,7 +319,7 @@ impl MindfulForgetting {
     }
 }
 """
-    
+
     def _reconsolidation(self) -> str:
         return """//! Reconsolidation
 //! Memory reconsolidation when recalled
@@ -376,7 +377,7 @@ impl Reconsolidation {
     }
 }
 """
-    
+
     def _dream_cycle(self) -> str:
         return """//! Dream Cycle Integration
 //! Integrates with dream cycle for memory processing
@@ -429,7 +430,7 @@ impl DreamCycleIntegration {
     }
 }
 """
-    
+
     def _memory_phylogenetics(self) -> str:
         return """//! Memory Phylogenetics
 //! Tracks memory lineage and evolution
@@ -519,35 +520,35 @@ impl MemoryPhylogenetics {
     }
 }
 """
-    
+
     def _write_file(self, rel_path: str, code: str):
         """Write file"""
         full_path = self.base_path / "whitemagic-rust" / "src" / "psr" / rel_path
         full_path.parent.mkdir(parents=True, exist_ok=True)
         full_path.write_text(code)
-        
+
         lines = len(code.split('\n'))
         self.generated.append((rel_path, lines))
         print(f"  ✅ {rel_path}: {lines} lines")
-    
+
     def _print_summary(self, duration: float):
         """Print summary"""
         print("\n" + "="*70)
         print("📊 PSR-001 COMPLETE")
         print("="*70)
-        
+
         total_lines = sum(lines for _, lines in self.generated)
-        
+
         print(f"\nGenerated: {len(self.generated)} implementations")
         print(f"Total lines: {total_lines:,}")
         print(f"Duration: {duration:.2f}s")
-        
+
         print("\n✅ PSR-001 Memory Core fully implemented!")
 
 def main():
     """Complete PSR-001"""
     base_path = Path(__file__).parent.parent
-    
+
     completer = PSR001Completer(base_path)
     completer.generate_all()
 

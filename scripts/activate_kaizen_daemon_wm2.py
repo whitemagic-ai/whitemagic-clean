@@ -21,10 +21,10 @@ kaizen_daemon = WM2_ROOT / "core" / "kaizen_daemon.py"
 if not kaizen_daemon.exists():
     print(f"❌ Kaizen daemon not found: {kaizen_daemon}")
     print("   Creating from template...")
-    
+
     # Create kaizen daemon if it doesn't exist
     kaizen_daemon.parent.mkdir(parents=True, exist_ok=True)
-    
+
     daemon_code = '''"""
 WM2 Kaizen Daemon - Autonomous Continuous Improvement
 ======================================================
@@ -169,7 +169,7 @@ if __name__ == "__main__":
     daemon = KaizenDaemon(cycle_interval=5)
     daemon.run(max_cycles=max_cycles)
 '''
-    
+
     kaizen_daemon.write_text(daemon_code)
     print(f"   ✅ Created: {kaizen_daemon}")
     print()
@@ -185,9 +185,9 @@ try:
         text=True,
         timeout=60
     )
-    
+
     print(result.stdout)
-    
+
     if result.returncode == 0:
         print()
         print("=" * 80)

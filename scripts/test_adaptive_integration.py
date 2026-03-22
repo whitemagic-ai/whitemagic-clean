@@ -54,15 +54,15 @@ for i in range(patterns_to_apply):
     pattern = integration.get_next_pattern()
     if not pattern:
         break
-    
+
     print(f"\n  Pattern {i+1}/{patterns_to_apply}: {pattern.tag}")
     print(f"    Confidence: {pattern.confidence:.2%}")
     print(f"    Sources: {', '.join(pattern.sources)}")
-    
+
     # Apply and measure
     result = simulate_pattern_application(pattern, integration)
     results.append(result)
-    
+
     print(f"    Result: {'✅ Success' if result['success'] else '❌ Failed'}")
     if result['performance_gain']:
         print(f"    Performance gain: {result['performance_gain']:.2f}x")
@@ -79,7 +79,7 @@ print(f"\n  Success rate: {len(successful)}/{len(results)} ({len(successful)/len
 if successful:
     avg_quality = sum(r['quality_score'] for r in successful) / len(successful)
     print(f"  Avg quality score: {avg_quality:.2%}")
-    
+
     perf_gains = [r['performance_gain'] for r in successful if r['performance_gain']]
     if perf_gains:
         avg_gain = sum(perf_gains) / len(perf_gains)
@@ -151,7 +151,7 @@ if perf_gains:
     print(f"Maximum speedup: {max_gain:.2f}x")
 
 print("\nConfidence evolution:")
-improved = [r for r in results[:5] if integration.get_pattern_stats(r['pattern_id']) and 
+improved = [r for r in results[:5] if integration.get_pattern_stats(r['pattern_id']) and
            integration.get_pattern_stats(r['pattern_id'])['confidence_change'] > 0]
 print(f"  Patterns with increased confidence: {len(improved)}")
 

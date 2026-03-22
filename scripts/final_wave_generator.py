@@ -4,40 +4,41 @@ Final Wave Generator - Complete remaining PSR implementations
 Generates the final 14 implementations to reach 39 total
 """
 
-from pathlib import Path
 import time
+from pathlib import Path
+
 
 class FinalWaveGenerator:
     """Generate final wave of implementations"""
-    
+
     def __init__(self, base_path: Path):
         self.base_path = base_path
         self.generated = []
-    
+
     def generate_all(self):
         """Generate all remaining implementations"""
         print("\n" + "="*70)
         print("🚀 FINAL WAVE GENERATOR - Completing PSR Campaigns")
         print("="*70)
-        
+
         start = time.time()
-        
+
         # PSR-001: Memory Core (remaining files)
         self.generate_psr001_remaining()
-        
+
         # PSR-004: Intelligence Layer (remaining files)
         self.generate_psr004_remaining()
-        
+
         # PSR-006: MCP Tools (remaining file)
         self.generate_psr006_remaining()
-        
+
         duration = time.time() - start
         self._print_summary(duration)
-    
+
     def generate_psr001_remaining(self):
         """PSR-001: Memory Core remaining files"""
         print("\n🔨 PSR-001: Memory Core (remaining)")
-        
+
         # Unified memory v2
         code = """//! Unified Memory System v2
 //! High-performance unified memory with hybrid recall
@@ -101,7 +102,7 @@ impl UnifiedMemoryV2 {
 }
 """
         self._write_file("psr-001/unified_memory_v3.rs", code)
-        
+
         # Hologram consolidation
         code = """//! Hologram Consolidation
 //! Memory consolidation with holographic encoding
@@ -142,11 +143,11 @@ impl HologramConsolidation {
 }
 """
         self._write_file("psr-001/hologram_consolidation_v2.rs", code)
-    
+
     def generate_psr004_remaining(self):
         """PSR-004: Intelligence Layer remaining files"""
         print("\n🔨 PSR-004: Intelligence Layer (remaining)")
-        
+
         # Synthesis engine
         code = """//! Synthesis Engine
 //! Combines multiple intelligence sources
@@ -189,7 +190,7 @@ impl SynthesisEngine {
 }
 """
         self._write_file("psr-004/synthesis_engine_v2.rs", code)
-        
+
         # Predictive engine
         code = """//! Predictive Engine
 //! Predicts future states based on patterns
@@ -253,11 +254,11 @@ impl PredictiveEngine {
 }
 """
         self._write_file("psr-004/predictive_engine_v2.rs", code)
-    
+
     def generate_psr006_remaining(self):
         """PSR-006: MCP Tools remaining file"""
         print("\n🔨 PSR-006: MCP Tools (remaining)")
-        
+
         # Gana Ghost (introspection)
         code = """//! Gana Ghost - Introspection and self-awareness
 //! System introspection and capability discovery
@@ -309,35 +310,35 @@ impl GanaGhost {
 }
 """
         self._write_file("psr-006/gana_ghost_v2.rs", code)
-    
+
     def _write_file(self, rel_path: str, code: str):
         """Write file"""
         full_path = self.base_path / "whitemagic-rust" / "src" / "psr" / rel_path
         full_path.parent.mkdir(parents=True, exist_ok=True)
         full_path.write_text(code)
-        
+
         lines = len(code.split('\n'))
         self.generated.append((rel_path, lines))
         print(f"  ✅ {rel_path}: {lines} lines")
-    
+
     def _print_summary(self, duration: float):
         """Print summary"""
         print("\n" + "="*70)
         print("📊 FINAL WAVE COMPLETE")
         print("="*70)
-        
+
         total_lines = sum(lines for _, lines in self.generated)
-        
+
         print(f"\nGenerated: {len(self.generated)} implementations")
         print(f"Total lines: {total_lines:,}")
         print(f"Duration: {duration:.2f}s")
-        
+
         print("\n✅ PSR campaigns ready for final compilation!")
 
 def main():
     """Run final wave generator"""
     base_path = Path(__file__).parent.parent
-    
+
     generator = FinalWaveGenerator(base_path)
     generator.generate_all()
 

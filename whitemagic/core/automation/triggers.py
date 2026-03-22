@@ -74,7 +74,7 @@ class TriggerManager:
             )
             with file_lock(self.trigger_file):
                 atomic_write(self.trigger_file, content)
-        except IOError:
+        except OSError:
             pass
 
 

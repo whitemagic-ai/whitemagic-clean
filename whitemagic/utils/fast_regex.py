@@ -12,7 +12,7 @@ Usage:
 """
 
 import re
-from typing import Pattern, Optional
+from re import Pattern
 
 # Try to import Rust regex support
 _RUST_AVAILABLE = False
@@ -31,7 +31,7 @@ class FastRegexPattern:
         self._py_pattern = re.compile(pattern, flags)
         self._use_rust = _RUST_AVAILABLE and flags == 0  # Rust only for simple patterns
 
-    def search(self, text: str) -> Optional[re.Match]:
+    def search(self, text: str) -> re.Match | None:
         """Search for pattern in text."""
         if self._use_rust:
             try:
@@ -42,7 +42,7 @@ class FastRegexPattern:
                 pass
         return self._py_pattern.search(text)
 
-    def match(self, text: str) -> Optional[re.Match]:
+    def match(self, text: str) -> re.Match | None:
         """Match pattern at start of text."""
         return self._py_pattern.match(text)
 

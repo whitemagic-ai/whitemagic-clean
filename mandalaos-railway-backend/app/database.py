@@ -1,9 +1,8 @@
 """Database initialization for MandalaOS Railway Backend."""
 
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, declarative_base
-
 from app.config import settings
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Convert PostgreSQL URL to async version if needed
 database_url = settings.DATABASE_URL

@@ -7,14 +7,14 @@ configuration sources (files, environment variables, CLI arguments).
 
 import logging
 import os
-
-from whitemagic.utils.fast_json import loads as _json_loads
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 

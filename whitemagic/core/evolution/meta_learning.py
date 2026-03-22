@@ -7,10 +7,9 @@ about its own learning process.
 
 import json
 import sqlite3
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 
 
 @dataclass
@@ -25,7 +24,7 @@ class PatternMetrics:
     avg_quality_score: float
     avg_confidence: float
     source_count: int
-    sources: List[str]
+    sources: list[str]
     first_seen: str
     last_applied: str
 
@@ -49,7 +48,7 @@ class MetaPattern:
     evidence_count: int
     confidence: float
     discovered_at: str
-    pattern_types_involved: List[str]
+    pattern_types_involved: list[str]
 
     # Examples of meta-patterns:
     # - "Cross-source patterns have 2.5x higher success rate"
@@ -61,7 +60,7 @@ class MetaPattern:
 class MetaLearningEngine:
     """Learns about the learning process itself"""
 
-    def __init__(self, db_path: Optional[str] = None):
+    def __init__(self, db_path: str | None = None):
         if db_path is None:
             db_path = str(Path.home() / ".whitemagic" / "memory" / "meta_learning.db")
 
@@ -127,7 +126,7 @@ class MetaLearningEngine:
         performance_gain: float,
         quality_score: float,
         confidence: float,
-        sources: List[str]
+        sources: list[str]
     ) -> None:
         """Update metrics for a pattern after application"""
         conn = sqlite3.connect(self.db_path)
@@ -177,7 +176,7 @@ class MetaLearningEngine:
         conn.commit()
         conn.close()
 
-    def discover_meta_patterns(self) -> List[MetaPattern]:
+    def discover_meta_patterns(self) -> list[MetaPattern]:
         """Analyze pattern metrics to discover meta-patterns"""
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
@@ -266,7 +265,7 @@ class MetaLearningEngine:
 
         return meta_patterns
 
-    def _save_meta_patterns(self, meta_patterns: List[MetaPattern]):
+    def _save_meta_patterns(self, meta_patterns: list[MetaPattern]):
         """Save meta-patterns to database"""
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
@@ -285,9 +284,9 @@ class MetaLearningEngine:
 
     def get_pattern_recommendations(
         self,
-        context: Dict,
+        context: dict,
         limit: int = 5
-    ) -> List[Tuple[str, float, str]]:
+    ) -> list[tuple[str, float, str]]:
         """Recommend patterns based on context and meta-learning"""
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
@@ -324,7 +323,7 @@ class MetaLearningEngine:
         conn.close()
         return recommendations
 
-    def get_meta_learning_summary(self) -> Dict:
+    def get_meta_learning_summary(self) -> dict:
         """Get summary of meta-learning insights"""
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()

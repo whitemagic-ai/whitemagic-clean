@@ -1,5 +1,5 @@
 
-with open('whitemagic/core/acceleration/koka_native_bridge.py', 'r') as f:
+with open('whitemagic/core/acceleration/koka_native_bridge.py') as f:
     content = f.read()
 
 # Fix indentation error introduced earlier

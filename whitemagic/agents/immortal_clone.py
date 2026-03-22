@@ -11,7 +11,7 @@ Based on Geoff Huntley's insights on agent loops:
 import logging
 import subprocess
 import time
-from concurrent.futures import ProcessPoolExecutor, wait, FIRST_COMPLETED
+from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path

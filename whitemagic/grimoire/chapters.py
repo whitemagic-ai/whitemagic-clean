@@ -11,9 +11,9 @@ connects to the rest of the architecture.
 Single source of truth: prat_resonance._GANA_META.
 """
 
-from typing import Any
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 
 @dataclass

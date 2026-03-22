@@ -21,24 +21,24 @@ print()
 def extract_decorator_patterns(codebase_path: Path) -> dict:
     """Extract all decorator patterns."""
     decorators = {}
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
                     for dec in node.decorator_list:
                         dec_name = ast.unparse(dec)
-                        
+
                         if dec_name not in decorators:
                             decorators[dec_name] = {
                                 "name": dec_name,
                                 "uses": [],
                                 "count": 0,
                             }
-                        
+
                         decorators[dec_name]["uses"].append({
                             "target": node.name,
                             "target_type": "function" if isinstance(node, ast.FunctionDef) else "class",
@@ -46,18 +46,18 @@ def extract_decorator_patterns(codebase_path: Path) -> dict:
                             "lineno": node.lineno,
                         })
                         decorators[dec_name]["count"] += 1
-        
+
         except Exception:
             continue
-    
+
     return decorators
 
 def generate_decorator_library(decorators: dict) -> str:
     """Generate decorator library for WM2."""
-    
+
     # Get top decorators
     top_decs = sorted(decorators.items(), key=lambda x: x[1]["count"], reverse=True)[:20]
-    
+
     return f'''"""
 WM2 Decorator Library
 =====================
@@ -128,44 +128,44 @@ def validate_args(**validators):
 def main():
     print("🔍 Extracting decorator patterns from whitemagicpublic...")
     print()
-    
+
     public_whitemagic = PUBLIC_ROOT / "whitemagic"
-    
+
     if not public_whitemagic.exists():
         print("❌ whitemagicpublic not found")
         return
-    
+
     decorators = extract_decorator_patterns(public_whitemagic)
-    
+
     total_uses = sum(d["count"] for d in decorators.values())
-    
+
     print("✅ Extracted decorator patterns:")
     print(f"   Unique decorators: {len(decorators):,}")
     print(f"   Total uses: {total_uses:,}")
     print()
-    
+
     # Top 10
     top_10 = sorted(decorators.items(), key=lambda x: x[1]["count"], reverse=True)[:10]
     print("Top 10 decorators:")
     for name, data in top_10:
         print(f"   {name}: {data['count']} uses")
     print()
-    
+
     # Save patterns
     results_path = PROJECT_ROOT / "reports" / "decorator_patterns.json"
     results_path.write_text(json.dumps(decorators, indent=2))
-    
+
     # Generate library
     print("📝 Generating DecoratorLibrary for WM2...")
     library_code = generate_decorator_library(decorators)
-    
+
     library_path = WM2_ROOT / "synthesized" / "decorator_library.py"
     library_path.parent.mkdir(parents=True, exist_ok=True)
     library_path.write_text(library_code)
-    
+
     print(f"   ✅ Created: {library_path.relative_to(WM2_ROOT)}")
     print()
-    
+
     print("=" * 80)
     print("DECORATOR SYNTHESIS COMPLETE")
     print("=" * 80)

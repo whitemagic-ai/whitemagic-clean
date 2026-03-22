@@ -5,15 +5,15 @@ Manages work sessions, state persistence, and context tracking.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
 from whitemagic.config.paths import SESSIONS_DIR
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 class SessionStatus(Enum):
@@ -37,8 +37,8 @@ class Session:
     tags: list[str] = field(default_factory=list)
 
     # Timestamps
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     completed_at: str | None = None
 
     # Data
@@ -53,7 +53,7 @@ class Session:
         return {**asdict(self), "status": self.status.value}
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Session":
+    def from_dict(cls, data: dict[str, Any]) -> Session:
         data = data.copy()
         if "status" in data:
             data["status"] = SessionStatus(data["status"])
@@ -148,7 +148,7 @@ class SessionManager:
             if hasattr(session, key):
                 setattr(session, key, value)
 
-        session.updated_at = datetime.now(timezone.utc).isoformat()
+        session.updated_at = datetime.now(UTC).isoformat()
         self._save_session(session)
         return session
 
@@ -157,7 +157,7 @@ class SessionManager:
         return self.update_session(
             session_id,
             status=SessionStatus.COMPLETED,
-            completed_at=datetime.now(timezone.utc).isoformat(),
+            completed_at=datetime.now(UTC).isoformat(),
         )
 
     def _save_session(self, session: Session) -> None:

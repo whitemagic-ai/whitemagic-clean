@@ -1,8 +1,8 @@
 import re
 
-with open('nexus/src/components/panels/LeftPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/LeftPanel.tsx') as f:
     content = f.read()
-    
+
 # Remove the unused TreeItem
 content = re.sub(r'function TreeItem\(\{[\s\S]*?</div>\n    </div>\n  \);\n\}', '', content)
 
@@ -115,7 +115,7 @@ if "function FileTree" not in content:
 with open('nexus/src/components/panels/LeftPanel.tsx', 'w') as f:
     f.write(content)
 
-with open('nexus/src/components/center/GlobalSearch.tsx', 'r') as f:
+with open('nexus/src/components/center/GlobalSearch.tsx') as f:
     content = f.read()
 
 # Replace openFile with hardcoded 'path' instead of variable since it was failing TS type checking

@@ -6,28 +6,28 @@ Extract real code patterns from WhiteMagic codebases to create a rich gene libra
 This becomes the foundation for meaningful evolution.
 """
 
-import os
 import json
-from pathlib import Path
-from typing import List, Dict
+import os
 from collections import defaultdict
+from pathlib import Path
+
 
 class GeneLibraryBuilder:
     """Build gene library from real codebases"""
-    
+
     def __init__(self):
         self.genes = []
         self.gene_ids = set()
         self.patterns = defaultdict(int)
-        
-    def scan_python_file(self, filepath: Path) -> List[Dict]:
+
+    def scan_python_file(self, filepath: Path) -> list[dict]:
         """Extract patterns from Python file"""
         genes = []
-        
+
         try:
-            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(filepath, encoding='utf-8', errors='ignore') as f:
                 content = f.read()
-            
+
             # Architecture patterns
             if 'async def' in content:
                 genes.append(self._create_gene('async_functions', 'Architecture', 0.85))
@@ -41,7 +41,7 @@ class GeneLibraryBuilder:
                 genes.append(self._create_gene('dataclasses', 'Architecture', 0.70))
             if 'Protocol' in content and 'typing' in content:
                 genes.append(self._create_gene('protocols', 'Architecture', 0.75))
-            
+
             # Optimization patterns
             if '@lru_cache' in content or '@cache' in content:
                 genes.append(self._create_gene('caching', 'Optimization', 0.85))
@@ -53,7 +53,7 @@ class GeneLibraryBuilder:
                 genes.append(self._create_gene('memory_mapping', 'Optimization', 0.80))
             if 'pool' in content.lower() and 'memory' in content.lower():
                 genes.append(self._create_gene('memory_pooling', 'Optimization', 0.85))
-            
+
             # Feature patterns
             if 'logging' in content:
                 genes.append(self._create_gene('logging', 'Feature', 0.60))
@@ -63,7 +63,7 @@ class GeneLibraryBuilder:
                 genes.append(self._create_gene('pydantic_validation', 'Feature', 0.75))
             if 'pytest' in content or 'unittest' in content:
                 genes.append(self._create_gene('testing', 'Feature', 0.70))
-            
+
             # Intelligence patterns
             if 'embedding' in content.lower():
                 genes.append(self._create_gene('embeddings', 'Intelligence', 0.85))
@@ -73,7 +73,7 @@ class GeneLibraryBuilder:
                 genes.append(self._create_gene('graph_algorithms', 'Intelligence', 0.85))
             if 'pattern' in content.lower() and 'match' in content.lower():
                 genes.append(self._create_gene('pattern_matching', 'Intelligence', 0.80))
-            
+
             # Biological patterns (adaptive systems)
             if 'adapt' in content.lower():
                 genes.append(self._create_gene('adaptive_systems', 'Biological', 0.80))
@@ -81,7 +81,7 @@ class GeneLibraryBuilder:
                 genes.append(self._create_gene('evolutionary_algorithms', 'Biological', 0.85))
             if 'feedback' in content.lower() and 'loop' in content.lower():
                 genes.append(self._create_gene('feedback_loops', 'Biological', 0.75))
-            
+
             # Polyglot patterns
             if 'rust' in content.lower() or '.rs' in content:
                 genes.append(self._create_gene('rust_integration', 'Polyglot', 0.90))
@@ -89,20 +89,20 @@ class GeneLibraryBuilder:
                 genes.append(self._create_gene('rust_subprocess', 'Polyglot', 0.85))
             if 'ctypes' in content or 'cffi' in content:
                 genes.append(self._create_gene('c_bindings', 'Polyglot', 0.80))
-            
+
         except Exception:
             pass
-        
+
         return genes
-    
-    def scan_rust_file(self, filepath: Path) -> List[Dict]:
+
+    def scan_rust_file(self, filepath: Path) -> list[dict]:
         """Extract patterns from Rust file"""
         genes = []
-        
+
         try:
-            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(filepath, encoding='utf-8', errors='ignore') as f:
                 content = f.read()
-            
+
             # Rust-specific patterns
             if 'rayon' in content:
                 genes.append(self._create_gene('rayon_parallelism', 'Optimization', 0.95))
@@ -116,13 +116,13 @@ class GeneLibraryBuilder:
                 genes.append(self._create_gene('concurrent_data_structures', 'Architecture', 0.85))
             if 'PyO3' in content or 'pyo3' in content:
                 genes.append(self._create_gene('python_rust_bridge', 'Polyglot', 0.95))
-            
+
         except Exception:
             pass
-        
+
         return genes
-    
-    def _create_gene(self, name: str, category: str, value: float) -> Dict:
+
+    def _create_gene(self, name: str, category: str, value: float) -> dict:
         """Create gene dict"""
         gene_id = f"{category.lower()}_{name}"
         if gene_id not in self.gene_ids:
@@ -136,27 +136,27 @@ class GeneLibraryBuilder:
                 'frequency': 1
             }
         return None
-    
-    def scan_directory(self, directory: Path, extensions: List[str]) -> None:
+
+    def scan_directory(self, directory: Path, extensions: list[str]) -> None:
         """Scan directory for code patterns"""
         print(f"📂 Scanning {directory}...")
-        
+
         file_count = 0
         for ext in extensions:
             for filepath in directory.rglob(f"*{ext}"):
                 # Skip test files, migrations, etc.
                 if any(skip in str(filepath) for skip in ['test_', '__pycache__', '.git', 'node_modules', 'venv', '.venv']):
                     continue
-                
+
                 file_count += 1
-                
+
                 if ext == '.py':
                     genes = self.scan_python_file(filepath)
                 elif ext == '.rs':
                     genes = self.scan_rust_file(filepath)
                 else:
                     continue
-                
+
                 for gene in genes:
                     if gene:
                         # Check if gene already exists
@@ -165,55 +165,55 @@ class GeneLibraryBuilder:
                             existing['frequency'] += 1
                         else:
                             self.genes.append(gene)
-        
+
         print(f"   ✅ Scanned {file_count} files")
         print(f"   ✅ Found {len(self.genes)} unique gene patterns")
-    
+
     def boost_frequent_patterns(self):
         """Boost value of frequently occurring patterns"""
         print("\n🔧 Boosting frequent patterns...")
-        
+
         for gene in self.genes:
             if gene['frequency'] > 10:
                 # Very common pattern - boost value
                 boost = min(0.10, gene['frequency'] * 0.005)
                 gene['value'] = min(0.99, gene['value'] + boost)
                 gene['boosted'] = True
-        
+
         boosted_count = sum(1 for g in self.genes if g.get('boosted', False))
         print(f"   ✅ Boosted {boosted_count} high-frequency patterns")
-    
+
     def add_synergy_genes(self):
         """Add synergy genes for pattern combinations"""
         print("\n🧬 Adding synergy genes...")
-        
+
         synergies = []
         gene_names = {g['name'] for g in self.genes}
-        
+
         # Define synergies
         if 'async_functions' in gene_names and 'tokio_async' in gene_names:
             synergies.append(self._create_gene('async_rust_python_bridge', 'Polyglot', 0.95))
-        
+
         if 'numpy_vectorization' in gene_names and 'simd_vectorization' in gene_names:
             synergies.append(self._create_gene('hybrid_vectorization', 'Optimization', 0.95))
-        
+
         if 'caching' in gene_names and 'memory_pooling' in gene_names:
             synergies.append(self._create_gene('memory_optimization_suite', 'Optimization', 0.90))
-        
+
         if 'embeddings' in gene_names and 'vector_search' in gene_names:
             synergies.append(self._create_gene('semantic_search_pipeline', 'Intelligence', 0.95))
-        
+
         for synergy in synergies:
             if synergy:
                 self.genes.append(synergy)
-        
+
         print(f"   ✅ Added {len(synergies)} synergy genes")
-    
+
     def save_library(self, filename: str = "gene_library_seed_vault.json"):
         """Save gene library"""
         # Sort by value (highest first)
         self.genes.sort(key=lambda g: g['value'], reverse=True)
-        
+
         # Add metadata
         library = {
             'version': '1.0.0',
@@ -229,10 +229,10 @@ class GeneLibraryBuilder:
             'top_patterns': sorted(self.patterns.items(), key=lambda x: x[1], reverse=True)[:20],
             'genes': self.genes
         }
-        
+
         with open(filename, 'w') as f:
             json.dump(library, f, indent=2)
-        
+
         print(f"\n💾 Gene library saved to {filename}")
         return library
 
@@ -244,28 +244,28 @@ def main():
     print()
     print("Building gene library from WhiteMagic codebases...")
     print()
-    
+
     builder = GeneLibraryBuilder()
-    
+
     # Scan WhiteMagic codebases
     codebases = [
         ("/home/lucas/Desktop/whitemagicdev", ['.py', '.rs']),
         ("/home/lucas/Desktop/whitemagicpublic", ['.py', '.rs']),
     ]
-    
+
     for directory, extensions in codebases:
         if os.path.exists(directory):
             builder.scan_directory(Path(directory), extensions)
         else:
             print(f"⚠️  {directory} not found, skipping")
-    
+
     # Enhance library
     builder.boost_frequent_patterns()
     builder.add_synergy_genes()
-    
+
     # Save
     library = builder.save_library()
-    
+
     # Summary
     print()
     print("=" * 80)

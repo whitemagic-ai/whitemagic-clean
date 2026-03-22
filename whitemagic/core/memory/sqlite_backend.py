@@ -5,19 +5,22 @@ Implements a scalable, ACID-compliant persistence layer for WhiteMagic.
 import logging
 import re
 import sqlite3
-
-from whitemagic.utils.fast_json import loads as _json_loads
+from collections.abc import Generator
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 
+from whitemagic.core.autonomous.unified_nervous_system import (
+    BiologicalSubsystem,
+    get_nervous_system,
+)
+from whitemagic.core.bridge.sutra_bridge import get_sutra_kernel
 from whitemagic.core.memory.db_manager import get_db_pool
 from whitemagic.core.memory.unified_types import Memory, MemoryType
+from whitemagic.security.zodiac.ledger import get_ledger
 from whitemagic.utils.core import parse_datetime
 from whitemagic.utils.fast_json import dumps_str as _fast_dumps
-from whitemagic.security.zodiac.ledger import get_ledger
-from whitemagic.core.bridge.sutra_bridge import get_sutra_kernel
-from whitemagic.core.autonomous.unified_nervous_system import get_nervous_system, BiologicalSubsystem
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -379,7 +382,7 @@ class SQLiteBackend:
                 # Lazy-init Rust backend if needed
                 if not hasattr(self, "_rust_backend"):
                     self._rust_backend = PySQLiteBackend(str(self.db_path))
-                
+
                 # Execute store in Rust (bypassing Python GIL)
                 rust_stored = self._rust_backend.store_memory(
                     memory.id,
@@ -476,7 +479,7 @@ class SQLiteBackend:
                     conn.execute("""
                         INSERT INTO memories_fts (id, title, content, tags_text) VALUES (?, ?, ?, ?)
                     """, (memory.id, memory.title or "", str(memory.content), tags_text))
-            
+
             # Commit Koka transaction
             if tx_id:
                 koka.commit_transaction(tx_id)

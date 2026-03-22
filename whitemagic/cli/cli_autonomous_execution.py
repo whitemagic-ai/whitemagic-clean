@@ -3,13 +3,12 @@
 
 import asyncio
 from datetime import datetime
-
-from whitemagic.utils.fast_json import loads as _json_loads
 from pathlib import Path
 
 import click
 
 from whitemagic.config.paths import WM_ROOT
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 @click.group()

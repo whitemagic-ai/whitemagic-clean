@@ -1,4 +1,5 @@
 import logging
+
 from whitemagic.core.acceleration.koka_bridge import get_koka_runtime
 
 logging.basicConfig(level=logging.INFO)
@@ -9,16 +10,16 @@ def test_koka():
     try:
         koka = get_koka_runtime()
         print("🚀 Starting Koka Runtime...")
-        
+
         tx_id = koka.begin_transaction()
         print(f"✅ Begin Transaction OK: ID={tx_id}")
-        
+
         if tx_id:
             success = koka.commit_transaction(tx_id)
             print(f"✅ Commit Transaction OK: {success}")
         else:
             print("❌ No Transaction ID returned")
-            
+
     except Exception as e:
         print(f"❌ Koka Diagnostic Failed: {e}")
         import traceback

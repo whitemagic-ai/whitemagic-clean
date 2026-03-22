@@ -8,14 +8,14 @@ Target: 60-70% faster access for frequently used memories
 
 import logging
 from collections import OrderedDict, defaultdict
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from collections.abc import Callable
 from typing import Any
 
 from whitemagic.config.paths import CACHE_DIR
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 

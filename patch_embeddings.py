@@ -1,6 +1,6 @@
 import re
 
-with open('whitemagic/core/memory/embeddings.py', 'r') as f:
+with open('whitemagic/core/memory/embeddings.py') as f:
     content = f.read()
 
 # Look for _load_vec_cache and replace the np.array creation

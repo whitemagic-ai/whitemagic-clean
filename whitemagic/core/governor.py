@@ -23,7 +23,7 @@ from threading import Lock
 from typing import Any
 
 # Singleton instance
-_governor_instance: "Governor" | None = None
+_governor_instance: Governor | None = None
 _governor_lock = Lock()
 
 

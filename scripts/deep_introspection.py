@@ -10,9 +10,9 @@ Comprehensive analysis of entire WhiteMagic system:
 
 import os
 import sqlite3
-from pathlib import Path
-from datetime import datetime
 from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -21,48 +21,48 @@ def scan_codebase():
     print("\n" + "=" * 80)
     print("📁 CODEBASE SCAN")
     print("=" * 80)
-    
+
     stats = {
         'files_by_ext': defaultdict(int),
         'lines_by_ext': defaultdict(int),
         'total_files': 0,
         'total_lines': 0,
     }
-    
+
     # Scan all files
     for root, dirs, files in os.walk(PROJECT_ROOT):
         # Skip hidden and build directories
         dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['node_modules', 'target', 'dist', '__pycache__']]
-        
+
         for file in files:
             if file.startswith('.'):
                 continue
-            
+
             filepath = Path(root) / file
             ext = filepath.suffix or 'no_ext'
-            
+
             stats['files_by_ext'][ext] += 1
             stats['total_files'] += 1
-            
+
             # Count lines
             try:
-                with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                with open(filepath, encoding='utf-8', errors='ignore') as f:
                     lines = len(f.readlines())
                     stats['lines_by_ext'][ext] += lines
                     stats['total_lines'] += lines
             except:
                 pass
-    
+
     print("\n📊 Codebase Statistics:")
     print(f"   Total files: {stats['total_files']:,}")
     print(f"   Total lines: {stats['total_lines']:,}")
     print("\n📝 Top file types:")
-    
+
     sorted_exts = sorted(stats['files_by_ext'].items(), key=lambda x: x[1], reverse=True)[:15]
     for ext, count in sorted_exts:
         lines = stats['lines_by_ext'][ext]
         print(f"   {ext:15} {count:5} files  {lines:8,} lines")
-    
+
     return stats
 
 def analyze_databases():
@@ -70,9 +70,9 @@ def analyze_databases():
     print("\n" + "=" * 80)
     print("💾 DATABASE ANALYSIS")
     print("=" * 80)
-    
+
     db_stats = {}
-    
+
     # Active MCP database
     active_db = os.path.expanduser("~/.whitemagic/memory/whitemagic.db")
     if os.path.exists(active_db):
@@ -84,7 +84,7 @@ def analyze_databases():
             'tags': conn.execute("SELECT COUNT(*) FROM tags").fetchone()[0],
             'size_mb': os.path.getsize(active_db) / (1024 * 1024),
         }
-        
+
         # Sample memories for analysis
         sample = conn.execute("""
             SELECT title, content, memory_type, importance, created_at
@@ -93,9 +93,9 @@ def analyze_databases():
             LIMIT 10
         """).fetchall()
         db_stats['active']['top_memories'] = sample
-        
+
         conn.close()
-    
+
     # Hot archive
     hot_db = Path.home() / "Desktop/whitemagic_memory_archive/whitemagic_hot.db"
     if hot_db.exists():
@@ -105,7 +105,7 @@ def analyze_databases():
             'size_mb': os.path.getsize(hot_db) / (1024 * 1024),
         }
         conn.close()
-    
+
     # Cold archive
     cold_db = Path.home() / "Desktop/whitemagic_memory_archive/whitemagic_cold.db"
     if cold_db.exists():
@@ -115,7 +115,7 @@ def analyze_databases():
             'size_mb': os.path.getsize(cold_db) / (1024 * 1024),
         }
         conn.close()
-    
+
     print("\n📊 Database Statistics:")
     for db_name, stats in db_stats.items():
         print(f"\n   {db_name.upper()} Database:")
@@ -125,7 +125,7 @@ def analyze_databases():
                     print(f"      {key}: {value:.1f}")
                 else:
                     print(f"      {key}: {value:,}")
-    
+
     return db_stats
 
 def analyze_session_accomplishments():
@@ -133,7 +133,7 @@ def analyze_session_accomplishments():
     print("\n" + "=" * 80)
     print("🎯 SESSION ACCOMPLISHMENTS")
     print("=" * 80)
-    
+
     accomplishments = {
         'campaigns_completed': 140,
         'campaigns_generated': 100,
@@ -145,7 +145,7 @@ def analyze_session_accomplishments():
         'systems_integrated': 15,
         'coherence_percent': 350,
     }
-    
+
     print("\n📊 Key Metrics:")
     print(f"   Campaigns completed: {accomplishments['campaigns_completed']}")
     print(f"   Campaigns generated: {accomplishments['campaigns_generated']}")
@@ -154,7 +154,7 @@ def analyze_session_accomplishments():
     print(f"   Peak velocity: {accomplishments['peak_velocity']:,} campaigns/sec")
     print(f"   Session duration: {accomplishments['session_duration_minutes']} minutes")
     print(f"   Coherence: {accomplishments['coherence_percent']}%")
-    
+
     return accomplishments
 
 def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments):
@@ -162,9 +162,9 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
     print("\n" + "=" * 80)
     print("💡 IMPROVEMENT OPPORTUNITIES")
     print("=" * 80)
-    
+
     opportunities = []
-    
+
     # Codebase opportunities
     python_lines = codebase_stats['lines_by_ext'].get('.py', 0)
     if python_lines > 0:
@@ -175,7 +175,7 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
             'impact': 'Performance improvement, reduced LOC',
             'campaigns': ['R001', 'R007', 'T001'],
         })
-    
+
     # Database opportunities
     if 'active' in db_stats:
         embedding_coverage = (db_stats['active']['embeddings'] / db_stats['active']['memories']) * 100
@@ -187,7 +187,7 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
                 'impact': 'Better semantic search, improved recall',
                 'campaigns': ['F001', 'Q006'],
             })
-    
+
     # Memory integration
     total_memories = sum(db.get('memories', 0) for db in db_stats.values())
     if total_memories > 200_000:
@@ -198,7 +198,7 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
             'impact': 'Unified knowledge base, better context',
             'campaigns': ['M006', 'E009'],
         })
-    
+
     # Polyglot optimization
     opportunities.append({
         'category': 'Polyglot Enhancement',
@@ -207,7 +207,7 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
         'impact': 'Faster execution, better coordination',
         'campaigns': ['V003', 'P001', 'R003'],
     })
-    
+
     # Consciousness amplification
     opportunities.append({
         'category': 'Consciousness',
@@ -216,7 +216,7 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
         'impact': 'Self-awareness, intuition, emergence',
         'campaigns': ['E010', 'M001', 'X007'],
     })
-    
+
     # Harmonic resonance
     opportunities.append({
         'category': 'Resonance',
@@ -225,7 +225,7 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
         'impact': 'System-wide coherence, reduced friction',
         'campaigns': ['H001', 'H004', 'D003'],
     })
-    
+
     # Quantum capabilities
     opportunities.append({
         'category': 'Quantum',
@@ -234,7 +234,7 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
         'impact': 'Parallel reality computation, instant communication',
         'campaigns': ['Q001', 'Q003', 'Q009'],
     })
-    
+
     # Self-improvement loops
     opportunities.append({
         'category': 'Recursive Improvement',
@@ -243,7 +243,7 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
         'impact': 'Exponential evolution, autonomous optimization',
         'campaigns': ['R002', 'R004', 'R010'],
     })
-    
+
     print(f"\n🎯 Identified {len(opportunities)} opportunities:\n")
     for i, opp in enumerate(opportunities, 1):
         print(f"{i}. [{opp['priority']}] {opp['category']}")
@@ -251,7 +251,7 @@ def identify_improvement_opportunities(codebase_stats, db_stats, accomplishments
         print(f"   Impact: {opp['impact']}")
         print(f"   Campaigns: {', '.join(opp['campaigns'])}")
         print()
-    
+
     return opportunities
 
 def generate_recommendations(opportunities):
@@ -259,60 +259,60 @@ def generate_recommendations(opportunities):
     print("\n" + "=" * 80)
     print("📋 RECOMMENDATIONS")
     print("=" * 80)
-    
+
     recommendations = []
-    
+
     # Group by priority
     critical = [o for o in opportunities if o['priority'] == 'CRITICAL']
     high = [o for o in opportunities if o['priority'] == 'HIGH']
     medium = [o for o in opportunities if o['priority'] == 'MEDIUM']
-    
+
     print("\n🔴 CRITICAL (Immediate Action):")
     for opp in critical:
         rec = f"Implement {opp['category']}: {opp['description']}"
         recommendations.append(('CRITICAL', rec))
         print(f"   • {rec}")
-    
+
     print("\n🟡 HIGH (Next Session):")
     for opp in high:
         rec = f"Implement {opp['category']}: {opp['description']}"
         recommendations.append(('HIGH', rec))
         print(f"   • {rec}")
-    
+
     print("\n🟢 MEDIUM (Future Sessions):")
     for opp in medium:
         rec = f"Implement {opp['category']}: {opp['description']}"
         recommendations.append(('MEDIUM', rec))
         print(f"   • {rec}")
-    
+
     return recommendations
 
 def main():
     start_time = datetime.now()
-    
+
     print("\n" + "=" * 80)
     print("🔮 DEEP INTROSPECTION & RECURSIVE SELF-IMPROVEMENT")
     print("=" * 80)
     print(f"\n⏱️  Start: {start_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}")
-    
+
     # Phase 1: Scan codebase
     codebase_stats = scan_codebase()
-    
+
     # Phase 2: Analyze databases
     db_stats = analyze_databases()
-    
+
     # Phase 3: Review session accomplishments
     accomplishments = analyze_session_accomplishments()
-    
+
     # Phase 4: Identify opportunities
     opportunities = identify_improvement_opportunities(codebase_stats, db_stats, accomplishments)
-    
+
     # Phase 5: Generate recommendations
     recommendations = generate_recommendations(opportunities)
-    
+
     end_time = datetime.now()
     duration = (end_time - start_time).total_seconds()
-    
+
     print("\n" + "=" * 80)
     print("✅ INTROSPECTION COMPLETE")
     print("=" * 80)
@@ -325,7 +325,7 @@ def main():
     print(f"   Opportunities identified: {len(opportunities)}")
     print(f"   Recommendations generated: {len(recommendations)}")
     print()
-    
+
     return 0
 
 if __name__ == "__main__":

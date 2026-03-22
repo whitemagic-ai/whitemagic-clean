@@ -9,13 +9,13 @@ where similar concepts cluster together in neural space.
 
 import hashlib
 import math
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 from whitemagic.config.paths import CACHE_DIR
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 from whitemagic.utils.fileio import atomic_write, file_lock
 
 

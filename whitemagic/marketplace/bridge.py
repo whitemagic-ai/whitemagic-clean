@@ -17,13 +17,14 @@ from __future__ import annotations
 import logging
 import threading
 import uuid
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ class ServiceListing:
     agent_id: str = ""
     agent_name: str = ""
     state: ListingState = ListingState.ACTIVE
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     expires_at: str = ""
     rating: float = 0.0
     total_sales: int = 0
@@ -113,7 +114,7 @@ class Negotiation:
     offer_xrp: float
     state: NegotiationState = NegotiationState.OFFERED
     message: str = ""
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     resolved_at: str = ""
 
     def to_dict(self) -> dict[str, Any]:
@@ -338,7 +339,7 @@ class MarketplaceBridge:
         # Auto-accept if offer meets or exceeds asking price
         if negotiation.offer_xrp >= listing.price_xrp:
             negotiation.state = NegotiationState.ACCEPTED
-            negotiation.resolved_at = datetime.now(timezone.utc).isoformat()
+            negotiation.resolved_at = datetime.now(UTC).isoformat()
 
         with self._lock:
             self._negotiations[neg_id] = negotiation
@@ -367,7 +368,7 @@ class MarketplaceBridge:
             listing = self._listings.get(neg.listing_id)
 
         neg.state = NegotiationState.COMPLETED
-        neg.resolved_at = datetime.now(timezone.utc).isoformat()
+        neg.resolved_at = datetime.now(UTC).isoformat()
 
         if listing:
             # Update rating (running average)

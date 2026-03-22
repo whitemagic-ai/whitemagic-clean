@@ -110,9 +110,11 @@ class HRREngine:
         """
         a_arr = self._to_array(a)
         b_arr = self._to_array(b)
-        
+
         try:
-            from whitemagic.core.acceleration.simd_holographic import circular_convolution
+            from whitemagic.core.acceleration.simd_holographic import (
+                circular_convolution,
+            )
             return circular_convolution(a_arr, b_arr)
         except (ImportError, Exception):
             result = np.real(np.fft.ifft(np.fft.fft(a_arr) * np.fft.fft(b_arr)))
@@ -127,9 +129,11 @@ class HRREngine:
         """
         bound_arr = self._to_array(bound)
         b_arr = self._to_array(b)
-        
+
         try:
-            from whitemagic.core.acceleration.simd_holographic import circular_correlation
+            from whitemagic.core.acceleration.simd_holographic import (
+                circular_correlation,
+            )
             return circular_correlation(bound_arr, b_arr)
         except (ImportError, Exception):
             result = np.real(np.fft.ifft(

@@ -17,9 +17,9 @@ from whitemagic.core.engines.registry import (
     ENGINE_REGISTRY,
     EngineEntry,
     get_engine_entry,
+    get_engine_stats,
     get_engines_by_quadrant,
     get_engines_by_status,
-    get_engine_stats,
 )
 
 __all__ = [

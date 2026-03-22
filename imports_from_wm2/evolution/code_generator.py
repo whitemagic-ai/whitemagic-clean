@@ -19,12 +19,12 @@ This enables true autonomous evolution - WhiteMagic can improve itself
 by simulating changes, testing them, and applying the winners.
 """
 
-import logging
 import ast
+import logging
 import textwrap
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ class CodeMutation:
     code_template: str
     description: str
     estimated_impact: float
-    validation_tests: List[str]
+    validation_tests: list[str]
 
 
 class CodeGenerator:
@@ -47,12 +47,12 @@ class CodeGenerator:
     
     Maps abstract genes to concrete code changes.
     """
-    
+
     def __init__(self, codebase_root: Path):
         self.codebase_root = Path(codebase_root)
         self.gene_to_code_map = self._build_gene_mapping()
-        
-    def _build_gene_mapping(self) -> Dict[str, Dict[str, Any]]:
+
+    def _build_gene_mapping(self) -> dict[str, dict[str, Any]]:
         """
         Build mapping from gene names to code templates.
         
@@ -73,7 +73,7 @@ class CodeGenerator:
                 "target": "core/integration.py",
                 "tests": ["test_master_integration"]
             },
-            
+
             # Feature genes
             "phylogenetic_memory": {
                 "type": "add_module",
@@ -87,7 +87,7 @@ class CodeGenerator:
                 "target": "search/vector.py",
                 "tests": ["test_vector_search_accuracy"]
             },
-            
+
             # Optimization genes
             "rust_hot_paths": {
                 "type": "optimize",
@@ -101,7 +101,7 @@ class CodeGenerator:
                 "target": "core/loading.py",
                 "tests": ["test_lazy_initialization"]
             },
-            
+
             # Biological genes
             "immune_system": {
                 "type": "add_class",
@@ -110,26 +110,26 @@ class CodeGenerator:
                 "tests": ["test_threat_detection"]
             },
         }
-    
+
     def generate_code_from_genome(
         self,
         genome,
-        output_dir: Optional[Path] = None
-    ) -> List[CodeMutation]:
+        output_dir: Path | None = None
+    ) -> list[CodeMutation]:
         """
         Generate code mutations from a successful genome.
         
         Returns list of code changes that can be applied to the codebase.
         """
         mutations = []
-        
+
         for gene in genome.genes:
             if gene.name in self.gene_to_code_map:
                 mapping = self.gene_to_code_map[gene.name]
-                
+
                 # Generate code from template
                 code = mapping["template"](gene)
-                
+
                 mutation = CodeMutation(
                     mutation_type=mapping["type"],
                     target_file=mapping["target"],
@@ -139,22 +139,22 @@ class CodeGenerator:
                     estimated_impact=gene.expression_level,
                     validation_tests=mapping["tests"]
                 )
-                
+
                 mutations.append(mutation)
-                
+
                 logger.info(f"  Generated {mutation.mutation_type} for {gene.name}")
-        
+
         # Save mutations if output directory specified
         if output_dir:
             self._save_mutations(mutations, output_dir)
-        
+
         return mutations
-    
+
     def apply_mutations_to_codebase(
         self,
-        mutations: List[CodeMutation],
+        mutations: list[CodeMutation],
         dry_run: bool = True
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Apply generated mutations to the actual codebase.
         
@@ -167,11 +167,11 @@ class CodeGenerator:
             "files_modified": [],
             "errors": []
         }
-        
+
         for mutation in mutations:
             try:
                 target_path = self.codebase_root / mutation.target_file
-                
+
                 if dry_run:
                     # Just validate
                     if self._validate_mutation(mutation):
@@ -189,14 +189,14 @@ class CodeGenerator:
                     else:
                         results["mutations_failed"] += 1
                         logger.error(f"  ✗ Failed: {mutation.description}")
-                        
+
             except Exception as e:
                 results["mutations_failed"] += 1
                 results["errors"].append(str(e))
                 logger.error(f"  ✗ Error applying {mutation.description}: {e}")
-        
+
         return results
-    
+
     def _validate_mutation(self, mutation: CodeMutation) -> bool:
         """Validate that a mutation is syntactically correct"""
         try:
@@ -205,18 +205,18 @@ class CodeGenerator:
             return True
         except SyntaxError:
             return False
-    
+
     def _apply_mutation(self, mutation: CodeMutation, target_path: Path) -> bool:
         """Actually apply a mutation to a file"""
         try:
             # Create file if it doesn't exist
             target_path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             if mutation.mutation_type == "add_module":
                 # Write entire new module
                 target_path.write_text(mutation.code_template)
                 return True
-                
+
             elif mutation.mutation_type == "add_function":
                 # Append function to existing file
                 if target_path.exists():
@@ -226,7 +226,7 @@ class CodeGenerator:
                 else:
                     target_path.write_text(mutation.code_template)
                 return True
-                
+
             elif mutation.mutation_type == "add_class":
                 # Append class to existing file
                 if target_path.exists():
@@ -236,23 +236,23 @@ class CodeGenerator:
                 else:
                     target_path.write_text(mutation.code_template)
                 return True
-            
+
             # Other mutation types would need more sophisticated logic
             return False
-            
+
         except Exception as e:
             logger.error(f"Failed to apply mutation: {e}")
             return False
-    
-    def _save_mutations(self, mutations: List[CodeMutation], output_dir: Path):
+
+    def _save_mutations(self, mutations: list[CodeMutation], output_dir: Path):
         """Save generated mutations to files for review"""
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
-        
+
         for i, mutation in enumerate(mutations):
             filename = f"mutation_{i:03d}_{mutation.mutation_type}.py"
             filepath = output_dir / filename
-            
+
             content = f"""# Generated Mutation: {mutation.description}
 # Type: {mutation.mutation_type}
 # Target: {mutation.target_file}
@@ -262,11 +262,11 @@ class CodeGenerator:
 {mutation.code_template}
 """
             filepath.write_text(content)
-        
+
         logger.info(f"💾 Saved {len(mutations)} mutations to {output_dir}")
-    
+
     # Code templates for different gene types
-    
+
     def _template_unified_nervous_system(self, gene) -> str:
         """Generate unified nervous system code"""
         return textwrap.dedent(f'''
@@ -298,7 +298,7 @@ class CodeGenerator:
                     for name, subsystem in self.subsystems.items()
                 }}
         ''')
-    
+
     def _template_master_integration(self, gene) -> str:
         """Generate master integration code"""
         return textwrap.dedent(f'''
@@ -320,7 +320,7 @@ class CodeGenerator:
             
             return integrated
         ''')
-    
+
     def _template_phylogenetic_memory(self, gene) -> str:
         """Generate phylogenetic memory module"""
         return textwrap.dedent(f'''
@@ -370,7 +370,7 @@ class CodeGenerator:
                 
                 return {{"ancestors": ancestors, "descendants": descendants}}
         ''')
-    
+
     def _template_vector_search(self, gene) -> str:
         """Generate vector search code"""
         return textwrap.dedent(f'''
@@ -399,7 +399,7 @@ class CodeGenerator:
             
             return results
         ''')
-    
+
     def _template_rust_optimization(self, gene) -> str:
         """Generate Rust optimization code"""
         return textwrap.dedent(f'''
@@ -414,7 +414,7 @@ class CodeGenerator:
                 .collect()
         }}
         ''')
-    
+
     def _template_lazy_loading(self, gene) -> str:
         """Generate lazy loading code"""
         return textwrap.dedent(f'''
@@ -434,7 +434,7 @@ class CodeGenerator:
             # Expensive initialization here
             return {{}}
         ''')
-    
+
     def _template_immune_system(self, gene) -> str:
         """Generate immune system code"""
         return textwrap.dedent(f'''
@@ -467,7 +467,7 @@ class CodeGenerator:
         ''')
 
 
-def generate_code_from_genome(genome, codebase_root: Path) -> List[CodeMutation]:
+def generate_code_from_genome(genome, codebase_root: Path) -> list[CodeMutation]:
     """
     Main entry point for code generation.
     
@@ -475,17 +475,17 @@ def generate_code_from_genome(genome, codebase_root: Path) -> List[CodeMutation]
     """
     generator = CodeGenerator(codebase_root)
     mutations = generator.generate_code_from_genome(genome)
-    
+
     logger.info(f"🔨 Generated {len(mutations)} code mutations from genome {genome.genome_id[:8]}")
-    
+
     return mutations
 
 
 def apply_mutations_to_codebase(
-    mutations: List[CodeMutation],
+    mutations: list[CodeMutation],
     codebase_root: Path,
     dry_run: bool = True
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Apply generated mutations to the codebase.
     
@@ -493,10 +493,10 @@ def apply_mutations_to_codebase(
     """
     generator = CodeGenerator(codebase_root)
     results = generator.apply_mutations_to_codebase(mutations, dry_run=dry_run)
-    
+
     logger.info("📝 Mutation application complete:")
     logger.info(f"   Applied: {results['mutations_applied']}")
     logger.info(f"   Failed: {results['mutations_failed']}")
     logger.info(f"   Files modified: {len(results['files_modified'])}")
-    
+
     return results

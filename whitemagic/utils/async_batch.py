@@ -1,6 +1,8 @@
 """Async batch processing utilities (PSR-013)."""
 import asyncio
-from typing import Any, Callable, Iterable
+from collections.abc import Callable, Iterable
+from typing import Any
+
 
 async def async_batch_process(items, processor, batch_size=100, concurrency=10):
     """Process items in async batches with concurrency control."""

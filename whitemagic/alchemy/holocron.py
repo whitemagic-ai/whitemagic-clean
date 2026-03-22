@@ -11,9 +11,9 @@ Usage:
 """
 
 import json
-from pathlib import Path
-from typing import List, Dict, Any
 import logging
+from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +24,10 @@ class Holocron:
 
     def __init__(self, path: Path = None):
         self.path = path or self.DEFAULT_PATH
-        self.rules: List[Dict[str, Any]] = []
+        self.rules: list[dict[str, Any]] = []
         self.version = "1.0.0"
 
-    def save(self, rules: List[Dict[str, Any]]):
+    def save(self, rules: list[dict[str, Any]]):
         """Save rules to the Holocron."""
         self.path.parent.mkdir(parents=True, exist_ok=True)
         data = {
@@ -46,17 +46,17 @@ class Holocron:
             return
 
         try:
-            with open(self.path, "r") as f:
+            with open(self.path) as f:
                 data = json.load(f)
             self.rules = data.get("rules", [])
             logger.info(f"Holocron loaded with {len(self.rules)} rules")
         except Exception as e:
             logger.error(f"Failed to load Holocron: {e}")
 
-    def get_all_rules(self) -> List[Dict[str, Any]]:
+    def get_all_rules(self) -> list[dict[str, Any]]:
         return self.rules
 
-    def get_relevant_rules(self, context: str, limit: int = 5) -> List[Dict[str, Any]]:
+    def get_relevant_rules(self, context: str, limit: int = 5) -> list[dict[str, Any]]:
         """
         Retrieve relevant rules based on context.
         Currently simple keyword match; could use embeddings later.

@@ -5,12 +5,12 @@ Deploy upgraded scouts to find systems throughout WhiteMagic that would
 benefit most from biological resonance integration.
 """
 
-import sys
 import re
-from pathlib import Path
-from datetime import datetime
-from typing import Dict, List, Any, Set
+import sys
 from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -21,23 +21,23 @@ WHITEMAGIC_DIR = PROJECT_ROOT / "whitemagic"
 
 class IntegrationCandidate:
     """Represents a system that could benefit from biological integration."""
-    
+
     def __init__(self, name: str, file_path: Path, category: str):
         self.name = name
         self.file_path = file_path
         self.category = category
         self.lines = 0
-        self.integration_points: List[str] = []
+        self.integration_points: list[str] = []
         self.biological_affinity: float = 0.0
         self.effectiveness_gain: float = 0.0
         self.priority: int = 0
-        self.details: Dict[str, Any] = {}
-    
+        self.details: dict[str, Any] = {}
+
     def calculate_priority(self):
         """Calculate integration priority based on affinity and potential gain."""
         self.priority = int((self.biological_affinity * 50) + (self.effectiveness_gain * 50))
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "file": str(self.file_path.relative_to(PROJECT_ROOT)),
@@ -53,9 +53,9 @@ class IntegrationCandidate:
 
 class BiologicalScout:
     """Upgraded scout that searches for biological integration opportunities."""
-    
+
     def __init__(self):
-        self.candidates: List[IntegrationCandidate] = []
+        self.candidates: list[IntegrationCandidate] = []
         self.categories = {
             "memory": ["memory", "recall", "consolidation", "forgetting"],
             "intelligence": ["reasoning", "synthesis", "analysis", "inference"],
@@ -68,7 +68,7 @@ class BiologicalScout:
             "automation": ["automation", "daemon", "scheduler", "trigger"],
             "communication": ["event", "signal", "message", "broadcast"],
         }
-        
+
         # Biological integration indicators
         self.bio_indicators = [
             "event", "signal", "feedback", "adaptive", "learning",
@@ -76,136 +76,136 @@ class BiologicalScout:
             "cycle", "phase", "state", "transition", "threshold",
             "monitor", "detect", "respond", "coordinate", "synchronize"
         ]
-    
+
     def scan_file(self, file_path: Path) -> IntegrationCandidate:
         """Scan a Python file for biological integration potential."""
         content = file_path.read_text()
         lines = content.split("\n")
-        
+
         # Determine category
         category = "other"
         for cat, keywords in self.categories.items():
             if any(kw in file_path.stem.lower() for kw in keywords):
                 category = cat
                 break
-        
+
         candidate = IntegrationCandidate(file_path.stem, file_path, category)
         candidate.lines = len(lines)
-        
+
         # Calculate biological affinity
         bio_score = 0
         for indicator in self.bio_indicators:
             count = content.lower().count(indicator)
             bio_score += count
-        
+
         candidate.biological_affinity = min(1.0, bio_score / 100.0)
-        
+
         # Find integration points
         integration_points = []
-        
+
         # Check for event/signal usage
         if "emit_event" in content or "dispatch_signal" in content:
             integration_points.append("Already uses events/signals")
         elif "def " in content and ("process" in content or "handle" in content):
             integration_points.append("Could emit events on processing")
-        
+
         # Check for state management
         if "self._state" in content or "self.state" in content:
             integration_points.append("State changes could trigger events")
-        
+
         # Check for loops/iterations
         if "for " in content and "in " in content:
             integration_points.append("Loops could emit progress events")
-        
+
         # Check for error handling
         if "try:" in content and "except" in content:
             integration_points.append("Errors could trigger immune response")
-        
+
         # Check for metrics/monitoring
         if "metric" in content.lower() or "monitor" in content.lower():
             integration_points.append("Metrics could feed consciousness")
-        
+
         # Check for caching/storage
         if "cache" in content.lower() or "store" in content.lower():
             integration_points.append("Storage could integrate with metabolism")
-        
+
         # Check for decision making
         if "if " in content and "else" in content:
             decision_count = content.count("if ")
             if decision_count > 5:
                 integration_points.append(f"Decision points ({decision_count}) could use adaptive logic")
-        
+
         # Check for async operations
         if "async def" in content or "await " in content:
             integration_points.append("Async ops could use Gan Ying async bus")
-        
+
         # Check for class definitions (potential organs)
         class_matches = re.findall(r'class (\w+)', content)
         if class_matches:
             candidate.details["classes"] = class_matches
             if len(class_matches) > 1:
                 integration_points.append(f"Multiple classes ({len(class_matches)}) could be organs")
-        
+
         candidate.integration_points = integration_points
-        
+
         # Estimate effectiveness gain
         candidate.effectiveness_gain = self._estimate_effectiveness_gain(candidate)
         candidate.calculate_priority()
-        
+
         return candidate
-    
+
     def _estimate_effectiveness_gain(self, candidate: IntegrationCandidate) -> float:
         """Estimate how much effectiveness would improve with integration."""
         gain = 0.0
-        
+
         # High-value categories
         if candidate.category in ["memory", "intelligence", "orchestration"]:
             gain += 0.3
-        
+
         # Large files have more impact
         if candidate.lines > 500:
             gain += 0.2
         elif candidate.lines > 200:
             gain += 0.1
-        
+
         # Many integration points = high potential
         gain += min(0.3, len(candidate.integration_points) * 0.05)
-        
+
         # High biological affinity = natural fit
         gain += candidate.biological_affinity * 0.2
-        
+
         return min(1.0, gain)
-    
-    def scout_directory(self, directory: Path, exclude_dirs: Set[str] = None) -> List[IntegrationCandidate]:
+
+    def scout_directory(self, directory: Path, exclude_dirs: set[str] = None) -> list[IntegrationCandidate]:
         """Scout a directory for integration candidates."""
         if exclude_dirs is None:
             exclude_dirs = {"__pycache__", ".git", "tests", "test", ".venv", "venv"}
-        
+
         candidates = []
-        
+
         for py_file in directory.rglob("*.py"):
             # Skip excluded directories
             if any(excluded in py_file.parts for excluded in exclude_dirs):
                 continue
-            
+
             # Skip __init__.py files (usually just imports)
             if py_file.name == "__init__.py":
                 continue
-            
+
             try:
                 candidate = self.scan_file(py_file)
                 if candidate.priority > 0:  # Only include if has some potential
                     candidates.append(candidate)
             except Exception as e:
                 print(f"⚠️  Error scanning {py_file}: {e}")
-        
+
         return candidates
-    
-    def prioritize_candidates(self, candidates: List[IntegrationCandidate]) -> List[IntegrationCandidate]:
+
+    def prioritize_candidates(self, candidates: list[IntegrationCandidate]) -> list[IntegrationCandidate]:
         """Sort candidates by priority (highest first)."""
         return sorted(candidates, key=lambda c: c.priority, reverse=True)
-    
-    def categorize_candidates(self, candidates: List[IntegrationCandidate]) -> Dict[str, List[IntegrationCandidate]]:
+
+    def categorize_candidates(self, candidates: list[IntegrationCandidate]) -> dict[str, list[IntegrationCandidate]]:
         """Group candidates by category."""
         categorized = defaultdict(list)
         for candidate in candidates:
@@ -213,13 +213,13 @@ class BiologicalScout:
         return dict(categorized)
 
 
-def analyze_top_candidates(candidates: List[IntegrationCandidate], top_n: int = 20):
+def analyze_top_candidates(candidates: list[IntegrationCandidate], top_n: int = 20):
     """Analyze top N candidates in detail."""
     print("\n" + "="*70)
     print(f"  TOP {top_n} INTEGRATION CANDIDATES")
     print("="*70)
     print()
-    
+
     for i, candidate in enumerate(candidates[:top_n], 1):
         print(f"{i}. {candidate.name} ({candidate.category})")
         print(f"   File: {candidate.file_path.relative_to(PROJECT_ROOT)}")
@@ -235,13 +235,13 @@ def analyze_top_candidates(candidates: List[IntegrationCandidate], top_n: int = 
         print()
 
 
-def generate_integration_strategy(candidates: List[IntegrationCandidate], categorized: Dict[str, List[IntegrationCandidate]]):
+def generate_integration_strategy(candidates: list[IntegrationCandidate], categorized: dict[str, list[IntegrationCandidate]]):
     """Generate strategic integration plan."""
     print("\n" + "="*70)
     print("  INTEGRATION STRATEGY")
     print("="*70)
     print()
-    
+
     # Phase 1: Quick wins (high gain, low complexity)
     phase1 = [c for c in candidates if c.effectiveness_gain > 0.5 and c.lines < 300]
     print(f"Phase 1 - Quick Wins ({len(phase1)} candidates):")
@@ -249,7 +249,7 @@ def generate_integration_strategy(candidates: List[IntegrationCandidate], catego
     for c in phase1[:5]:
         print(f"  - {c.name} ({c.category}): {c.priority}/100")
     print()
-    
+
     # Phase 2: High-impact systems (high gain, any complexity)
     phase2 = [c for c in candidates if c.effectiveness_gain > 0.6 and c not in phase1]
     print(f"Phase 2 - High Impact ({len(phase2)} candidates):")
@@ -257,7 +257,7 @@ def generate_integration_strategy(candidates: List[IntegrationCandidate], catego
     for c in phase2[:5]:
         print(f"  - {c.name} ({c.category}): {c.priority}/100")
     print()
-    
+
     # Phase 3: Category completion (fill out each category)
     print("Phase 3 - Category Completion:")
     print("  Ensure all categories have biological integration")
@@ -266,7 +266,7 @@ def generate_integration_strategy(candidates: List[IntegrationCandidate], catego
             top = cat_candidates[0]
             print(f"  - {category}: {top.name} ({top.priority}/100)")
     print()
-    
+
     # Phase 4: Ecosystem integration (connect everything)
     phase4 = [c for c in candidates if c.biological_affinity > 0.5]
     print(f"Phase 4 - Ecosystem Integration ({len(phase4)} candidates):")
@@ -276,13 +276,13 @@ def generate_integration_strategy(candidates: List[IntegrationCandidate], catego
     print()
 
 
-def generate_comprehensive_report(scout: BiologicalScout, candidates: List[IntegrationCandidate], categorized: Dict[str, List[IntegrationCandidate]]):
+def generate_comprehensive_report(scout: BiologicalScout, candidates: list[IntegrationCandidate], categorized: dict[str, list[IntegrationCandidate]]):
     """Generate comprehensive scouting report."""
     print("\n" + "="*70)
     print("  GENERATING COMPREHENSIVE REPORT")
     print("="*70)
     print()
-    
+
     report = f"""# Biological Resonance Integration - Scout Report
 **Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
 **Scout Mission**: Find viable candidates for biological integration  
@@ -300,7 +300,7 @@ Deployed upgraded scouts across entire WhiteMagic codebase to identify systems t
 ## Top 20 Integration Candidates
 
 """
-    
+
     for i, candidate in enumerate(candidates[:20], 1):
         report += f"""
 ### {i}. {candidate.name} ({candidate.category})
@@ -315,22 +315,22 @@ Deployed upgraded scouts across entire WhiteMagic codebase to identify systems t
 """
         for point in candidate.integration_points:
             report += f"\n- {point}"
-        
+
         if candidate.details.get("classes"):
             report += f"\n\n**Classes**: {', '.join(candidate.details['classes'])}"
-        
+
         report += "\n"
-    
+
     report += """
 
 ## Category Analysis
 
 """
-    
+
     for category, cat_candidates in sorted(categorized.items(), key=lambda x: len(x[1]), reverse=True):
         avg_priority = sum(c.priority for c in cat_candidates) / len(cat_candidates)
         avg_gain = sum(c.effectiveness_gain for c in cat_candidates) / len(cat_candidates)
-        
+
         report += f"""
 ### {category.title()} ({len(cat_candidates)} candidates)
 
@@ -339,7 +339,7 @@ Deployed upgraded scouts across entire WhiteMagic codebase to identify systems t
 **Top Candidate**: {cat_candidates[0].name} ({cat_candidates[0].priority}/100)
 
 """
-    
+
     report += """
 
 ## Integration Strategy
@@ -349,11 +349,11 @@ Deployed upgraded scouts across entire WhiteMagic codebase to identify systems t
 High effectiveness gain, low complexity. These can be integrated quickly with immediate impact.
 
 """
-    
+
     phase1 = [c for c in candidates if c.effectiveness_gain > 0.5 and c.lines < 300]
     for c in phase1[:10]:
         report += f"- **{c.name}** ({c.category}): Priority {c.priority}/100, {c.lines} lines\n"
-    
+
     report += f"""
 
 **Total Phase 1**: {len(phase1)} candidates  
@@ -365,11 +365,11 @@ High effectiveness gain, low complexity. These can be integrated quickly with im
 Maximum effectiveness gain regardless of complexity. Worth the investment.
 
 """
-    
+
     phase2 = [c for c in candidates if c.effectiveness_gain > 0.6 and c not in phase1]
     for c in phase2[:10]:
         report += f"- **{c.name}** ({c.category}): Priority {c.priority}/100, Gain {c.effectiveness_gain:.2f}\n"
-    
+
     report += f"""
 
 **Total Phase 2**: {len(phase2)} candidates  
@@ -381,12 +381,12 @@ Maximum effectiveness gain regardless of complexity. Worth the investment.
 Ensure every category has biological integration for ecosystem coherence.
 
 """
-    
+
     for category, cat_candidates in sorted(categorized.items(), key=lambda x: len(x[1]), reverse=True):
         if cat_candidates:
             top = cat_candidates[0]
             report += f"- **{category}**: {top.name} (Priority {top.priority}/100)\n"
-    
+
     report += f"""
 
 **Total Phase 3**: {len(categorized)} categories  
@@ -398,11 +398,11 @@ Ensure every category has biological integration for ecosystem coherence.
 High biological affinity systems that naturally fit the organism model.
 
 """
-    
+
     phase4 = [c for c in candidates if c.biological_affinity > 0.5 and c not in phase1 and c not in phase2]
     for c in phase4[:10]:
         report += f"- **{c.name}** ({c.category}): Affinity {c.biological_affinity:.2f}\n"
-    
+
     report += f"""
 
 **Total Phase 4**: {len(phase4)} candidates  
@@ -414,7 +414,7 @@ High biological affinity systems that naturally fit the organism model.
 ### Memory Systems
 
 """
-    
+
     memory_candidates = categorized.get("memory", [])
     for c in memory_candidates[:3]:
         report += f"""
@@ -423,13 +423,13 @@ High biological affinity systems that naturally fit the organism model.
 - **Benefit**: Automatic metabolism tracking, dream cycle integration
 - **Gain**: {c.effectiveness_gain:.2f}
 """
-    
+
     report += """
 
 ### Intelligence Systems
 
 """
-    
+
     intelligence_candidates = categorized.get("intelligence", [])
     for c in intelligence_candidates[:3]:
         report += f"""
@@ -438,13 +438,13 @@ High biological affinity systems that naturally fit the organism model.
 - **Benefit**: Feed consciousness, enable emergent intelligence
 - **Gain**: {c.effectiveness_gain:.2f}
 """
-    
+
     report += """
 
 ### Orchestration Systems
 
 """
-    
+
     orchestration_candidates = categorized.get("orchestration", [])
     for c in orchestration_candidates[:3]:
         report += f"""
@@ -453,13 +453,13 @@ High biological affinity systems that naturally fit the organism model.
 - **Benefit**: Organism-level orchestration, adaptive workflows
 - **Gain**: {c.effectiveness_gain:.2f}
 """
-    
+
     report += """
 
 ### Tool Systems
 
 """
-    
+
     tool_candidates = categorized.get("tools", [])
     for c in tool_candidates[:3]:
         report += f"""
@@ -468,7 +468,7 @@ High biological affinity systems that naturally fit the organism model.
 - **Benefit**: Tools become organ extensions, adaptive tool selection
 - **Gain**: {c.effectiveness_gain:.2f}
 """
-    
+
     report += """
 
 ## Implementation Patterns
@@ -561,13 +561,13 @@ Scout mission identified **{len(candidates)} viable candidates** for biological 
 
 **Status**: ✅ Scout mission complete - Ready for integration deployment
 """
-    
+
     # Save report
     report_path = REPORTS_DIR / "biological_integration_scout_report.md"
     report_path.write_text(report)
-    
+
     print(f"✅ Report saved: {report_path}")
-    
+
     return report
 
 
@@ -576,34 +576,34 @@ def main():
     print("  BIOLOGICAL RESONANCE INTEGRATION - SCOUT MISSION")
     print("="*70)
     print()
-    
+
     # Initialize scout
     scout = BiologicalScout()
-    
+
     # Scout the whitemagic directory
     print("🔍 Deploying scouts across WhiteMagic codebase...")
     print()
-    
+
     candidates = scout.scout_directory(WHITEMAGIC_DIR)
-    
+
     print(f"✅ Scanned {len(candidates)} files")
     print()
-    
+
     # Prioritize candidates
     candidates = scout.prioritize_candidates(candidates)
-    
+
     # Categorize candidates
     categorized = scout.categorize_candidates(candidates)
-    
+
     # Analyze top candidates
     analyze_top_candidates(candidates, top_n=20)
-    
+
     # Generate integration strategy
     generate_integration_strategy(candidates, categorized)
-    
+
     # Generate comprehensive report
     generate_comprehensive_report(scout, candidates, categorized)
-    
+
     # Print summary
     print("\n" + "="*70)
     print("✅ SCOUT MISSION COMPLETE")
@@ -620,7 +620,7 @@ def main():
     print(f"  Priority: {candidates[0].priority if candidates else 0}/100")
     print(f"  Category: {candidates[0].category if candidates else 'N/A'}")
     print()
-    
+
     return 0
 
 

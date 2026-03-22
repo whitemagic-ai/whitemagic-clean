@@ -16,7 +16,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 def find_regex_hot_paths():
     """Scan codebase for re.compile usage and rank by frequency."""
     print("Scanning for regex hot paths...")
-    
+
     regex_files = []
     for py_file in PROJECT_ROOT.glob("whitemagic/**/*.py"):
         if py_file.is_file():
@@ -24,15 +24,15 @@ def find_regex_hot_paths():
             compile_count = len(re.findall(r're\.compile\(', content))
             if compile_count > 0:
                 regex_files.append((py_file, compile_count))
-    
+
     # Sort by frequency
     regex_files.sort(key=lambda x: x[1], reverse=True)
-    
+
     print("\nTop 10 files by re.compile usage:")
     for i, (filepath, count) in enumerate(regex_files[:10], 1):
         rel_path = filepath.relative_to(PROJECT_ROOT)
         print(f"  {i:2d}. {str(rel_path):60s} — {count} patterns")
-    
+
     return regex_files[:3]  # Top 3
 
 
@@ -40,7 +40,7 @@ def check_rust_regex_available():
     """Check if Rust regex crate is available via whitemagic_rs."""
     try:
         from whitemagic.optimization import rust_accelerators
-        
+
         # Check if we have regex support
         if hasattr(rust_accelerators, 'rust_regex_match'):
             print("✓ Rust regex support available")
@@ -56,13 +56,13 @@ def check_rust_regex_available():
 def implement_rust_regex_wrapper():
     """Create Python wrapper for Rust regex if not exists."""
     wrapper_path = PROJECT_ROOT / "whitemagic" / "utils" / "fast_regex.py"
-    
+
     if wrapper_path.exists():
         print(f"✓ Regex wrapper already exists: {wrapper_path}")
         return True
-    
+
     print(f"Creating regex wrapper: {wrapper_path}")
-    
+
     wrapper_code = '''"""Fast Regex - Rust-accelerated regex with Python fallback
 ===========================================================
 Provides drop-in replacement for Python's re.compile with Rust acceleration
@@ -149,7 +149,7 @@ IGNORECASE = re.IGNORECASE
 MULTILINE = re.MULTILINE
 DOTALL = re.DOTALL
 '''
-    
+
     wrapper_path.write_text(wrapper_code)
     print(f"✓ Created {wrapper_path}")
     return True
@@ -158,26 +158,26 @@ DOTALL = re.DOTALL
 def wire_top_files(top_files):
     """Wire fast_regex into top-3 files."""
     print("\nWiring fast_regex into top files...")
-    
+
     for filepath, count in top_files:
         rel_path = filepath.relative_to(PROJECT_ROOT)
         print(f"\n  Processing {rel_path} ({count} patterns)...")
-        
+
         content = filepath.read_text()
         original = content
-        
+
         # Check if already wired
         if 'from whitemagic.utils.fast_regex import compile' in content:
             print("    ✓ Already wired")
             continue
-        
+
         # Add import at top (after other imports)
         for i, line in enumerate(content.split('\n')):
             if line.startswith('import ') or line.startswith('from '):
                 i + 1
-        
+
         lines = content.split('\n')
-        
+
         # Insert fast_regex import
         if 'import re' in content:
             # Replace 'import re' with fast_regex import
@@ -188,11 +188,11 @@ def wire_top_files(top_files):
                     new_lines.append('from whitemagic.utils.fast_regex import compile as re_compile')
                 else:
                     new_lines.append(line)
-            
+
             # Replace re.compile with re_compile
             content_new = '\n'.join(new_lines)
             content_new = content_new.replace('re.compile(', 're_compile(')
-            
+
             if content_new != original:
                 filepath.write_text(content_new)
                 print(f"    ✓ Wired fast_regex ({count} patterns)")
@@ -205,7 +205,7 @@ def wire_top_files(top_files):
 def run_benchmark():
     """Benchmark regex performance."""
     print("\nRunning regex benchmark...")
-    
+
     benchmark_code = '''
 import re
 import time
@@ -238,7 +238,7 @@ for pattern_str in patterns:
     speedup = py_time / fast_time if fast_time > 0 else 1.0
     print(f"{pattern_str:40s} — Python: {py_time:.3f}s, Fast: {fast_time:.3f}s, Speedup: {speedup:.2f}x")
 '''
-    
+
     try:
         result = subprocess.run(
             [sys.executable, "-c", benchmark_code],
@@ -258,13 +258,13 @@ def update_campaign_vc():
     """Mark the regex VC as complete in V006."""
     campaign_path = PROJECT_ROOT / "campaigns" / "V006_rust_hot_path_completion.md"
     content = campaign_path.read_text()
-    
+
     # Update the regex VC
     updated = content.replace(
         '- [ ] regex_compile hot paths in top-3 files using Rust regex (deferred)',
         '- [x] regex_compile hot paths in top-3 files using Rust regex (fast_regex wrapper)'
     )
-    
+
     if updated != content:
         campaign_path.write_text(updated)
         print(f"\n✓ Updated {campaign_path}")
@@ -280,27 +280,27 @@ if __name__ == "__main__":
     print("  V006 COMPLETION: Rust Regex Implementation")
     print("="*80)
     print()
-    
+
     # Step 1: Find hot paths
     top_files = find_regex_hot_paths()
     print()
-    
+
     # Step 2: Check Rust availability
     rust_available = check_rust_regex_available()
     print()
-    
+
     # Step 3: Create wrapper
     implement_rust_regex_wrapper()
     print()
-    
+
     # Step 4: Wire top files
     wire_top_files(top_files)
     print()
-    
+
     # Step 5: Benchmark
     run_benchmark()
     print()
-    
+
     # Step 6: Update campaign
     if update_campaign_vc():
         print("\n" + "="*80)

@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/center/HarmonyDashboard.tsx', 'r') as f:
+with open('nexus/src/components/center/HarmonyDashboard.tsx') as f:
     content = f.read()
 
 # Make sure imports are present and correct
@@ -14,14 +14,14 @@ with open('nexus/src/components/center/HarmonyDashboard.tsx', 'w') as f:
     f.write(content)
 
 # Clean up unused vars in Dharma and GanaActivity
-with open('nexus/src/components/center/DharmaMetricsPanel.tsx', 'r') as f:
+with open('nexus/src/components/center/DharmaMetricsPanel.tsx') as f:
     dharma = f.read()
 dharma = dharma.replace("import React, { useEffect, useState } from 'react';", "import { useEffect, useState } from 'react';")
 dharma = dharma.replace("import { Shield, AlertTriangle, CheckCircle, Info } from 'lucide-react';", "import { Shield, AlertTriangle, CheckCircle } from 'lucide-react';")
 with open('nexus/src/components/center/DharmaMetricsPanel.tsx', 'w') as f:
     f.write(dharma)
 
-with open('nexus/src/components/center/GanaActivityHeatmap.tsx', 'r') as f:
+with open('nexus/src/components/center/GanaActivityHeatmap.tsx') as f:
     gana = f.read()
 gana = gana.replace("import React, { useEffect, useRef, useState } from 'react';", "import { useEffect, useRef, useState } from 'react';")
 gana = gana.replace(".startAngle((d, i) => i * angleStep)", ".startAngle((_d, i) => i * angleStep)")

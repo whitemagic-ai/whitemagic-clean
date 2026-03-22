@@ -1,11 +1,9 @@
 """Health check routes for MandalaOS Railway Backend."""
 
-from fastapi import APIRouter
+from app.database import get_db
+from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends
-
-from app.database import get_db
 
 router = APIRouter()
 
@@ -19,7 +17,7 @@ async def health_check(db: AsyncSession = Depends(get_db)) -> dict:
         db_status = "connected" if result.scalar() == 1 else "error"
     except Exception as e:
         db_status = f"error: {str(e)}"
-    
+
     return {
         "status": "healthy" if db_status == "connected" else "degraded",
         "database": db_status,

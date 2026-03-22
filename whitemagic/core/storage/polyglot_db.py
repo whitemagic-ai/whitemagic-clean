@@ -60,8 +60,8 @@ class PolyglotDB:
         """Initialize Elixir backend (ETS + GenServer)."""
         try:
             import erlport
-            from erlport.erlterms import Atom
             from erlport.erlang import call
+            from erlport.erlterms import Atom
 
             # Start Elixir node
             self.elixir_port = erlport.erlang.Atom(b'whitemagic@localhost')
@@ -77,6 +77,7 @@ class PolyglotDB:
         try:
             from sqlalchemy import create_engine
             from sqlalchemy.pool import QueuePool
+
             from whitemagic.config.paths import MEMORY_DIR
 
             db_path = MEMORY_DIR / "whitemagic.db"
@@ -96,6 +97,7 @@ class PolyglotDB:
             # Fallback to direct connection
             try:
                 import sqlite3
+
                 from whitemagic.config.paths import MEMORY_DIR
                 db_path = MEMORY_DIR / "whitemagic.db"
                 self.sqlite_pool = sqlite3.connect(str(db_path), check_same_thread=False)
@@ -138,8 +140,8 @@ class PolyglotDB:
                 return {"status": "success", "backend": "rust"}
 
             elif self.active_backend == BackendType.ELIXIR and self.elixir_port:
-                from erlport.erlterms import Atom
                 from erlport.erlang import call
+                from erlport.erlterms import Atom
 
                 call(
                     Atom(b'Elixir.WhiteMagicCore.GalacticStore'),
@@ -193,8 +195,8 @@ class PolyglotDB:
                 return {"status": "error", "error": "Not found"}
 
             elif self.active_backend == BackendType.ELIXIR and self.elixir_port:
-                from erlport.erlterms import Atom
                 from erlport.erlang import call
+                from erlport.erlterms import Atom
 
                 result = call(
                     Atom(b'Elixir.WhiteMagicCore.GalacticStore'),
@@ -256,8 +258,8 @@ class PolyglotDB:
                 return {"status": "success", "count": count, "backend": "rust"}
 
             elif self.active_backend == BackendType.ELIXIR and self.elixir_port:
-                from erlport.erlterms import Atom
                 from erlport.erlang import call
+                from erlport.erlterms import Atom
 
                 result = call(
                     Atom(b'Elixir.WhiteMagicCore.GalacticStore'),
@@ -300,8 +302,8 @@ class PolyglotDB:
                 return {"status": "success", "stats": json.loads(stats_json), "backend": "rust"}
 
             elif self.active_backend == BackendType.ELIXIR and self.elixir_port:
-                from erlport.erlterms import Atom
                 from erlport.erlang import call
+                from erlport.erlterms import Atom
 
                 stats = call(
                     Atom(b'Elixir.WhiteMagicCore.GalacticStore'),

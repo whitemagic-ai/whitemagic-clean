@@ -834,7 +834,10 @@ def route_prat_call(gana_name: str, tool: str | None = None,
 
         # ── Leap 7: Zig dispatch pre-check (rate limit, circuit breaker, maturity) ──
         try:
-            from whitemagic.core.acceleration.dispatch_bridge import get_dispatch, DispatchResult
+            from whitemagic.core.acceleration.dispatch_bridge import (
+                DispatchResult,
+                get_dispatch,
+            )
             dispatch = get_dispatch()
             meta = _GANA_META.get(gana_name)
             engine_slot = (meta[0] - 1) if meta else None  # mansion_num is 1-indexed, slots are 0-indexed

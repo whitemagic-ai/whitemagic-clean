@@ -94,21 +94,27 @@ class TruthGarden(BaseGarden, GanYingMixin):
 
         # Zig (ctypes .so)
         try:
-            from whitemagic.optimization import zig_accelerators  # type: ignore[attr-defined]
+            from whitemagic.optimization import (
+                zig_accelerators,  # type: ignore[attr-defined]
+            )
             status["zig"] = hasattr(zig_accelerators, '_lib') or True
         except ImportError:
             status["zig"] = False
 
         # Haskell
         try:
-            from whitemagic.haskell import haskell_bridge  # type: ignore[import-not-found]  # noqa: F401
+            from whitemagic.haskell import (
+                haskell_bridge,  # type: ignore[import-not-found]  # noqa: F401
+            )
             status["haskell"] = True
         except ImportError:
             status["haskell"] = False
 
         # Elixir
         try:
-            from whitemagic.elixir import elixir_bridge  # type: ignore[import-not-found]  # noqa: F401
+            from whitemagic.elixir import (
+                elixir_bridge,  # type: ignore[import-not-found]  # noqa: F401
+            )
             status["elixir"] = True
         except ImportError:
             status["elixir"] = False
@@ -183,7 +189,9 @@ class TruthGarden(BaseGarden, GanYingMixin):
 
         # Memory DB quick check
         try:
-            from whitemagic.core.memory.sqlite_backend import get_pool  # type: ignore[attr-defined]
+            from whitemagic.core.memory.sqlite_backend import (
+                get_pool,  # type: ignore[attr-defined]
+            )
             pool = get_pool()
             with pool.connection() as conn:
                 count = conn.execute("SELECT COUNT(*) FROM memories").fetchone()[0]

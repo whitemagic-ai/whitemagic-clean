@@ -10,10 +10,10 @@ Executes the mass rehabilitation of the 104,720 quarantined memories.
 5. Rehabilitates the rest (Novelty/Lost) -> LONG_TERM.
 """
 
-import sqlite3
-import time
 import logging
+import sqlite3
 import sys
+import time
 from pathlib import Path
 
 # Add project root to python path
@@ -50,11 +50,11 @@ def rehabilitate():
 
     batch_size = 5000
     cursor.execute("SELECT id, title, content, content_hash FROM memories WHERE memory_type = 'quarantined'")
-    
+
     to_purge_dupe = []
     to_purge_noise = []
     to_rehab = []
-    
+
     processed = 0
     start_time = time.time()
 
@@ -62,26 +62,26 @@ def rehabilitate():
         rows = cursor.fetchmany(batch_size)
         if not rows:
             break
-            
+
         for row in rows:
             mid = row["id"]
             title = row["title"] or ""
             content = row["content"] or ""
             chash = row["content_hash"]
-            
+
             # 1. Deduplication Check
             if chash in active_hashes:
                 to_purge_dupe.append(mid)
                 continue
-                
+
             # 2. Noise Check
             if is_noise(content, title):
                 to_purge_noise.append(mid)
                 continue
-                
+
             # 3. Rehabilitate
             to_rehab.append(mid)
-            
+
         processed += len(rows)
         if processed % 10000 == 0:
             logger.info(f"Scanned {processed}/{total_quarantined}...")
@@ -100,7 +100,7 @@ def rehabilitate():
         return
 
     logger.info("--- Phase 3: Execution ---")
-    
+
     # Batch delete
     total_purge = to_purge_dupe + to_purge_noise
     if total_purge:
@@ -112,7 +112,7 @@ def rehabilitate():
             placeholders = ",".join("?" * len(chunk))
             cursor.execute(f"DELETE FROM memories WHERE id IN ({placeholders})", chunk)
             conn.commit()
-    
+
     # Batch update
     if to_rehab:
         logger.info(f"Rehabilitating {len(to_rehab)} memories...")
@@ -121,7 +121,7 @@ def rehabilitate():
             placeholders = ",".join("?" * len(chunk))
             # Set to LONG_TERM and tag as recovered
             cursor.execute(f"UPDATE memories SET memory_type = 'LONG_TERM' WHERE id IN ({placeholders})", chunk)
-            
+
             # Add tags (need separate loop or smarter SQL? Simple loop for tags)
             # Actually, doing one massive tag insert is better.
             tag_values = [(mid, "recovered_from_quarantine") for mid in chunk]
@@ -131,7 +131,7 @@ def rehabilitate():
     # Vacuum to reclaim space
     logger.info("--- Phase 4: Vacuuming ---")
     # cursor.execute("VACUUM") # Optional, takes time
-    
+
     conn.close()
     logger.info("Quarantine Rehabilitation Complete.")
 

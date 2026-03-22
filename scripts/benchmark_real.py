@@ -35,8 +35,8 @@ def bench(label: str, fn, n: int = 1000) -> float:
 
 
 def bench_vector_search() -> dict:
-    import random
     import math
+    import random
 
     DIM = 128
     N = 500

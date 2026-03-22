@@ -1,6 +1,6 @@
 import re
 
-with open('nexus/src/components/panels/LeftPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/LeftPanel.tsx') as f:
     content = f.read()
 
 # Fix the dummy SAMPLE_TREE data missing path properties
@@ -28,19 +28,19 @@ content = content.replace('if (window.__TAURI_INTERNALS__) {', 'if ((window as a
 with open('nexus/src/components/panels/LeftPanel.tsx', 'w') as f:
     f.write(content)
 
-with open('nexus/src/components/status/StatusBar.tsx', 'r') as f:
+with open('nexus/src/components/status/StatusBar.tsx') as f:
     sb = f.read()
     sb = sb.replace('if (window.__TAURI_INTERNALS__) {', 'if ((window as any).__TAURI_INTERNALS__) {')
     with open('nexus/src/components/status/StatusBar.tsx', 'w') as f:
         f.write(sb)
 
-with open('nexus/src/store/editor.ts', 'r') as f:
+with open('nexus/src/store/editor.ts') as f:
     ed = f.read()
     ed = ed.replace('if (window.__TAURI_INTERNALS__) {', 'if ((window as any).__TAURI_INTERNALS__) {')
     with open('nexus/src/store/editor.ts', 'w') as f:
         f.write(ed)
-        
-with open('nexus/src/components/center/GlobalSearch.tsx', 'r') as f:
+
+with open('nexus/src/components/center/GlobalSearch.tsx') as f:
     gs = f.read()
     gs = gs.replace('if (window.__TAURI_INTERNALS__) {', 'if ((window as any).__TAURI_INTERNALS__) {')
     with open('nexus/src/components/center/GlobalSearch.tsx', 'w') as f:

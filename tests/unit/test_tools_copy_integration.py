@@ -15,7 +15,6 @@ Covers:
 
 import pytest
 
-
 # =========================================================================
 # 1. Emotion & Drive Core
 # =========================================================================
@@ -150,7 +149,7 @@ class TestSelfModel:
     """Test the SelfModel predictive introspection engine."""
 
     def test_import(self):
-        from whitemagic.core.intelligence.self_model import SelfModel, Forecast
+        from whitemagic.core.intelligence.self_model import Forecast, SelfModel
         assert SelfModel is not None
         assert Forecast is not None
 
@@ -426,7 +425,8 @@ class TestWebhookTriggers:
     def test_import(self):
         try:
             from whitemagic.interfaces.api.routes.webhook_triggers import (
-                ALLOWED_ACTIONS, router
+                ALLOWED_ACTIONS,
+                router,
             )
             assert len(ALLOWED_ACTIONS) > 0
             assert router is not None
@@ -435,7 +435,9 @@ class TestWebhookTriggers:
 
     def test_allowed_actions_structure(self):
         try:
-            from whitemagic.interfaces.api.routes.webhook_triggers import ALLOWED_ACTIONS
+            from whitemagic.interfaces.api.routes.webhook_triggers import (
+                ALLOWED_ACTIONS,
+            )
             for name, config in ALLOWED_ACTIONS.items():
                 assert "description" in config
                 assert "tool" in config

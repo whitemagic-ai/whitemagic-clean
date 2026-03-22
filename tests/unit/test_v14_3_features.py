@@ -11,9 +11,10 @@ Validates:
 
 from __future__ import annotations
 
-import pytest
 from importlib.util import find_spec
 from unittest.mock import patch
+
+import pytest
 
 _has_nacl = find_spec("nacl") is not None
 
@@ -149,6 +150,7 @@ class TestEd25519Signing:
 
     def test_private_key_permissions(self, tmp_path):
         import stat
+
         from whitemagic.tools.manifest import generate_signing_keypair
         with patch("whitemagic.tools.manifest._get_key_dir", return_value=tmp_path):
             generate_signing_keypair()

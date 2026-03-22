@@ -9,10 +9,10 @@ Handles None values gracefully and processes batches efficiently.
 
 import sys
 import time
-
-from whitemagic.utils.fast_json import loads as _json_loads
 from dataclasses import dataclass
 from typing import Any
+
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 @dataclass

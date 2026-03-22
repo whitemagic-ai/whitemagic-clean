@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import base64
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -34,7 +34,7 @@ class Screenshot:
     format: str = "png"
     width: int = 0
     height: int = 0
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     element_selector: str | None = None  # If element screenshot
 
     def save(self, path: str) -> None:
@@ -55,7 +55,7 @@ class Screenshot:
 
 
 async def capture_screenshot(
-    cdp: 'CDPConnection',
+    cdp: CDPConnection,
     format: str = "png",
     quality: int = 80,
     full_page: bool = False,
@@ -107,7 +107,7 @@ async def capture_screenshot(
 
 
 async def capture_element(
-    cdp: 'CDPConnection',
+    cdp: CDPConnection,
     selector: str,
     format: str = "png",
     quality: int = 80,
@@ -194,7 +194,7 @@ async def capture_element(
     )
 
 
-async def get_viewport_size(cdp: 'CDPConnection') -> dict[str, int]:
+async def get_viewport_size(cdp: CDPConnection) -> dict[str, int]:
     """Get current viewport dimensions."""
     layout = await cdp.send("Page.getLayoutMetrics")
 
@@ -210,7 +210,7 @@ async def get_viewport_size(cdp: 'CDPConnection') -> dict[str, int]:
 
 
 async def set_viewport_size(
-    cdp: 'CDPConnection',
+    cdp: CDPConnection,
     width: int,
     height: int,
     device_scale_factor: float = 1.0,

@@ -27,10 +27,10 @@ from __future__ import annotations
 import logging
 import os
 from collections.abc import Callable
-
-from whitemagic.runtime_status import get_runtime_status
 from dataclasses import dataclass, field
 from typing import Any
+
+from whitemagic.runtime_status import get_runtime_status
 
 logger = logging.getLogger(__name__)
 
@@ -156,7 +156,7 @@ class DispatchPipeline:
         self._middlewares: list[tuple[str, MiddlewareFn]] = []
         self._chain: NextFn | None = None  # Pre-built chain (frozen after first execute)
 
-    def use(self, name: str, middleware: MiddlewareFn) -> "DispatchPipeline":
+    def use(self, name: str, middleware: MiddlewareFn) -> DispatchPipeline:
         """Register a middleware.  Order matters — first registered runs first."""
         self._middlewares.append((name, middleware))
         self._chain = None  # Invalidate pre-built chain

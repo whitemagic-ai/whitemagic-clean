@@ -1,7 +1,7 @@
 
-import subprocess
 import json
 import os
+import subprocess
 
 print("🔮 WhiteMagic Grand Smoke Test 🔮")
 print("=================================")
@@ -32,8 +32,8 @@ if os.path.exists(julia_script):
     try:
         input_data = json.dumps({"magnitude": 0.9, "damping": 0.05})
         result = subprocess.run(
-            ["julia", julia_script, input_data], 
-            capture_output=True, 
+            ["julia", julia_script, input_data],
+            capture_output=True,
             text=True,
             timeout=60
         )
@@ -55,7 +55,7 @@ if os.path.exists(haskell_src):
     try:
         env = os.environ.copy()
         env["LD_LIBRARY_PATH"] = f"{os.getcwd()}/whitemagic/lib_shim:{env.get('LD_LIBRARY_PATH', '')}"
-        
+
         # Try runghc for script usage
         result = subprocess.run(
             ["runghc", "-ihaskell/src", haskell_src],
@@ -65,7 +65,7 @@ if os.path.exists(haskell_src):
             env=env
         )
         if result.returncode == 0:
-            print(f"   ✅ Output: {result.stdout.strip()[:100]}...") 
+            print(f"   ✅ Output: {result.stdout.strip()[:100]}...")
         else:
             # Maybe it needs input or arguments?
             print(f"   message: Haskell ran with code {result.returncode}")

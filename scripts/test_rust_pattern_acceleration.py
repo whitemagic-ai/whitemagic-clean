@@ -5,8 +5,8 @@ Compares performance of Python pattern scoring vs Rust parallel implementation.
 Expected: 10-100x speedup for Rust.
 """
 
-import sys
 import json
+import sys
 import time
 from pathlib import Path
 

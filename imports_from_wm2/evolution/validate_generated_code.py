@@ -10,28 +10,28 @@ Validates generated code through multiple tiers:
 
 import ast
 import json
-from typing import Dict, List, Tuple
+
 
 class CodeValidator:
     """Multi-tier code validation"""
-    
+
     def __init__(self):
         self.results = []
-    
-    def validate_syntax(self, code: str, name: str = "generated") -> Tuple[bool, str, float]:
+
+    def validate_syntax(self, code: str, name: str = "generated") -> tuple[bool, str, float]:
         """Tier 1: Syntax validation"""
         try:
             ast.parse(code)
             return True, "Valid Python syntax", 0.2
         except SyntaxError as e:
             return False, f"Syntax error: {e}", 0.0
-    
-    def analyze_imports(self, code: str) -> Tuple[bool, List[str], float]:
+
+    def analyze_imports(self, code: str) -> tuple[bool, list[str], float]:
         """Check if imports are available"""
         try:
             tree = ast.parse(code)
             imports = []
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
                     for alias in node.names:
@@ -39,13 +39,13 @@ class CodeValidator:
                 elif isinstance(node, ast.ImportFrom):
                     if node.module:
                         imports.append(node.module)
-            
+
             # Check if imports exist (simplified - just check common ones)
             unavailable = []
-            common_modules = {'os', 'sys', 'json', 'time', 'pathlib', 'typing', 
+            common_modules = {'os', 'sys', 'json', 'time', 'pathlib', 'typing',
                             'dataclasses', 'asyncio', 'multiprocessing', 'threading',
                             'numpy', 'pandas', 'requests'}
-            
+
             for imp in imports:
                 base = imp.split('.')[0]
                 if base not in common_modules:
@@ -53,15 +53,15 @@ class CodeValidator:
                         __import__(base)
                     except ImportError:
                         unavailable.append(base)
-            
+
             if unavailable:
                 return False, unavailable, 0.0
             return True, imports, 0.1
-            
+
         except Exception:
             return False, [], 0.0
-    
-    def analyze_patterns(self, code: str) -> Dict[str, int]:
+
+    def analyze_patterns(self, code: str) -> dict[str, int]:
         """Analyze code patterns"""
         patterns = {
             'async_functions': code.count('async def'),
@@ -73,11 +73,11 @@ class CodeValidator:
             'error_handling': code.count('try:'),
         }
         return patterns
-    
-    def generate_insights(self, genome_genes: List[str]) -> List[Dict]:
+
+    def generate_insights(self, genome_genes: list[str]) -> list[dict]:
         """Generate actionable insights from genome"""
         insights = []
-        
+
         # Map genes to actionable recommendations
         gene_to_insight = {
             'caching': {
@@ -117,26 +117,26 @@ class CodeValidator:
                 'example': 'Use PyO3 to expose Rust functions to Python'
             },
         }
-        
+
         for gene in genome_genes:
             if gene in gene_to_insight:
                 insight = gene_to_insight[gene].copy()
                 insight['gene'] = gene
                 insights.append(insight)
-        
+
         return insights
-    
-    def validate_genome(self, genome: Dict) -> Dict:
+
+    def validate_genome(self, genome: dict) -> dict:
         """Validate a genome and generate insights"""
         genes = genome.get('genes', [])
-        
+
         # Generate insights
         insights = self.generate_insights(genes)
-        
+
         # Calculate synthetic fitness
         gene_values = [0.5] * len(genes)  # Simplified
         synthetic_fitness = sum(gene_values) / len(gene_values) if gene_values else 0.0
-        
+
         result = {
             'genome_size': len(genes),
             'genes': genes,
@@ -145,7 +145,7 @@ class CodeValidator:
             'actionable_count': len(insights),
             'high_impact_count': sum(1 for i in insights if i['impact'] in ['high', 'very_high']),
         }
-        
+
         return result
 
 
@@ -154,28 +154,28 @@ def main():
     print("CODE VALIDATION FRAMEWORK")
     print("=" * 80)
     print()
-    
+
     # Load results from real gene library run
     try:
         with open("real_gene_library_results.json") as f:
             results = json.load(f)
-        
+
         print("📊 Analyzing best genome from evolution...")
         print()
-        
+
         validator = CodeValidator()
-        
+
         # Validate best genome
         genome = results['best_genome']
         validation = validator.validate_genome(genome)
-        
+
         print("🧬 GENOME ANALYSIS:")
         print(f"   Size: {validation['genome_size']} genes")
         print(f"   Synthetic fitness: {validation['synthetic_fitness']:.4f}")
         print(f"   Actionable insights: {validation['actionable_count']}")
         print(f"   High-impact insights: {validation['high_impact_count']}")
         print()
-        
+
         if validation['insights']:
             print("💡 ACTIONABLE INSIGHTS:")
             print()
@@ -188,11 +188,11 @@ def main():
         else:
             print("⚠️  No actionable insights generated")
             print("   Genome may need more specific genes")
-        
+
         # Save validation results
         with open("validation_results.json", 'w') as f:
             json.dump(validation, f, indent=2)
-        
+
         print("💾 Validation results saved to validation_results.json")
         print()
         print("✅ Validation framework operational!")
@@ -201,7 +201,7 @@ def main():
         print("1. Implement benchmark harness to test insights")
         print("2. Apply insights to WhiteMagic codebase")
         print("3. Measure actual performance improvements")
-        
+
     except FileNotFoundError:
         print("❌ No results file found")
         print("   Run run_with_real_genes.py first")

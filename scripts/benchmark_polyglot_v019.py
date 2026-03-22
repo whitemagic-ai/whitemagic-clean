@@ -4,9 +4,9 @@
 Measures latency and throughput for each live polyglot backend and
 compares against Python/NumPy baseline. Produces a report for VC9.
 """
-import time
-import statistics
 import json
+import statistics
+import time
 from pathlib import Path
 
 import numpy as np
@@ -78,7 +78,11 @@ def main():
     # 3. Zig graph bridge cosine (new wm_simd_cosine_f32)
     # -------------------------------------------------------------------------
     try:
-        from whitemagic.core.acceleration.zig_graph_bridge import zig_simd_cosine, zig_tokenize_count, zig_graph_bridge_status
+        from whitemagic.core.acceleration.zig_graph_bridge import (
+            zig_graph_bridge_status,
+            zig_simd_cosine,
+            zig_tokenize_count,
+        )
         st = zig_graph_bridge_status()
         if st["has_zig_graph"]:
             def zig_graph_cosine():
@@ -99,7 +103,10 @@ def main():
     # 4. Julia RRF fusion
     # -------------------------------------------------------------------------
     try:
-        from whitemagic.core.acceleration.julia_bridge import julia_rrf_fuse, julia_pagerank
+        from whitemagic.core.acceleration.julia_bridge import (
+            julia_pagerank,
+            julia_rrf_fuse,
+        )
         lists = [
             [{"id": f"m{i}", "score": 1.0 - i * 0.05} for i in range(20)],
             [{"id": f"m{i}", "score": 1.0 - i * 0.04} for i in range(20)],
@@ -123,7 +130,10 @@ def main():
     # 5. Koka bridge status + plan_deployment
     # -------------------------------------------------------------------------
     try:
-        from whitemagic.core.acceleration.koka_bridge import koka_plan_deployment, koka_bridge_status
+        from whitemagic.core.acceleration.koka_bridge import (
+            koka_bridge_status,
+            koka_plan_deployment,
+        )
         st = koka_bridge_status()
         tasks = [{"id": f"t{i}", "priority": i % 3, "type": "clone"} for i in range(50)]
         def koka_plan():

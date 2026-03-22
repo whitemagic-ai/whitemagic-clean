@@ -1,6 +1,6 @@
 import re
 
-with open('whitemagic/core/acceleration/koka_native_bridge.py', 'r') as f:
+with open('whitemagic/core/acceleration/koka_native_bridge.py') as f:
     content = f.read()
 
 # Add a circuit breaker implementation
@@ -44,14 +44,14 @@ class KokaCircuitBreaker:
 
 if "class KokaCircuitBreaker" not in content:
     content = content.replace("class KokaNativeBridge:", circuit_breaker + "\nclass KokaNativeBridge:")
-    
+
     # Initialize circuit breakers per module
     content = content.replace("self._binaries: dict[str, Path] = {}", "self._binaries: dict[str, Path] = {}\n        self._breakers: dict[str, KokaCircuitBreaker] = {}")
-    
+
     # Register breaker when checking binaries
     content = content.replace("self._available[name] = []", "self._available[name] = []\n                if name not in self._breakers:\n                    self._breakers[name] = KokaCircuitBreaker()")
     content = content.replace('self._available["dispatcher"] = []', 'self._available["dispatcher"] = []\n            if "dispatcher" not in self._breakers:\n                self._breakers["dispatcher"] = KokaCircuitBreaker()')
-    
+
     # Check circuit breaker before dispatch
     check_breaker = """
         if not self.is_available(module):
@@ -64,16 +64,16 @@ if "class KokaCircuitBreaker" not in content:
             return None
 """
     content = re.sub(r'        if not self\.is_available\(module\):\n            logger\.debug\("Koka module not available: %s", module\)\n            return None', check_breaker, content)
-    
+
     # Record success/failure in dispatch
     content = content.replace('logger.error("Koka process timed out or returned no response for %s.%s", module, operation)', 'logger.error("Koka process timed out or returned no response for %s.%s", module, operation)\n            if breaker: breaker.record_failure()')
     content = content.replace('logger.error("Invalid JSON from Koka: %s", e)', 'logger.error("Invalid JSON from Koka: %s", e)\n                if breaker: breaker.record_failure()')
     content = content.replace('logger.error("Koka call timed out: %s.%s", module, operation)', 'logger.error("Koka call timed out: %s.%s", module, operation)\n            if breaker: breaker.record_failure()')
     content = content.replace('logger.error("Koka dispatch error: %s", e)', 'logger.error("Koka dispatch error: %s", e)\n            if breaker: breaker.record_failure()')
-    
+
     # Add success record
     content = content.replace('response["_koka_latency_ms"] = elapsed * 1000\n                return response', 'response["_koka_latency_ms"] = elapsed * 1000\n                if breaker: breaker.record_success()\n                return response')
-    
+
     # Add timeout fallback to _readline_with_timeout to be safe from hanging threads
     fallback = """        thread.start()
         # Add thread join with a slightly longer timeout just to avoid leaking threads
@@ -84,7 +84,7 @@ if "class KokaCircuitBreaker" not in content:
             return res
         except queue.Empty:
             return None"""
-            
+
     content = re.sub(r'        thread\.start\(\)\n\n        try:\n            return result_queue\.get\(timeout=timeout\)\n        except queue\.Empty:\n            return None', fallback, content)
 
 with open('whitemagic/core/acceleration/koka_native_bridge.py', 'w') as f:

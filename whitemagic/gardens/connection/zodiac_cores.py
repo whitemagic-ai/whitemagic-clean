@@ -18,7 +18,11 @@ _EventType: Any = None
 try:
     from whitemagic.core.resonance.gan_ying import (
         EventType as _event_type_imported,
+    )
+    from whitemagic.core.resonance.gan_ying import (
         ResonanceEvent as _resonance_event_imported,
+    )
+    from whitemagic.core.resonance.gan_ying import (
         get_bus as _get_bus_imported,
     )
 except ImportError:

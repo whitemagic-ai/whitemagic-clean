@@ -129,7 +129,9 @@ class DreamDaemon:
         # Attempt bridge synthesis for serendipitous connections
         insights_found = 0
         try:
-            from whitemagic.core.intelligence.synthesis.bridge_synthesizer import BridgeSynthesizer
+            from whitemagic.core.intelligence.synthesis.bridge_synthesizer import (
+                BridgeSynthesizer,
+            )
             synth = BridgeSynthesizer()
             bridges = synth.find_bridges(top_k=3)
             insights_found = len(bridges) if bridges else 0
@@ -147,10 +149,12 @@ class DreamDaemon:
     def _calculate_resonance(self, impulse_data: str) -> float:
         """Call Julia Gan Ying engine to measure resonance."""
         try:
-            from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
             import os
             import subprocess
             from pathlib import Path
+
+            from whitemagic.utils.fast_json import dumps_str as _json_dumps
+            from whitemagic.utils.fast_json import loads as _json_loads
 
             # Find the Julia script relative to this file
             # whitemagic/core/consciousness/dream_daemon.py -> root -> whitemagic-julia

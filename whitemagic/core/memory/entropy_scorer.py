@@ -33,12 +33,14 @@ from __future__ import annotations
 import logging
 import math
 import re
-from whitemagic.utils.fast_regex import compile as re_compile
 import threading
 import time
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
+
+from whitemagic.utils.fast_regex import compile as re_compile
 
 logger = logging.getLogger(__name__)
 

@@ -1,10 +1,10 @@
 """Rapid Cognition - Learn every 5 seconds."""
 
-from typing import Any
 import logging
 import threading
 import time
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 try:

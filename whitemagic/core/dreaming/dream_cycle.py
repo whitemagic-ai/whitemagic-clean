@@ -117,7 +117,7 @@ class DreamCycle:
         with self._lock:
             if self._running:
                 return
-            
+
             # Polyglot check: If Elixir is the master, delegate dreaming
             import os
             if os.environ.get("WHITEMAGIC_ELIXIR_MASTER") == "1":
@@ -137,7 +137,7 @@ class DreamCycle:
         with self._lock:
             self._running = False
             self._dreaming = False
-        
+
         import os
         if os.environ.get("WHITEMAGIC_ELIXIR_MASTER") == "1":
             logger.info("☀️ Elixir delegation stopped")
@@ -150,7 +150,7 @@ class DreamCycle:
     def touch(self) -> None:
         """Record activity — resets idle timer. Call on every tool dispatch."""
         self._last_activity = time.time()
-        
+
         # Notify Elixir Master if active
         import os
         if os.environ.get("WHITEMAGIC_ELIXIR_MASTER") == "1":
@@ -490,7 +490,9 @@ class DreamCycle:
             # Synthesize insights from bridges
             if bridges:
                 try:
-                    from whitemagic.core.memory.bridge_synthesizer import get_bridge_synthesizer
+                    from whitemagic.core.memory.bridge_synthesizer import (
+                        get_bridge_synthesizer,
+                    )
                     synth = get_bridge_synthesizer()
                     insights = synth.synthesize_from_bridges(bridges, top_n=3)
                     result["bridge_insights"] = [i.to_dict() for i in insights]
@@ -622,7 +624,9 @@ class DreamCycle:
         and creates high-quality recall anchors.
         """
         try:
-            from whitemagic.core.dreaming.narrative_compressor import get_narrative_compressor
+            from whitemagic.core.dreaming.narrative_compressor import (
+                get_narrative_compressor,
+            )
             nc = get_narrative_compressor()
             result = nc.compress(max_clusters=3, sample_limit=200)
             return result.to_dict()
@@ -640,7 +644,9 @@ class DreamCycle:
         emergence_insights = []
         persisted_count = 0
         try:
-            from whitemagic.core.intelligence.agentic.emergence_engine import get_emergence_engine
+            from whitemagic.core.intelligence.agentic.emergence_engine import (
+                get_emergence_engine,
+            )
             ee = get_emergence_engine()
             insights = ee.scan_for_emergence()
             emergence_insights = [i.to_dict() for i in insights[:5]]

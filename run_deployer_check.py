@@ -1,4 +1,5 @@
 import time
+
 import whitemagic_rust as rs
 
 print("Deployer available:", hasattr(rs, "MassiveDeployer"))

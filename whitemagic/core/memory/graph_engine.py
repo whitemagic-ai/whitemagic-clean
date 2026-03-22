@@ -557,11 +557,11 @@ class GraphEngine:
                     adjacencies: dict[str, list[str]] = {str(n): [str(nb) for nb in UG.neighbors(n)] for n in UG.nodes()}
                     edge_weights: dict[tuple[str, str], float] = {(str(u), str(v)): UG[u][v].get("weight", 0.5) for u, v in UG.edges()}
                     communities_member_lists = [list(c) for c in communities_list]
-                    
+
                     rust_results = _rust_graph.py_count_community_edges(
                         adjacencies, edge_weights, communities_member_lists
                     )
-                    
+
                     result: list[Community] = []
                     for idx, (size, internal_edges, avg_strength) in enumerate(rust_results):
                         members = communities_list[idx]
@@ -574,7 +574,7 @@ class GraphEngine:
                             avg_strength=avg_strength,
                             theme_tags=theme_tags,
                         ))
-                    
+
                     result.sort(key=lambda c: c.size, reverse=True)
                     return result
                 except Exception as e:

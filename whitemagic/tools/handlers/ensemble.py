@@ -16,13 +16,14 @@ import asyncio
 import os
 import re
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections.abc import Coroutine
 from datetime import datetime
 from pathlib import Path
 from typing import Any, TypeVar, cast
 from uuid import uuid4
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 T = TypeVar("T")
 

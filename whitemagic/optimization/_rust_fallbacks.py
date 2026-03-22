@@ -3,8 +3,8 @@
 This module contains pure-Python fallback implementations used when
 the Rust extension (whitemagic_rs) is not available.
 """
-from typing import Any, cast
 import logging
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 

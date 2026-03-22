@@ -17,7 +17,7 @@ import os
 import sqlite3
 import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -126,7 +126,7 @@ def generate_content(conv: dict) -> str:
         "",
         f"**UUID**: {conv['uuid']}",
         f"**Chunks**: {conv['chunks']}",
-        f"**Extracted**: {datetime.now(timezone.utc).strftime('%Y-%m-%d')} (Round 2)",
+        f"**Extracted**: {datetime.now(UTC).strftime('%Y-%m-%d')} (Round 2)",
         "",
         "## Summary",
         conv["description"],
@@ -187,7 +187,7 @@ def main():
             continue
 
         memory_id = str(uuid.uuid4())
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         if not args.apply:
             log.info(f"  DRY RUN: {title} ({len(content)} chars, {len(conv['tags'])} tags)")

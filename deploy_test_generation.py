@@ -1,4 +1,5 @@
 import time
+
 import whitemagic_rust as rs
 
 deployer = rs.MassiveDeployer(8) # Max parallel

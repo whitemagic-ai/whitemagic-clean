@@ -5,8 +5,8 @@ Test Rust-Accelerated Ingestion
 Extract one dense Windsurf session and benchmark Python vs Rust
 """
 
-import time
 import sys
+import time
 from pathlib import Path
 
 # Add project root to path
@@ -92,7 +92,7 @@ WM1 (dev): 143,655 LOC → WM2: 3,500 LOC = 97.6% reduction
 - Memory usage: 14.92 MB
 - Throughput: 934K clones/sec (warm)
 """ * 50  # Repeat to make it dense like a real session
-    
+
     return sample_content
 
 def test_rust_functions():
@@ -101,7 +101,7 @@ def test_rust_functions():
     print("TESTING RUST FUNCTIONS")
     print("=" * 80)
     print()
-    
+
     # Test 1: Keyword extraction
     print("Test 1: keyword_extract_batch")
     texts = [
@@ -109,7 +109,7 @@ def test_rust_functions():
         "Python fallback for systems without GPU acceleration",
         "Mojo provides 50-200x speedup for ML operations",
     ]
-    
+
     t0 = time.time()
     try:
         keywords = whitemagic_rs.keyword_extract_batch(texts, top_k=5)
@@ -118,7 +118,7 @@ def test_rust_functions():
         print(f"   Sample: {keywords[0][:3]}")
     except Exception as e:
         print(f"   ❌ Failed: {e}")
-    
+
     # Test 2: Holographic encoding
     print("\nTest 2: holographic_encode_batch")
     titles = [
@@ -126,7 +126,7 @@ def test_rust_functions():
         "Windsurf Session: PSR Deployment",
         "Windsurf Session: Evolution Campaigns",
     ]
-    
+
     t0 = time.time()
     try:
         coords = whitemagic_rs.holographic_encode_batch(titles)
@@ -135,7 +135,7 @@ def test_rust_functions():
         print(f"   Sample coord dimensions: {len(coords[0]) if coords else 0}")
     except Exception as e:
         print(f"   ❌ Failed: {e}")
-    
+
     # Test 3: Arrow encoding
     print("\nTest 3: arrow_encode_memories + arrow_decode_memories")
     test_memories = [
@@ -158,14 +158,14 @@ def test_rust_functions():
             "metadata": {"source": "test"},
         },
     ]
-    
+
     t0 = time.time()
     try:
         arrow_data = whitemagic_rs.arrow_encode_memories(test_memories)
         elapsed_encode = time.time() - t0
         print(f"   ✅ Encoded to Arrow in {elapsed_encode*1000:.2f}ms")
         print(f"   Arrow data size: {len(arrow_data):,} bytes")
-        
+
         t0 = time.time()
         decoded = whitemagic_rs.arrow_decode_memories(arrow_data)
         elapsed_decode = time.time() - t0
@@ -180,40 +180,40 @@ def benchmark_ingestion():
     print("BENCHMARKING INGESTION")
     print("=" * 80)
     print()
-    
+
     # Extract test session
     print("Extracting test session content...")
     content = extract_session_content(TEST_SESSION["id"])
     print(f"   Content size: {len(content):,} characters")
     print()
-    
+
     # Benchmark Python
     print("Benchmark 1: Python ingestion")
     from ingest_windsurf_rust_accelerated import batch_ingest_python
-    
+
     t0 = time.time()
     result_python = batch_ingest_python([TEST_SESSION], [content])
     python_time = time.time() - t0
-    
+
     print(f"   Time: {python_time:.3f}s")
     print(f"   Status: {result_python['status']}")
     print()
-    
+
     # Benchmark Rust
     print("Benchmark 2: Rust-accelerated ingestion")
     from ingest_windsurf_rust_accelerated import batch_ingest_rust
-    
+
     # Use a different session ID to avoid duplicate
     TEST_SESSION["id"] = TEST_SESSION["id"] + "_rust"
-    
+
     t0 = time.time()
     result_rust = batch_ingest_rust([TEST_SESSION], [content])
     rust_time = time.time() - t0
-    
+
     print(f"   Time: {rust_time:.3f}s")
     print(f"   Status: {result_rust['status']}")
     print()
-    
+
     # Compare
     print("=" * 80)
     print("RESULTS")
@@ -221,11 +221,11 @@ def benchmark_ingestion():
     print()
     print(f"Python time:  {python_time:.3f}s")
     print(f"Rust time:    {rust_time:.3f}s")
-    
+
     if rust_time > 0:
         speedup = python_time / rust_time
         print(f"Speedup:      {speedup:.2f}x")
-        
+
         if speedup >= 5:
             print("\n✅ Rust acceleration is HIGHLY EFFECTIVE!")
             print("   Recommendation: Use Rust-accelerated ingestion")
@@ -244,10 +244,10 @@ def main():
     print("RUST-ACCELERATED INGESTION TEST")
     print("=" * 80)
     print()
-    
+
     # Test Rust functions
     test_rust_functions()
-    
+
     # Benchmark ingestion
     benchmark_ingestion()
 

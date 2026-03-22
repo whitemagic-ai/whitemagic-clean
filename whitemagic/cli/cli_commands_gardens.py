@@ -133,7 +133,9 @@ def deactivate(garden: str) -> None:
 
 def _get_gardens_backend():
     try:
-        from whitemagic_extensions import gardens as gardens_module  # type: ignore[import-not-found]
+        from whitemagic_extensions import (
+            gardens as gardens_module,  # type: ignore[import-not-found]
+        )
     except ImportError:
         from whitemagic import gardens as gardens_module
 

@@ -35,10 +35,10 @@ class LanguageStats:
     code_lines: int = 0  # Non-comment, non-blank
     comment_lines: int = 0
     blank_lines: int = 0
-    
+
     # Hot path analysis
     hot_candidates: list[dict[str, Any]] = field(default_factory=list)
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
@@ -62,7 +62,7 @@ class FileAnalysis:
     is_hot_candidate: bool = False
     translation_recommendation: str = ""
     hot_path_reason: str = ""
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "path": self.path,
@@ -176,7 +176,7 @@ LANGUAGES = {
 def find_all_files(root: Path) -> dict[str, list[Path]]:
     """Find all files organized by language."""
     files_by_lang: dict[str, list[Path]] = defaultdict(list)
-    
+
     for lang_name, lang_config in LANGUAGES.items():
         for ext in lang_config["extensions"]:
             # Use find for speed with better exclusions
@@ -210,7 +210,7 @@ def find_all_files(root: Path) -> dict[str, list[Path]]:
                             files_by_lang[lang_name].append(Path(line))
             except Exception:
                 pass
-    
+
     return dict(files_by_lang)
 
 
@@ -220,17 +220,17 @@ def analyze_file(file_path: Path, lang_name: str, lang_config: dict) -> FileAnal
         content = file_path.read_text(encoding="utf-8", errors="ignore")
         lines = content.split("\n")
         total_lines = len(lines)
-        
+
         # Count blank and comment lines
         blank_lines = sum(1 for line in lines if not line.strip())
         comment_lines = 0
         in_multiline_comment = False
-        
+
         for line in lines:
             stripped = line.strip()
             if not stripped:
                 continue
-            
+
             # Check for multiline comment markers
             if lang_name == "Python":
                 if '"""' in stripped or "'''" in stripped:
@@ -238,24 +238,24 @@ def analyze_file(file_path: Path, lang_name: str, lang_config: dict) -> FileAnal
                         in_multiline_comment = not in_multiline_comment
                     comment_lines += 1
                     continue
-            
+
             if in_multiline_comment:
                 comment_lines += 1
                 continue
-            
+
             # Check single-line comments
             for pattern in lang_config.get("comment_patterns", []):
                 if re.match(pattern, stripped):
                     comment_lines += 1
                     break
-        
+
         code_lines = total_lines - blank_lines - comment_lines
-        
+
         # Hot path analysis (Python only for now)
         is_hot = False
         recommendation = ""
         reason = ""
-        
+
         if lang_name == "Python" and code_lines > 20:
             content_lower = content.lower()
             for indicator, target_lang, description in lang_config.get("hot_path_indicators", []):
@@ -266,7 +266,7 @@ def analyze_file(file_path: Path, lang_name: str, lang_config: dict) -> FileAnal
                         recommendation = f"Translate to {target_lang}"
                         reason = description
                         break
-        
+
         return FileAnalysis(
             path=str(file_path.relative_to(PROJECT_ROOT)),
             language=lang_name,
@@ -285,24 +285,24 @@ def run_census() -> dict[str, Any]:
     """Run complete polyglot census."""
     print("🔍 S020 Polyglot Census: Analyzing WhiteMagic codebase...")
     print("=" * 70)
-    
+
     # Find all files
     print("\n📁 Scanning for files...")
     files_by_lang = find_all_files(PROJECT_ROOT)
-    
+
     # Analyze each file
     print("\n📊 Analyzing files...")
     stats_by_lang: dict[str, LanguageStats] = {}
     all_files: list[FileAnalysis] = []
-    
+
     for lang_name, files in files_by_lang.items():
         if not files:
             continue
-            
+
         print(f"   Analyzing {len(files)} {lang_name} files...")
         lang_config = LANGUAGES[lang_name]
         stats = LanguageStats(name=lang_name, extension=lang_config["extensions"][0][1:])
-        
+
         for file_path in files:
             analysis = analyze_file(file_path, lang_name, lang_config)
             if analysis:
@@ -310,7 +310,7 @@ def run_census() -> dict[str, Any]:
                 stats.total_lines += analysis.total_lines
                 stats.code_lines += analysis.code_lines
                 all_files.append(analysis)
-                
+
                 if analysis.is_hot_candidate:
                     stats.hot_candidates.append({
                         "path": analysis.path,
@@ -318,21 +318,21 @@ def run_census() -> dict[str, Any]:
                         "recommendation": analysis.translation_recommendation,
                         "reason": analysis.hot_path_reason,
                     })
-        
+
         stats_by_lang[lang_name] = stats
-    
+
     # Calculate percentages
     total_code_lines = sum(s.code_lines for s in stats_by_lang.values())
-    
+
     print("\n" + "=" * 70)
     print("📈 POLYGLOT BREAKDOWN")
     print("=" * 70)
-    
+
     results = []
     for lang_name in sorted(stats_by_lang.keys(), key=lambda x: stats_by_lang[x].code_lines, reverse=True):
         stats = stats_by_lang[lang_name]
         pct = (stats.code_lines / total_code_lines * 100) if total_code_lines > 0 else 0
-        
+
         result = {
             "language": lang_name,
             "files": stats.files,
@@ -342,29 +342,29 @@ def run_census() -> dict[str, Any]:
             "hot_candidates": len(stats.hot_candidates),
         }
         results.append(result)
-        
+
         hot_indicator = f" 🔥{len(stats.hot_candidates)} hot" if stats.hot_candidates else ""
         print(f"{lang_name:15} {stats.files:6} files {stats.code_lines:9,} LOC ({pct:5.1f}%){hot_indicator}")
-    
+
     print("\n" + "=" * 70)
     print(f"TOTAL: {sum(s.files for s in stats_by_lang.values())} files, {total_code_lines:,} code lines")
     print("=" * 70)
-    
+
     # Hot candidates summary
     print("\n🔥 HOT PATH CANDIDATES FOR TRANSLATION:")
     print("-" * 70)
-    
+
     hot_files = [f for f in all_files if f.is_hot_candidate]
     hot_files.sort(key=lambda x: x.code_lines, reverse=True)
-    
+
     for f in hot_files[:20]:  # Top 20
         print(f"\n{f.path}")
         print(f"   Lines: {f.code_lines} → {f.translation_recommendation}")
         print(f"   Reason: {f.hot_path_reason}")
-    
+
     if len(hot_files) > 20:
         print(f"\n... and {len(hot_files) - 20} more hot candidates")
-    
+
     # Generate report
     report = {
         "timestamp": "2026-02-21T11:58:00",
@@ -386,13 +386,13 @@ def run_census() -> dict[str, Any]:
             "Haskell": "2% (type-safe rules)",
         },
     }
-    
+
     # Save report
     report_path = PROJECT_ROOT / "reports" / "S020_polyglot_census.json"
     report_path.parent.mkdir(exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2))
     print(f"\n💾 Report saved to: {report_path}")
-    
+
     return report
 
 

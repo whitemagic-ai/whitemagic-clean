@@ -1,7 +1,8 @@
-with open('whitemagic-rust/src/ipc_bridge.rs', 'r') as f:
+with open('whitemagic-rust/src/ipc_bridge.rs') as f:
     content = f.read()
 
 import re
+
 # Just replace the whole function cleanly
 func_new = """#[pyfunction]
 pub fn ipc_status() -> HashMap<String, String> {

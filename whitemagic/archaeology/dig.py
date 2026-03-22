@@ -6,7 +6,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 # Configure logging
 logging.basicConfig(
@@ -45,8 +45,8 @@ class Grimoire:
     }
 
     @staticmethod
-    def identify(content: str, filename: str) -> List[Dict[str, Any]]:
-        matches: List[Dict[str, Any]] = []
+    def identify(content: str, filename: str) -> list[dict[str, Any]]:
+        matches: list[dict[str, Any]] = []
         text = (content + " " + filename).lower()
         for num, info in Grimoire.CHAPTERS.items():
             score = sum(1 for k in info["keywords"] if k in text)
@@ -81,7 +81,7 @@ class Ganas:
     }
 
     @staticmethod
-    def identify(content: str, filename: str) -> Optional[str]:
+    def identify(content: str, filename: str) -> str | None:
         text = (content + " " + filename).lower()
         best_gana = None
         best_score = 0
@@ -137,7 +137,7 @@ class ChariotArchaeologist:
             ".mp3", ".mp4", ".wav", ".pdf",
         }
 
-    def _load_state(self) -> Dict[str, Any]:
+    def _load_state(self) -> dict[str, Any]:
         if self.state_file.exists():
             try:
                 return json.loads(self.state_file.read_text())
@@ -153,7 +153,7 @@ class ChariotArchaeologist:
             }
             self.state_file.write_text(json.dumps(state, indent=2))
 
-    def mark_read(self, path: str, context: Optional[str] = None, note: Optional[str] = None, insight: Optional[str] = None) -> Dict[str, Any]:
+    def mark_read(self, path: str, context: str | None = None, note: str | None = None, insight: str | None = None) -> dict[str, Any]:
         entry = {
             "path": path,
             "type": "read",
@@ -168,7 +168,7 @@ class ChariotArchaeologist:
         self._save_state()
         return entry
 
-    def mark_written(self, path: str, context: Optional[str] = None, note: Optional[str] = None) -> Dict[str, Any]:
+    def mark_written(self, path: str, context: str | None = None, note: str | None = None) -> dict[str, Any]:
         entry = {
             "path": path,
             "type": "written",
@@ -184,7 +184,7 @@ class ChariotArchaeologist:
     def have_read(self, path: str) -> bool:
         return path in self._read_files
 
-    def find_unread(self, directory: str = ".", patterns: Optional[List[str]] = None) -> List[Any]:
+    def find_unread(self, directory: str = ".", patterns: list[str] | None = None) -> list[Any]:
         dir_path = Path(directory)
         unread = []
         for root, _, files in os.walk(dir_path):
@@ -200,21 +200,21 @@ class ChariotArchaeologist:
                     unread.append(fpath)
         return unread
 
-    def stats(self, scan_disk: bool = False) -> Dict[str, Any]:
+    def stats(self, scan_disk: bool = False) -> dict[str, Any]:
         return {
             "total_files_tracked": len(self._read_files),
             "history_size": len(self._history),
             **self.stats_data
         }
 
-    def get_recent_reads(self, limit: int = 50) -> List[Dict[str, Any]]:
+    def get_recent_reads(self, limit: int = 50) -> list[dict[str, Any]]:
         reads = [h for h in self._history if h["type"] == "read"]
         return reads[-limit:]
 
     def reading_report(self) -> str:
         return f"Archaeologist report: {len(self._read_files)} files read, {len(self._history)} actions recorded."
 
-    def search(self, query: str) -> List[Dict[str, Any]]:
+    def search(self, query: str) -> list[dict[str, Any]]:
         results = []
         query_lower = query.lower()
         for entry in self._history:
@@ -224,7 +224,7 @@ class ChariotArchaeologist:
                 results.append(entry)
         return results
 
-    def write_finding(self, finding: Dict[str, Any]) -> None:
+    def write_finding(self, finding: dict[str, Any]) -> None:
         """Thread-safe write to JSONL file"""
         with self.lock:
             with open(self.report_file, "a") as f:

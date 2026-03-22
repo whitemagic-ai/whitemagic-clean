@@ -1,5 +1,5 @@
 
-with open('nexus/src-tauri/src/main.rs', 'r') as f:
+with open('nexus/src-tauri/src/main.rs') as f:
     content = f.read()
 
 replacement = """// WhiteMagic Nexus — Tauri 2.0 Desktop Application

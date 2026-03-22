@@ -6,8 +6,8 @@ Generate comprehensive final victory metrics
 """
 
 import json
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
 
 PROJECT_ROOT = Path(__file__).parent.parent
 WM2_ROOT = Path.home() / "Desktop" / "WM2"
@@ -20,17 +20,17 @@ print()
 def main():
     # Load final metrics
     metrics_path = PROJECT_ROOT / "reports" / "final_consolidation_metrics.json"
-    
+
     if not metrics_path.exists():
         print("⚠️  Metrics not found, generating from scratch...")
         metrics = {}
     else:
         metrics = json.loads(metrics_path.read_text())
-    
+
     # Generate victory report
     report = f"""# 🎖️ WHITEMAGIC 2.0 EVOLUTION - TOTAL VICTORY
 
-**Execution Date**: {datetime.now(timezone.utc).strftime('%B %d, %Y at %I:%M %p UTC')}  
+**Execution Date**: {datetime.now(UTC).strftime('%B %d, %Y at %I:%M %p UTC')}  
 **Campaign Duration**: Minutes (not weeks!)  
 **Status**: ✅ **MISSION ACCOMPLISHED**
 
@@ -239,19 +239,19 @@ We pushed WhiteMagic to its absolute limits and discovered:
 
 ---
 
-*Generated: {datetime.now(timezone.utc).isoformat()}*  
+*Generated: {datetime.now(UTC).isoformat()}*  
 *WhiteMagic 2.0 Evolution Campaign*  
 *Execution Speed: 10,000x faster than planned*
 """
-    
+
     # Save victory report
     report_path = PROJECT_ROOT / "reports" / "WM2_EVOLUTION_TOTAL_VICTORY.md"
     report_path.write_text(report)
-    
+
     print("📄 Victory report generated!")
     print(f"   Location: {report_path}")
     print()
-    
+
     print("=" * 80)
     print("PHASE 7 COMPLETE")
     print("=" * 80)

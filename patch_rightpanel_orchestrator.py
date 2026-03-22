@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/panels/RightPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/RightPanel.tsx') as f:
     content = f.read()
 
 # Add SwarmOrchestrator import and to RightPanel tabs

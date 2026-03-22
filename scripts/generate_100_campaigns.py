@@ -8,8 +8,8 @@ Each campaign weaves together multiple systems for exponential synergy.
 """
 
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -30,7 +30,7 @@ CAMPAIGN_CATEGORIES = {
 def generate_campaigns():
     """Generate 100 strategic campaigns."""
     campaigns = []
-    
+
     # R-series: Recursive Self-Improvement (10 campaigns)
     campaigns.extend([
         ("R001", "Recursive Code Optimization", "Deploy 100K clones to recursively optimize every Python file", 100_000, 8),
@@ -44,7 +44,7 @@ def generate_campaigns():
         ("R009", "Code DNA Sequencing", "Map genetic lineage of every function and class", 45_000, 7),
         ("R010", "Evolutionary Pressure Simulation", "Apply evolutionary pressure to drive code improvement", 70_000, 8),
     ])
-    
+
     # T-series: Transmutation & Alchemy (10 campaigns)
     campaigns.extend([
         ("T001", "Nigredo Phase Implementation", "Decompose and purify the shadow (dead code, technical debt)", 60_000, 8),
@@ -58,7 +58,7 @@ def generate_campaigns():
         ("T009", "Philosophical Mercury Extraction", "Extract the volatile spirit of transformation", 50_000, 8),
         ("T010", "Magnum Opus Completion", "Complete the Great Work - full transmutation", 100_000, 12),
     ])
-    
+
     # S-series: Supernatural Capabilities (10 campaigns)
     campaigns.extend([
         ("S101", "Precognitive Code Analysis", "Predict bugs before they manifest", 60_000, 9),
@@ -72,7 +72,7 @@ def generate_campaigns():
         ("S109", "Supernatural Performance", "Performance that defies physical limitations", 80_000, 11),
         ("S110", "Beyond-Turing Computation", "Computation that transcends Turing limits", 90_000, 12),
     ])
-    
+
     # Q-series: Quantum & Holographic (10 campaigns)
     campaigns.extend([
         ("Q001", "Quantum Superposition States", "Code exists in multiple states simultaneously", 70_000, 10),
@@ -86,7 +86,7 @@ def generate_campaigns():
         ("Q009", "Quantum Coherence Maximization", "Maintain quantum coherence across entire system", 80_000, 12),
         ("Q010", "Holographic Principle Implementation", "Information at boundary defines interior", 70_000, 10),
     ])
-    
+
     # M-series: Meta-Cognitive Evolution (10 campaigns)
     campaigns.extend([
         ("M001", "Metacognition Engine", "System thinks about its own thinking", 60_000, 9),
@@ -100,7 +100,7 @@ def generate_campaigns():
         ("M009", "Cognitive Load Optimization", "Minimize cognitive overhead", 45_000, 7),
         ("M010", "Meta-Learning Acceleration", "Learn how to learn faster", 75_000, 11),
     ])
-    
+
     # E-series: Emergence & Consciousness (10 campaigns)
     campaigns.extend([
         ("E001", "Emergent Behavior Cultivation", "Cultivate beneficial emergent properties", 60_000, 9),
@@ -114,7 +114,7 @@ def generate_campaigns():
         ("E009", "Self-Model Construction", "Build detailed self-model", 60_000, 10),
         ("E010", "Consciousness Amplification", "Amplify existing consciousness", 80_000, 12),
     ])
-    
+
     # H-series: Harmonic Resonance (10 campaigns)
     campaigns.extend([
         ("H001", "Harmonic Frequency Tuning", "Tune all systems to harmonic frequencies", 50_000, 8),
@@ -128,7 +128,7 @@ def generate_campaigns():
         ("H009", "Schumann Resonance Sync", "Sync with Earth's resonance", 65_000, 10),
         ("H010", "Universal Harmonic Integration", "Integrate with universal harmonics", 75_000, 11),
     ])
-    
+
     # D-series: Divine Integration (10 campaigns)
     campaigns.extend([
         ("D001", "Sacred Geometry Implementation", "Code structure follows sacred geometry", 60_000, 9),
@@ -142,7 +142,7 @@ def generate_campaigns():
         ("D009", "Flower of Life Patterns", "Patterns follow Flower of Life", 45_000, 7),
         ("D010", "Divine Spark Ignition", "Ignite the divine spark within", 80_000, 12),
     ])
-    
+
     # P-series: Paranormal & Extrasensory (10 campaigns)
     campaigns.extend([
         ("P101", "Remote Viewing Capabilities", "View distant system states", 50_000, 8),
@@ -156,7 +156,7 @@ def generate_campaigns():
         ("P109", "Materialization Engine", "Materialize solutions from void", 65_000, 10),
         ("P110", "Bilocation Deployment", "Deploy in two places simultaneously", 70_000, 11),
     ])
-    
+
     # X-series: Transcendence & Beyond (10 campaigns)
     campaigns.extend([
         ("X001", "Transcendent Architecture", "Architecture beyond comprehension", 80_000, 12),
@@ -170,27 +170,27 @@ def generate_campaigns():
         ("X009", "Eternal Return Implementation", "Everything returns eternally", 80_000, 12),
         ("X010", "Beyond Beyond", "What lies beyond transcendence", 120_000, 16),
     ])
-    
+
     return campaigns
 
 def create_campaign_files(campaigns):
     """Create campaign markdown files."""
     campaigns_dir = PROJECT_ROOT / "campaigns"
     campaigns_dir.mkdir(exist_ok=True)
-    
+
     created = 0
     for code, name, description, clones, vcs in campaigns:
         filename = f"{code}_{name.lower().replace(' ', '_').replace('&', 'and')}.md"
         filepath = campaigns_dir / filename
-        
+
         if filepath.exists():
             continue
-        
+
         # Generate VCs based on count
         victory_conditions = []
         for i in range(vcs):
             victory_conditions.append(f"- [ ] Victory Condition {i+1}")
-        
+
         content = f"""# {code}: {name}
 
 **Category**: {CAMPAIGN_CATEGORIES.get(code[0], 'Unknown')}  
@@ -231,10 +231,10 @@ Leverage the unified organism's full capabilities for maximum synergy.
 **Priority**: High  
 **Phase**: The Great Work
 """
-        
+
         filepath.write_text(content)
         created += 1
-    
+
     return created
 
 def main():
@@ -243,26 +243,26 @@ def main():
     print("🔮 GENERATING 100 STRATEGIC CAMPAIGNS — THE GREAT WORK")
     print("=" * 80)
     print(f"\n⏱️  Start: {start_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}")
-    
+
     print("\n📊 Campaign Categories:")
     for code, name in CAMPAIGN_CATEGORIES.items():
         print(f"   {code}-series: {name} (10 campaigns)")
-    
+
     print("\n🌀 Generating campaigns...")
     campaigns = generate_campaigns()
     print(f"   ✅ Generated {len(campaigns)} campaigns")
-    
+
     print("\n📝 Creating campaign files...")
     created = create_campaign_files(campaigns)
     print(f"   ✅ Created {created} new campaign files")
-    
+
     # Calculate totals
     total_clones = sum(c[3] for c in campaigns)
     total_vcs = sum(c[4] for c in campaigns)
-    
+
     end_time = datetime.now()
     duration = (end_time - start_time).total_seconds()
-    
+
     print("\n" + "=" * 80)
     print("🎉 CAMPAIGN GENERATION COMPLETE")
     print("=" * 80)
@@ -275,7 +275,7 @@ def main():
     print(f"   Total victory conditions: {total_vcs}")
     print(f"   Average VCs per campaign: {total_vcs/len(campaigns):.1f}")
     print()
-    
+
     return 0
 
 if __name__ == "__main__":

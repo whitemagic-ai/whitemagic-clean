@@ -35,7 +35,7 @@ import os
 import sqlite3
 import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -445,7 +445,7 @@ def generate_content(conv: dict) -> str:
         f"**UUID**: {conv.get('uuid', 'unknown')}",
         f"**Chunks**: {conv['chunks']}",
         f"**Extraction Round**: {conv.get('extraction_round', 'unknown')}",
-        f"**Extracted**: {datetime.now(timezone.utc).strftime('%Y-%m-%d')}",
+        f"**Extracted**: {datetime.now(UTC).strftime('%Y-%m-%d')}",
         "",
         "## Summary",
         conv["description"],
@@ -502,7 +502,7 @@ def ingest_conversations(
             continue
 
         memory_id = str(uuid.uuid4())
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         conn.execute(
             """INSERT INTO memories (id, content, memory_type, title, created_at,

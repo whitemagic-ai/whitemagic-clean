@@ -1,5 +1,5 @@
 
-with open("whitemagic-rust/src/continuous_daemon.rs", "r") as f:
+with open("whitemagic-rust/src/continuous_daemon.rs") as f:
     content = f.read()
 
 # Make the integration with rust ConsolidationEngine

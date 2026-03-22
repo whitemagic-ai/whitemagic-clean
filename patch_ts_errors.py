@@ -1,9 +1,9 @@
 import re
 
 # Fix LeftPanel.tsx remaining sample tree paths
-with open('nexus/src/components/panels/LeftPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/LeftPanel.tsx') as f:
     content = f.read()
-    
+
 content = re.sub(r'\{ name: "gan_ying\.py", type: "file" \}', '{ name: "gan_ying.py", type: "file", path: "/workspace/whitemagic/core/gan_ying.py" }', content)
 content = re.sub(r'\{ name: "temporal_scheduler\.py", type: "file" \}', '{ name: "temporal_scheduler.py", type: "file", path: "/workspace/whitemagic/core/temporal_scheduler.py" }', content)
 content = re.sub(r'\{ name: "salience_arbiter\.py", type: "file" \}', '{ name: "salience_arbiter.py", type: "file", path: "/workspace/whitemagic/core/salience_arbiter.py" }', content)
@@ -19,7 +19,7 @@ with open('nexus/src/components/panels/LeftPanel.tsx', 'w') as f:
     f.write(content)
 
 # Fix GlobalSearch
-with open('nexus/src/components/center/GlobalSearch.tsx', 'r') as f:
+with open('nexus/src/components/center/GlobalSearch.tsx') as f:
     content = f.read()
 
 content = content.replace("import React, { useState, useEffect, useRef } from 'react';", "import { useState } from 'react';")
@@ -30,14 +30,14 @@ with open('nexus/src/components/center/GlobalSearch.tsx', 'w') as f:
     f.write(content)
 
 # Fix CenterContent tab TS error
-with open('nexus/src/components/center/CenterContent.tsx', 'r') as f:
+with open('nexus/src/components/center/CenterContent.tsx') as f:
     content = f.read()
 content = content.replace('{tab === "search" && <GlobalSearch />}', '{/* @ts-ignore */}\n      {tab === "search" && <GlobalSearch />}')
 with open('nexus/src/components/center/CenterContent.tsx', 'w') as f:
     f.write(content)
 
 # Fix editor.ts unused TS ignore issue
-with open('nexus/src/store/editor.ts', 'r') as f:
+with open('nexus/src/store/editor.ts') as f:
     content = f.read()
 content = content.replace('import { invoke } from "@tauri-apps/api/core";', 'import { invoke } from "@tauri-apps/api/core";\n// @ts-ignore')
 with open('nexus/src/store/editor.ts', 'w') as f:

@@ -6,29 +6,29 @@ Verify content, structure, and readiness for compilation
 
 import json
 from pathlib import Path
-from typing import Dict, Tuple
 
-def check_file_content(filepath: Path) -> Tuple[bool, int, str]:
+
+def check_file_content(filepath: Path) -> tuple[bool, int, str]:
     """Check if file exists and has meaningful content"""
     if not filepath.exists():
         return False, 0, "File does not exist"
-    
+
     content = filepath.read_text()
     lines = content.strip().split('\n')
-    
+
     if len(lines) < 10:
         return False, len(lines), "File too short (< 10 lines)"
-    
+
     # Check for placeholder content
     if "TODO" in content and len(lines) < 50:
         return False, len(lines), "Appears to be placeholder/stub"
-    
+
     return True, len(lines), "OK"
 
-def validate_rust_files() -> Dict:
+def validate_rust_files() -> dict:
     """Validate all Rust PSR files"""
     base = Path(__file__).parent.parent
-    
+
     rust_files = [
         # PSR-001
         'whitemagic-rust/src/memory/sqlite_backend_v2.rs',
@@ -59,7 +59,7 @@ def validate_rust_files() -> Dict:
         'whitemagic-rust/src/psr/psr-010/performance_monitor.rs',
         'whitemagic-rust/src/psr/psr-010/test_suite.rs',
     ]
-    
+
     results = {
         'total': len(rust_files),
         'valid': 0,
@@ -67,7 +67,7 @@ def validate_rust_files() -> Dict:
         'total_lines': 0,
         'files': {}
     }
-    
+
     for f in rust_files:
         path = base / f
         valid, lines, msg = check_file_content(path)
@@ -81,13 +81,13 @@ def validate_rust_files() -> Dict:
             results['total_lines'] += lines
         else:
             results['invalid'] += 1
-    
+
     return results
 
-def validate_zig_files() -> Dict:
+def validate_zig_files() -> dict:
     """Validate all Zig PSR files"""
     base = Path(__file__).parent.parent
-    
+
     zig_files = [
         'whitemagic-zig/src/memory/pattern_engine.zig',
         'whitemagic-zig/src/memory/galactic_map.zig',
@@ -95,7 +95,7 @@ def validate_zig_files() -> Dict:
         'whitemagic-zig/src/psr/psr-003/graph_topology.zig',
         'whitemagic-zig/src/psr/psr-003/centrality.zig',
     ]
-    
+
     results = {
         'total': len(zig_files),
         'valid': 0,
@@ -103,7 +103,7 @@ def validate_zig_files() -> Dict:
         'total_lines': 0,
         'files': {}
     }
-    
+
     for f in zig_files:
         path = base / f
         valid, lines, msg = check_file_content(path)
@@ -117,13 +117,13 @@ def validate_zig_files() -> Dict:
             results['total_lines'] += lines
         else:
             results['invalid'] += 1
-    
+
     return results
 
-def validate_mojo_files() -> Dict:
+def validate_mojo_files() -> dict:
     """Validate all Mojo PSR files"""
     base = Path(__file__).parent.parent
-    
+
     mojo_files = [
         'whitemagic-mojo/src/hrr.mojo',
         'whitemagic-mojo/src/surprise_gate.mojo',
@@ -132,7 +132,7 @@ def validate_mojo_files() -> Dict:
         'whitemagic-mojo/src/psr/psr-009/clustering.mojo',
         'whitemagic-mojo/src/psr/psr-009/dimensionality_reduction.mojo',
     ]
-    
+
     results = {
         'total': len(mojo_files),
         'valid': 0,
@@ -140,7 +140,7 @@ def validate_mojo_files() -> Dict:
         'total_lines': 0,
         'files': {}
     }
-    
+
     for f in mojo_files:
         path = base / f
         valid, lines, msg = check_file_content(path)
@@ -154,13 +154,13 @@ def validate_mojo_files() -> Dict:
             results['total_lines'] += lines
         else:
             results['invalid'] += 1
-    
+
     return results
 
-def validate_koka_files() -> Dict:
+def validate_koka_files() -> dict:
     """Validate all Koka PSR files"""
     base = Path(__file__).parent.parent
-    
+
     koka_files = [
         'whitemagic-koka/src/dream_cycle.kk',
         'whitemagic-koka/src/psr/psr-007/garden_base.kk',
@@ -171,7 +171,7 @@ def validate_koka_files() -> Dict:
         'whitemagic-koka/src/psr/psr-008/effect_handlers.kk',
         'whitemagic-koka/src/psr/psr-008/coordination.kk',
     ]
-    
+
     results = {
         'total': len(koka_files),
         'valid': 0,
@@ -179,7 +179,7 @@ def validate_koka_files() -> Dict:
         'total_lines': 0,
         'files': {}
     }
-    
+
     for f in koka_files:
         path = base / f
         valid, lines, msg = check_file_content(path)
@@ -193,7 +193,7 @@ def validate_koka_files() -> Dict:
             results['total_lines'] += lines
         else:
             results['invalid'] += 1
-    
+
     return results
 
 def main():
@@ -201,46 +201,46 @@ def main():
     print("\n" + "="*70)
     print("🔬 RIGOROUS VALIDATION - DEEP FILE CHECK")
     print("="*70)
-    
+
     # Validate each language
     rust_results = validate_rust_files()
     zig_results = validate_zig_files()
     mojo_results = validate_mojo_files()
     koka_results = validate_koka_files()
-    
+
     # Summary
     print("\n📊 VALIDATION SUMMARY")
     print("="*70)
-    
-    total_files = (rust_results['total'] + zig_results['total'] + 
+
+    total_files = (rust_results['total'] + zig_results['total'] +
                    mojo_results['total'] + koka_results['total'])
-    total_valid = (rust_results['valid'] + zig_results['valid'] + 
+    total_valid = (rust_results['valid'] + zig_results['valid'] +
                    mojo_results['valid'] + koka_results['valid'])
-    total_invalid = (rust_results['invalid'] + zig_results['invalid'] + 
+    total_invalid = (rust_results['invalid'] + zig_results['invalid'] +
                      mojo_results['invalid'] + koka_results['invalid'])
-    total_lines = (rust_results['total_lines'] + zig_results['total_lines'] + 
+    total_lines = (rust_results['total_lines'] + zig_results['total_lines'] +
                    mojo_results['total_lines'] + koka_results['total_lines'])
-    
+
     print(f"\n📁 Total Files: {total_files}")
     print(f"✅ Valid: {total_valid} ({total_valid/total_files*100:.1f}%)")
     print(f"❌ Invalid: {total_invalid} ({total_invalid/total_files*100:.1f}%)")
     print(f"📝 Total Lines: {total_lines:,}")
-    
+
     print("\n📋 By Language:")
     print(f"  Rust:  {rust_results['valid']}/{rust_results['total']} valid ({rust_results['total_lines']:,} lines)")
     print(f"  Zig:   {zig_results['valid']}/{zig_results['total']} valid ({zig_results['total_lines']:,} lines)")
     print(f"  Mojo:  {mojo_results['valid']}/{mojo_results['total']} valid ({mojo_results['total_lines']:,} lines)")
     print(f"  Koka:  {koka_results['valid']}/{koka_results['total']} valid ({koka_results['total_lines']:,} lines)")
-    
+
     # Show invalid files
     if total_invalid > 0:
         print("\n❌ INVALID FILES:")
-        for lang, results in [('Rust', rust_results), ('Zig', zig_results), 
+        for lang, results in [('Rust', rust_results), ('Zig', zig_results),
                               ('Mojo', mojo_results), ('Koka', koka_results)]:
             for f, info in results['files'].items():
                 if not info['valid']:
                     print(f"  {f}: {info['message']} ({info['lines']} lines)")
-    
+
     # Save detailed report
     report = {
         'summary': {
@@ -254,12 +254,12 @@ def main():
         'mojo': mojo_results,
         'koka': koka_results
     }
-    
+
     report_path = Path(__file__).parent.parent / "reports" / "rigorous_validation.json"
     report_path.write_text(json.dumps(report, indent=2))
-    
+
     print(f"\n✅ Detailed report saved: {report_path}")
-    
+
     if total_invalid == 0:
         print("\n🎉 ALL FILES VALID - READY FOR COMPILATION!")
     else:

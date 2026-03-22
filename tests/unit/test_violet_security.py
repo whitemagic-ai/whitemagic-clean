@@ -11,8 +11,6 @@ Covers all 6 features:
 
 import time
 
-
-
 # =========================================================================
 # 1. MCP Integrity Checking
 # =========================================================================
@@ -500,8 +498,8 @@ class TestSecurityBreaker:
 
 
     def test_dispatch_quiet_benchmark_flag_survives_sanitizer(self, monkeypatch):
-        from whitemagic.tools.dispatch_table import dispatch
         from whitemagic.security.security_breaker import get_security_monitor
+        from whitemagic.tools.dispatch_table import dispatch
 
         monkeypatch.setenv("WM_BENCHMARK_QUIET", "1")
         monitor = get_security_monitor()
@@ -543,7 +541,9 @@ class TestVioletSecurityHandlers:
     """Test that all 15 handlers return valid responses."""
 
     def test_mcp_integrity_snapshot(self):
-        from whitemagic.tools.handlers.violet_security import handle_mcp_integrity_snapshot
+        from whitemagic.tools.handlers.violet_security import (
+            handle_mcp_integrity_snapshot,
+        )
         result = handle_mcp_integrity_snapshot()
         assert result["status"] == "success"
 
@@ -557,7 +557,9 @@ class TestVioletSecurityHandlers:
         assert result["status"] == "success"
 
     def test_mcp_integrity_status(self):
-        from whitemagic.tools.handlers.violet_security import handle_mcp_integrity_status
+        from whitemagic.tools.handlers.violet_security import (
+            handle_mcp_integrity_status,
+        )
         result = handle_mcp_integrity_status()
         assert result["status"] == "success"
 
@@ -588,7 +590,9 @@ class TestVioletSecurityHandlers:
         assert result["status"] == "error"
 
     def test_model_signing_status(self):
-        from whitemagic.tools.handlers.violet_security import handle_model_signing_status
+        from whitemagic.tools.handlers.violet_security import (
+            handle_model_signing_status,
+        )
         result = handle_model_signing_status()
         assert result["status"] == "success"
 
@@ -628,6 +632,8 @@ class TestVioletSecurityHandlers:
         assert result["status"] == "success"
 
     def test_security_monitor_status(self):
-        from whitemagic.tools.handlers.violet_security import handle_security_monitor_status
+        from whitemagic.tools.handlers.violet_security import (
+            handle_security_monitor_status,
+        )
         result = handle_security_monitor_status()
         assert result["status"] == "success"

@@ -414,7 +414,9 @@ class JITResearcher:
     ) -> str | None:
         """Attempt LLM-based synthesis via Ollama."""
         try:
-            from whitemagic.tools.handlers.ollama import handle_ollama_generate as _ollama_generate
+            from whitemagic.tools.handlers.ollama import (
+                handle_ollama_generate as _ollama_generate,
+            )
             evidence_text = "\n".join(
                 f"- [{e.get('title', 'untitled')}]: {e.get('content', '')[:200]}"
                 for e in evidence[:10]

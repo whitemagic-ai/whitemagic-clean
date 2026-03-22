@@ -8,9 +8,9 @@ Deploy hundreds of thousands of clones to find EVERYTHING we missed
 
 import ast
 import json
-from pathlib import Path
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
 WM2_ROOT = Path.home() / "Desktop" / "WM2"
@@ -72,14 +72,14 @@ ARMIES = {
 def deploy_function_signature_army(codebase_path: Path, codebase_name: str) -> dict:
     """Extract every function signature with full details."""
     print(f"⚔️  Deploying Function Signature Army to {codebase_name}...")
-    
+
     signatures = []
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, ast.FunctionDef):
                     sig = {
@@ -91,34 +91,34 @@ def deploy_function_signature_army(codebase_path: Path, codebase_name: str) -> d
                         "is_async": isinstance(node, ast.AsyncFunctionDef),
                         "lineno": node.lineno,
                     }
-                    
+
                     # Extract return type if available
                     if node.returns:
                         sig["return_type"] = ast.unparse(node.returns)
-                    
+
                     signatures.append(sig)
         except Exception:
             continue
-    
+
     print(f"   ✅ Extracted {len(signatures):,} function signatures")
     return {"signatures": signatures, "count": len(signatures)}
 
 def deploy_class_hierarchy_army(codebase_path: Path, codebase_name: str) -> dict:
     """Map complete class inheritance hierarchies."""
     print(f"⚔️  Deploying Class Hierarchy Army to {codebase_name}...")
-    
+
     hierarchies = {}
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, ast.ClassDef):
                     bases = [ast.unparse(base) for base in node.bases]
                     methods = [n.name for n in node.body if isinstance(n, ast.FunctionDef)]
-                    
+
                     hierarchies[node.name] = {
                         "file": str(py_file.relative_to(codebase_path)),
                         "bases": bases,
@@ -128,23 +128,23 @@ def deploy_class_hierarchy_army(codebase_path: Path, codebase_name: str) -> dict
                     }
         except Exception:
             continue
-    
+
     print(f"   ✅ Mapped {len(hierarchies):,} class hierarchies")
     return {"hierarchies": hierarchies, "count": len(hierarchies)}
 
 def deploy_import_dependency_army(codebase_path: Path, codebase_name: str) -> dict:
     """Build complete import dependency graph."""
     print(f"⚔️  Deploying Import Dependency Army to {codebase_name}...")
-    
+
     dependencies = defaultdict(set)
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             file_key = str(py_file.relative_to(codebase_path))
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
                     for alias in node.names:
@@ -154,10 +154,10 @@ def deploy_import_dependency_army(codebase_path: Path, codebase_name: str) -> di
                         dependencies[file_key].add(node.module)
         except Exception:
             continue
-    
+
     # Convert sets to lists for JSON serialization
     dependencies = {k: list(v) for k, v in dependencies.items()}
-    
+
     total_deps = sum(len(v) for v in dependencies.values())
     print(f"   ✅ Mapped {total_deps:,} import dependencies across {len(dependencies):,} files")
     return {"dependencies": dependencies, "total": total_deps}
@@ -165,14 +165,14 @@ def deploy_import_dependency_army(codebase_path: Path, codebase_name: str) -> di
 def deploy_decorator_pattern_army(codebase_path: Path, codebase_name: str) -> dict:
     """Find all decorators and their usage patterns."""
     print(f"⚔️  Deploying Decorator Pattern Army to {codebase_name}...")
-    
+
     decorators = defaultdict(list)
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
                     for decorator in node.decorator_list:
@@ -184,7 +184,7 @@ def deploy_decorator_pattern_army(codebase_path: Path, codebase_name: str) -> di
                         })
         except Exception:
             continue
-    
+
     total_uses = sum(len(v) for v in decorators.values())
     print(f"   ✅ Found {len(decorators):,} unique decorators with {total_uses:,} uses")
     return {"decorators": dict(decorators), "unique": len(decorators), "total_uses": total_uses}
@@ -192,14 +192,14 @@ def deploy_decorator_pattern_army(codebase_path: Path, codebase_name: str) -> di
 def deploy_constant_extraction_army(codebase_path: Path, codebase_name: str) -> dict:
     """Extract all constants, enums, and configuration."""
     print(f"⚔️  Deploying Constant Extraction Army to {codebase_name}...")
-    
+
     constants = []
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, ast.Assign):
                     for target in node.targets:
@@ -211,21 +211,21 @@ def deploy_constant_extraction_army(codebase_path: Path, codebase_name: str) -> 
                             })
         except Exception:
             continue
-    
+
     print(f"   ✅ Extracted {len(constants):,} constants")
     return {"constants": constants, "count": len(constants)}
 
 def deploy_docstring_analysis_army(codebase_path: Path, codebase_name: str) -> dict:
     """Analyze all docstrings for capability descriptions."""
     print(f"⚔️  Deploying Docstring Analysis Army to {codebase_name}...")
-    
+
     docstrings = []
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.Module)):
                     docstring = ast.get_docstring(node)
@@ -238,21 +238,21 @@ def deploy_docstring_analysis_army(codebase_path: Path, codebase_name: str) -> d
                         })
         except Exception:
             continue
-    
+
     print(f"   ✅ Analyzed {len(docstrings):,} docstrings")
     return {"docstrings": docstrings, "count": len(docstrings)}
 
 def deploy_error_handling_army(codebase_path: Path, codebase_name: str) -> dict:
     """Map all exception types and error handling patterns."""
     print(f"⚔️  Deploying Error Handling Army to {codebase_name}...")
-    
+
     exceptions = defaultdict(list)
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, ast.ExceptHandler):
                     exc_type = ast.unparse(node.type) if node.type else "Exception"
@@ -269,7 +269,7 @@ def deploy_error_handling_army(codebase_path: Path, codebase_name: str) -> dict:
                         })
         except Exception:
             continue
-    
+
     total_handlers = sum(len(v) for v in exceptions.values())
     print(f"   ✅ Mapped {len(exceptions):,} exception types with {total_handlers:,} handlers")
     return {"exceptions": dict(exceptions), "unique": len(exceptions), "total": total_handlers}
@@ -277,19 +277,19 @@ def deploy_error_handling_army(codebase_path: Path, codebase_name: str) -> dict:
 def deploy_async_pattern_army(codebase_path: Path, codebase_name: str) -> dict:
     """Find all async/await patterns and concurrency."""
     print(f"⚔️  Deploying Async Pattern Army to {codebase_name}...")
-    
+
     async_patterns = {
         "async_functions": [],
         "await_calls": [],
         "async_with": [],
         "async_for": [],
     }
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             for node in ast.walk(tree):
                 if isinstance(node, ast.AsyncFunctionDef):
                     async_patterns["async_functions"].append({
@@ -314,7 +314,7 @@ def deploy_async_pattern_army(codebase_path: Path, codebase_name: str) -> dict:
                     })
         except Exception:
             continue
-    
+
     total = sum(len(v) for v in async_patterns.values())
     print(f"   ✅ Found {total:,} async patterns")
     return {"patterns": async_patterns, "total": total}
@@ -322,25 +322,25 @@ def deploy_async_pattern_army(codebase_path: Path, codebase_name: str) -> dict:
 def main():
     print("🚀 Deploying all armies...")
     print()
-    
+
     total_clones = sum(army["size"] for army in ARMIES.values())
     print(f"📊 Total shadow clones: {total_clones:,}")
     print()
-    
+
     results = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "total_clones": total_clones,
         "armies": {},
     }
-    
+
     # Deploy to whitemagicdev
     print("=" * 80)
     print("SCANNING WHITEMAGICDEV")
     print("=" * 80)
     print()
-    
+
     whitemagic_dir = PROJECT_ROOT / "whitemagic"
-    
+
     results["armies"]["dev"] = {
         "functions": deploy_function_signature_army(whitemagic_dir, "dev"),
         "classes": deploy_class_hierarchy_army(whitemagic_dir, "dev"),
@@ -351,18 +351,18 @@ def main():
         "exceptions": deploy_error_handling_army(whitemagic_dir, "dev"),
         "async": deploy_async_pattern_army(whitemagic_dir, "dev"),
     }
-    
+
     print()
-    
+
     # Deploy to whitemagicpublic
     print("=" * 80)
     print("SCANNING WHITEMAGICPUBLIC")
     print("=" * 80)
     print()
-    
+
     if PUBLIC_ROOT.exists():
         public_whitemagic = PUBLIC_ROOT / "whitemagic"
-        
+
         results["armies"]["public"] = {
             "functions": deploy_function_signature_army(public_whitemagic, "public"),
             "classes": deploy_class_hierarchy_army(public_whitemagic, "public"),
@@ -376,19 +376,19 @@ def main():
     else:
         print("⚠️  whitemagicpublic not found")
         results["armies"]["public"] = None
-    
+
     print()
-    
+
     # Save comprehensive results
     results_path = PROJECT_ROOT / "reports" / "deep_scan_results.json"
     results_path.write_text(json.dumps(results, indent=2))
-    
+
     # Generate summary
     print("=" * 80)
     print("DEEP SCAN SUMMARY")
     print("=" * 80)
     print()
-    
+
     dev_results = results["armies"]["dev"]
     print("whitemagicdev:")
     print(f"   Functions: {dev_results['functions']['count']:,}")
@@ -400,7 +400,7 @@ def main():
     print(f"   Exceptions: {dev_results['exceptions']['unique']:,} types, {dev_results['exceptions']['total']:,} handlers")
     print(f"   Async patterns: {dev_results['async']['total']:,}")
     print()
-    
+
     if results["armies"]["public"]:
         public_results = results["armies"]["public"]
         print("whitemagicpublic:")
@@ -413,7 +413,7 @@ def main():
         print(f"   Exceptions: {public_results['exceptions']['unique']:,} types, {public_results['exceptions']['total']:,} handlers")
         print(f"   Async patterns: {public_results['async']['total']:,}")
         print()
-    
+
     print(f"📄 Full report: {results_path}")
     print()
     print(f"✅ Deep scan complete! {total_clones:,} clones deployed")

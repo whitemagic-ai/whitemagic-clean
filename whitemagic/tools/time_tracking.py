@@ -5,9 +5,9 @@ Tracks phase timing, logs to memories, and provides timing reports.
 Can be used standalone or integrated into campaign deployments.
 """
 import time
-from datetime import datetime, timezone
-from typing import Optional, Dict, List, Any, Literal
 from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import Any, Literal
 
 
 @dataclass
@@ -15,20 +15,20 @@ class PhaseTiming:
     """Record of a single phase's timing."""
     phase_name: str
     start_time: float  # Unix timestamp
-    end_time: Optional[float] = None
-    metadata: Optional[Dict] = None
+    end_time: float | None = None
+    metadata: dict | None = None
 
     @property
-    def duration_seconds(self) -> Optional[float]:
+    def duration_seconds(self) -> float | None:
         if self.end_time:
             return self.end_time - self.start_time
         return None
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "phase_name": self.phase_name,
-            "start_iso": datetime.fromtimestamp(self.start_time, tz=timezone.utc).isoformat(),
-            "end_iso": datetime.fromtimestamp(self.end_time, tz=timezone.utc).isoformat() if self.end_time else None,
+            "start_iso": datetime.fromtimestamp(self.start_time, tz=UTC).isoformat(),
+            "end_iso": datetime.fromtimestamp(self.end_time, tz=UTC).isoformat() if self.end_time else None,
             "duration_seconds": self.duration_seconds,
             "metadata": self.metadata
         }
@@ -37,10 +37,10 @@ class PhaseTiming:
 class PhaseTimer:
     """Context manager for timing workflow phases."""
 
-    def __init__(self, phase_name: str, metadata: Optional[Dict] = None):
+    def __init__(self, phase_name: str, metadata: dict | None = None):
         self.phase_name = phase_name
         self.metadata = metadata or {}
-        self._timing: Optional[PhaseTiming] = None
+        self._timing: PhaseTiming | None = None
 
     def __enter__(self) -> "PhaseTimer":
         start = time.time()
@@ -52,7 +52,7 @@ class PhaseTimer:
         print(f"⏱️  Phase '{self.phase_name}' started at {self._start_iso()}")
         return self
 
-    def __exit__(self, exc_type: Optional[type], exc_val: Optional[Exception], exc_tb: Optional[Any]) -> Literal[False]:
+    def __exit__(self, exc_type: type | None, exc_val: Exception | None, exc_tb: Any | None) -> Literal[False]:
         if self._timing is None:
             return False
         self._timing.end_time = time.time()
@@ -65,10 +65,10 @@ class PhaseTimer:
     def _start_iso(self) -> str:
         if self._timing is None:
             return "unknown"
-        return datetime.fromtimestamp(self._timing.start_time, tz=timezone.utc).isoformat()
+        return datetime.fromtimestamp(self._timing.start_time, tz=UTC).isoformat()
 
     @property
-    def timing(self) -> Optional[PhaseTiming]:
+    def timing(self) -> PhaseTiming | None:
         return self._timing
 
 
@@ -77,16 +77,16 @@ class WorkflowTimer:
 
     def __init__(self, workflow_name: str):
         self.workflow_name = workflow_name
-        self.phases: List[PhaseTiming] = []
-        self._current: Optional[PhaseTimer] = None
-        self._workflow_start: Optional[float] = None
-        self._workflow_end: Optional[float] = None
+        self.phases: list[PhaseTiming] = []
+        self._current: PhaseTimer | None = None
+        self._workflow_start: float | None = None
+        self._workflow_end: float | None = None
 
     def start_workflow(self) -> None:
         """Mark workflow start time."""
         self._workflow_start = time.time()
         print(f"\n🚀 Workflow '{self.workflow_name}' started")
-        print(f"   {datetime.now(timezone.utc).isoformat()}")
+        print(f"   {datetime.now(UTC).isoformat()}")
 
     def end_workflow(self) -> None:
         """Mark workflow end time."""
@@ -94,7 +94,7 @@ class WorkflowTimer:
         duration: float = self._workflow_end - self._workflow_start if self._workflow_start else 0.0
         print(f"\n✅ Workflow '{self.workflow_name}' completed in {duration:.2f}s")
 
-    def phase(self, phase_name: str, metadata: Optional[Dict] = None) -> PhaseTimer:
+    def phase(self, phase_name: str, metadata: dict | None = None) -> PhaseTimer:
         """Get a context manager for a new phase."""
         timer = PhaseTimer(phase_name, metadata)
         return timer
@@ -104,7 +104,7 @@ class WorkflowTimer:
         if phase_timer.timing and phase_timer.timing.end_time:
             self.phases.append(phase_timer.timing)
 
-    def get_report(self) -> Dict:
+    def get_report(self) -> dict:
         """Generate timing report."""
         total_duration: float = 0.0
         if self._workflow_start and self._workflow_end:
@@ -112,8 +112,8 @@ class WorkflowTimer:
 
         return {
             "workflow_name": self.workflow_name,
-            "started": datetime.fromtimestamp(self._workflow_start, tz=timezone.utc).isoformat() if self._workflow_start else None,
-            "completed": datetime.fromtimestamp(self._workflow_end, tz=timezone.utc).isoformat() if self._workflow_end else None,
+            "started": datetime.fromtimestamp(self._workflow_start, tz=UTC).isoformat() if self._workflow_start else None,
+            "completed": datetime.fromtimestamp(self._workflow_end, tz=UTC).isoformat() if self._workflow_end else None,
             "total_seconds": total_duration,
             "phases": [p.to_dict() for p in self.phases],
             "phase_count": len(self.phases)
@@ -136,14 +136,14 @@ class WorkflowTimer:
 
 
 # Convenience functions for quick usage
-def timed(phase_name: str, metadata: Optional[Dict] = None) -> PhaseTimer:
+def timed(phase_name: str, metadata: dict | None = None) -> PhaseTimer:
     """Decorator/context manager for timing a function or block."""
     return PhaseTimer(phase_name, metadata)
 
 
 def get_current_time() -> str:
     """Get current UTC time in ISO format."""
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def get_local_time(tz_name: str = "America/New_York") -> str:

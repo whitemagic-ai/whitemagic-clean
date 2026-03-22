@@ -1,5 +1,5 @@
 
-with open('whitemagic/tools/dispatch_table.py', 'r') as f:
+with open('whitemagic/tools/dispatch_table.py') as f:
     content = f.read()
 
 if "mw_sutra_auto_execute" not in content:

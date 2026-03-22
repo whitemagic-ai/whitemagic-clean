@@ -1,5 +1,5 @@
 
-with open("whitemagic/core/memory/db_manager.py", "r") as f:
+with open("whitemagic/core/memory/db_manager.py") as f:
     content = f.read()
 
 content = content.replace(

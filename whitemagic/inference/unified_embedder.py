@@ -100,7 +100,7 @@ class UnifiedEmbedder:
         self,
         texts: list[str],
         batch_size: int = 2048
-    ) -> "np.ndarray":
+    ) -> np.ndarray:
         """Encode batch with automatic polyglot routing.
 
         Args:
@@ -126,7 +126,7 @@ class UnifiedEmbedder:
         # Concatenate all batches
         return np.vstack(all_embeddings)
 
-    def _encode_single_batch(self, texts: list[str]) -> "np.ndarray":
+    def _encode_single_batch(self, texts: list[str]) -> np.ndarray:
         """Encode a single batch using the best available backend."""
 
         # Route 1: Mojo GPU via Iceoryx2 (fastest)
@@ -146,7 +146,7 @@ class UnifiedEmbedder:
         # Route 3: Python FastEmbed (slow but reliable)
         return self._encode_python_fastembed(texts)
 
-    def _encode_mojo_gpu(self, texts: list[str]) -> "np.ndarray":
+    def _encode_mojo_gpu(self, texts: list[str]) -> np.ndarray:
         """Encode using Mojo GPU via Iceoryx2 shared memory.
 
         Not yet implemented — requires Iceoryx2 IPC channel to Mojo GPU process.
@@ -154,7 +154,7 @@ class UnifiedEmbedder:
         """
         raise NotImplementedError("Mojo GPU path not yet implemented (requires Iceoryx2 IPC)")
 
-    def _encode_rust_onnx(self, texts: list[str]) -> "np.ndarray":
+    def _encode_rust_onnx(self, texts: list[str]) -> np.ndarray:
         """Encode using Rust ONNX with Arrow."""
         import whitemagic_rs
 
@@ -170,7 +170,7 @@ class UnifiedEmbedder:
         # Convert back to numpy
         return self._arrow_to_numpy(result_arrow)
 
-    def _encode_python_fastembed(self, texts: list[str]) -> "np.ndarray":
+    def _encode_python_fastembed(self, texts: list[str]) -> np.ndarray:
         """Encode using Python FastEmbed (fallback)."""
         try:
             from fastembed import TextEmbedding
@@ -188,7 +188,7 @@ class UnifiedEmbedder:
             embedding_dim = 384
             return np.random.randn(len(texts), embedding_dim).astype(np.float32)
 
-    def _arrow_to_numpy(self, arrow_bytes: bytes) -> "np.ndarray":
+    def _arrow_to_numpy(self, arrow_bytes: bytes) -> np.ndarray:
         """Convert Arrow IPC to numpy (zero-copy).
 
         Args:

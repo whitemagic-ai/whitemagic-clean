@@ -7,8 +7,6 @@ until the piece is complete. Each iteration builds on the last, with memory and 
 
 import logging
 from collections.abc import Callable
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -18,6 +16,7 @@ from whitemagic.config.paths import WM_ROOT
 from whitemagic.core.intelligence.agentic.token_optimizer import TokenBudget
 from whitemagic.core.resonance.gan_ying_enhanced import EventType, emit_event
 from whitemagic.edge.thought_clones_async import AsyncThoughtCloneArmy, AsyncThoughtPath
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 

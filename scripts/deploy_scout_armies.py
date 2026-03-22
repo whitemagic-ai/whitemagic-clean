@@ -5,27 +5,28 @@ Uses Tree-Sitter, Arrow, and Iceoryx2 for advanced search capabilities
 """
 
 import time
-from typing import Dict, Any
+from typing import Any
+
 
 class ScoutArmy:
     """Base class for specialized scout armies"""
-    
+
     def __init__(self, name: str, size: int):
         self.name = name
         self.size = size
         self.discoveries = []
-    
-    def deploy(self) -> Dict[str, Any]:
+
+    def deploy(self) -> dict[str, Any]:
         """Deploy scouts and return discoveries"""
         raise NotImplementedError
 
 class ArchiveScoutArmy(ScoutArmy):
     """Scout archived documents for forgotten features"""
-    
-    def deploy(self) -> Dict[str, Any]:
+
+    def deploy(self) -> dict[str, Any]:
         print(f"\n📚 {self.name} ({self.size:,} scouts)")
         print("   Scanning: _archives/, docs/, reports/")
-        
+
         discoveries = {
             "forgotten_features": [
                 "Iceoryx2 IPC bridge (mentioned in POLYGLOT_STATUS.md)",
@@ -46,7 +47,7 @@ class ArchiveScoutArmy(ScoutArmy):
                 "Cross-campaign blackboard: shared intelligence with dependency graph",
             ]
         }
-        
+
         return {
             "army": self.name,
             "scouts": self.size,
@@ -56,11 +57,11 @@ class ArchiveScoutArmy(ScoutArmy):
 
 class CodebaseScoutArmy(ScoutArmy):
     """Scout codebase for optimization opportunities"""
-    
-    def deploy(self) -> Dict[str, Any]:
+
+    def deploy(self) -> dict[str, Any]:
         print(f"\n🔍 {self.name} ({self.size:,} scouts)")
         print("   Scanning: whitemagic/, whitemagic-rust/, whitemagic-zig/")
-        
+
         discoveries = {
             "hot_paths": [
                 "whitemagic/core/memory/embeddings.py: find_duplicates() - 738 LOC, uses Rust MinHash",
@@ -81,7 +82,7 @@ class CodebaseScoutArmy(ScoutArmy):
                 "Dead code detection (find unused functions)",
             ]
         }
-        
+
         return {
             "army": self.name,
             "scouts": self.size,
@@ -91,11 +92,11 @@ class CodebaseScoutArmy(ScoutArmy):
 
 class MemoryScoutArmy(ScoutArmy):
     """Scout memory databases for insights"""
-    
-    def deploy(self) -> Dict[str, Any]:
+
+    def deploy(self) -> dict[str, Any]:
         print(f"\n🧠 {self.name} ({self.size:,} scouts)")
         print("   Scanning: ~/.whitemagic/memory/, whitemagic_memory_archive/")
-        
+
         discoveries = {
             "aria_memories": [
                 "30+ Aria-specific memories in archive DBs",
@@ -117,7 +118,7 @@ class MemoryScoutArmy(ScoutArmy):
                 "3,363 orphan associations",
             ]
         }
-        
+
         return {
             "army": self.name,
             "scouts": self.size,
@@ -127,11 +128,11 @@ class MemoryScoutArmy(ScoutArmy):
 
 class InfrastructureScoutArmy(ScoutArmy):
     """Scout for infrastructure integration opportunities"""
-    
-    def deploy(self) -> Dict[str, Any]:
+
+    def deploy(self) -> dict[str, Any]:
         print(f"\n⚙️  {self.name} ({self.size:,} scouts)")
         print("   Scanning: Infrastructure capabilities")
-        
+
         discoveries = {
             "arrow_ipc": [
                 "Apache Arrow bridge exists (whitemagic-rust/src/arrow_bridge.rs)",
@@ -157,7 +158,7 @@ class InfrastructureScoutArmy(ScoutArmy):
                 "Massive parallelism potential",
             ]
         }
-        
+
         return {
             "army": self.name,
             "scouts": self.size,
@@ -167,29 +168,29 @@ class InfrastructureScoutArmy(ScoutArmy):
 
 def deploy_all_scout_armies():
     """Deploy all scout armies and aggregate discoveries"""
-    
+
     print("\n" + "=" * 70)
     print("🔭 SCOUT ARMY DEPLOYMENT - DISCOVERY MISSION")
     print("=" * 70)
-    
+
     start_time = time.time()
-    
+
     armies = [
         ArchiveScoutArmy("Archive Scouts", 50000),
         CodebaseScoutArmy("Codebase Scouts", 75000),
         MemoryScoutArmy("Memory Scouts", 60000),
         InfrastructureScoutArmy("Infrastructure Scouts", 40000),
     ]
-    
+
     results = []
     for army in armies:
         result = army.deploy()
         results.append(result)
-    
+
     total_time = time.time() - start_time
     total_scouts = sum(a.size for a in armies)
     total_discoveries = sum(r["discoveries"] for r in results)
-    
+
     print("\n" + "=" * 70)
     print("📊 SCOUT MISSION SUMMARY")
     print("=" * 70)
@@ -197,14 +198,14 @@ def deploy_all_scout_armies():
     print(f"Total discoveries: {total_discoveries}")
     print(f"Execution time: {total_time:.2f}s")
     print(f"Scout throughput: {total_scouts/total_time:,.0f} scouts/sec")
-    
+
     print("\n🎯 TOP PRIORITIES FOR NEXT CAMPAIGNS:")
     print("1. Tree-Sitter integration (P009) - 10× search precision")
     print("2. Arrow IPC zero-copy (P004) - 100× data transfer speedup")
     print("3. Polyglot profiler (P003) - 20%+ auto-optimization")
     print("4. Distributed mesh (P005) - 10× scaling with distributed nodes")
     print("5. Cross-language type system (P002) - 90%+ compile-time error detection")
-    
+
     return results
 
 if __name__ == "__main__":

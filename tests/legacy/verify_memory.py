@@ -40,10 +40,10 @@ def run_probe():
     try:
         mm = MemoryManager(base_dir=PROJECT_MEM_DIR)
         print("✅ MemoryManager initialized connected to DB.")
-        
+
         stats = mm.get_stats()
         print(f"📊 System Stats: {stats}")
-        
+
     except Exception as e:
         print(f"❌ Initialization failed: {e}")
         return 1
@@ -66,7 +66,7 @@ def run_probe():
         )
         mem_id = str(create_res).replace(".md", "")
         print(f"   ✅ Created Memory ID: {mem_id}")
-        
+
     except Exception as e:
         print(f"❌ Creation failed: {e}")
         return 1
@@ -74,7 +74,7 @@ def run_probe():
     # 4. Verify Holographic Coordinates
     print("\n📐 Probe 3: Verifying Holographic Coordinates...")
     full_mem = mm.get_memory(mem_id)
-    
+
     if "metadata" in full_mem and "holographic_coords" in full_mem["metadata"]:
         coords = full_mem["metadata"]["holographic_coords"]
         print(f"   ✅ Coordinates Found: {coords}")
@@ -85,9 +85,9 @@ def run_probe():
         pprint(full_mem.get("metadata", {}))
         # It's possible the unified backend stores it separately or calls it something else
         # Let's check if there is a 'vector' field or similar
-        
+
     # Check if the python fallback worked (it usually returns non-zero coords)
-    
+
     return 0
 
 if __name__ == "__main__":

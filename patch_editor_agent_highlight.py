@@ -1,6 +1,6 @@
 import re
 
-with open('nexus/src/components/center/MonacoEditor.tsx', 'r') as f:
+with open('nexus/src/components/center/MonacoEditor.tsx') as f:
     content = f.read()
 
 # Add context menu item for inline agent, not just hotkey

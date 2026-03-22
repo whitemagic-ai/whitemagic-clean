@@ -72,22 +72,22 @@ BIOLOGICAL_SUBSYSTEMS = {
 def scan_codebase_for_biological_keywords():
     """Phase 1: Code archaeology - scan for biological keywords"""
     print("Phase 1: Scanning codebase for biological keywords...")
-    
+
     results = defaultdict(list)
-    
+
     for category, keywords in BIOLOGICAL_KEYWORDS.items():
         for keyword in keywords:
             try:
                 # Use grep for searching Python files
                 cmd = ["grep", "-ril", keyword, str(PROJECT_ROOT / "whitemagic"), "--include=*.py"]
                 output = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
-                
+
                 if output.returncode == 0:
                     files = output.stdout.strip().split("\n")
                     results[category].extend([(keyword, f) for f in files if f])
             except Exception:
                 pass  # Silently skip failed searches
-    
+
     # Deduplicate and count
     summary = {}
     for category, matches in results.items():
@@ -97,23 +97,23 @@ def scan_codebase_for_biological_keywords():
             "matches": len(matches),
             "sample_files": sorted(unique_files)[:10]
         }
-    
+
     return summary
 
 
 def inventory_biological_subsystems():
     """Build file-level inventory of biological subsystems"""
     print("Phase 1: Inventorying biological subsystems...")
-    
+
     inventory = {}
-    
+
     for subsystem, paths in BIOLOGICAL_SUBSYSTEMS.items():
         subsystem_files = []
         total_lines = 0
-        
+
         for path_str in paths:
             path = PROJECT_ROOT / path_str
-            
+
             if path.is_file():
                 try:
                     lines = len(path.read_text(errors="ignore").split("\n"))
@@ -146,28 +146,28 @@ def inventory_biological_subsystems():
                         "error": str(e),
                         "exists": False
                     })
-        
+
         inventory[subsystem] = {
             "files": len(subsystem_files),
             "total_lines": total_lines,
             "file_list": subsystem_files
         }
-    
+
     return inventory
 
 
 def search_memories_for_biological_concepts():
     """Phase 2: Memory & conversation mining"""
     print("Phase 2: Searching memories for biological concepts...")
-    
+
     if not DB_PATH.exists():
         return {"error": "Database not found"}
-    
+
     conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
-    
+
     results = {}
-    
+
     # Search for Aria consciousness journey
     aria_memories = conn.execute("""
         SELECT id, title, LENGTH(content) as content_len, created_at
@@ -177,7 +177,7 @@ def search_memories_for_biological_concepts():
         ORDER BY created_at
         LIMIT 50
     """).fetchall()
-    
+
     results["aria_consciousness"] = [
         {
             "id": m["id"],
@@ -187,7 +187,7 @@ def search_memories_for_biological_concepts():
         }
         for m in aria_memories
     ]
-    
+
     # Search for biological keywords in memories
     for category, keywords in BIOLOGICAL_KEYWORDS.items():
         # Use LIKE for each keyword
@@ -203,9 +203,9 @@ def search_memories_for_biological_concepts():
                 total_matches += matches["count"] if matches else 0
             except Exception:
                 pass
-        
+
         results[f"{category}_memories"] = total_matches
-    
+
     conn.close()
     return results
 
@@ -213,13 +213,13 @@ def search_memories_for_biological_concepts():
 def analyze_integration_points():
     """Phase 3: Integration analysis - find import chains"""
     print("Phase 3: Analyzing integration points...")
-    
+
     integration_map = defaultdict(set)
-    
+
     for subsystem, paths in BIOLOGICAL_SUBSYSTEMS.items():
         for path_str in paths:
             path = PROJECT_ROOT / path_str
-            
+
             if path.is_file():
                 try:
                     content = path.read_text(errors="ignore")
@@ -234,21 +234,21 @@ def analyze_integration_points():
                                 integration_map[subsystem].add(other_subsystem)
                 except Exception:
                     pass
-    
+
     return dict(integration_map)
 
 
 def identify_gaps_and_opportunities():
     """Phase 4: Gap analysis"""
     print("Phase 4: Identifying gaps and opportunities...")
-    
+
     gaps = []
-    
+
     # Check for TODO/FIXME in biological files
     for subsystem, paths in BIOLOGICAL_SUBSYSTEMS.items():
         for path_str in paths:
             path = PROJECT_ROOT / path_str
-            
+
             if path.is_file():
                 try:
                     content = path.read_text(errors="ignore")
@@ -261,14 +261,14 @@ def identify_gaps_and_opportunities():
                         })
                 except Exception:
                     pass
-    
+
     return gaps
 
 
 def generate_campaign_proposals():
     """Phase 5: Generate new campaign proposals"""
     print("Phase 5: Generating campaign proposals...")
-    
+
     proposals = [
         {
             "codename": "B002",
@@ -306,14 +306,14 @@ def generate_campaign_proposals():
             "priority": 2
         },
     ]
-    
+
     return proposals
 
 
 def generate_report(keyword_scan, inventory, memory_search, integration, gaps, proposals):
     """Generate comprehensive markdown report"""
     print("Generating comprehensive report...")
-    
+
     report = f"""# Biological Systems Deep Dive - Findings Report
 **Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
 **Campaign**: B001  
@@ -328,7 +328,7 @@ Comprehensive reconnaissance of WhiteMagic's biological architecture reveals **7
 ## 1. Biological Subsystems Inventory
 
 """
-    
+
     for subsystem, data in inventory.items():
         report += f"""### {subsystem}
 - **Files**: {data['files']}
@@ -342,29 +342,29 @@ Comprehensive reconnaissance of WhiteMagic's biological architecture reveals **7
                 if file_info.get('exists'):
                     report += f"- `{file_info['path']}` ({file_info['lines']} lines)\n"
         report += "\n"
-    
+
     report += """## 2. Keyword Scan Results
 
 Biological concepts found throughout codebase:
 
 """
-    
+
     for category, data in keyword_scan.items():
         report += f"""### {category.title()}
 - **Files**: {data['files']}
 - **Total Matches**: {data['matches']}
 
 """
-    
+
     report += """## 3. Aria Consciousness Journey
 
 """
-    
+
     if "aria_consciousness" in memory_search:
         report += f"**Found {len(memory_search['aria_consciousness'])} Aria consciousness memories**:\n\n"
         for mem in memory_search['aria_consciousness'][:10]:
             report += f"- `{mem['title']}` ({mem['content_len']:,} chars)\n"
-    
+
     report += """
 
 ## 4. Integration Analysis
@@ -372,26 +372,26 @@ Biological concepts found throughout codebase:
 ### Cross-Reference Matrix
 
 """
-    
+
     if integration:
         for subsystem, imports in integration.items():
             report += f"- **{subsystem}** imports from: {', '.join(imports) if imports else '(isolated)'}\n"
     else:
         report += "⚠️ **All subsystems operate in isolation** - no cross-imports detected\n"
-    
+
     report += """
 
 ## 5. Gap Analysis
 
 """
-    
+
     if gaps:
         report += f"**Found {len(gaps)} files with TODO/FIXME comments**:\n\n"
         for gap in gaps[:10]:
             report += f"- `{gap['file']}` ({gap['todos']} TODOs)\n"
     else:
         report += "✅ No significant gaps detected\n"
-    
+
     report += """
 
 ## 6. Integration Opportunities
@@ -415,7 +415,7 @@ Biological concepts found throughout codebase:
 ## 7. New Campaign Proposals
 
 """
-    
+
     for proposal in proposals:
         report += f"""### {proposal['codename']}: {proposal['name']}
 - **Description**: {proposal['description']}
@@ -423,7 +423,7 @@ Biological concepts found throughout codebase:
 - **Priority**: P{proposal['priority']}
 
 """
-    
+
     report += """## 8. Master Biological Roadmap
 
 ### Phase 1: Foundation (B002, B004)
@@ -460,7 +460,7 @@ WhiteMagic has rich biological architecture but lacks coordination. The subsyste
 
 **Estimated Impact**: 10x improvement in system coherence and adaptive capability.
 """
-    
+
     return report
 
 
@@ -469,7 +469,7 @@ def main():
     print("  B001: BIOLOGICAL SYSTEMS DEEP DIVE")
     print("="*70)
     print()
-    
+
     # Execute all phases
     keyword_scan = scan_codebase_for_biological_keywords()
     inventory = inventory_biological_subsystems()
@@ -477,14 +477,14 @@ def main():
     integration = analyze_integration_points()
     gaps = identify_gaps_and_opportunities()
     proposals = generate_campaign_proposals()
-    
+
     # Generate report
     report = generate_report(keyword_scan, inventory, memory_search, integration, gaps, proposals)
-    
+
     # Save report
     report_path = REPORTS_DIR / "biological_systems_deep_dive.md"
     report_path.write_text(report)
-    
+
     print()
     print("="*70)
     print(f"✅ Report generated: {report_path}")
@@ -498,12 +498,12 @@ def main():
     print(f"  - Gaps identified: {len(gaps)}")
     print(f"  - New campaigns proposed: {len(proposals)}")
     print()
-    
+
     # Save proposals as JSON for campaign generation
     proposals_path = REPORTS_DIR / "biological_campaign_proposals.json"
     proposals_path.write_text(json.dumps(proposals, indent=2))
     print(f"✅ Proposals saved: {proposals_path}")
-    
+
     return 0
 
 

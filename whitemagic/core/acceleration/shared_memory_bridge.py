@@ -15,7 +15,6 @@ import struct
 import threading
 import time
 from multiprocessing import shared_memory
-from typing import Optional
 
 import numpy as np
 
@@ -55,8 +54,8 @@ class SharedMemoryBridge:
 
     def __init__(self, name: str = SHM_NAME, create: bool = False):
         self.name = name
-        self._shm: Optional[shared_memory.SharedMemory] = None
-        self._header: Optional[SharedMemoryHeader] = None
+        self._shm: shared_memory.SharedMemory | None = None
+        self._header: SharedMemoryHeader | None = None
         self._lock = threading.Lock()
         self._is_owner = create
 
@@ -160,7 +159,7 @@ class SharedMemoryBridge:
             self._header.last_write_ts = time.time()
         return written
 
-    def read_embedding(self) -> Optional[tuple[int, list[float]]]:
+    def read_embedding(self) -> tuple[int, list[float]] | None:
         with self._lock:
             if self._header is None or self._header.count == 0:
                 return None

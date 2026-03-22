@@ -1,5 +1,5 @@
 
-with open('whitemagic-rust/src/arrow_bridge.rs', 'r') as f:
+with open('whitemagic-rust/src/arrow_bridge.rs') as f:
     content = f.read()
 
 # Fix the extra brace

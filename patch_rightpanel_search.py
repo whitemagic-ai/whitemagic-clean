@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/panels/RightPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/RightPanel.tsx') as f:
     content = f.read()
 
 # Add Fast Context / Global Search to the chat input (like Windsurf's @ command)
@@ -23,7 +23,7 @@ injection = """
 if "handleInput" not in content:
     content = content.replace("const handleSend =", injection + "\n  const handleSend =")
     content = content.replace('onChange={(e) => setInput(e.target.value)}', 'onChange={handleInput}')
-    
+
     with open('nexus/src/components/panels/RightPanel.tsx', 'w') as f:
         f.write(content)
     print("Patched RightPanel with @-mention fast context search stub")

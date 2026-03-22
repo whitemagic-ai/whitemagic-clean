@@ -6,11 +6,11 @@ Wu Xing Waking Scheduler (G007)
 Wood -> Fire -> Earth -> Metal -> Water cycle.
 """
 
-from enum import Enum
+import logging
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, Any, List
-import logging
+from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class WuXingScheduler:
     def get_current_phase(self) -> Phase:
         return self.state.current
 
-    def update(self, metrics: Dict[str, Any]) -> Phase:
+    def update(self, metrics: dict[str, Any]) -> Phase:
         """
         Update state based on time and metrics.
         Returns potentially new phase.
@@ -100,13 +100,13 @@ class WuXingScheduler:
         self.transition_to(phase, reason="Manual override")
         self.manual_override = True
 
-    def _check_emergency_earth(self, metrics: Dict[str, Any]) -> bool:
+    def _check_emergency_earth(self, metrics: dict[str, Any]) -> bool:
         """Return True if metrics indicate need for immediate stabilization."""
         # Example: if recent error rate is high
         error_rate = metrics.get("error_rate", 0.0)
         return error_rate > 0.2 and self.state.current != Phase.EARTH
 
-    def get_allowed_actions(self) -> List[str]:
+    def get_allowed_actions(self) -> list[str]:
         """Return list of allowed action types for current phase."""
         if self.state.current == Phase.WOOD:
             return ["create_file", "plan", "brainstorm", "list_files"]
@@ -120,7 +120,7 @@ class WuXingScheduler:
             return ["save_memory", "summarize", "log", "archive"]
         return []
 
-    def status(self) -> Dict[str, Any]:
+    def status(self) -> dict[str, Any]:
         """Return scheduler status."""
         return {
             "phase": self.state.current.value,

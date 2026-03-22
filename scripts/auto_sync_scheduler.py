@@ -21,12 +21,12 @@ def run_sync_cycle(root_dir: Path | None = None) -> dict:
     Returns dict with results.
     """
     root = root_dir or Path(__file__).resolve().parent.parent
-    
+
     results = {
         "timestamp": datetime.now().isoformat(),
         "steps": [],
     }
-    
+
     # Step 1: Run census
     try:
         result = subprocess.run(
@@ -43,7 +43,7 @@ def run_sync_cycle(root_dir: Path | None = None) -> dict:
         })
     except Exception as e:
         results["steps"].append({"step": "census", "status": "error", "error": str(e)})
-    
+
     # Step 2: Sync SYSTEM_MAP.md
     try:
         result = subprocess.run(
@@ -60,7 +60,7 @@ def run_sync_cycle(root_dir: Path | None = None) -> dict:
         })
     except Exception as e:
         results["steps"].append({"step": "sync", "status": "error", "error": str(e)})
-    
+
     # Step 3: Drift detection
     try:
         result = subprocess.run(
@@ -77,11 +77,11 @@ def run_sync_cycle(root_dir: Path | None = None) -> dict:
         })
     except Exception as e:
         results["steps"].append({"step": "drift_check", "status": "error", "error": str(e)})
-    
+
     # Summary
     ok_count = sum(1 for s in results["steps"] if s["status"] == "ok")
     results["summary"] = f"{ok_count}/3 steps completed successfully"
-    
+
     return results
 
 

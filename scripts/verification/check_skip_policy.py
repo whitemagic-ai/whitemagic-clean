@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import re
 
-
 SKIP_LINE_RE = re.compile(r"^SKIPPED \[(\d+)\] .*: (.+)$")
 
 # Known skip reason substrings per profile.  Any skip whose reason text

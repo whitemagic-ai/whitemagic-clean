@@ -10,15 +10,14 @@ Analyzes codebase subsystems and maps them to gardens based on:
 from __future__ import annotations
 
 import json
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from whitemagic.core.garden_directory import GardenDirectory
-
 
 # System definitions based on codebase structure
 SYSTEM_DEFINITIONS: dict[str, dict[str, Any]] = {
@@ -133,12 +132,12 @@ SYSTEM_DEFINITIONS: dict[str, dict[str, Any]] = {
 def analyze_systems(directory: GardenDirectory) -> dict[str, Any]:
     """Analyze systems and map to gardens."""
     system_mappings: dict[str, dict[str, Any]] = {}
-    
+
     for system_id, system_def in SYSTEM_DEFINITIONS.items():
         # Find files belonging to this system
         system_files = []
         garden_counts: dict[str, int] = defaultdict(int)
-        
+
         for fp, mapping in directory._file_mappings.items():
             # Check if file belongs to this system
             belongs = False
@@ -146,7 +145,7 @@ def analyze_systems(directory: GardenDirectory) -> dict[str, Any]:
                 if path_prefix in fp:
                     belongs = True
                     break
-            
+
             if not belongs:
                 # Check keywords
                 fp_lower = fp.lower()
@@ -154,11 +153,11 @@ def analyze_systems(directory: GardenDirectory) -> dict[str, Any]:
                     if kw in fp_lower:
                         belongs = True
                         break
-            
+
             if belongs:
                 system_files.append(fp)
                 garden_counts[mapping.primary_garden] += 1
-        
+
         # Determine primary and operating gardens
         if garden_counts:
             sorted_gardens = sorted(garden_counts.items(), key=lambda x: -x[1])
@@ -167,7 +166,7 @@ def analyze_systems(directory: GardenDirectory) -> dict[str, Any]:
         else:
             primary_garden = "mystery"
             operating_gardens = []
-        
+
         system_mappings[system_id] = {
             "description": system_def.get("description", ""),
             "primary_garden": primary_garden,
@@ -176,7 +175,7 @@ def analyze_systems(directory: GardenDirectory) -> dict[str, Any]:
             "garden_distribution": dict(garden_counts),
             "sample_files": system_files[:10],
         }
-    
+
     return system_mappings
 
 
@@ -190,17 +189,17 @@ def generate_system_report(system_mappings: dict[str, Any], output_path: Path) -
         "| System | Primary Garden | Operating Gardens | Files |",
         "|--------|---------------|-------------------|-------|",
     ]
-    
+
     for system_id, mapping in sorted(system_mappings.items(), key=lambda x: -x[1]["file_count"]):
         ops = ", ".join(mapping["operating_gardens"][:2]) if mapping["operating_gardens"] else "-"
         lines.append(f"| {system_id} | {mapping['primary_garden']} | {ops} | {mapping['file_count']} |")
-    
+
     lines.extend([
         "",
         "## Detailed Mappings",
         "",
     ])
-    
+
     for system_id, mapping in sorted(system_mappings.items()):
         lines.append(f"### {system_id}")
         lines.append("")
@@ -220,7 +219,7 @@ def generate_system_report(system_mappings: dict[str, Any], output_path: Path) -
             for fp in mapping["sample_files"]:
                 lines.append(f"- `{fp}`")
             lines.append("")
-    
+
     output_path.write_text("\n".join(lines))
     print(f"📄 System report saved to {output_path}")
 
@@ -228,45 +227,45 @@ def generate_system_report(system_mappings: dict[str, Any], output_path: Path) -
 def main() -> None:
     """Run the system scanner."""
     root = Path(__file__).parent.parent
-    
+
     print("=" * 60)
     print("🌸 S025 Phase 3: System-to-Garden Mapping")
     print("=" * 60)
     print()
-    
+
     # Load file directory
     file_registry_path = root / "data" / "garden_file_registry.json"
     directory = GardenDirectory(file_registry_path)
     if not directory.load():
         print("❌ File registry not found. Run s025_garden_organization.py first.")
         return
-    
+
     # Analyze systems
     system_mappings = analyze_systems(directory)
-    
+
     # Save system mappings
     system_registry_path = root / "data" / "garden_system_registry.json"
     system_registry_path.parent.mkdir(parents=True, exist_ok=True)
     system_registry_path.write_text(json.dumps(system_mappings, indent=2))
     print(f"💾 System registry saved to {system_registry_path}")
-    
+
     # Generate report
     report_path = root / "reports" / "garden_system_mapping.md"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     generate_system_report(system_mappings, report_path)
-    
+
     # Summary
     print()
     print("=" * 60)
     print("SUMMARY")
     print("=" * 60)
     print(f"Systems analyzed: {len(system_mappings)}")
-    
+
     # Count garden assignments
     garden_systems: dict[str, list[str]] = defaultdict(list)
     for system_id, mapping in system_mappings.items():
         garden_systems[mapping["primary_garden"]].append(system_id)
-    
+
     print()
     print("Garden → Systems:")
     for garden, systems in sorted(garden_systems.items()):

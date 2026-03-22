@@ -6,12 +6,13 @@ and consensus detection.  All state is stored under WM_STATE_ROOT/votes/.
 import json
 import os
 import re
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
 from uuid import uuid4
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 def _emit(event_type_name: str, data: dict) -> None:

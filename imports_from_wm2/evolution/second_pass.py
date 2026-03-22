@@ -8,10 +8,11 @@ Uses learnings from first pass:
 - Optimized parameters based on actual results
 """
 
-import hyperevolution_core as rust
-import time
 import json
+import time
 from pathlib import Path
+
+import hyperevolution_core as rust
 
 print("=" * 80)
 print("SECOND PASS - OPTIMIZED EVOLUTION")
@@ -128,9 +129,9 @@ first_pass = {
     "best_genes": 22,
 }
 
-improvement_fitness = ((metrics.best_fitness - first_pass["best_fitness"]) / 
+improvement_fitness = ((metrics.best_fitness - first_pass["best_fitness"]) /
                        first_pass["best_fitness"] * 100)
-improvement_diversity = ((metrics.diversity - first_pass["diversity"]) / 
+improvement_diversity = ((metrics.diversity - first_pass["diversity"]) /
                          first_pass["diversity"] * 100)
 
 print("Metric                  | First Pass | Second Pass | Change")

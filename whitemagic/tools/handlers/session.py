@@ -1,12 +1,13 @@
 """Session tool handlers — including cross-device handoff."""
 import json
 import os
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
 from uuid import uuid4
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 def _resolve_base_path(kwargs: dict[str, Any]) -> Path:

@@ -1,15 +1,14 @@
 """Session management routes for MandalaOS Railway Backend."""
 
-from typing import List, Optional
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc, update
-
 from app.database import get_db
-from models import Session, Agent
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy import desc, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from models import Agent, Session
 
 router = APIRouter()
 
@@ -33,7 +32,7 @@ class SessionResponse(BaseModel):
 class StateUpdate(BaseModel):
     """Request model for updating session state."""
     state: dict
-    context_window: Optional[List[str]] = None
+    context_window: list[str] | None = None
 
 
 @router.post("/", response_model=SessionResponse)
@@ -43,9 +42,9 @@ async def create_session(
 ) -> Session:
     """Create a new session for an agent."""
     import uuid
-    
+
     session_id = f"sess_{uuid.uuid4().hex[:16]}"
-    
+
     db_session = Session(
         id=session_id,
         agent_id=session_data.agent_id,
@@ -53,7 +52,7 @@ async def create_session(
         is_active="active",
     )
     db.add(db_session)
-    
+
     # Update agent stats
     await db.execute(
         update(Agent)
@@ -63,26 +62,26 @@ async def create_session(
             last_seen=datetime.utcnow()
         )
     )
-    
+
     await db.flush()
     await db.refresh(db_session)
     return db_session
 
 
-@router.get("/agent/{agent_id}", response_model=List[SessionResponse])
+@router.get("/agent/{agent_id}", response_model=list[SessionResponse])
 async def list_agent_sessions(
     agent_id: str,
     active_only: bool = True,
     db: AsyncSession = Depends(get_db)
-) -> List[Session]:
+) -> list[Session]:
     """List sessions for an agent."""
     query = select(Session).where(Session.agent_id == agent_id)
-    
+
     if active_only:
         query = query.where(Session.is_active == "active")
-    
+
     query = query.order_by(desc(Session.last_activity))
-    
+
     result = await db.execute(query)
     return result.scalars().all()
 
@@ -97,10 +96,10 @@ async def get_session(
         select(Session).where(Session.id == session_id)
     )
     session = result.scalar_one_or_none()
-    
+
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     return session
 
 
@@ -115,20 +114,20 @@ async def update_session_state(
         select(Session).where(Session.id == session_id)
     )
     session = result.scalar_one_or_none()
-    
+
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     # Update state
     current_state = dict(session.state) if session.state else {}
     current_state.update(update.state)
     session.state = current_state
-    
+
     if update.context_window:
         session.context_window = update.context_window
-    
+
     session.last_activity = datetime.utcnow()
-    
+
     return {"updated": True, "session_id": session_id}
 
 
@@ -142,10 +141,10 @@ async def pause_session(
         select(Session).where(Session.id == session_id)
     )
     session = result.scalar_one_or_none()
-    
+
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     session.is_active = "paused"
     return {"paused": True, "session_id": session_id}
 
@@ -160,13 +159,13 @@ async def resume_session(
         select(Session).where(Session.id == session_id)
     )
     session = result.scalar_one_or_none()
-    
+
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     session.is_active = "active"
     session.last_activity = datetime.utcnow()
-    
+
     return session
 
 
@@ -180,11 +179,11 @@ async def close_session(
         select(Session).where(Session.id == session_id)
     )
     session = result.scalar_one_or_none()
-    
+
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     session.is_active = "closed"
     session.websocket_connections = []
-    
+
     return {"closed": True, "session_id": session_id}

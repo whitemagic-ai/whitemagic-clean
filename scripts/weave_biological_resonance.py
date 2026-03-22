@@ -6,9 +6,9 @@ into the top priority systems identified by scouts.
 """
 
 import sys
-from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Any
+from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -19,17 +19,17 @@ WHITEMAGIC_DIR = PROJECT_ROOT / "whitemagic"
 
 class BiologicalWeaver:
     """Weaves biological resonance into existing systems."""
-    
+
     def __init__(self):
-        self.integrations: List[Dict[str, Any]] = []
+        self.integrations: list[dict[str, Any]] = []
         self.patterns_applied = 0
         self.files_modified = 0
-    
-    def analyze_file_for_weaving(self, file_path: Path) -> Dict[str, Any]:
+
+    def analyze_file_for_weaving(self, file_path: Path) -> dict[str, Any]:
         """Analyze a file to determine how to weave biological resonance."""
         content = file_path.read_text()
         lines = content.split("\n")
-        
+
         analysis = {
             "file": str(file_path.relative_to(PROJECT_ROOT)),
             "lines": len(lines),
@@ -38,15 +38,15 @@ class BiologicalWeaver:
             "has_nervous_system": False,
             "weaving_opportunities": []
         }
-        
+
         # Check existing integration
         if "from whitemagic.core.resonance.gan_ying import" in content:
             analysis["has_events"] = True
         if "from whitemagic.core.nervous_system import" in content:
             analysis["has_nervous_system"] = True
-        
+
         # Find weaving opportunities
-        
+
         # 1. Class definitions that could be organs
         for i, line in enumerate(lines):
             if line.strip().startswith("class ") and ":" in line:
@@ -57,7 +57,7 @@ class BiologicalWeaver:
                     "class": class_name,
                     "pattern": "Register class as biological organ"
                 })
-        
+
         # 2. State changes that could emit events
         for i, line in enumerate(lines):
             if "self.state = " in line or "self._state = " in line:
@@ -66,7 +66,7 @@ class BiologicalWeaver:
                     "line": i + 1,
                     "pattern": "Emit event on state change"
                 })
-        
+
         # 3. Loops that could emit progress
         for i, line in enumerate(lines):
             if line.strip().startswith("for ") and " in " in line:
@@ -75,7 +75,7 @@ class BiologicalWeaver:
                     "line": i + 1,
                     "pattern": "Emit progress events in loop"
                 })
-        
+
         # 4. Error handling that could trigger immune
         for i, line in enumerate(lines):
             if "except " in line:
@@ -84,7 +84,7 @@ class BiologicalWeaver:
                     "line": i + 1,
                     "pattern": "Emit threat event on error"
                 })
-        
+
         # 5. Metrics that could feed consciousness
         for i, line in enumerate(lines):
             if "metric" in line.lower() or "measure" in line.lower():
@@ -93,12 +93,12 @@ class BiologicalWeaver:
                     "line": i + 1,
                     "pattern": "Feed metrics to consciousness"
                 })
-        
+
         return analysis
-    
-    def generate_integration_code(self, file_path: Path, analysis: Dict[str, Any]) -> str:
+
+    def generate_integration_code(self, file_path: Path, analysis: dict[str, Any]) -> str:
         """Generate code snippets for biological integration."""
-        
+
         integration = f"""
 # Biological Resonance Integration for {file_path.stem}
 # Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
@@ -114,7 +114,7 @@ from whitemagic.core.nervous_system import get_nervous_system, OrganType
 ## Integration Patterns
 
 """
-        
+
         # Pattern 1: Organ Registration
         organ_opps = [o for o in analysis["weaving_opportunities"] if o["type"] == "organ_registration"]
         if organ_opps:
@@ -153,7 +153,7 @@ class {organ_opps[0]['class']}:
         return True  # or more detailed status
 ```
 """
-        
+
         # Pattern 2: State Events
         state_opps = [o for o in analysis["weaving_opportunities"] if o["type"] == "state_event"]
         if state_opps:
@@ -187,7 +187,7 @@ def set_state(self, new_state):
         )
 ```
 """
-        
+
         # Pattern 3: Progress Events
         progress_opps = [o for o in analysis["weaving_opportunities"] if o["type"] == "progress_event"]
         if progress_opps:
@@ -240,7 +240,7 @@ def process_items(self, items):
     )
 ```
 """
-        
+
         # Pattern 4: Error Events
         error_opps = [o for o in analysis["weaving_opportunities"] if o["type"] == "error_event"]
         if error_opps:
@@ -272,7 +272,7 @@ def risky_operation(self):
         raise
 ```
 """
-        
+
         # Pattern 5: Metric Events
         metric_opps = [o for o in analysis["weaving_opportunities"] if o["type"] == "metric_event"]
         if metric_opps:
@@ -311,7 +311,7 @@ def collect_metrics(self):
     return metrics
 ```
 """
-        
+
         integration += f"""
 
 ## Summary
@@ -335,68 +335,68 @@ def collect_metrics(self):
 4. Subscribe to relevant signals
 5. Test integration with organism
 """
-        
+
         return integration
-    
-    def weave_top_candidates(self, candidates: List[Dict[str, str]]) -> List[Dict[str, Any]]:
+
+    def weave_top_candidates(self, candidates: list[dict[str, str]]) -> list[dict[str, Any]]:
         """Weave biological resonance into top candidates."""
-        
+
         results = []
-        
+
         for candidate in candidates:
             file_path = PROJECT_ROOT / candidate["file"]
-            
+
             if not file_path.exists():
                 continue
-            
+
             print(f"\n{'='*70}")
             print(f"  WEAVING: {candidate['name']}")
             print(f"{'='*70}")
             print(f"File: {candidate['file']}")
             print(f"Priority: {candidate['priority']}/100")
             print()
-            
+
             # Analyze file
             analysis = self.analyze_file_for_weaving(file_path)
-            
+
             print("Analysis:")
             print(f"  Lines: {analysis['lines']}")
             print(f"  Has Events: {'✅' if analysis['has_events'] else '❌'}")
             print(f"  Has Nervous System: {'✅' if analysis['has_nervous_system'] else '❌'}")
             print(f"  Opportunities: {len(analysis['weaving_opportunities'])}")
             print()
-            
+
             # Generate integration code
             integration_code = self.generate_integration_code(file_path, analysis)
-            
+
             # Save integration guide
             guide_path = REPORTS_DIR / f"integration_{candidate['name']}.md"
             guide_path.write_text(integration_code)
-            
+
             print(f"✅ Integration guide saved: {guide_path.name}")
-            
+
             result = {
                 "candidate": candidate,
                 "analysis": analysis,
                 "guide_path": str(guide_path),
                 "opportunities": len(analysis["weaving_opportunities"])
             }
-            
+
             results.append(result)
             self.integrations.append(result)
             self.patterns_applied += len(analysis["weaving_opportunities"])
-        
+
         return results
 
 
-def generate_weaving_report(weaver: BiologicalWeaver, results: List[Dict[str, Any]]):
+def generate_weaving_report(weaver: BiologicalWeaver, results: list[dict[str, Any]]):
     """Generate comprehensive weaving report."""
-    
+
     print("\n" + "="*70)
     print("  GENERATING WEAVING REPORT")
     print("="*70)
     print()
-    
+
     report = f"""# Biological Resonance Weaving Report
 **Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
 **Systems Analyzed**: {len(results)}  
@@ -413,11 +413,11 @@ Analyzed top priority systems and generated biological resonance integration gui
 ## Integration Results
 
 """
-    
+
     for i, result in enumerate(results, 1):
         candidate = result["candidate"]
         analysis = result["analysis"]
-        
+
         report += f"""
 ### {i}. {candidate['name']} ({candidate['category']})
 
@@ -434,18 +434,18 @@ Analyzed top priority systems and generated biological resonance integration gui
 
 **Patterns to Apply**:
 """
-        
+
         # Count pattern types
         pattern_counts = {}
         for opp in analysis["weaving_opportunities"]:
             pattern_type = opp["type"]
             pattern_counts[pattern_type] = pattern_counts.get(pattern_type, 0) + 1
-        
+
         for pattern_type, count in pattern_counts.items():
             report += f"- {pattern_type.replace('_', ' ').title()}: {count}\n"
-        
+
         report += "\n"
-    
+
     report += f"""
 
 ## Implementation Roadmap
@@ -486,11 +486,11 @@ Subscribe to organism signals:
 
 ### Per-System Improvements
 """
-    
+
     for result in results[:5]:
         candidate = result["candidate"]
         report += f"- **{candidate['name']}**: +{int(candidate.get('effectiveness_gain', 0.3) * 100)}% effectiveness\n"
-    
+
     report += f"""
 
 ### Organism-Level Improvements
@@ -507,10 +507,10 @@ Subscribe to organism signals:
 ## Integration Guides Generated
 
 """
-    
+
     for result in results:
         report += f"- `{Path(result['guide_path']).name}` - {result['candidate']['name']}\n"
-    
+
     report += f"""
 
 ## Next Steps
@@ -542,13 +542,13 @@ Generated {len(results)} integration guides with {weaver.patterns_applied} speci
 **Status**: ✅ Weaving analysis complete - Ready for implementation  
 **Next**: Begin implementing integration guides starting with tactical_pipeline
 """
-    
+
     # Save report
     report_path = REPORTS_DIR / "biological_weaving_report.md"
     report_path.write_text(report)
-    
+
     print(f"✅ Report saved: {report_path}")
-    
+
     return report
 
 
@@ -557,7 +557,7 @@ def main():
     print("  BIOLOGICAL RESONANCE WEAVING")
     print("="*70)
     print()
-    
+
     # Top candidates from scout report
     top_candidates = [
         {"name": "tactical_pipeline", "file": "whitemagic/agents/tactical_pipeline.py", "category": "orchestration", "priority": 97, "effectiveness_gain": 0.95},
@@ -566,16 +566,16 @@ def main():
         {"name": "hermit_crab", "file": "whitemagic/security/hermit_crab.py", "category": "security", "priority": 85, "effectiveness_gain": 0.70},
         {"name": "security_integration", "file": "whitemagic/core/immune/security_integration.py", "category": "security", "priority": 85, "effectiveness_gain": 0.70},
     ]
-    
+
     # Initialize weaver
     weaver = BiologicalWeaver()
-    
+
     # Weave biological resonance into top candidates
     results = weaver.weave_top_candidates(top_candidates)
-    
+
     # Generate comprehensive report
     generate_weaving_report(weaver, results)
-    
+
     # Print summary
     print("\n" + "="*70)
     print("✅ BIOLOGICAL WEAVING COMPLETE")
@@ -593,7 +593,7 @@ def main():
         print(f"  Priority: {top['candidate']['priority']}/100")
         print(f"  Opportunities: {top['opportunities']}")
     print()
-    
+
     return 0
 
 

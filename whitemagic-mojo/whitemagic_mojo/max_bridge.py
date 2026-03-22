@@ -1,6 +1,7 @@
 """MAX Bridge for Python interop"""
 import numpy as np
 
+
 class MAXBridge:
     """Bridge between Python and MAX/Mojo kernels"""
 

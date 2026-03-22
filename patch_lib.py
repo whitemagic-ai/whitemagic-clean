@@ -1,5 +1,5 @@
 
-with open('whitemagic-rust/src/lib.rs', 'r') as f:
+with open('whitemagic-rust/src/lib.rs') as f:
     content = f.read()
 
 # Add mod ipc_bridge

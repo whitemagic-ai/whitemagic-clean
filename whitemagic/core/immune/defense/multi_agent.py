@@ -8,10 +8,10 @@ Inspired by distributed systems locking and consensus protocols.
 
 from __future__ import annotations
 
-from typing import Any
 import threading
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 
 @dataclass
@@ -89,7 +89,7 @@ class MultiAgentCoordinator:
                 # Allow same agent to re-acquire (reentrant lock)
                 if existing_lock.agent_id == agent_id:
                     # Extend expiration
-                    existing_lock.expires_at = datetime.now(timezone.utc) + timedelta(
+                    existing_lock.expires_at = datetime.now(UTC) + timedelta(
                         seconds=timeout or self.lock_timeout,
                     )
                     return True, None
@@ -101,8 +101,8 @@ class MultiAgentCoordinator:
             lock = ResourceLock(
                 resource=resource,
                 agent_id=agent_id,
-                acquired_at=datetime.now(timezone.utc),
-                expires_at=datetime.now(timezone.utc) + timedelta(seconds=timeout or self.lock_timeout),
+                acquired_at=datetime.now(UTC),
+                expires_at=datetime.now(UTC) + timedelta(seconds=timeout or self.lock_timeout),
                 operation=operation,
             )
 
@@ -151,7 +151,7 @@ class MultiAgentCoordinator:
 
     def _cleanup_expired_locks(self) -> Any:
         """Remove expired locks (called with lock held)."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expired = [
             resource for resource, lock in self.locks.items()
             if lock.expires_at < now

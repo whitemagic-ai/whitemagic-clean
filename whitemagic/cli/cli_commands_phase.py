@@ -6,6 +6,7 @@ wm phase status/set
 """
 
 import click
+
 from whitemagic.core.wuxing_scheduler import WuXingScheduler
 
 # In a real app, the scheduler would be a singleton or attached to the session service.

@@ -352,8 +352,9 @@ class EmbeddingDaemon:
                     embeddings = [e.tolist() for e in embeddings]
 
             # Store embeddings
-            from whitemagic.core.memory.embeddings import MODEL_NAME
             import struct
+
+            from whitemagic.core.memory.embeddings import MODEL_NAME
 
             embedded = 0
             failed = 0
@@ -379,7 +380,7 @@ class EmbeddingDaemon:
     def _record_metrics(self, result: dict) -> None:
         """Record metrics to Prometheus if available."""
         try:
-            from prometheus_client import Counter, Histogram, REGISTRY
+            from prometheus_client import REGISTRY, Counter, Histogram
 
             # Get or create metrics
             try:

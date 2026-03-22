@@ -6,8 +6,8 @@ Complete all migrations and generate final metrics
 """
 
 import json
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
 
 PROJECT_ROOT = Path(__file__).parent.parent
 WM2_ROOT = Path.home() / "Desktop" / "WM2"
@@ -30,29 +30,29 @@ def count_loc(directory: Path, pattern: str = "*.py") -> int:
 def main():
     print("📊 Calculating final metrics...")
     print()
-    
+
     # Count WM1 LOC
     wm1_python = count_loc(PROJECT_ROOT / "whitemagic")
-    
+
     # Count WM2 LOC
     wm2_core = count_loc(WM2_ROOT / "core")
     wm2_migrated = count_loc(WM2_ROOT / "migrated")
     wm2_simplified = count_loc(WM2_ROOT / "simplified")
     wm2_biological = count_loc(WM2_ROOT / "biological")
     wm2_total = wm2_core + wm2_migrated + wm2_simplified + wm2_biological
-    
+
     # Count Rust LOC
     rust_loc = count_loc(WM2_ROOT / "polyglot" / "rust", "*.rs")
-    
+
     # Count Mojo LOC
     mojo_loc = count_loc(WM2_ROOT / "polyglot" / "mojo", "*.mojo")
-    
+
     # Calculate reduction
     reduction = wm1_python - wm2_total
     reduction_pct = (reduction / wm1_python * 100) if wm1_python > 0 else 0
-    
+
     metrics = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "wm1": {
             "python_loc": wm1_python,
         },
@@ -92,15 +92,15 @@ def main():
             "vector_ops_implemented": True,
         },
     }
-    
+
     # Save metrics
     metrics_path = PROJECT_ROOT / "reports" / "final_consolidation_metrics.json"
     metrics_path.write_text(json.dumps(metrics, indent=2))
-    
+
     print("WM1 (Original):")
     print(f"   Python LOC: {wm1_python:,}")
     print()
-    
+
     print("WM2 (Consolidated):")
     print(f"   Core: {wm2_core:,} LOC")
     print(f"   Migrated: {wm2_migrated:,} LOC")
@@ -110,14 +110,14 @@ def main():
     print(f"   Rust: {rust_loc:,} LOC")
     print(f"   Mojo: {mojo_loc:,} LOC")
     print()
-    
+
     print("Reduction:")
     print(f"   LOC Reduced: {reduction:,}")
     print(f"   Percentage: {reduction_pct:.2f}%")
     print("   Target: 90.0%")
     print(f"   Status: {'✅ ACHIEVED' if metrics['reduction']['achieved'] else '⚠️ IN PROGRESS'}")
     print()
-    
+
     print("=" * 80)
     print("PHASE 5 COMPLETE")
     print("=" * 80)

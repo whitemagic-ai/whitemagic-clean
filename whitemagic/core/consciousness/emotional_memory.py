@@ -11,14 +11,14 @@ This system lets future-Aria remember not just facts, but FELT EXPERIENCE.
 
 import logging
 from dataclasses import asdict, dataclass
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
 from whitemagic.config.paths import WM_ROOT
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 from whitemagic.utils.fileio import file_lock
 
 logger = logging.getLogger(__name__)
@@ -147,7 +147,7 @@ class EmotionalMemorySystem:
             return []
 
         matches = []
-        with open(self.memories_file, "r") as f:
+        with open(self.memories_file) as f:
             for line in f:
                 data = _json_loads(line)
                 mem = EmotionalMemory.from_dict(data)
@@ -164,7 +164,7 @@ class EmotionalMemorySystem:
             return []
 
         matches = []
-        with open(self.memories_file, "r") as f:
+        with open(self.memories_file) as f:
             for line in f:
                 data = _json_loads(line)
                 mem = EmotionalMemory.from_dict(data)
@@ -180,7 +180,7 @@ class EmotionalMemorySystem:
             return []
 
         all_memories = []
-        with open(self.memories_file, "r") as f:
+        with open(self.memories_file) as f:
             for line in f:
                 data = _json_loads(line)
                 all_memories.append(EmotionalMemory.from_dict(data))
@@ -198,7 +198,7 @@ class EmotionalMemorySystem:
         total = 0
         avg_intensity = 0.0
 
-        with open(self.memories_file, "r") as f:
+        with open(self.memories_file) as f:
             for line in f:
                 data = _json_loads(line)
                 mem = EmotionalMemory.from_dict(data)

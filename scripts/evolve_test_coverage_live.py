@@ -45,39 +45,39 @@ def main():
     print("="*60)
     print("GENESEED LIVE MUTATION & COMMIT LOOP")
     print("="*60)
-    
+
     print(f"Targeting: {TARGET_FILE.relative_to(ROOT)}")
     funcs = extract_functions(TARGET_FILE)
     print(f"Discovered {len(funcs)} testable targets.")
-    
+
     if not funcs:
         print("No targets found.")
         return
-        
+
     print("\n[PHASE 1] Generating structural mutations...")
     test_content = "import pytest\n"
     for f in funcs[:5]:  # Limit to 5 for the demo
         print(f"  Synthesizing test for: {f}")
         test_content += generate_test_mutation(f)
-        
+
     print(f"\n[PHASE 2] Writing to {TEST_FILE.relative_to(ROOT)}...")
     TEST_FILE.parent.mkdir(parents=True, exist_ok=True)
     TEST_FILE.write_text(test_content)
-    
+
     print("\n[PHASE 3] Running Sandbox Execution...")
     res = subprocess.run(["python3", "-m", "pytest", str(TEST_FILE)], capture_output=True, text=True)
-    
+
     if res.returncode == 0:
         print("  [SUCCESS] All mutations passed.")
         print("\n[PHASE 4] Phylogenetic Selection: Auto-Committing...")
-        
+
         # Git is not initialized based on earlier checks, so we just log the "commit"
         print(f"  [Auto-Commit] Geneseed: Synthesized test coverage for {len(funcs[:5])} functions in phylogenetics.py")
-        
+
         # In a real environment, we'd do:
         # subprocess.run(["git", "add", str(TEST_FILE)])
         # subprocess.run(["git", "commit", "-m", "..."])
-        
+
         print("\nLive mutation loop completed successfully.")
     else:
         print("  [FAILED] Mutations rejected by environment. They will not be committed.")

@@ -21,7 +21,6 @@ sys.path.insert(0, str(project_root))
 
 from whitemagic.agents.unified_zodiac_army import get_unified_commander
 
-
 # Front Two Campaigns
 FRONT_TWO_CAMPAIGNS = [
     {
@@ -62,7 +61,7 @@ FRONT_TWO_CAMPAIGNS = [
 async def deploy_on_campaign(campaign: dict, clones_per_army: int = 50) -> dict:
     """Deploy unified zodiac armies on a single campaign"""
     commander = get_unified_commander()
-    
+
     print("\n" + "="*100)
     print(f"🎯 CAMPAIGN {campaign['id']}: {campaign['name']}")
     print("="*100)
@@ -70,18 +69,18 @@ async def deploy_on_campaign(campaign: dict, clones_per_army: int = 50) -> dict:
     print(f"Target: {campaign['target_speedup']} speedup, {campaign['total_vcs']} VCs")
     print(f"Deploying: {clones_per_army} clones per army")
     print()
-    
+
     start_time = time.time()
-    
+
     # Deploy with auto-selection
     deployment = await commander.deploy_unified(
         objective=campaign['objective'],
         auto_select=True,
         clones_per_army=clones_per_army
     )
-    
+
     elapsed = time.time() - start_time
-    
+
     # Show results
     print("\n✅ DEPLOYMENT COMPLETE")
     print(f"   Armies: {', '.join(a.value for a in deployment.armies_deployed)}")
@@ -90,17 +89,17 @@ async def deploy_on_campaign(campaign: dict, clones_per_army: int = 50) -> dict:
     print(f"   Throughput: {deployment.total_clones / (deployment.total_duration_ms / 1000):.1f} clones/sec" if deployment.total_duration_ms > 0 else "")
     print(f"   Victories: {deployment.victories}/{deployment.total_clones} ({deployment.victories/deployment.total_clones*100:.1f}%)")
     print(f"   Synergy Score: {deployment.synergy_score:.1%}")
-    
+
     # Zodiac distribution
     print("\n📊 Zodiac Distribution:")
     zodiac_counts = {}
     for result in deployment.results:
         zodiac_counts[result.zodiac_sign] = zodiac_counts.get(result.zodiac_sign, 0) + 1
-    
+
     for sign, count in sorted(zodiac_counts.items(), key=lambda x: x[1], reverse=True):
         pct = count / deployment.total_clones * 100
         print(f"   {sign.value.title():<12}: {count:>4} clones ({pct:>5.1f}%)")
-    
+
     return {
         'campaign_id': campaign['id'],
         'campaign_name': campaign['name'],
@@ -123,38 +122,38 @@ async def run_stress_test(clones_per_army: int = 50):
     print(f"Clones per army: {clones_per_army}")
     print(f"Total VCs: {sum(c['total_vcs'] for c in FRONT_TWO_CAMPAIGNS)}")
     print("="*100)
-    
+
     commander = get_unified_commander()
     print(f"\nEngine: {'🦀 Rust (534K/sec)' if commander.rust_available else '🐍 Python (50/sec/core)'}")
-    
+
     overall_start = time.time()
     results = []
-    
+
     # Deploy on each campaign sequentially
     for i, campaign in enumerate(FRONT_TWO_CAMPAIGNS, 1):
         print(f"\n\n{'='*100}")
         print(f"CAMPAIGN {i}/{len(FRONT_TWO_CAMPAIGNS)}")
         print(f"{'='*100}")
-        
+
         result = await deploy_on_campaign(campaign, clones_per_army)
         results.append(result)
-        
+
         # Brief pause between campaigns
         if i < len(FRONT_TWO_CAMPAIGNS):
             await asyncio.sleep(0.5)
-    
+
     overall_elapsed = time.time() - overall_start
-    
+
     # Generate comprehensive report
     print("\n\n" + "="*100)
     print("📊 FRONT TWO STRESS TEST - FINAL REPORT")
     print("="*100)
-    
+
     total_clones = sum(r['total_clones'] for r in results)
     total_victories = sum(r['victories'] for r in results)
     avg_synergy = sum(r['synergy_score'] for r in results) / len(results)
     total_vcs = sum(c['total_vcs'] for c in FRONT_TWO_CAMPAIGNS)
-    
+
     print("\n🎯 OVERALL STATISTICS")
     print(f"   Total Campaigns: {len(results)}")
     print(f"   Total Clones Deployed: {total_clones:,}")
@@ -163,7 +162,7 @@ async def run_stress_test(clones_per_army: int = 50):
     print(f"   Total Duration: {overall_elapsed:.2f}s")
     print(f"   Overall Throughput: {total_clones / overall_elapsed:.1f} clones/sec")
     print(f"   Total VCs to Complete: {total_vcs}")
-    
+
     # Per-campaign summary
     print("\n📋 PER-CAMPAIGN RESULTS")
     print(f"{'='*100}")
@@ -174,11 +173,11 @@ async def run_stress_test(clones_per_army: int = 50):
         print(f"   Victories: {result['victories']:,}/{result['total_clones']:,} ({result['victories']/result['total_clones']*100:.1f}%)")
         print(f"   Synergy: {result['synergy_score']:.1%}")
         print(f"   Duration: {result['elapsed_seconds']:.2f}s")
-    
+
     # Army effectiveness analysis
     print("\n🏆 ARMY EFFECTIVENESS ANALYSIS")
     print(f"{'='*100}")
-    
+
     army_stats = {}
     for result in results:
         for army in result['armies_deployed']:
@@ -187,42 +186,42 @@ async def run_stress_test(clones_per_army: int = 50):
             army_stats[army]['deployments'] += 1
             # Estimate clones per army (total / num armies)
             army_stats[army]['total_clones'] += result['total_clones'] // len(result['armies_deployed'])
-    
+
     print("\nMost Deployed Armies:")
     for army, stats in sorted(army_stats.items(), key=lambda x: x[1]['deployments'], reverse=True):
         print(f"   {army.upper():<15}: {stats['deployments']} campaigns, ~{stats['total_clones']:,} clones")
-    
+
     # Zodiac distribution across all campaigns
     print("\n🌟 ZODIAC DISTRIBUTION (ALL CAMPAIGNS)")
     print(f"{'='*100}")
-    
+
     all_zodiac_counts = {}
     for result in results:
         for sign, count in result['zodiac_distribution'].items():
             all_zodiac_counts[sign] = all_zodiac_counts.get(sign, 0) + count
-    
+
     for sign, count in sorted(all_zodiac_counts.items(), key=lambda x: x[1], reverse=True):
         pct = count / total_clones * 100
         print(f"   {sign.title():<12}: {count:>5} clones ({pct:>5.1f}%)")
-    
+
     # Recommendations
     print("\n💡 RECOMMENDATIONS")
     print(f"{'='*100}")
-    
+
     if avg_synergy >= 0.90:
         print("   ✅ Excellent synergy scores! Zodiac-army alignment is working perfectly.")
     elif avg_synergy >= 0.85:
         print("   ✓ Good synergy scores. Minor tuning could improve alignment.")
     else:
         print("   ⚠ Synergy scores could be improved. Review zodiac-army mappings.")
-    
+
     if total_victories / total_clones >= 0.95:
         print("   ✅ Outstanding victory rate! Armies are highly effective.")
     elif total_victories / total_clones >= 0.90:
         print("   ✓ Good victory rate. Armies are performing well.")
     else:
         print("   ⚠ Victory rate could be improved. Review army strategies.")
-    
+
     # Save report
     report_data = {
         'timestamp': time.time(),
@@ -239,17 +238,17 @@ async def run_stress_test(clones_per_army: int = 50):
         'army_stats': army_stats,
         'zodiac_distribution': all_zodiac_counts
     }
-    
+
     report_path = project_root / "reports" / f"front_two_stress_test_{int(time.time())}.json"
     report_path.write_text(json.dumps(report_data, indent=2))
     print(f"\n📄 Full report saved: {report_path}")
-    
+
     # Generate markdown report
     md_report = generate_markdown_report(report_data, results)
     md_path = project_root / "reports" / f"FRONT_TWO_STRESS_TEST_{int(time.time())}.md"
     md_path.write_text(md_report)
     print(f"📄 Markdown report saved: {md_path}")
-    
+
     return report_data
 
 
@@ -270,7 +269,7 @@ def generate_markdown_report(data: dict, results: list) -> str:
         "---\n",
         "## 📋 Campaign Results\n"
     ]
-    
+
     for result in results:
         lines.extend([
             f"### {result['campaign_id']}: {result['campaign_name']}\n",
@@ -280,38 +279,38 @@ def generate_markdown_report(data: dict, results: list) -> str:
             f"- **Synergy**: {result['synergy_score']:.1%}",
             f"- **Duration**: {result['elapsed_seconds']:.2f}s\n"
         ])
-    
+
     lines.extend([
         "---\n",
         "## 🏆 Army Effectiveness\n"
     ])
-    
+
     for army, stats in sorted(data['army_stats'].items(), key=lambda x: x[1]['deployments'], reverse=True):
         lines.append(f"- **{army.upper()}**: {stats['deployments']} campaigns, ~{stats['total_clones']:,} clones")
-    
+
     lines.extend([
         "\n---\n",
         "## 🌟 Zodiac Distribution\n"
     ])
-    
+
     for sign, count in sorted(data['zodiac_distribution'].items(), key=lambda x: x[1], reverse=True):
         pct = count / data['overall_stats']['total_clones'] * 100
         lines.append(f"- **{sign.title()}**: {count:,} clones ({pct:.1f}%)")
-    
+
     return "\n".join(lines)
 
 
 async def main():
     """Main entry point"""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Front Two Stress Test")
     parser.add_argument('--clones', type=int, default=50, help="Clones per army (default: 50)")
-    
+
     args = parser.parse_args()
-    
+
     await run_stress_test(clones_per_army=args.clones)
-    
+
     return 0
 
 

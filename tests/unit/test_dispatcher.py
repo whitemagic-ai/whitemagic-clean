@@ -1,7 +1,6 @@
 """Tests for the tool dispatcher — routing, unknown tools, gana prefix, error paths."""
 import json
 
-
 from tests.conftest import assert_envelope_shape
 
 

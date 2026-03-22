@@ -35,10 +35,10 @@ import logging
 import threading
 import time
 from dataclasses import dataclass
-
-from whitemagic.runtime_status import get_runtime_status
 from enum import Enum
 from typing import Any
+
+from whitemagic.runtime_status import get_runtime_status
 
 logger = logging.getLogger(__name__)
 
@@ -170,6 +170,8 @@ class CircuitBreaker:
         try:
             from whitemagic.core.acceleration.state_board_bridge import (
                 BreakerState as BoardBreaker,
+            )
+            from whitemagic.core.acceleration.state_board_bridge import (
                 get_state_board,
             )
             slot = _tool_to_engine_slot(self.tool_name)

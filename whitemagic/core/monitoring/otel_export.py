@@ -45,7 +45,9 @@ except ImportError:
 # Try OTLP exporter
 HAS_OTLP = False
 try:
-    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter  # type: ignore[import-not-found]
+    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+        OTLPSpanExporter,  # type: ignore[import-not-found]
+    )
     HAS_OTLP = True
 except ImportError:
     pass

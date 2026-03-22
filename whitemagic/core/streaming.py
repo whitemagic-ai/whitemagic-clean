@@ -8,10 +8,11 @@ Enables progressive loading, cancellation, and better UX.
 
 import asyncio
 import logging
+from collections.abc import AsyncGenerator
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, AsyncGenerator, Dict, Optional
 from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -34,13 +35,13 @@ class StreamChunk:
     progress: float  # 0.0 to 1.0
     is_final: bool
     timestamp: datetime
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 class StreamableToolResponse:
     """Wrapper for tool responses that can be streamed."""
 
-    def __init__(self, tool_name: str, total_items: Optional[int] = None):
+    def __init__(self, tool_name: str, total_items: int | None = None):
         self.tool_name = tool_name
         self.total_items = total_items
         self.chunk_counter = 0
@@ -319,7 +320,7 @@ class StreamingToolAdapter:
 
 
 # Utility functions
-def chunk_to_dict(chunk: StreamChunk) -> Dict[str, Any]:
+def chunk_to_dict(chunk: StreamChunk) -> dict[str, Any]:
     """Convert StreamChunk to dictionary for JSON serialization."""
     return {
         "chunk_id": chunk.chunk_id,

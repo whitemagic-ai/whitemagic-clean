@@ -5,11 +5,11 @@ Deploys scout clones to analyze the codebase and identify where Koka
 binaries can be integrated for maximum impact.
 """
 
-import re
 import json
+import re
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from dataclasses import dataclass, asdict
-from typing import List, Dict, Any
+from typing import Any
 
 
 @dataclass
@@ -26,21 +26,21 @@ class IntegrationTarget:
 
 class KokaIntegrationScout:
     """Scout army to find Koka integration opportunities."""
-    
+
     def __init__(self, root_dir: Path):
         self.root_dir = Path(root_dir)
-        self.targets: List[IntegrationTarget] = []
-        self.findings: Dict[str, Any] = {
+        self.targets: list[IntegrationTarget] = []
+        self.findings: dict[str, Any] = {
             "ipc_candidates": [],
             "ffi_candidates": [],
             "replace_candidates": [],
             "bridge_candidates": []
         }
-    
-    def analyze_python_files(self) -> List[IntegrationTarget]:
+
+    def analyze_python_files(self) -> list[IntegrationTarget]:
         """Find Python files that could use Koka IPC."""
         targets = []
-        
+
         # Find files with IPC patterns
         ipc_patterns = [
             (r'subprocess\.run|subprocess\.call|subprocess\.Popen', "external_process", "ipc"),
@@ -49,23 +49,23 @@ class KokaIntegrationScout:
             (r'asyncio\.create_subprocess|asyncio\.subprocess', "async_process", "ipc"),
             (r'multiprocessing\.Process|multiprocessing\.Pool', "multiprocessing", "bridge"),
         ]
-        
+
         core_dir = self.root_dir / "whitemagic" / "core"
-        
+
         for py_file in core_dir.rglob("*.py"):
             try:
                 content = py_file.read_text()
                 lines = content.split('\n')
                 loc = len(lines)
-                
+
                 for pattern, pattern_name, integration_type in ipc_patterns:
                     if re.search(pattern, content):
                         # Score based on file characteristics
                         hot_score = self._calculate_hot_score(content, pattern_name)
-                        
+
                         # Suggest Koka binary
                         binary = self._suggest_koka_binary(content, pattern_name)
-                        
+
                         target = IntegrationTarget(
                             file_path=str(py_file.relative_to(self.root_dir)),
                             current_language="Python",
@@ -78,28 +78,28 @@ class KokaIntegrationScout:
                         )
                         targets.append(target)
                         break  # One target per file
-                        
+
             except Exception:
                 continue
-        
+
         return targets
-    
-    def analyze_rust_files(self) -> List[IntegrationTarget]:
+
+    def analyze_rust_files(self) -> list[IntegrationTarget]:
         """Find Rust files that could be called from Koka."""
         targets = []
-        
+
         rust_dir = self.root_dir / "whitemagic-rust" / "src"
-        
+
         for rs_file in rust_dir.rglob("*.rs"):
             try:
                 content = rs_file.read_text()
                 lines = content.split('\n')
                 loc = len(lines)
-                
+
                 # Look for functions that could be exposed
                 if re.search(r'pub fn |#\[pyfunction\]|#\[pymethods\]', content):
                     hot_score = self._calculate_rust_hot_score(content)
-                    
+
                     target = IntegrationTarget(
                         file_path=str(rs_file.relative_to(self.root_dir)),
                         current_language="Rust",
@@ -111,16 +111,16 @@ class KokaIntegrationScout:
                         rationale="Public functions available for Koka FFI"
                     )
                     targets.append(target)
-                    
+
             except Exception:
                 continue
-        
+
         return targets
-    
-    def analyze_existing_koka(self) -> Dict[str, Any]:
+
+    def analyze_existing_koka(self) -> dict[str, Any]:
         """Analyze existing Koka binaries for gaps."""
         koka_dir = self.root_dir / "whitemagic-koka"
-        
+
         binaries = {
             "unified_runtime_v3": {"has_batch": True, "has_events": True, "has_profile": False},
             "effect_runtime": {"has_batch": False, "has_events": True, "has_profile": True},
@@ -129,9 +129,9 @@ class KokaIntegrationScout:
             "prat": {"has_batch": False, "has_events": True, "has_profile": False},
             "gan_ying": {"has_batch": False, "has_events": True, "has_profile": False},
         }
-        
+
         gaps = []
-        
+
         # Check what binaries need enhancement
         for binary, features in binaries.items():
             binary_path = koka_dir / binary
@@ -148,7 +148,7 @@ class KokaIntegrationScout:
                         "missing": "profiling integration",
                         "priority": "low"
                     })
-        
+
         return {
             "existing_binaries": len(binaries),
             "gaps": gaps,
@@ -158,11 +158,11 @@ class KokaIntegrationScout:
                 "profile": sum(1 for b in binaries.values() if b["has_profile"])
             }
         }
-    
+
     def _calculate_hot_score(self, content: str, pattern: str) -> int:
         """Calculate hot path score for Python code."""
         score = 0
-        
+
         # Base score from pattern
         pattern_scores = {
             "external_process": 30,
@@ -172,43 +172,43 @@ class KokaIntegrationScout:
             "multiprocessing": 25
         }
         score += pattern_scores.get(pattern, 10)
-        
+
         # Bonus for loops
         if re.search(r'for .* in range\(|for .* in enumerate\(', content):
             score += 20
-        
+
         # Bonus for batch operations
         if 'batch' in content.lower():
             score += 15
-        
+
         # Bonus for performance comments
         if re.search(r'#.*optimize|#.*performance|#.*fast|#.*speed', content, re.I):
             score += 10
-        
+
         return score
-    
+
     def _calculate_rust_hot_score(self, content: str) -> int:
         """Calculate hot path score for Rust code."""
         score = 0
-        
+
         # SIMD operations
         if 'simd' in content.lower():
             score += 30
-        
+
         # Unsafe blocks (performance critical)
         if 'unsafe' in content:
             score += 20
-        
+
         # Vector operations
         if re.search(r'vector|embedding|similarity', content, re.I):
             score += 25
-        
+
         # PyO3 bindings (ready for Python/Koka)
         if 'pyo3' in content or '#[pyfunction]' in content:
             score += 15
-        
+
         return score
-    
+
     def _suggest_koka_binary(self, content: str, pattern: str) -> str:
         """Suggest appropriate Koka binary."""
         if 'event' in content.lower() or 'emit' in content.lower():
@@ -223,31 +223,31 @@ class KokaIntegrationScout:
             return "unified_runtime_v3"
         else:
             return "unified_runtime_v3"
-    
-    def deploy_scouts(self) -> Dict[str, Any]:
+
+    def deploy_scouts(self) -> dict[str, Any]:
         """Deploy scout army and collect findings."""
         print("=" * 70)
         print("KOKA INTEGRATION SCOUT ARMY DEPLOYMENT")
         print("=" * 70)
-        
+
         # Scout 1: Python IPC candidates
         print("\n[Scout 1] Analyzing Python files for IPC opportunities...")
         python_targets = self.analyze_python_files()
         print(f"  Found {len(python_targets)} Python IPC candidates")
-        
+
         # Scout 2: Rust FFI candidates
         print("\n[Scout 2] Analyzing Rust files for FFI opportunities...")
         rust_targets = self.analyze_rust_files()
         print(f"  Found {len(rust_targets)} Rust FFI candidates")
-        
+
         # Scout 3: Existing Koka gaps
         print("\n[Scout 3] Analyzing existing Koka binaries for gaps...")
         koka_analysis = self.analyze_existing_koka()
         print(f"  Found {len(koka_analysis['gaps'])} gaps in existing binaries")
-        
+
         # Compile findings
         self.targets = python_targets + rust_targets
-        
+
         self.findings = {
             "scout_deployment": {
                 "python_scouts": len(python_targets),
@@ -259,13 +259,13 @@ class KokaIntegrationScout:
             "koka_binary_gaps": koka_analysis,
             "integration_recommendations": self._generate_recommendations()
         }
-        
+
         return self.findings
-    
-    def _generate_recommendations(self) -> List[Dict[str, Any]]:
+
+    def _generate_recommendations(self) -> list[dict[str, Any]]:
         """Generate integration recommendations."""
         recommendations = []
-        
+
         # High impact: Python files with subprocess
         high_impact = [t for t in self.targets if t.estimated_impact == "high"]
         for target in high_impact[:5]:
@@ -275,7 +275,7 @@ class KokaIntegrationScout:
                 "with": f"Koka {target.koka_binary_suggested}",
                 "expected_benefit": "10-20x IPC throughput improvement"
             })
-        
+
         # Medium impact: Rust FFI
         rust_targets = [t for t in self.targets if t.current_language == "Rust"]
         for target in rust_targets[:3]:
@@ -285,7 +285,7 @@ class KokaIntegrationScout:
                 "with": "Python IPC wrapper",
                 "expected_benefit": "5-10x hot path acceleration"
             })
-        
+
         # Create orchestrator
         recommendations.append({
             "priority": "high",
@@ -293,58 +293,58 @@ class KokaIntegrationScout:
             "with": "New Koka orchestrator.kk",
             "expected_benefit": "Centralized management of all Koka binaries"
         })
-        
+
         return recommendations
-    
+
     def print_findings(self):
         """Print formatted findings."""
         print("\n" + "=" * 70)
         print("SCOUT FINDINGS")
         print("=" * 70)
-        
+
         print(f"\nTotal Integration Targets: {self.findings['scout_deployment']['total_targets']}")
         print(f"  - Python IPC candidates: {self.findings['scout_deployment']['python_scouts']}")
         print(f"  - Rust FFI candidates: {self.findings['scout_deployment']['rust_scouts']}")
-        
+
         print("\n--- Top Python IPC Candidates ---")
         for i, target in enumerate(self.findings['python_ipc_candidates'][:5], 1):
             print(f"{i}. {target['file_path']}")
             print(f"   → Suggest: {target['koka_binary_suggested']} ({target['estimated_impact']} impact)")
             print(f"   → {target['rationale']}")
-        
+
         print("\n--- Top Rust FFI Candidates ---")
         for i, target in enumerate(self.findings['rust_ffi_candidates'][:5], 1):
             print(f"{i}. {target['file_path']}")
             print(f"   → {target['lines_of_code']} LOC, hot score: {target['hot_path_score']}")
-        
+
         print("\n--- Koka Binary Gaps ---")
         for gap in self.findings['koka_binary_gaps']['gaps'][:5]:
             print(f"• {gap['binary']}: Missing {gap['missing']} ({gap['priority']} priority)")
-        
+
         print("\n--- Integration Recommendations ---")
         for i, rec in enumerate(self.findings['integration_recommendations'], 1):
             print(f"{i}. [{rec['priority'].upper()}] {rec['action']}")
             print(f"   → Use: {rec['with']}")
             print(f"   → Benefit: {rec['expected_benefit']}")
-        
+
         print("=" * 70)
 
 
 def main():
     """Deploy scout army."""
     root_dir = Path(__file__).parent.parent
-    
+
     scout = KokaIntegrationScout(root_dir)
     findings = scout.deploy_scouts()
     scout.print_findings()
-    
+
     # Save findings
     findings_path = root_dir / "reports" / "koka_integration_scout_findings.json"
     findings_path.parent.mkdir(exist_ok=True)
     with open(findings_path, "w") as f:
         json.dump(findings, f, indent=2)
     print(f"\nFindings saved to: {findings_path}")
-    
+
     # Summary for deployment
     print("\n" + "=" * 70)
     print("DEPLOYMENT READY OBJECTIVES")

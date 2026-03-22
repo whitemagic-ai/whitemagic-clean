@@ -53,7 +53,9 @@ class HolographicConsolidator:
 
     def _get_synthesizer(self) -> Any:
         if self.synthesizer is None:
-            from .sector_synthesis import SectorSynthesizer  # type: ignore[import-not-found]
+            from .sector_synthesis import (
+                SectorSynthesizer,  # type: ignore[import-not-found]
+            )
             self.synthesizer = SectorSynthesizer()
         return self.synthesizer
 

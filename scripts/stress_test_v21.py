@@ -1,10 +1,11 @@
+import logging
+import random
+import sys
 import time
 import uuid
-import random
-import logging
-import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
 
 # Simple ASCII Progress Bar with explicit flushing
 def print_progress(current, total, bar_length=40):
@@ -23,17 +24,17 @@ def run_stress_test(num_memories=5000, batch_size=100):
     db_path = Path("stress_test_v21.db")
     if db_path.exists():
         db_path.unlink()
-    
+
     # Force use of the backend which now has Koka fallbacks
     backend = SQLiteBackend(db_path)
-    
+
     print("\n🚀 Starting v21 Polyglot Stress Test (Reliable Feedback Mode)")
     print(f"   Target: {num_memories} memories")
     print(f"   Batch Size: {batch_size}")
     print(f"   Database: {db_path}\n")
 
     start_time = time.perf_counter()
-    
+
     def generate_memory(idx):
         m_id = str(uuid.uuid4())
         return Memory(
@@ -60,7 +61,7 @@ def run_stress_test(num_memories=5000, batch_size=100):
                 sys.stdout.write(f"\n❌ Error storing memory {total_inserted + j}: {e}\n")
                 sys.stdout.flush()
                 continue
-        
+
         total_inserted += current_batch_size
         print_progress(total_inserted, num_memories)
 
@@ -72,7 +73,7 @@ def run_stress_test(num_memories=5000, batch_size=100):
     print(f"   Total Inserted: {total_inserted}")
     print(f"   Duration: {duration:.2f}s")
     print(f"   Throughput: {ops_per_sec:.2f} ops/s")
-    
+
     if db_path.exists():
         db_path.unlink()
 

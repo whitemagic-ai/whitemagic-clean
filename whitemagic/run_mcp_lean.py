@@ -20,18 +20,23 @@ import asyncio
 import logging
 import sys
 import threading
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from pathlib import Path
 from typing import Any
 
 from whitemagic.runtime_status import get_runtime_status
 from whitemagic.tools.tool_surface import (
     GANA_NAMES as _GANA_NAMES,
+)
+from whitemagic.tools.tool_surface import (
     GANA_SHORT_DESC as _GANA_SHORT_DESC,
+)
+from whitemagic.tools.tool_surface import (
     get_gana_metadata as _get_gana_metadata,
+)
+from whitemagic.tools.tool_surface import (
     get_gana_nested_tools as _get_gana_nested_tools,
 )
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 # ── Ensure project root is on sys.path ──────────────────────────────
 ROOT_DIR = Path(__file__).resolve().parent
@@ -48,8 +53,8 @@ logging.basicConfig(
 logger = logging.getLogger("wm_mcp")
 
 # ── Standard MCP SDK imports (after sys.path setup) ──────────────────
-from mcp.server import Server  # noqa: E402
 import mcp.types as types  # noqa: E402
+from mcp.server import Server  # noqa: E402
 from mcp.shared.message import SessionMessage  # noqa: E402
 
 # ── Version ──────────────────────────────────────────────────────────
@@ -428,13 +433,14 @@ async def main_stdio() -> None:
 
 async def main_http(host: str = "127.0.0.1", port: int = 8770) -> None:
     """Run as Streamable HTTP MCP server (for remote/browser access)."""
+    import uuid
+
+    import uvicorn
+    from mcp.server.streamable_http import StreamableHTTPServerTransport
     from starlette.applications import Starlette
-    from starlette.routing import Mount
     from starlette.middleware import Middleware
     from starlette.middleware.cors import CORSMiddleware
-    from mcp.server.streamable_http import StreamableHTTPServerTransport
-    import uvicorn
-    import uuid
+    from starlette.routing import Mount
 
     transport = StreamableHTTPServerTransport(
         mcp_session_id=str(uuid.uuid4()),

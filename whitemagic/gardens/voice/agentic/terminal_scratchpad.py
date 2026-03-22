@@ -3,13 +3,12 @@ from __future__ import annotations
 import sqlite3
 import time
 import uuid
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
 from whitemagic.config.paths import DB_PATH
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 
 # Colors for terminal output

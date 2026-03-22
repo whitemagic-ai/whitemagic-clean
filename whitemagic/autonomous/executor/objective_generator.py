@@ -102,7 +102,7 @@ class ObjectiveGenerator:
                 stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=30)
                 if stdout:
                     return [line.strip() for line in stdout.decode().splitlines()[:50] if line.strip()]
-            except (asyncio.TimeoutError, Exception):
+            except (TimeoutError, Exception):
                 return []
             return []
 
@@ -146,7 +146,7 @@ class ObjectiveGenerator:
                 if src_name != "__init__.py" and src_name not in test_names:
                     gaps.append(src_file)
             return gaps
-        except (asyncio.TimeoutError, Exception):
+        except (TimeoutError, Exception):
             return []
 
     async def _scan_doc_gaps(self) -> list[str]:
@@ -171,7 +171,7 @@ class ObjectiveGenerator:
                 except Exception:
                     continue
             return gaps
-        except (asyncio.TimeoutError, Exception):
+        except (TimeoutError, Exception):
             return []
 
     async def _scan_incomplete_features(self, key_dirs: list[str]) -> list[str]:
@@ -188,7 +188,7 @@ class ObjectiveGenerator:
                 stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=30)
                 if stdout:
                     return [line.strip() for line in stdout.decode().splitlines()[:50] if line.strip()]
-            except (asyncio.TimeoutError, Exception):
+            except (TimeoutError, Exception):
                 return []
             return []
 
@@ -209,7 +209,7 @@ class ObjectiveGenerator:
                 stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=30)
                 if stdout:
                     return [line.strip() for line in stdout.decode().splitlines()[:50] if line.strip()]
-            except (asyncio.TimeoutError, Exception):
+            except (TimeoutError, Exception):
                 return []
             return []
 

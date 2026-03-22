@@ -4,11 +4,14 @@ Tests distributed locking and heartbeating between multiple simulated agents.
 """
 
 import pytest
+
 rich = pytest.importorskip("rich")
 
-from whitemagic.gardens.sangha.resources import get_resources
-from rich.console import Console
 import time
+
+from rich.console import Console
+
+from whitemagic.gardens.sangha.resources import get_resources
 
 console = Console()
 
@@ -16,7 +19,7 @@ def test_sangha_locking():
     console.print("\n--- Testing Sangha Coordination: Distributed Locking ---")
     res = get_resources()
     resource_id = "test_coordination_resource"
-    
+
     # 1. Agent A acquires lock
     a_ok = res.acquire_lock(resource_id, "Agent-A", "Working on task X", ttl_seconds=2)
     if a_ok:
@@ -42,7 +45,7 @@ def test_sangha_locking():
     # 4. Wait for original TTL (2s) to pass, heartbeat should keep it alive
     console.print("Waiting for original TTL to pass...")
     time.sleep(2.5)
-    
+
     b_fail_again = res.acquire_lock(resource_id, "Agent-B", "Attempting again", ttl_seconds=2)
     if not b_fail_again:
         console.print("[green]✅ Heartbeat kept lock alive; Agent-B still denied.[/]")

@@ -7,11 +7,13 @@ Population: 500K, Generations: 200
 Expected: 100M simulations, ~13 minutes, fitness >0.69
 """
 
-import hyperevolution_core as rust
-import time
 import json
-from dataclasses import dataclass, asdict
+import time
+from dataclasses import asdict, dataclass
+
+import hyperevolution_core as rust
 import psutil
+
 
 @dataclass
 class MassiveScaleResults:
@@ -32,12 +34,12 @@ class MassiveScaleResults:
 
 def run_massive_scale():
     """Run Option B with optimal parameters"""
-    
+
     print("=" * 80)
     print("OPTION B: MASSIVE SCALE EVOLUTION")
     print("=" * 80)
     print()
-    
+
     # Optimal parameters from Option C
     population = 500_000
     generations = 200
@@ -45,7 +47,7 @@ def run_massive_scale():
     selection_pressure = 0.25
     elitism_rate = 0.02
     crossover_rate = 0.7
-    
+
     print("Configuration:")
     print(f"  Population: {population:,}")
     print(f"  Generations: {generations}")
@@ -55,13 +57,13 @@ def run_massive_scale():
     print(f"  Elitism rate: {elitism_rate}")
     print(f"  Crossover rate: {crossover_rate}")
     print()
-    
+
     print("Expected performance (from Option C):")
     print("  Throughput: ~132,000 lineages/sec")
     print("  Duration: ~13 minutes")
     print("  Fitness: 0.69-0.70 (target)")
     print()
-    
+
     # Create gene library
     print("📚 Creating gene library (1,000 genes)...")
     genes = []
@@ -73,21 +75,21 @@ def run_massive_scale():
         rust.GeneCategory.Intelligence,
         rust.GeneCategory.Polyglot,
     ]
-    
+
     for i in range(1000):
         genes.append(rust.Gene(f"gene_{i}", categories[i % 6], 0.5))
-    
+
     print(f"   ✅ {len(genes)} genes created")
     print()
-    
+
     # Check available memory
     process = psutil.Process()
     available_memory = psutil.virtual_memory().available / 1024 / 1024
     print(f"💾 Available memory: {available_memory:,.0f} MB")
-    
+
     estimated_memory = population * 0.001  # ~1KB per genome
     print(f"   Estimated usage: {estimated_memory:,.0f} MB")
-    
+
     if estimated_memory > available_memory * 0.5:
         print("   ⚠️  WARNING: May need streaming for memory safety")
         print("   Consider using streaming_evolution.py instead")
@@ -98,7 +100,7 @@ def run_massive_scale():
     else:
         print("   ✅ Memory sufficient, proceeding without streaming")
     print()
-    
+
     # Create evolution config
     print("🔧 Initializing evolution engine...")
     config = rust.EvolutionConfig(
@@ -109,34 +111,34 @@ def run_massive_scale():
         selection_pressure,
         elitism_rate,
     )
-    
+
     engine = rust.HyperEvolutionCore(config, genes)
     print("   ✅ Engine ready")
     print()
-    
+
     # Monitor memory
     start_memory = process.memory_info().rss / 1024 / 1024
     peak_memory = start_memory
-    
+
     print("🚀 Starting evolution...")
     print("=" * 80)
     print()
-    
+
     start_time = time.time()
-    
+
     try:
         metrics = engine.evolve(generations)
         duration = time.time() - start_time
-        
+
         end_memory = process.memory_info().rss / 1024 / 1024
         peak_memory = max(peak_memory, end_memory)
-        
+
         print()
         print("=" * 80)
         print("✅ EVOLUTION COMPLETE")
         print("=" * 80)
         print()
-        
+
         # Display results
         print("📊 RESULTS:")
         print(f"   Best fitness: {metrics.best_fitness:.4f}")
@@ -146,17 +148,17 @@ def run_massive_scale():
         print(f"   Duration: {duration:.1f}s ({duration/60:.1f} minutes)")
         print(f"   Peak memory: {peak_memory:.0f} MB")
         print()
-        
+
         # Calculate improvements
         third_pass_fitness = 0.6816
         improvement = ((metrics.best_fitness / third_pass_fitness) - 1) * 100
-        
+
         print("📈 COMPARISON TO THIRD PASS:")
         print(f"   Third pass fitness: {third_pass_fitness:.4f}")
         print(f"   Option B fitness: {metrics.best_fitness:.4f}")
         print(f"   Improvement: {improvement:+.2f}%")
         print()
-        
+
         # Save results
         results = MassiveScaleResults(
             population=population,
@@ -174,13 +176,13 @@ def run_massive_scale():
             peak_memory_mb=peak_memory,
             best_genome_size=len(metrics.best_genome.genes),
         )
-        
+
         with open("option_b_results.json", 'w') as f:
             json.dump(asdict(results), f, indent=2)
-        
+
         print("💾 Results saved to option_b_results.json")
         print()
-        
+
         # Victory assessment
         if metrics.best_fitness > 0.69:
             print("🏆 VICTORY: Fitness target exceeded!")
@@ -188,10 +190,10 @@ def run_massive_scale():
             print("✅ SUCCESS: Excellent fitness achieved!")
         else:
             print("✅ COMPLETE: Good results, consider longer evolution for higher fitness")
-        
+
         print()
         print("Next: Generate final comparison across all passes")
-        
+
     except Exception as e:
         print(f"❌ ERROR: {e}")
         print()

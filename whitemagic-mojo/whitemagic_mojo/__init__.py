@@ -1,10 +1,10 @@
 """WhiteMagic Mojo/MAX Accelerators"""
 __version__ = '17.0.0'
 
-from .embeddings import EmbeddingKernel
-from .hot_path import HotPathOptimizer
-from .grimoire import GrimoireKernel
 from .context_router import ContextRouter
+from .embeddings import EmbeddingKernel
+from .grimoire import GrimoireKernel
+from .hot_path import HotPathOptimizer
 
 __all__ = [
     'EmbeddingKernel',

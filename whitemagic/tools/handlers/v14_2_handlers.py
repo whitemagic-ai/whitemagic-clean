@@ -68,7 +68,9 @@ def handle_jit_research_stats(**kwargs: Any) -> dict[str, Any]:
 def handle_narrative_compress(**kwargs: Any) -> dict[str, Any]:
     """Compress a narrative while preserving key information."""
     try:
-        from whitemagic.core.intelligence.narrative_compression import NarrativeCompressor
+        from whitemagic.core.intelligence.narrative_compression import (
+            NarrativeCompressor,
+        )
         compressor = NarrativeCompressor()
 
         content = kwargs.get("content", "")
@@ -109,7 +111,9 @@ def handle_narrative_compress(**kwargs: Any) -> dict[str, Any]:
 def handle_narrative_stats(**kwargs: Any) -> dict[str, Any]:
     """Get narrative compression statistics."""
     try:
-        from whitemagic.core.intelligence.narrative_compression import NarrativeCompressor
+        from whitemagic.core.intelligence.narrative_compression import (
+            NarrativeCompressor,
+        )
         compressor = NarrativeCompressor()
         return {
             "status": "success",

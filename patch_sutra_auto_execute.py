@@ -1,5 +1,5 @@
 
-with open('whitemagic/tools/middleware.py', 'r') as f:
+with open('whitemagic/tools/middleware.py') as f:
     content = f.read()
 
 # Add a new middleware `mw_sutra_auto_execute` right after `mw_governor`

@@ -11,7 +11,7 @@ Expected overall speedup: 20-50× vs unified.py
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,7 @@ class UnifiedMemoryV2:
         self,
         query: str,
         limit: int = 10,
-        strategy: Optional[str] = None,
+        strategy: str | None = None,
     ) -> list[dict[str, Any]]:
         """H002: Hybrid search with intelligent caching.
 
@@ -122,7 +122,7 @@ class UnifiedMemoryV2:
         self,
         content: str,
         memory_type: str = "note",
-        tags: Optional[list[str]] = None,
+        tags: list[str] | None = None,
         **metadata: Any,
     ) -> str:
         """Store a memory.
@@ -180,7 +180,7 @@ class UnifiedMemoryV2:
 
 
 # Singleton instance for backward compatibility
-_instance: Optional[UnifiedMemoryV2] = None
+_instance: UnifiedMemoryV2 | None = None
 
 
 def get_unified_memory_v2(db_path: str | None = None) -> UnifiedMemoryV2:

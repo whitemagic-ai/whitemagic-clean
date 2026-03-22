@@ -6,8 +6,8 @@ Status, health, doctor, explore, galaxy, and related diagnostic commands.
 import click
 
 try:
-    from rich.panel import Panel
     from rich.console import Console
+    from rich.panel import Panel
     HAS_RICH = True
     console = Console()
 except ImportError:

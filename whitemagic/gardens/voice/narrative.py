@@ -38,7 +38,7 @@ class Thread:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Thread":
+    def from_dict(cls, data: dict[str, Any]) -> Thread:
         return cls(
             id=data["id"],
             name=data["name"],
@@ -68,7 +68,7 @@ class Chapter:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Chapter":
+    def from_dict(cls, data: dict[str, Any]) -> Chapter:
         return cls(
             name=data["name"],
             story=data["story"],
@@ -100,7 +100,7 @@ class Story:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Story":
+    def from_dict(cls, data: dict[str, Any]) -> Story:
         return cls(
             title=data["title"],
             theme=data.get("theme"),

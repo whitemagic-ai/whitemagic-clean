@@ -5,19 +5,22 @@ Comprehensive testing, benchmarking, and integration of biological systems
 with shadow clone armies for bidirectional communication.
 """
 
+import statistics
 import sys
 import time
-from pathlib import Path
 from datetime import datetime
-from typing import Any, Dict, List
-import statistics
+from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from whitemagic.core.nervous_system import OrganType, get_nervous_system
 from whitemagic.core.resonance.gan_ying import (
-    EventType, ResonanceEvent, get_bus, emit_event
+    EventType,
+    ResonanceEvent,
+    emit_event,
+    get_bus,
 )
 
 REPORTS_DIR = PROJECT_ROOT / "reports"
@@ -33,10 +36,10 @@ except ImportError:
 class TestResults:
     """Collect test results across all benchmarks."""
     def __init__(self):
-        self.tests: List[Dict[str, Any]] = []
-        self.benchmarks: List[Dict[str, Any]] = []
-        self.integrations: List[Dict[str, Any]] = []
-    
+        self.tests: list[dict[str, Any]] = []
+        self.benchmarks: list[dict[str, Any]] = []
+        self.integrations: list[dict[str, Any]] = []
+
     def add_test(self, name: str, passed: bool, duration_ms: float, details: str = ""):
         self.tests.append({
             "name": name,
@@ -44,23 +47,23 @@ class TestResults:
             "duration_ms": duration_ms,
             "details": details
         })
-    
-    def add_benchmark(self, name: str, throughput: float, latency_ms: float, details: Dict[str, Any]):
+
+    def add_benchmark(self, name: str, throughput: float, latency_ms: float, details: dict[str, Any]):
         self.benchmarks.append({
             "name": name,
             "throughput": throughput,
             "latency_ms": latency_ms,
             "details": details
         })
-    
-    def add_integration(self, name: str, success: bool, metrics: Dict[str, Any]):
+
+    def add_integration(self, name: str, success: bool, metrics: dict[str, Any]):
         self.integrations.append({
             "name": name,
             "success": success,
             "metrics": metrics
         })
-    
-    def summary(self) -> Dict[str, Any]:
+
+    def summary(self) -> dict[str, Any]:
         passed = sum(1 for t in self.tests if t["passed"])
         return {
             "tests": {
@@ -86,44 +89,44 @@ def test_nervous_system_basic(results: TestResults):
     print("\n" + "="*70)
     print("  TEST 1: NERVOUS SYSTEM BASIC FUNCTIONALITY")
     print("="*70)
-    
+
     start = time.time()
-    
+
     try:
         # Get singleton
         ns = get_nervous_system()
-        
+
         # Test organ registration
         class MockOrgan:
             def status(self):
                 return True
-        
+
         mock_immune = MockOrgan()
         ns.register_organ(OrganType.IMMUNE, mock_immune)
-        
+
         # Test retrieval
         retrieved = ns.get_organ(OrganType.IMMUNE)
         assert retrieved is mock_immune, "Organ retrieval failed"
-        
+
         # Test signal subscription
         signal_received = []
         def callback(data):
             signal_received.append(data)
-        
+
         ns.subscribe("test_signal", callback)
         ns.dispatch_signal("test_signal", {"test": "data"})
-        
+
         assert len(signal_received) == 1, "Signal not received"
         assert signal_received[0]["test"] == "data", "Signal data incorrect"
-        
+
         # Test health dashboard
         health = ns.health_dashboard()
         assert "immune" in health, "Health dashboard missing immune"
-        
+
         duration = (time.time() - start) * 1000
         results.add_test("NervousSystem Basic", True, duration, "All basic operations work")
         print(f"✅ PASSED ({duration:.2f}ms)")
-        
+
     except Exception as e:
         duration = (time.time() - start) * 1000
         results.add_test("NervousSystem Basic", False, duration, str(e))
@@ -135,43 +138,43 @@ def test_gan_ying_events(results: TestResults):
     print("\n" + "="*70)
     print("  TEST 2: GAN YING EVENT BUS")
     print("="*70)
-    
+
     start = time.time()
-    
+
     try:
         bus = get_bus()
-        
+
         # Test event emission
         events_received = []
-        
+
         def listener(event: ResonanceEvent):
             events_received.append(event)
-        
+
         # Subscribe to events
         bus.subscribe(EventType.MEMORY_CREATED, listener)
-        
+
         # Emit event
         emit_event(
             EventType.MEMORY_CREATED,
             {"memory_id": "test_123", "content": "test"},
             source="test_suite"
         )
-        
+
         # Give async processing time
         time.sleep(0.1)
-        
+
         assert len(events_received) >= 1, "Event not received"
         assert events_received[0].event_type == EventType.MEMORY_CREATED, "Wrong event type"
         assert events_received[0].data["memory_id"] == "test_123", "Wrong event data"
-        
+
         # Test metrics
         metrics = bus.get_metrics()
         assert metrics["total_emissions"] > 0, "No emissions recorded"
-        
+
         duration = (time.time() - start) * 1000
         results.add_test("Gan Ying Events", True, duration, f"Emissions: {metrics['total_emissions']}")
         print(f"✅ PASSED ({duration:.2f}ms) - {metrics['total_emissions']} emissions")
-        
+
     except Exception as e:
         duration = (time.time() - start) * 1000
         results.add_test("Gan Ying Events", False, duration, str(e))
@@ -183,34 +186,34 @@ def test_event_signal_bridge(results: TestResults):
     print("\n" + "="*70)
     print("  TEST 3: EVENT-SIGNAL BRIDGE")
     print("="*70)
-    
+
     start = time.time()
-    
+
     try:
         ns = get_nervous_system()
         bus = get_bus()
-        
+
         # Test signal → event direction
         events_from_signal = []
-        
+
         def event_listener(event: ResonanceEvent):
             if event.source == "nervous_system":
                 events_from_signal.append(event)
-        
+
         bus.subscribe(EventType.THREAT_DETECTED, event_listener)
-        
+
         # Dispatch signal (should emit event)
         ns.dispatch_signal("threat_detected", {"level": 0.8})
-        
+
         time.sleep(0.1)
-        
+
         # Note: This test may not work without the enhanced dispatch from UnifiedNervousSystem
         # but we can still verify the infrastructure exists
-        
+
         duration = (time.time() - start) * 1000
         results.add_test("Event-Signal Bridge", True, duration, "Infrastructure verified")
         print(f"✅ PASSED ({duration:.2f}ms) - Bridge infrastructure exists")
-        
+
     except Exception as e:
         duration = (time.time() - start) * 1000
         results.add_test("Event-Signal Bridge", False, duration, str(e))
@@ -222,35 +225,35 @@ def benchmark_event_throughput(results: TestResults):
     print("\n" + "="*70)
     print("  BENCHMARK 1: EVENT THROUGHPUT")
     print("="*70)
-    
+
     get_bus()
-    
+
     # Warm up
     for _ in range(100):
         emit_event(EventType.PATTERN_DETECTED, {"warmup": True}, source="benchmark")
-    
+
     # Benchmark
     num_events = 10000
     start = time.time()
-    
+
     for i in range(num_events):
         emit_event(
             EventType.PATTERN_DETECTED,
             {"iteration": i, "data": "test"},
             source="benchmark"
         )
-    
+
     duration = time.time() - start
     throughput = num_events / duration
     latency_ms = (duration / num_events) * 1000
-    
+
     results.add_benchmark(
         "Event Throughput",
         throughput,
         latency_ms,
         {"num_events": num_events, "duration_s": duration}
     )
-    
+
     print(f"✅ Throughput: {throughput:,.0f} events/sec")
     print(f"✅ Latency: {latency_ms:.4f}ms per event")
 
@@ -260,30 +263,30 @@ def benchmark_signal_dispatch(results: TestResults):
     print("\n" + "="*70)
     print("  BENCHMARK 2: SIGNAL DISPATCH")
     print("="*70)
-    
+
     ns = get_nervous_system()
-    
+
     # Subscribe multiple listeners
     call_counts = []
-    
+
     for i in range(10):
         def callback(data, idx=i):
             call_counts.append(idx)
         ns.subscribe("benchmark_signal", callback)
-    
+
     # Benchmark
     num_signals = 1000
     latencies = []
-    
+
     for i in range(num_signals):
         start = time.time()
         ns.dispatch_signal("benchmark_signal", {"iteration": i})
         latency = (time.time() - start) * 1000
         latencies.append(latency)
-    
+
     avg_latency = statistics.mean(latencies)
     throughput = 1000 / avg_latency  # signals per second
-    
+
     results.add_benchmark(
         "Signal Dispatch",
         throughput,
@@ -295,7 +298,7 @@ def benchmark_signal_dispatch(results: TestResults):
             "max_latency_ms": max(latencies)
         }
     )
-    
+
     print(f"✅ Avg Latency: {avg_latency:.4f}ms")
     print(f"✅ Throughput: {throughput:,.0f} signals/sec")
     print(f"✅ Min/Max: {min(latencies):.4f}ms / {max(latencies):.4f}ms")
@@ -306,24 +309,24 @@ def benchmark_rust_tokio_clones(results: TestResults):
     print("\n" + "="*70)
     print("  BENCHMARK 3: RUST TOKIO CLONE DEPLOYMENT")
     print("="*70)
-    
+
     if not RUST_OK:
         print("⚠️  SKIPPED: Rust bridge not available")
         return
-    
+
     # Benchmark clone deployment
     num_clones = 10000
     start = time.time()
-    
+
     result = rs.tokio_deploy_clones(
         "Test prompt for benchmark",
         num_clones,
         ["direct", "analytical"]
     )
-    
+
     duration_ms = (time.time() - start) * 1000
     throughput = num_clones / (duration_ms / 1000)
-    
+
     results.add_benchmark(
         "Rust Tokio Clones",
         throughput,
@@ -334,7 +337,7 @@ def benchmark_rust_tokio_clones(results: TestResults):
             "result": result
         }
     )
-    
+
     print(f"✅ Deployed {num_clones:,} clones in {duration_ms:.1f}ms")
     print(f"✅ Throughput: {throughput:,.0f} clones/sec")
 
@@ -344,24 +347,24 @@ def integrate_clones_with_events(results: TestResults):
     print("\n" + "="*70)
     print("  INTEGRATION 1: CLONES → EVENTS")
     print("="*70)
-    
+
     if not RUST_OK:
         print("⚠️  SKIPPED: Rust bridge not available")
         return
-    
+
     start = time.time()
-    
+
     try:
         # Deploy clones and have them emit events
         clone_events = []
-        
+
         def clone_event_listener(event: ResonanceEvent):
             if event.source.startswith("clone_"):
                 clone_events.append(event)
-        
+
         bus = get_bus()
         bus.subscribe(EventType.PATTERN_DETECTED, clone_event_listener)
-        
+
         # Simulate clone deployment with event emission
         for i in range(100):
             emit_event(
@@ -373,11 +376,11 @@ def integrate_clones_with_events(results: TestResults):
                 },
                 source=f"clone_{i}"
             )
-        
+
         time.sleep(0.1)
-        
+
         duration = (time.time() - start) * 1000
-        
+
         results.add_integration(
             "Clones → Events",
             True,
@@ -387,10 +390,10 @@ def integrate_clones_with_events(results: TestResults):
                 "duration_ms": duration
             }
         )
-        
+
         print(f"✅ SUCCESS: {len(clone_events)} events from 100 clones")
         print(f"✅ Duration: {duration:.2f}ms")
-        
+
     except Exception as e:
         duration = (time.time() - start) * 1000
         results.add_integration("Clones → Events", False, {"error": str(e), "duration_ms": duration})
@@ -402,23 +405,23 @@ def integrate_organs_with_clones(results: TestResults):
     print("\n" + "="*70)
     print("  INTEGRATION 2: ORGANS → CLONES")
     print("="*70)
-    
+
     start = time.time()
-    
+
     try:
         ns = get_nervous_system()
-        
+
         # Create mock organ that can deploy clones
         class CloneDeployingOrgan:
             def __init__(self):
                 self.clones_deployed = 0
                 self.findings = []
-            
+
             def on_threat(self, data):
                 """Deploy defensive clones when threat detected."""
                 threat_level = data.get("level", 0.5)
                 num_clones = int(threat_level * 1000)
-                
+
                 # Simulate clone deployment
                 for i in range(num_clones):
                     emit_event(
@@ -431,26 +434,26 @@ def integrate_organs_with_clones(results: TestResults):
                         source=f"immune_clone_{i}"
                     )
                     self.clones_deployed += 1
-                
+
                 self.findings.append(f"Deployed {num_clones} defensive clones")
-            
+
             def status(self):
                 return True
-        
+
         # Register organ
         immune_organ = CloneDeployingOrgan()
         ns.register_organ(OrganType.IMMUNE, immune_organ)
-        
+
         # Subscribe to threats
         ns.subscribe("threat_detected", immune_organ.on_threat)
-        
+
         # Trigger threat
         ns.dispatch_signal("threat_detected", {"level": 0.5})
-        
+
         time.sleep(0.1)
-        
+
         duration = (time.time() - start) * 1000
-        
+
         results.add_integration(
             "Organs → Clones",
             True,
@@ -461,11 +464,11 @@ def integrate_organs_with_clones(results: TestResults):
                 "duration_ms": duration
             }
         )
-        
+
         print(f"✅ SUCCESS: Immune organ deployed {immune_organ.clones_deployed} clones")
         print(f"✅ Findings: {immune_organ.findings}")
         print(f"✅ Duration: {duration:.2f}ms")
-        
+
     except Exception as e:
         duration = (time.time() - start) * 1000
         results.add_integration("Organs → Clones", False, {"error": str(e), "duration_ms": duration})
@@ -477,24 +480,24 @@ def integrate_bidirectional_feedback(results: TestResults):
     print("\n" + "="*70)
     print("  INTEGRATION 3: BIDIRECTIONAL FEEDBACK LOOP")
     print("="*70)
-    
+
     start = time.time()
-    
+
     try:
         ns = get_nervous_system()
         bus = get_bus()
-        
+
         # Create organ that responds to clone findings
         class AdaptiveOrgan:
             def __init__(self):
                 self.patterns_detected = []
                 self.adaptations = []
-            
+
             def on_pattern(self, event: ResonanceEvent):
                 """Respond to patterns detected by clones."""
                 if event.source.startswith("clone_"):
                     self.patterns_detected.append(event.data)
-                    
+
                     # Adapt based on pattern
                     if len(self.patterns_detected) > 5:
                         # Emit adaptation signal
@@ -504,15 +507,15 @@ def integrate_bidirectional_feedback(results: TestResults):
                             source="adaptive_organ"
                         )
                         self.adaptations.append("increased_sensitivity")
-            
+
             def status(self):
                 return True
-        
+
         # Register organ
         adaptive = AdaptiveOrgan()
         ns.register_organ(OrganType.GENETICS, adaptive)
         bus.subscribe(EventType.PATTERN_DETECTED, adaptive.on_pattern)
-        
+
         # Simulate clone findings
         for i in range(10):
             emit_event(
@@ -520,11 +523,11 @@ def integrate_bidirectional_feedback(results: TestResults):
                 {"pattern_id": i, "confidence": 0.8 + (i * 0.01)},
                 source=f"clone_{i}"
             )
-        
+
         time.sleep(0.2)
-        
+
         duration = (time.time() - start) * 1000
-        
+
         results.add_integration(
             "Bidirectional Feedback",
             True,
@@ -535,11 +538,11 @@ def integrate_bidirectional_feedback(results: TestResults):
                 "feedback_loops": 1
             }
         )
-        
+
         print(f"✅ SUCCESS: {len(adaptive.patterns_detected)} patterns → {len(adaptive.adaptations)} adaptations")
         print("✅ Feedback loop operational")
         print(f"✅ Duration: {duration:.2f}ms")
-        
+
     except Exception as e:
         duration = (time.time() - start) * 1000
         results.add_integration("Bidirectional Feedback", False, {"error": str(e), "duration_ms": duration})
@@ -551,9 +554,9 @@ def generate_comprehensive_report(results: TestResults):
     print("\n" + "="*70)
     print("  GENERATING COMPREHENSIVE REPORT")
     print("="*70)
-    
+
     summary = results.summary()
-    
+
     report = f"""# Unified Nervous System - Test & Integration Report
 **Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
 **Test Suite**: Comprehensive System Validation
@@ -571,7 +574,7 @@ Comprehensive testing and benchmarking of the unified nervous system with shadow
 ### Functional Tests
 
 """
-    
+
     for test in results.tests:
         status = "✅ PASS" if test["passed"] else "❌ FAIL"
         report += f"""
@@ -579,7 +582,7 @@ Comprehensive testing and benchmarking of the unified nervous system with shadow
 - **Duration**: {test['duration_ms']:.2f}ms
 - **Details**: {test['details']}
 """
-    
+
     report += """
 
 ## Benchmark Results
@@ -587,7 +590,7 @@ Comprehensive testing and benchmarking of the unified nervous system with shadow
 ### Performance Metrics
 
 """
-    
+
     for bench in results.benchmarks:
         report += f"""
 #### {bench['name']}
@@ -595,7 +598,7 @@ Comprehensive testing and benchmarking of the unified nervous system with shadow
 - **Latency**: {bench['latency_ms']:.4f}ms
 - **Details**: {bench['details']}
 """
-    
+
     report += f"""
 
 ### Summary Statistics
@@ -608,14 +611,14 @@ Comprehensive testing and benchmarking of the unified nervous system with shadow
 ### Shadow Clone ↔ Biological Organ Communication
 
 """
-    
+
     for integration in results.integrations:
         status = "✅ SUCCESS" if integration["success"] else "❌ FAILED"
         report += f"""
 #### {integration['name']} {status}
 - **Metrics**: {integration['metrics']}
 """
-    
+
     report += """
 
 ## Key Findings
@@ -794,13 +797,13 @@ The unified nervous system with shadow clone integration creates a **living, ada
 
 **Next Step**: Deploy this integrated system across all campaigns for autonomous, adaptive execution.
 """
-    
+
     # Save report
     report_path = REPORTS_DIR / "unified_system_test_integration_report.md"
     report_path.write_text(report)
-    
+
     print(f"✅ Report saved: {report_path}")
-    
+
     return report
 
 
@@ -809,36 +812,36 @@ def main():
     print("  UNIFIED NERVOUS SYSTEM - TEST & BENCHMARK SUITE")
     print("="*70)
     print()
-    
+
     results = TestResults()
-    
+
     # Run tests
     print("\n📋 RUNNING FUNCTIONAL TESTS")
     print("="*70)
     test_nervous_system_basic(results)
     test_gan_ying_events(results)
     test_event_signal_bridge(results)
-    
+
     # Run benchmarks
     print("\n⚡ RUNNING PERFORMANCE BENCHMARKS")
     print("="*70)
     benchmark_event_throughput(results)
     benchmark_signal_dispatch(results)
     benchmark_rust_tokio_clones(results)
-    
+
     # Run integrations
     print("\n🔗 RUNNING INTEGRATION TESTS")
     print("="*70)
     integrate_clones_with_events(results)
     integrate_organs_with_clones(results)
     integrate_bidirectional_feedback(results)
-    
+
     # Generate report
     generate_comprehensive_report(results)
-    
+
     # Print summary
     summary = results.summary()
-    
+
     print("\n" + "="*70)
     print("✅ TEST SUITE COMPLETE")
     print("="*70)
@@ -850,7 +853,7 @@ def main():
     print(f"  Avg Latency: {summary['benchmarks']['avg_latency_ms']:.4f}ms")
     print(f"  Integrations: {summary['integrations']['successful']}/{summary['integrations']['total']} successful")
     print()
-    
+
     return 0
 
 

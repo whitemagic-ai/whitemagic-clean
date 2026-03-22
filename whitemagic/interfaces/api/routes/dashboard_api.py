@@ -106,7 +106,9 @@ async def get_agentic_status() -> dict[str, Any]:
 async def get_session_info() -> dict[str, Any]:
     """Get current session information."""
     try:
-        from whitemagic.session import get_session_manifest  # type: ignore[import-not-found]
+        from whitemagic.session import (
+            get_session_manifest,  # type: ignore[import-not-found]
+        )
 
         manifest = get_session_manifest()
         if manifest:

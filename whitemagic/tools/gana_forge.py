@@ -224,7 +224,7 @@ def _inject_tool(
         DISPATCH_TABLE[name] = handler
 
         # 2. Inject into PRAT TOOL_TO_GANA mapping
-        from whitemagic.tools.prat_router import TOOL_TO_GANA, GANA_TO_TOOLS
+        from whitemagic.tools.prat_router import GANA_TO_TOOLS, TOOL_TO_GANA
         if name not in TOOL_TO_GANA:
             TOOL_TO_GANA[name] = gana
         if gana in GANA_TO_TOOLS:

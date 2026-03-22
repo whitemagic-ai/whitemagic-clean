@@ -1,16 +1,17 @@
 
-import unittest
-import sys
 import os
 import sqlite3
+import sys
+import unittest
 
 # Path setup
 sys.path.append(os.path.join(os.getcwd(), "staging/core_system"))
 
 from whitemagic.gardens.air.agentic.terminal_scratchpad import TerminalScratchpad
 
+
 class TestTerminalScratchpad(unittest.TestCase):
-    
+
     def setUp(self):
         # Use in-memory DB for testing
         self.test_db = ":memory:"
@@ -41,11 +42,11 @@ class TestTerminalScratchpad(unittest.TestCase):
         # For this test, we accept that the real class might try to open a file path.
         # So we better mock the db connection or pass a real file path.
         # Let's use a temp file for safety.
-        
+
         temp_db = "test_scratchpad.db"
         if os.path.exists(temp_db):
             os.remove(temp_db)
-            
+
         # Init temp db locally
         conn = sqlite3.connect(temp_db)
         cursor = conn.cursor()
@@ -64,28 +65,28 @@ class TestTerminalScratchpad(unittest.TestCase):
         """)
         conn.commit()
         conn.close()
-        
+
         try:
             with TerminalScratchpad("Test Task", db_path=temp_db) as pad:
                 pad.think("Thinking...")
                 pad.decide("Deciding...")
                 pad.question("Questioning?")
-                
+
                 self.assertEqual(len(pad.thoughts), 3)
                 self.assertEqual(pad.thoughts[0].type, "think")
                 self.assertEqual(pad.thoughts[1].type, "decide")
-                
+
             # Verify Persistence
             conn = sqlite3.connect(temp_db)
             cursor = conn.cursor()
             cursor.execute("SELECT content, memory_type FROM memories")
             result = cursor.fetchone()
-            
+
             self.assertIsNotNone(result)
             self.assertEqual(result[1], "scratchpad_session")
             self.assertIn("Thinking...", result[0])
             self.assertIn("Questioning?", result[0])
-            
+
         finally:
             if os.path.exists(temp_db):
                 os.remove(temp_db)
@@ -93,7 +94,7 @@ class TestTerminalScratchpad(unittest.TestCase):
     def test_error_handling(self):
         """Test that memory is saved even if crash occurs"""
         temp_db = "test_scratchpad_crash.db"
-        # Init DB... (omitted for brevity, relying on auto-create if handled, 
+        # Init DB... (omitted for brevity, relying on auto-create if handled,
         # but the class relies on existing table usually. Let's create it.)
         conn = sqlite3.connect(temp_db)
         cursor = conn.cursor()
@@ -106,7 +107,7 @@ class TestTerminalScratchpad(unittest.TestCase):
                 with TerminalScratchpad("Crash Task", db_path=temp_db) as pad:
                     pad.think("About to crash")
                     raise ValueError("Intentional Crash")
-            
+
             # Check if saved despite crash
             conn = sqlite3.connect(temp_db)
             cursor = conn.cursor()
@@ -114,7 +115,7 @@ class TestTerminalScratchpad(unittest.TestCase):
             result = cursor.fetchone()
             self.assertIsNotNone(result)
             self.assertIn("About to crash", result[0])
-            
+
         finally:
             if os.path.exists(temp_db):
                 os.remove(temp_db)

@@ -15,18 +15,18 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timedelta, timezone
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from threading import Lock
 from typing import Any
 
 from whitemagic.config.paths import WM_ROOT
 from whitemagic.utils.core import parse_datetime
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 from whitemagic.utils.fileio import atomic_write, file_lock
 
-_timeline_instance: "ChronologicalTimeline" | None = None
+_timeline_instance: ChronologicalTimeline | None = None
 _timeline_lock = Lock()
 
 
@@ -44,7 +44,7 @@ class TimelineEvent:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'TimelineEvent':
+    def from_dict(cls, data: dict) -> TimelineEvent:
         return cls(**data)
 
 
@@ -83,7 +83,7 @@ class ChronologicalTimeline:
         """Save timeline to disk."""
         data = {
             "version": "1.0",
-            "updated": datetime.now(timezone.utc).isoformat(),
+            "updated": datetime.now(UTC).isoformat(),
             "counter": self._event_counter,
             "total_events": len(self._events),
             "events": [e.to_dict() for e in self._events],
@@ -113,7 +113,7 @@ class ChronologicalTimeline:
         self._event_counter += 1
         event = TimelineEvent(
             id=f"evt_{self._event_counter}",
-            timestamp=timestamp or datetime.now(timezone.utc).isoformat(),
+            timestamp=timestamp or datetime.now(UTC).isoformat(),
             event_type=event_type,
             data=data or {},
             tags=tags or [],
@@ -138,7 +138,7 @@ class ChronologicalTimeline:
 
         """
         start = parse_datetime(start_date.replace("Z", "+00:00"))
-        end = parse_datetime(end_date.replace("Z", "+00:00")) if end_date else datetime.now(timezone.utc)
+        end = parse_datetime(end_date.replace("Z", "+00:00")) if end_date else datetime.now(UTC)
 
         results = []
         for event in self._events:
@@ -161,12 +161,12 @@ class ChronologicalTimeline:
 
     def get_today(self) -> list[TimelineEvent]:
         """Get today's events."""
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        today = datetime.now(UTC).strftime("%Y-%m-%d")
         return self.get_range(today)
 
     def get_recent(self, hours: int = 24) -> list[TimelineEvent]:
         """Get events from the last N hours."""
-        start = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+        start = (datetime.now(UTC) - timedelta(hours=hours)).isoformat()
         return self.get_range(start)
 
     def group_by_day(

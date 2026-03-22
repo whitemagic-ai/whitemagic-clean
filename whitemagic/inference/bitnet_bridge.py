@@ -16,12 +16,13 @@ Usage:
 import logging
 import os
 import subprocess
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 import time
 import uuid
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ def is_available() -> bool:
 
 
 def infer(prompt: str, n_predict: int = 128, temp: float = 0.8,
-          mode: str = "auto") -> Dict[str, Any]:
+          mode: str = "auto") -> dict[str, Any]:
     """
     Run BitNet inference.
 
@@ -85,7 +86,7 @@ def _redis_available() -> bool:
         return False
 
 
-def _infer_redis(prompt: str, n_predict: int, temp: float) -> Dict[str, Any]:
+def _infer_redis(prompt: str, n_predict: int, temp: float) -> dict[str, Any]:
     """Send inference request via Redis pub/sub (Gan Ying bus)."""
     import redis
 
@@ -131,7 +132,7 @@ def _infer_redis(prompt: str, n_predict: int, temp: float) -> Dict[str, Any]:
     return {"status": "error", "message": f"Timeout after {TIMEOUT}s waiting for BitNet response"}
 
 
-def _infer_direct(prompt: str, n_predict: int, temp: float) -> Dict[str, Any]:
+def _infer_direct(prompt: str, n_predict: int, temp: float) -> dict[str, Any]:
     """Run inference directly via llama-cli subprocess."""
     executable = LLAMA_CLI
     if not Path(executable).exists():
@@ -170,10 +171,14 @@ def _infer_direct(prompt: str, n_predict: int, temp: float) -> Dict[str, Any]:
 
 # --- Gan Ying event emission ---
 
-def _emit_inference_event(result: Dict[str, Any], prompt: str) -> Any:
+def _emit_inference_event(result: dict[str, Any], prompt: str) -> Any:
     """Emit inference result to Gan Ying bus."""
     try:
-        from whitemagic.core.resonance.gan_ying_enhanced import get_bus, ResonanceEvent, EventType
+        from whitemagic.core.resonance.gan_ying_enhanced import (
+            EventType,
+            ResonanceEvent,
+            get_bus,
+        )
         bus = get_bus()
         inference_event = getattr(EventType, "INFERENCE_COMPLETE", EventType.PATTERN_DETECTED)
         bus.emit(ResonanceEvent(

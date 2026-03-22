@@ -1,5 +1,5 @@
 
-with open('whitemagic/core/memory/embeddings.py', 'r') as f:
+with open('whitemagic/core/memory/embeddings.py') as f:
     content = f.read()
 
 # Replace whitemagic_rs import and function call

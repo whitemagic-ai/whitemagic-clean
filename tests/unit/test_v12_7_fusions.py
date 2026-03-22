@@ -16,7 +16,6 @@ Tests:
 
 import unittest
 
-
 # =========================================================================
 # 1. Zig SIMD Cosine Similarity
 # =========================================================================
@@ -78,7 +77,7 @@ class TestHaskellDharmaPrimary(unittest.TestCase):
 
     def test_evaluate_destructive_op(self):
         """Destructive operations should be blocked/warned regardless of backend."""
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
         engine = DharmaRulesEngine()
         decision = engine.evaluate({"tool": "delete_memory", "description": "remove old data"})
         self.assertIn(decision.action, [DharmaAction.WARN, DharmaAction.BLOCK])
@@ -86,14 +85,14 @@ class TestHaskellDharmaPrimary(unittest.TestCase):
 
     def test_evaluate_safe_op(self):
         """Safe operations should get LOG action."""
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
         engine = DharmaRulesEngine()
         decision = engine.evaluate({"tool": "search_memories", "description": "find docs"})
         self.assertEqual(decision.action, DharmaAction.LOG)
 
     def test_evaluate_external_op(self):
         """External network operations should be flagged."""
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
         engine = DharmaRulesEngine()
         decision = engine.evaluate({
             "tool": "upload", "description": "send to external server"
@@ -102,7 +101,7 @@ class TestHaskellDharmaPrimary(unittest.TestCase):
 
     def test_python_fallback_works(self):
         """Python evaluation should work when Haskell is unavailable."""
-        from whitemagic.dharma.rules import DharmaRulesEngine, DharmaAction
+        from whitemagic.dharma.rules import DharmaAction, DharmaRulesEngine
         engine = DharmaRulesEngine()
         decision = engine._python_evaluate(
             {"tool": "delete_all", "description": "purge everything"}, "default"

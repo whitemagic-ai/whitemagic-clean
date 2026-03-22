@@ -6,14 +6,15 @@ Exposes the full Sacred Cycle (28 Ganas + Aux Tools) via FastMCP.
 Dynamically loads tools from the hydrated `mcp_api_bridge.py`.
 """
 
-import os
-import sys
 import inspect
 import logging
+import os
 import re
+import sys
+from collections.abc import Callable
 from importlib.util import find_spec
 from pathlib import Path
-from typing import Callable, Any
+from typing import Any
 
 from whitemagic.runtime_status import get_runtime_status
 
@@ -138,11 +139,17 @@ _LITE_TOOLS = {
 
 def _register_prat_tools(mcp_client: str) -> int:
     """Register the 28 PRAT Gana meta-tools for the stable MCP contract."""
-    from whitemagic.tools.schema_adapter import adapt_schema
-    from whitemagic.tools.tool_surface import GANA_NAMES, GANA_SHORT_DESC, get_callable_tool_definitions
     from whitemagic.tools.prat_router import (
-        build_prat_description, build_prat_schema, route_prat_call,
+        build_prat_description,
+        build_prat_schema,
         get_tools_for_gana,
+        route_prat_call,
+    )
+    from whitemagic.tools.schema_adapter import adapt_schema
+    from whitemagic.tools.tool_surface import (
+        GANA_NAMES,
+        GANA_SHORT_DESC,
+        get_callable_tool_definitions,
     )
 
     callable_tool_defs = get_callable_tool_definitions()
@@ -215,9 +222,9 @@ def register_tools() -> None:
     """Register all tools from the canonical registry.py with dynamic signatures."""
     try:
         from whitemagic.tools.registry import TOOL_REGISTRY
+        from whitemagic.tools.schema_adapter import adapt_schema
         from whitemagic.tools.tool_surface import get_callable_tool_definitions
         from whitemagic.tools.unified_api import call_tool
-        from whitemagic.tools.schema_adapter import adapt_schema
     except ImportError as e:
         logger.error(f"Failed to import registry or unified_api: {e}")
         return

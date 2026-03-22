@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -78,7 +78,7 @@ class AutomationOrchestra:
         logger.info("=" * 60)
 
         health_report: dict[str, Any] = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "overall_health": "unknown",
             "systems": {},
             "coordinated_actions": [],
@@ -230,7 +230,7 @@ class AutomationOrchestra:
         logger.info("=" * 60)
 
         results: dict[str, Any] = {
-            "started_at": datetime.now(timezone.utc).isoformat(),
+            "started_at": datetime.now(UTC).isoformat(),
             "dry_run": dry_run,
             "steps": [],
         }
@@ -274,7 +274,7 @@ class AutomationOrchestra:
         final_health = self.threat_detector.generate_health_report()
         results["final_health"] = final_health
 
-        results["completed_at"] = datetime.now(timezone.utc).isoformat()
+        results["completed_at"] = datetime.now(UTC).isoformat()
 
         logger.info("\n" + "=" * 60)
         logger.info("✅ Maintenance cycle complete")

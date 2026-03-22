@@ -1,5 +1,5 @@
 
-with open('whitemagic/core/ipc_bridge.py', 'r') as f:
+with open('whitemagic/core/ipc_bridge.py') as f:
     content = f.read()
 
 # Update the python side to match the new Rust API

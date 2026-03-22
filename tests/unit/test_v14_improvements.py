@@ -161,9 +161,9 @@ class TestBriefingMemory:
 
     def test_persist_briefing_as_memory(self):
         from whitemagic.core.intelligence.insight_pipeline import (
+            BriefingItem,
             InsightBriefing,
             InsightPipeline,
-            BriefingItem,
         )
 
         pipeline = InsightPipeline(persist_briefings=True)

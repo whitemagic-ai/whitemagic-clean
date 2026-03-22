@@ -264,36 +264,36 @@ class UnifiedNervousSystem(BaseEngine, Serializable, MetricCollector):
 def main():
     print("🧠 Creating biological subsystem controllers...")
     print()
-    
+
     bio_dir = WM2_ROOT / "biological"
     bio_dir.mkdir(parents=True, exist_ok=True)
-    
+
     created_count = 0
     total_files = 0
-    
+
     for subsystem in subsystems:
         controller_path = bio_dir / f"{subsystem['name']}_{subsystem['controller'].lower()}.py"
         controller_code = create_biological_controller(subsystem)
         controller_path.write_text(controller_code)
-        
+
         print(f"   ✅ {subsystem['controller']}")
         print(f"      Subsystem: {subsystem['name']}")
         print(f"      Files: {subsystem['files']}")
         print(f"      Description: {subsystem['description']}")
         print()
-        
+
         created_count += 1
         total_files += subsystem['files']
-    
+
     # Create unified nervous system
     nervous_system_path = bio_dir / "unified_nervous_system.py"
     nervous_system_code = create_unified_nervous_system()
     nervous_system_path.write_text(nervous_system_code)
-    
+
     print("   ✅ UnifiedNervousSystem")
     print("      Wires all 7 subsystems")
     print()
-    
+
     print("=" * 80)
     print("PHASE 3 COMPLETE")
     print("=" * 80)

@@ -16,10 +16,10 @@ from __future__ import annotations
 import logging
 import os
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
-from typing import Optional
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ def _cache_path() -> Path:
     return Path(state) / ".update_check"
 
 
-def _read_cache() -> Optional[dict]:
+def _read_cache() -> dict | None:
     """Read cached check result if still valid."""
     try:
         p = _cache_path()
@@ -61,10 +61,10 @@ def _write_cache(latest: str, current: str) -> None:
         pass
 
 
-def _fetch_latest_version() -> Optional[str]:
+def _fetch_latest_version() -> str | None:
     """Fetch latest version from PyPI (blocking, with short timeout)."""
     try:
-        from urllib.request import urlopen, Request
+        from urllib.request import Request, urlopen
 
         req = Request(_PYPI_URL, headers={"Accept": "application/json"})
         with urlopen(req, timeout=_TIMEOUT_SECONDS) as resp:
@@ -82,7 +82,7 @@ def _parse_version(v: str) -> tuple:
         return (0, 0, 0)
 
 
-def check_for_update() -> Optional[str]:
+def check_for_update() -> str | None:
     """Check if a newer WhiteMagic version is available on PyPI.
 
     Returns a human-readable message if an update is available, else None.

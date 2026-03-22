@@ -12,6 +12,7 @@ classes, and docstrings (summarized).
 import ast
 from pathlib import Path
 
+
 class Skeletonizer:
     """AST-based code skeletonizer for Python."""
 

@@ -46,7 +46,9 @@ def _get_sbert() -> Any:
                 name = os.environ.get("WM_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
                 try:
                     if _sbert_class is None:
-                        from sentence_transformers import SentenceTransformer as _SentenceTransformer
+                        from sentence_transformers import (
+                            SentenceTransformer as _SentenceTransformer,
+                        )
                         _sbert_class = _SentenceTransformer
                     kwargs: dict[str, Any] = {}
                     if not _allow_remote_model_download():
@@ -152,16 +154,19 @@ class VectorSearch:
 
             # 1. Try Koka Shared Memory Bridge (Native C AVX2) - Fastest!
             try:
+                from whitemagic.core.acceleration.koka_native_bridge import (
+                    get_koka_bridge,
+                )
                 from whitemagic.core.memory.shm_manager import get_shm_manager
-                from whitemagic.core.acceleration.koka_native_bridge import get_koka_bridge
 
                 shm = get_shm_manager()
                 bridge = get_koka_bridge()
 
                 # Ensure DB is loaded into SHM if not already
                 if shm.get_count() == 0:
-                    from whitemagic.core.memory.db_manager import get_db_pool
                     import os
+
+                    from whitemagic.core.memory.db_manager import get_db_pool
                     default_db = os.path.expanduser("~/.whitemagic/memory/whitemagic.db")
                     pool = get_db_pool(default_db)
                     shm.sync_from_db(pool)

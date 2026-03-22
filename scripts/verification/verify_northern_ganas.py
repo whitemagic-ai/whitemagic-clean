@@ -1,16 +1,22 @@
 
-import sys
-import os
 import asyncio
 import json
+import os
+import sys
 
 # Add module to path
 sys.path.insert(0, os.path.abspath('.'))
 
 from whitemagic.mcp_api_bridge import (
-    gana_dipper, gana_ox, gana_girl, gana_void,
-    gana_roof, gana_encampment, gana_wall
+    gana_dipper,
+    gana_encampment,
+    gana_girl,
+    gana_ox,
+    gana_roof,
+    gana_void,
+    gana_wall,
 )
+
 
 async def run_test(name, func, **kwargs):
     print(f"\nTesting {name}...")

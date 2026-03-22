@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Test H003 Rust ONNX Embedder"""
 import sys
+
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
 import subprocess

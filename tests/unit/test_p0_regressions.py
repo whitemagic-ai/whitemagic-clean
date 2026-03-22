@@ -9,6 +9,7 @@ import whitemagic.cli.cli_app as cli_app
 
 try:
     from starlette.routing import Match
+
     from whitemagic.interfaces.api.routes import tools_gateway
     _HAS_API = True
 except ImportError:

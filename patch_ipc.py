@@ -1,5 +1,5 @@
 
-with open('whitemagic-rust/src/ipc_bridge.rs', 'r') as f:
+with open('whitemagic-rust/src/ipc_bridge.rs') as f:
     content = f.read()
 
 # Make sure wrap_pyfunction is imported or the macro works

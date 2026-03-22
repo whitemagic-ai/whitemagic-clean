@@ -1,8 +1,9 @@
-import posix_ipc
+import logging
 import mmap
 import struct
-import logging
 import threading
+
+import posix_ipc
 
 logger = logging.getLogger(__name__)
 

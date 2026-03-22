@@ -26,7 +26,7 @@ import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any
 
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
@@ -51,18 +51,18 @@ class LanguageArmy:
     language: str
     clone_count: int
     specialization: str
-    target_patterns: List[str]
-    candidates: List[OptimizationCandidate] = field(default_factory=list)
+    target_patterns: list[str]
+    candidates: list[OptimizationCandidate] = field(default_factory=list)
 
 
 class PolyglotOptimizationCampaign:
     """Orchestrates polyglot optimization campaign."""
-    
+
     def __init__(self):
         self.armies = self._create_armies()
         self.results = {}
-        
-    def _create_armies(self) -> List[LanguageArmy]:
+
+    def _create_armies(self) -> list[LanguageArmy]:
         """Create specialized shadow clone armies for each language."""
         return [
             LanguageArmy(
@@ -149,19 +149,19 @@ class PolyglotOptimizationCampaign:
                 ],
             ),
         ]
-    
-    def analyze_codebase_structure(self) -> Dict[str, Any]:
+
+    def analyze_codebase_structure(self) -> dict[str, Any]:
         """Analyze codebase to understand current polyglot status."""
         print("\n" + "="*80)
         print("CODEBASE STRUCTURE ANALYSIS")
         print("="*80 + "\n")
-        
+
         structure = {}
-        
+
         # Count files by language
         for army in self.armies:
             lang = army.language.lower()
-            
+
             # Map language to file extensions
             ext_map = {
                 "rust": "rs",
@@ -173,9 +173,9 @@ class PolyglotOptimizationCampaign:
                 "go": "go",
                 "typescript": "ts",
             }
-            
+
             ext = ext_map.get(lang, lang)
-            
+
             # Count files
             result = subprocess.run(
                 f"find . -name '*.{ext}' -type f | wc -l",
@@ -184,9 +184,9 @@ class PolyglotOptimizationCampaign:
                 text=True,
                 cwd="/home/lucas/Desktop/whitemagicdev",
             )
-            
+
             file_count = int(result.stdout.strip()) if result.returncode == 0 else 0
-            
+
             # Count lines
             result = subprocess.run(
                 f"find . -name '*.{ext}' -type f -exec wc -l {{}} + 2>/dev/null | tail -1 | awk '{{print $1}}'",
@@ -195,28 +195,28 @@ class PolyglotOptimizationCampaign:
                 text=True,
                 cwd="/home/lucas/Desktop/whitemagicdev",
             )
-            
+
             line_count = int(result.stdout.strip()) if result.returncode == 0 and result.stdout.strip() else 0
-            
+
             structure[army.language] = {
                 "files": file_count,
                 "lines": line_count,
                 "status": "active" if file_count > 0 else "not_used",
             }
-            
+
             status_icon = "✅" if file_count > 0 else "❌"
             print(f"{status_icon} {army.language:12s}: {file_count:4d} files, {line_count:7d} lines")
-        
+
         return structure
-    
-    def find_hot_paths_python(self) -> List[Dict[str, Any]]:
+
+    def find_hot_paths_python(self) -> list[dict[str, Any]]:
         """Find hot paths in Python code that are candidates for optimization."""
         print("\n" + "="*80)
         print("HOT PATH ANALYSIS - Python Code")
         print("="*80 + "\n")
-        
+
         hot_paths = []
-        
+
         # Patterns that indicate hot paths
         patterns = [
             ("for.*in.*range", "Loop over range", 0.7),
@@ -232,9 +232,9 @@ class PolyglotOptimizationCampaign:
             ("def.*search", "Search function", 0.8),
             ("def.*infer", "Inference function", 0.9),
         ]
-        
+
         print("Searching for hot path patterns...")
-        
+
         for pattern, description, score in patterns:
             result = subprocess.run(
                 f"grep -r --include='*.py' -E '{pattern}' whitemagic/ 2>/dev/null | wc -l",
@@ -243,9 +243,9 @@ class PolyglotOptimizationCampaign:
                 text=True,
                 cwd="/home/lucas/Desktop/whitemagicdev",
             )
-            
+
             count = int(result.stdout.strip()) if result.returncode == 0 else 0
-            
+
             if count > 0:
                 hot_paths.append({
                     "pattern": pattern,
@@ -254,17 +254,17 @@ class PolyglotOptimizationCampaign:
                     "hot_path_score": score,
                 })
                 print(f"  Found {count:4d} × {description} (score: {score:.1f})")
-        
+
         return hot_paths
-    
-    def deploy_rust_army(self) -> List[OptimizationCandidate]:
+
+    def deploy_rust_army(self) -> list[OptimizationCandidate]:
         """Deploy Rust shadow clone army to find optimization candidates."""
         print("\n" + "="*80)
         print("RUST ARMY DEPLOYMENT (50K clones)")
         print("="*80 + "\n")
-        
+
         candidates = []
-        
+
         # Check existing Rust infrastructure
         rust_files = subprocess.run(
             "find whitemagic-rust/src -name '*.rs' -type f 2>/dev/null",
@@ -273,17 +273,17 @@ class PolyglotOptimizationCampaign:
             text=True,
             cwd="/home/lucas/Desktop/whitemagicdev",
         )
-        
+
         rust_file_list = rust_files.stdout.strip().split('\n') if rust_files.stdout.strip() else []
-        
+
         print(f"Existing Rust modules: {len(rust_file_list)}")
         for f in rust_file_list[:10]:
             print(f"  - {f}")
         if len(rust_file_list) > 10:
             print(f"  ... and {len(rust_file_list) - 10} more")
-        
+
         print("\nAnalyzing optimization opportunities...")
-        
+
         # High-priority candidates based on hot path analysis
         candidates.extend([
             OptimizationCandidate(
@@ -353,19 +353,19 @@ class PolyglotOptimizationCampaign:
                 rationale="Edge inference with 80 rules. Rust with regex crate and SIMD string matching could be 100-1000x faster. Already have partial implementation.",
             ),
         ])
-        
+
         print(f"\nIdentified {len(candidates)} high-priority Rust optimization candidates")
-        
+
         return candidates
-    
-    def deploy_mojo_army(self) -> List[OptimizationCandidate]:
+
+    def deploy_mojo_army(self) -> list[OptimizationCandidate]:
         """Deploy Mojo shadow clone army for ML/inference optimization."""
         print("\n" + "="*80)
         print("MOJO ARMY DEPLOYMENT (30K clones)")
         print("="*80 + "\n")
-        
+
         candidates = []
-        
+
         # Check existing Mojo infrastructure
         mojo_files = subprocess.run(
             "find whitemagic-mojo/src -name '*.mojo' -type f 2>/dev/null",
@@ -374,15 +374,15 @@ class PolyglotOptimizationCampaign:
             text=True,
             cwd="/home/lucas/Desktop/whitemagicdev",
         )
-        
+
         mojo_file_list = mojo_files.stdout.strip().split('\n') if mojo_files.stdout.strip() else []
-        
+
         print(f"Existing Mojo modules: {len(mojo_file_list)}")
         for f in mojo_file_list[:10]:
             print(f"  - {f}")
-        
+
         print("\nMojo specialization: Python-compatible 10-100x speedup for ML/inference")
-        
+
         candidates.extend([
             OptimizationCandidate(
                 file_path="whitemagic/inference/local_embedder.py",
@@ -418,19 +418,19 @@ class PolyglotOptimizationCampaign:
                 rationale="Mojo can implement BitNet 1.58-bit inference natively. Eliminate external process overhead and enable true on-device inference.",
             ),
         ])
-        
+
         print(f"\nIdentified {len(candidates)} high-priority Mojo optimization candidates")
-        
+
         return candidates
-    
-    def deploy_zig_army(self) -> List[OptimizationCandidate]:
+
+    def deploy_zig_army(self) -> list[OptimizationCandidate]:
         """Deploy Zig shadow clone army for low-level optimization."""
         print("\n" + "="*80)
         print("ZIG ARMY DEPLOYMENT (20K clones)")
         print("="*80 + "\n")
-        
+
         candidates = []
-        
+
         # Check existing Zig infrastructure
         zig_files = subprocess.run(
             "find whitemagic-zig/src -name '*.zig' -type f 2>/dev/null",
@@ -439,15 +439,15 @@ class PolyglotOptimizationCampaign:
             text=True,
             cwd="/home/lucas/Desktop/whitemagicdev",
         )
-        
+
         zig_file_list = zig_files.stdout.strip().split('\n') if zig_files.stdout.strip() else []
-        
+
         print(f"Existing Zig modules: {len(zig_file_list)}")
         for f in zig_file_list[:10]:
             print(f"  - {f}")
-        
+
         print("\nZig specialization: Compile-time optimization, memory safety, C interop")
-        
+
         candidates.extend([
             OptimizationCandidate(
                 file_path="whitemagic/utils/fileio.py",
@@ -472,19 +472,19 @@ class PolyglotOptimizationCampaign:
                 rationale="Zig can wrap SQLite C API directly with zero overhead. Compile-time query validation and connection pooling.",
             ),
         ])
-        
+
         print(f"\nIdentified {len(candidates)} high-priority Zig optimization candidates")
-        
+
         return candidates
-    
-    def deploy_specialized_armies(self) -> Dict[str, List[OptimizationCandidate]]:
+
+    def deploy_specialized_armies(self) -> dict[str, list[OptimizationCandidate]]:
         """Deploy Julia, Haskell, Elixir, Go, TypeScript armies."""
         print("\n" + "="*80)
         print("SPECIALIZED ARMIES DEPLOYMENT")
         print("="*80 + "\n")
-        
+
         results = {}
-        
+
         # Julia - Scientific computing
         print("Julia Army (15K clones) - Scientific computing, graph algorithms")
         julia_candidates = [
@@ -502,7 +502,7 @@ class PolyglotOptimizationCampaign:
         ]
         results["Julia"] = julia_candidates
         print(f"  Identified {len(julia_candidates)} candidates\n")
-        
+
         # Haskell - Pure functions
         print("Haskell Army (10K clones) - Pure transformations, type safety")
         haskell_candidates = [
@@ -520,7 +520,7 @@ class PolyglotOptimizationCampaign:
         ]
         results["Haskell"] = haskell_candidates
         print(f"  Identified {len(haskell_candidates)} candidates\n")
-        
+
         # Elixir - Concurrent systems
         print("Elixir Army (10K clones) - Actor model, fault tolerance")
         elixir_candidates = [
@@ -538,7 +538,7 @@ class PolyglotOptimizationCampaign:
         ]
         results["Elixir"] = elixir_candidates
         print(f"  Identified {len(elixir_candidates)} candidates\n")
-        
+
         # Go - Networking
         print("Go Army (8K clones) - Goroutines, simple concurrency")
         go_candidates = [
@@ -556,7 +556,7 @@ class PolyglotOptimizationCampaign:
         ]
         results["Go"] = go_candidates
         print(f"  Identified {len(go_candidates)} candidates\n")
-        
+
         # TypeScript - Frontend
         print("TypeScript Army (7K clones) - Type safety, async patterns")
         ts_candidates = [
@@ -574,79 +574,79 @@ class PolyglotOptimizationCampaign:
         ]
         results["TypeScript"] = ts_candidates
         print(f"  Identified {len(ts_candidates)} candidates\n")
-        
+
         return results
-    
-    def synthesize_strategy(self, all_candidates: Dict[str, List[OptimizationCandidate]]) -> Dict[str, Any]:
+
+    def synthesize_strategy(self, all_candidates: dict[str, list[OptimizationCandidate]]) -> dict[str, Any]:
         """Synthesize findings into actionable optimization roadmap."""
         print("\n" + "="*80)
         print("STRATEGY SYNTHESIS")
         print("="*80 + "\n")
-        
+
         # Flatten and sort by priority
         flat_candidates = []
         for lang, candidates in all_candidates.items():
             flat_candidates.extend(candidates)
-        
+
         flat_candidates.sort(key=lambda x: (x.priority, x.hot_path_score), reverse=True)
-        
+
         # Group by priority
         by_priority = {1: [], 2: [], 3: [], 4: [], 5: []}
         for candidate in flat_candidates:
             by_priority[candidate.priority].append(candidate)
-        
+
         print("Optimization Roadmap by Priority:\n")
-        
+
         for priority in [5, 4, 3, 2, 1]:
             candidates = by_priority[priority]
             if not candidates:
                 continue
-            
+
             print(f"Priority {priority} ({'CRITICAL' if priority == 5 else 'HIGH' if priority == 4 else 'MEDIUM' if priority == 3 else 'LOW'}):")
             for candidate in candidates:
                 print(f"  [{candidate.language:10s}] {candidate.function_name:40s} | {candidate.expected_speedup:15s} | {candidate.hot_path_score:.2f}")
             print()
-        
+
         # Calculate potential impact
         total_speedup_estimate = sum(
             float(c.expected_speedup.split('-')[1].replace('x', '')) * c.hot_path_score
             for c in flat_candidates
             if 'x' in c.expected_speedup and c.priority >= 4
         )
-        
+
         print(f"Estimated Total Performance Impact: {total_speedup_estimate:.0f}x weighted speedup")
         print(f"Total Optimization Candidates: {len(flat_candidates)}")
         print(f"Priority 5 (Critical): {len(by_priority[5])}")
         print(f"Priority 4 (High): {len(by_priority[4])}")
-        
+
         return {
             "total_candidates": len(flat_candidates),
             "by_priority": {k: len(v) for k, v in by_priority.items()},
             "estimated_impact": total_speedup_estimate,
             "top_10": flat_candidates[:10],
         }
-    
+
     async def execute_campaign(self):
         """Execute the full polyglot optimization campaign."""
         print("\n" + "="*80)
         print("POLYGLOT OPTIMIZATION CAMPAIGN")
         print("Operation: PERFORMANCE SUPREMACY")
         print("="*80)
-        
+
         start_time = time.time()
-        
+
         # Phase 1: Analyze codebase
         structure = self.analyze_codebase_structure()
-        
+
         # Phase 2: Find hot paths
         hot_paths = self.find_hot_paths_python()
-        
+
         # Phase 3: Deploy language-specific armies
         rust_candidates = self.deploy_rust_army()
         mojo_candidates = self.deploy_mojo_army()
         zig_candidates = self.deploy_zig_army()
         specialized_candidates = self.deploy_specialized_armies()
-        
+
         # Combine all candidates
         all_candidates = {
             "Rust": rust_candidates,
@@ -654,12 +654,12 @@ class PolyglotOptimizationCampaign:
             "Zig": zig_candidates,
             **specialized_candidates,
         }
-        
+
         # Phase 4: Synthesize strategy
         strategy = self.synthesize_strategy(all_candidates)
-        
+
         elapsed = time.time() - start_time
-        
+
         # Save results
         output = {
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -683,16 +683,16 @@ class PolyglotOptimizationCampaign:
             },
             "strategy": strategy,
         }
-        
+
         output_path = Path("reports/polyglot_optimization_campaign.json")
         output_path.write_text(json.dumps(output, indent=2))
-        
+
         print(f"\n{'='*80}")
         print("CAMPAIGN COMPLETE")
         print(f"{'='*80}")
         print(f"\nDuration: {elapsed:.1f}s")
         print(f"Results saved to: {output_path}")
-        
+
         return output
 
 
@@ -700,12 +700,12 @@ async def main():
     """Run the polyglot optimization campaign."""
     campaign = PolyglotOptimizationCampaign()
     results = await campaign.execute_campaign()
-    
+
     # Generate markdown report
     generate_markdown_report(results)
 
 
-def generate_markdown_report(results: Dict[str, Any]):
+def generate_markdown_report(results: dict[str, Any]):
     """Generate markdown report from campaign results."""
     lines = [
         "# Polyglot Optimization Campaign Report",
@@ -732,11 +732,11 @@ def generate_markdown_report(results: Dict[str, Any]):
         "| Language | Files | Lines | Status |",
         "|----------|-------|-------|--------|",
     ]
-    
+
     for lang, data in results['codebase_structure'].items():
         status = "✅ Active" if data['status'] == 'active' else "❌ Not Used"
         lines.append(f"| {lang} | {data['files']} | {data['lines']:,} | {status} |")
-    
+
     lines.extend([
         "",
         "---",
@@ -744,7 +744,7 @@ def generate_markdown_report(results: Dict[str, Any]):
         "## Top 10 Optimization Priorities",
         "",
     ])
-    
+
     for i, candidate in enumerate(results['strategy']['top_10'], 1):
         lines.extend([
             f"### {i}. {candidate['function_name']} ({candidate['language']})",
@@ -758,7 +758,7 @@ def generate_markdown_report(results: Dict[str, Any]):
             f"**Rationale**: {candidate['rationale']}",
             "",
         ])
-    
+
     lines.extend([
         "---",
         "",
@@ -773,7 +773,7 @@ def generate_markdown_report(results: Dict[str, Any]):
         "",
         "*Generated by WhiteMagic Polyglot Optimization Campaign*",
     ])
-    
+
     output_path = Path("reports/polyglot_optimization_campaign.md")
     output_path.write_text("\n".join(lines))
     print(f"Markdown report: {output_path}")

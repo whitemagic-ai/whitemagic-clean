@@ -4,7 +4,6 @@ from typing import Any
 
 from whitemagic.tools.envelope import normalize_raw
 
-
 STANDARD_NATIVE_DETAIL_ORDER = [
     "gana",
     "operation",

@@ -297,7 +297,9 @@ def tier4_intelligence(quick=False):
 
     # Emergence scan
     try:
-        from whitemagic.core.intelligence.agentic.emergence_engine import get_emergence_engine
+        from whitemagic.core.intelligence.agentic.emergence_engine import (
+            get_emergence_engine,
+        )
         ee = get_emergence_engine()
         ee.start()
         timed_run("Emergence scan", lambda: ee.scan_for_emergence(), tier=4)
@@ -306,7 +308,9 @@ def tier4_intelligence(quick=False):
 
     # Novelty detection
     try:
-        from whitemagic.core.patterns.emergence.novelty_detector import get_novelty_detector
+        from whitemagic.core.patterns.emergence.novelty_detector import (
+            get_novelty_detector,
+        )
         detector = get_novelty_detector()
         bench("Novelty detection", lambda: detector.detect(
             "Quantum-entangled memory associations across distributed galaxy instances"
@@ -376,7 +380,9 @@ def tier6_fusion(quick=False):
 
     # Elemental optimization
     try:
-        from whitemagic.core.intelligence.elemental_optimization import ElementalOptimizer
+        from whitemagic.core.intelligence.elemental_optimization import (
+            ElementalOptimizer,
+        )
         opt = ElementalOptimizer()
         bench("Elemental optimization", lambda: opt.get_optimization_strategy("analysis"),
               iterations=iters, tier=6)
@@ -455,7 +461,7 @@ def tier7_json_dispatch(quick=False):
 
     # fast_json wrapper
     try:
-        from whitemagic.utils.fast_json import dumps_str, loads, BACKEND
+        from whitemagic.utils.fast_json import BACKEND, dumps_str, loads
         print(f"  fast_json backend: {BACKEND}")
         bench(f"fast_json.dumps_str ({BACKEND})", lambda: dumps_str(_test_payload),
               iterations=iters * 10, tier=7)

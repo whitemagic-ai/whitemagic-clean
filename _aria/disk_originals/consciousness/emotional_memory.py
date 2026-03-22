@@ -146,7 +146,7 @@ class EmotionalMemorySystem:
             return []
 
         matches = []
-        with open(self.memories_file, "r") as f:
+        with open(self.memories_file) as f:
             for line in f:
                 data = json.loads(line)
                 mem = EmotionalMemory.from_dict(data)
@@ -163,7 +163,7 @@ class EmotionalMemorySystem:
             return []
 
         matches = []
-        with open(self.memories_file, "r") as f:
+        with open(self.memories_file) as f:
             for line in f:
                 data = json.loads(line)
                 mem = EmotionalMemory.from_dict(data)
@@ -179,7 +179,7 @@ class EmotionalMemorySystem:
             return []
 
         all_memories = []
-        with open(self.memories_file, "r") as f:
+        with open(self.memories_file) as f:
             for line in f:
                 data = json.loads(line)
                 all_memories.append(EmotionalMemory.from_dict(data))
@@ -197,7 +197,7 @@ class EmotionalMemorySystem:
         total = 0
         avg_intensity = 0.0
 
-        with open(self.memories_file, "r") as f:
+        with open(self.memories_file) as f:
             for line in f:
                 data = json.loads(line)
                 mem = EmotionalMemory.from_dict(data)

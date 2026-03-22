@@ -3,9 +3,9 @@
 Centralized management of worker limits to prevent resource exhaustion.
 """
 
-from typing import Any
 import multiprocessing
 import os
+from typing import Any
 
 
 def get_safe_cpu_count() -> int:

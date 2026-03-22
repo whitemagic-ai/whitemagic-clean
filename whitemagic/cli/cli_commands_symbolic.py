@@ -18,7 +18,9 @@ def iching() -> None:
 def consult(question: str) -> None:
     """Ask the I Ching a question."""
     try:
-        from whitemagic_extensions.symbolic import consult_iching  # type: ignore[import-not-found]
+        from whitemagic_extensions.symbolic import (
+            consult_iching,  # type: ignore[import-not-found]
+        )
 
         click.echo("\n📿 Consulting the I Ching...\n")
         click.echo(f"Question: {question}\n")

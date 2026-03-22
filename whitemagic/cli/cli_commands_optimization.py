@@ -5,9 +5,12 @@ CLI Commands: Optimization (G002)
 wm skeleton <path>
 """
 
-import click
 from pathlib import Path
+
+import click
+
 from whitemagic.optimization.skeletonizer import skeletonize_file
+
 
 @click.group(name="opt")
 def optimization_cli():

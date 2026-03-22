@@ -4,13 +4,13 @@ LoCoMo V020 WhiteMagic Self-Test
 """
 
 import json
-from typing import List, Dict, Any
 from datetime import datetime
+from typing import Any
 
 
-def generate_v020_self_test() -> Dict[str, Any]:
+def generate_v020_self_test() -> dict[str, Any]:
     """Generate comprehensive V020 test for WhiteMagic self-testing."""
-    
+
     test = {
         "version": "V020-WM",
         "description": "WhiteMagic self-test with 100 memories, 300 questions",
@@ -29,20 +29,20 @@ def generate_v020_self_test() -> Dict[str, Any]:
         "memories": [],
         "questions": []
     }
-    
+
     # Generate 100 memories with rich interconnections
     test["memories"] = _generate_memory_corpus()
-    
+
     # Generate 300 questions across types
     test["questions"] = _generate_question_suite(test["memories"])
-    
+
     return test
 
 
-def _generate_memory_corpus() -> List[Dict]:
+def _generate_memory_corpus() -> list[dict]:
     """Generate 100 memories with interconnected topics."""
     memories = []
-    
+
     # Topic clusters for multi-hop testing
     {
         "mcp_architecture": list(range(0, 15)),
@@ -53,7 +53,7 @@ def _generate_memory_corpus() -> List[Dict]:
         "bridge_synthesis": list(range(75, 90)),
         "hybrid_fusion": list(range(90, 100)),
     }
-    
+
     memory_templates = [
         # MCP Architecture (0-14)
         {"id": "wm_mcp_001", "title": "MCP Tool Registration Protocol", "topic": "mcp_architecture", "date": "2026-01-15"},
@@ -71,7 +71,7 @@ def _generate_memory_corpus() -> List[Dict]:
         {"id": "wm_mcp_013", "title": "Root URI Resolution", "topic": "mcp_architecture", "date": "2026-01-27"},
         {"id": "wm_mcp_014", "title": "Tool Result Caching", "topic": "mcp_architecture", "date": "2026-01-28"},
         {"id": "wm_mcp_015", "title": "MCP Server Lifecycle", "topic": "mcp_architecture", "date": "2026-01-29"},
-        
+
         # Memory Systems (15-29)
         {"id": "wm_mem_001", "title": "Holographic Coordinate System", "topic": "memory_systems", "date": "2026-02-01"},
         {"id": "wm_mem_002", "title": "Galactic Distance Metrics", "topic": "memory_systems", "date": "2026-02-02"},
@@ -88,7 +88,7 @@ def _generate_memory_corpus() -> List[Dict]:
         {"id": "wm_mem_013", "title": "Vector Dimension Reduction", "topic": "memory_systems", "date": "2026-02-13"},
         {"id": "wm_mem_014", "title": "Similarity Threshold Tuning", "topic": "memory_systems", "date": "2026-02-14"},
         {"id": "wm_mem_015", "title": "Memory Importance Scoring", "topic": "memory_systems", "date": "2026-02-15"},
-        
+
         # Graph Algorithms (30-44)
         {"id": "wm_graph_001", "title": "Bridging Centrality Detection", "topic": "graph_algorithms", "date": "2026-02-16"},
         {"id": "wm_graph_002", "title": "Community Detection HDBSCAN", "topic": "graph_algorithms", "date": "2026-02-17"},
@@ -105,7 +105,7 @@ def _generate_memory_corpus() -> List[Dict]:
         {"id": "wm_graph_013", "title": "Graph Visualization Export", "topic": "graph_algorithms", "date": "2026-02-28"},
         {"id": "wm_graph_014", "title": "Causality Enforcement", "topic": "graph_algorithms", "date": "2026-03-01"},
         {"id": "wm_graph_015", "title": "Temporal Edge Ordering", "topic": "graph_algorithms", "date": "2026-03-02"},
-        
+
         # Embedding Models (45-59)
         {"id": "wm_emb_001", "title": "BGE-Small Model Fine-tuning", "topic": "embedding_models", "date": "2026-03-03"},
         {"id": "wm_emb_002", "title": "ONNX Runtime Optimization", "topic": "embedding_models", "date": "2026-03-04"},
@@ -122,7 +122,7 @@ def _generate_memory_corpus() -> List[Dict]:
         {"id": "wm_emb_013", "title": "Cross-encoder Reranking", "topic": "embedding_models", "date": "2026-03-15"},
         {"id": "wm_emb_014", "title": "LoCoMo Training Data", "topic": "embedding_models", "date": "2026-03-16"},
         {"id": "wm_emb_015", "title": "Learned Reranker", "topic": "embedding_models", "date": "2026-03-17"},
-        
+
         # Dream Cycles (60-74)
         {"id": "wm_dream_001", "title": "Dream Cycle 8 Phases", "topic": "dream_cycles", "date": "2026-03-18"},
         {"id": "wm_dream_002", "title": "Triage Phase Auto-tagging", "topic": "dream_cycles", "date": "2026-03-19"},
@@ -139,7 +139,7 @@ def _generate_memory_corpus() -> List[Dict]:
         {"id": "wm_dream_013", "title": "REM Insight Burst", "topic": "dream_cycles", "date": "2026-03-30"},
         {"id": "wm_dream_014", "title": "Dream Synthesis Pipeline", "topic": "dream_cycles", "date": "2026-03-31"},
         {"id": "wm_dream_015", "title": "Oneiric Pattern Recognition", "topic": "dream_cycles", "date": "2026-04-01"},
-        
+
         # Bridge Synthesis (75-89)
         {"id": "wm_bridge_001", "title": "Bridge Node Detection", "topic": "bridge_synthesis", "date": "2026-04-02"},
         {"id": "wm_bridge_002", "title": "Bridging Centrality Algorithm", "topic": "bridge_synthesis", "date": "2026-04-03"},
@@ -156,7 +156,7 @@ def _generate_memory_corpus() -> List[Dict]:
         {"id": "wm_bridge_013", "title": "Dynamic Bridge Updates", "topic": "bridge_synthesis", "date": "2026-04-14"},
         {"id": "wm_bridge_014", "title": "Bridge Visualization", "topic": "bridge_synthesis", "date": "2026-04-15"},
         {"id": "wm_bridge_015", "title": "Bridge Quality Metrics", "topic": "bridge_synthesis", "date": "2026-04-16"},
-        
+
         # Hybrid Fusion (90-99)
         {"id": "wm_fusion_001", "title": "Reciprocal Rank Fusion", "topic": "hybrid_fusion", "date": "2026-04-17"},
         {"id": "wm_fusion_002", "title": "RRF Weight Adaptation", "topic": "hybrid_fusion", "date": "2026-04-18"},
@@ -169,28 +169,28 @@ def _generate_memory_corpus() -> List[Dict]:
         {"id": "wm_fusion_009", "title": "Learned Fusion Weights", "topic": "hybrid_fusion", "date": "2026-04-25"},
         {"id": "wm_fusion_010", "title": "Real-time Fusion Pipeline", "topic": "hybrid_fusion", "date": "2026-04-26"},
     ]
-    
+
     # Add content and associations to each memory
     for i, mem in enumerate(memory_templates):
         mem["content"] = f"Detailed technical documentation for {mem['title']}. This memory contains implementation details, design patterns, and best practices for WhiteMagic {mem['topic'].replace('_', ' ')} systems. Date: {mem['date']}."
         mem["importance"] = round(0.7 + (i % 3) * 0.1, 2)
         mem["associations"] = _generate_associations(i, memory_templates)
         memories.append(mem)
-    
+
     return memories
 
 
-def _generate_associations(idx: int, all_memories: List[Dict]) -> List[str]:
+def _generate_associations(idx: int, all_memories: list[dict]) -> list[str]:
     """Generate cross-topic associations for multi-hop testing."""
     associations = []
-    
+
     # Connect to next 2 in same topic
     topic_memories = [m for m in all_memories if m["topic"] == all_memories[idx]["topic"]]
     topic_idx = topic_memories.index(all_memories[idx])
     for i in range(1, 3):
         if topic_idx + i < len(topic_memories):
             associations.append(topic_memories[topic_idx + i]["id"])
-    
+
     # Connect to 1-2 in related topics (for multi-hop)
     topic_groups = {
         "mcp_architecture": ["memory_systems", "hybrid_fusion"],
@@ -201,46 +201,46 @@ def _generate_associations(idx: int, all_memories: List[Dict]) -> List[str]:
         "bridge_synthesis": ["graph_algorithms", "dream_cycles"],
         "hybrid_fusion": ["memory_systems", "embedding_models"],
     }
-    
+
     current_topic = all_memories[idx]["topic"]
     related_topics = topic_groups.get(current_topic, [])
-    
+
     for related_topic in related_topics[:1]:  # Add 1 cross-topic link
         related_memories = [m for m in all_memories if m["topic"] == related_topic]
         if related_memories:
             # Pick a memory with similar index for consistency
             target_idx = idx % len(related_memories)
             associations.append(related_memories[target_idx]["id"])
-    
+
     return associations
 
 
-def _generate_question_suite(memories: List[Dict]) -> List[Dict]:
+def _generate_question_suite(memories: list[dict]) -> list[dict]:
     """Generate 300 questions across all types."""
     questions = []
-    
+
     # 60 single-hop (direct fact lookup)
     questions.extend(_generate_single_hop_questions(memories, 60))
-    
+
     # 75 multi-hop (require graph traversal)
     questions.extend(_generate_multi_hop_questions(memories, 75))
-    
+
     # 60 temporal (date-based)
     questions.extend(_generate_temporal_questions(memories, 60))
-    
+
     # 60 open-domain (synthesis across multiple)
     questions.extend(_generate_open_domain_questions(memories, 60))
-    
+
     # 30 adversarial (false premises)
     questions.extend(_generate_adversarial_questions(memories, 30))
-    
+
     # 15 calibration (uncertainty testing)
     questions.extend(_generate_calibration_questions(memories, 15))
-    
+
     return questions
 
 
-def _generate_single_hop_questions(memories: List[Dict], count: int) -> List[Dict]:
+def _generate_single_hop_questions(memories: list[dict], count: int) -> list[dict]:
     """Generate single-hop questions requiring direct lookup."""
     questions = []
     for i in range(count):
@@ -257,7 +257,7 @@ def _generate_single_hop_questions(memories: List[Dict], count: int) -> List[Dic
     return questions
 
 
-def _generate_multi_hop_questions(memories: List[Dict], count: int) -> List[Dict]:
+def _generate_multi_hop_questions(memories: list[dict], count: int) -> list[dict]:
     """Generate multi-hop questions requiring graph traversal."""
     questions = []
     for i in range(count):
@@ -283,7 +283,7 @@ def _generate_multi_hop_questions(memories: List[Dict], count: int) -> List[Dict
     return questions
 
 
-def _generate_temporal_questions(memories: List[Dict], count: int) -> List[Dict]:
+def _generate_temporal_questions(memories: list[dict], count: int) -> list[dict]:
     """Generate temporal questions based on dates."""
     questions = []
     for i in range(count):
@@ -300,11 +300,11 @@ def _generate_temporal_questions(memories: List[Dict], count: int) -> List[Dict]
     return questions
 
 
-def _generate_open_domain_questions(memories: List[Dict], count: int) -> List[Dict]:
+def _generate_open_domain_questions(memories: list[dict], count: int) -> list[dict]:
     """Generate open-domain questions requiring synthesis."""
     questions = []
     topics = ["mcp_architecture", "memory_systems", "graph_algorithms", "dream_cycles"]
-    
+
     for i in range(count):
         topic = topics[i % len(topics)]
         topic_memories = [m for m in memories if m["topic"] == topic]
@@ -325,10 +325,10 @@ def _generate_open_domain_questions(memories: List[Dict], count: int) -> List[Di
     return questions
 
 
-def _generate_adversarial_questions(memories: List[Dict], count: int) -> List[Dict]:
+def _generate_adversarial_questions(memories: list[dict], count: int) -> list[dict]:
     """Generate adversarial questions with false premises."""
     questions = []
-    
+
     adversarial_templates = [
         {
             "question": "What was the MCP implementation date on February 30, 2026?",
@@ -346,7 +346,7 @@ def _generate_adversarial_questions(memories: List[Dict], count: int) -> List[Di
             "expected": ["wrong date", "mismatch", "incorrect"]
         },
     ]
-    
+
     for i in range(count):
         template = adversarial_templates[i % len(adversarial_templates)]
         questions.append({
@@ -359,14 +359,14 @@ def _generate_adversarial_questions(memories: List[Dict], count: int) -> List[Di
             "difficulty": "medium",
             "trap": template["trap"],
         })
-    
+
     return questions
 
 
-def _generate_calibration_questions(memories: List[Dict], count: int) -> List[Dict]:
+def _generate_calibration_questions(memories: list[dict], count: int) -> list[dict]:
     """Generate calibration questions testing uncertainty."""
     questions = []
-    
+
     for i in range(count):
         questions.append({
             "question_id": f"q_cal_{i+1:03d}",
@@ -382,27 +382,27 @@ def _generate_calibration_questions(memories: List[Dict], count: int) -> List[Di
             "difficulty": "hard",
             "ideal_confidence": 0.0,
         })
-    
+
     return questions
 
 
 if __name__ == "__main__":
     test = generate_v020_self_test()
-    
+
     output_path = "/home/lucas/Desktop/whitemagicdev/eval/locomo_v020_self_test.json"
     with open(output_path, "w") as f:
         json.dump(test, f, indent=2)
-    
+
     print(f"Generated V020 Self-Test: {output_path}")
     print(f"Memories: {len(test['memories'])}")
     print(f"Questions: {len(test['questions'])}")
-    
+
     # Distribution
     by_type = {}
     for q in test["questions"]:
         qtype = q["question_type"]
         by_type[qtype] = by_type.get(qtype, 0) + 1
-    
+
     print("\nQuestion Distribution:")
     for qtype, count in sorted(by_type.items()):
         print(f"  {qtype}: {count}")

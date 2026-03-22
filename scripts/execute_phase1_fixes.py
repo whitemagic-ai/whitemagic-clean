@@ -8,8 +8,8 @@ This script runs all auto-fixable Kaizen proposals:
 4. Merge exact duplicate titles
 """
 
-import sys
 import logging
+import sys
 from pathlib import Path
 
 # Add project root to path
@@ -24,7 +24,9 @@ def fix_untitled():
     """Fix untitled memories using TitleGenerator."""
     logger.info("--- Fixing Untitled Memories ---")
     try:
-        from whitemagic.core.intelligence.synthesis.title_generator import get_title_generator
+        from whitemagic.core.intelligence.synthesis.title_generator import (
+            get_title_generator,
+        )
         tg = get_title_generator()
         result = tg.fix_all(dry_run=False)
         logger.info(f"Fixed {result['fixed']} untitled memories, skipped {result['skipped']}")
@@ -38,7 +40,9 @@ def auto_tag_untagged():
     """Auto-tag memories without tags."""
     logger.info("--- Auto-Tagging Untagged Memories ---")
     try:
-        from whitemagic.core.intelligence.synthesis.tag_normalizer import get_tag_normalizer
+        from whitemagic.core.intelligence.synthesis.tag_normalizer import (
+            get_tag_normalizer,
+        )
         tn = get_tag_normalizer()
         result = tn.auto_tag_untagged(dry_run=False)
         logger.info(f"Tagged {result['tagged']} memories, skipped {result['skipped']}")
@@ -55,17 +59,18 @@ def prune_broken_associations():
         from whitemagic.core.intelligence.core_access import get_core_access
         cal = get_core_access()
         broken = cal.find_broken_associations(limit=1000)
-        
+
         if not broken:
             logger.info("No broken associations found")
             return {"pruned": 0}
-        
+
         # Get DB connection and prune
         import sqlite3
+
         from whitemagic.config.paths import DB_PATH
         conn = sqlite3.connect(str(DB_PATH))
         cur = conn.cursor()
-        
+
         pruned = 0
         for assoc in broken:
             # Delete association - correct column names are source_id and target_id
@@ -74,7 +79,7 @@ def prune_broken_associations():
                 (assoc["source_id"], assoc["target_id"])
             )
             pruned += cur.rowcount
-        
+
         conn.commit()
         conn.close()
         logger.info(f"Pruned {pruned} broken associations")
@@ -89,12 +94,13 @@ def merge_exact_duplicates():
     logger.info("--- Merging Exact Duplicate Titles ---")
     try:
         import sqlite3
+
         from whitemagic.config.paths import DB_PATH
-        
+
         conn = sqlite3.connect(str(DB_PATH))
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-        
+
         # Find duplicate titles
         cur.execute("""
             SELECT title, COUNT(*) as cnt 
@@ -105,35 +111,35 @@ def merge_exact_duplicates():
             ORDER BY cnt DESC
         """)
         duplicates = cur.fetchall()
-        
+
         if not duplicates:
             logger.info("No exact duplicate titles found")
             return {"merged": 0}
-        
+
         merged = 0
         kept_ids = []
         for dup in duplicates[:100]:  # Limit to first 100 groups
             title = dup["title"]
             dup["cnt"]
-            
+
             # Get all memories with this title
             cur.execute(
                 "SELECT id, created_at FROM memories WHERE title = ? AND memory_type != 'quarantined' ORDER BY created_at DESC",
                 (title,)
             )
             mems = cur.fetchall()
-            
+
             if len(mems) < 2:
                 continue
-            
+
             # Keep the newest, mark others for merge
             keep_id = mems[0]["id"]
             merge_ids = [m["id"] for m in mems[1:]]
-            
+
             # For now, just log - actual merge requires careful handling of associations
             merged += len(merge_ids)
             kept_ids.append(keep_id)
-        
+
         conn.close()
         logger.info(f"Found {merged} candidates for merging across {len(duplicates)} duplicate title groups")
         logger.info("Note: Actual merge requires careful association migration - logging only")
@@ -147,21 +153,21 @@ def main():
     """Run all Phase 1 fixes."""
     logger.info("=== PHASE 1 AUTOMATED FIXES ===")
     logger.info("Starting execution...")
-    
+
     results = {
         "untitled": fix_untitled(),
         "auto_tag": auto_tag_untagged(),
         "broken_associations": prune_broken_associations(),
         "duplicates": merge_exact_duplicates(),
     }
-    
+
     logger.info("\n=== PHASE 1 COMPLETE ===")
     for name, result in results.items():
         if "error" in result:
             logger.warning(f"{name}: ERROR - {result['error']}")
         else:
             logger.info(f"{name}: {result}")
-    
+
     return results
 
 

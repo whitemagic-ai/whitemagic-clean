@@ -1,5 +1,5 @@
 
-with open('nexus/src-tauri/src/main.rs', 'r') as f:
+with open('nexus/src-tauri/src/main.rs') as f:
     content = f.read()
 
 content = content.replace("mod ipc;", "mod ipc;\nmod fs_api;")

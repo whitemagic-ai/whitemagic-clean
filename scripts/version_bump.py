@@ -180,8 +180,8 @@ def main() -> None:
         print(f"\nDone! Version is now {new_version}.")
         print("Next steps:")
         print("  1. Update CHANGELOG.md with release notes")
-        print("  2. git add -A && git commit -m 'chore: bump version to {}'".format(new_version))
-        print("  3. git tag v{}".format(new_version))
+        print(f"  2. git add -A && git commit -m 'chore: bump version to {new_version}'")
+        print(f"  3. git tag v{new_version}")
         print("  4. python -m build && twine upload dist/*")
 
 

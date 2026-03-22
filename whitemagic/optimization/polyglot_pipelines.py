@@ -2,7 +2,8 @@
 """Multi-Language Pipelines - Chain multiple languages for complex operations"""
 
 import time
-from typing import Any, Dict, List
+from typing import Any
+
 
 class PolyglotPipeline:
     """Sequential multi-language pipelines"""
@@ -11,7 +12,7 @@ class PolyglotPipeline:
         from whitemagic.optimization.polyglot_specialists import PolyglotSpecialists
         self.specialists = PolyglotSpecialists()
 
-    def memory_analysis_pipeline(self, memory_id: str, content: str) -> Dict[str, Any]:
+    def memory_analysis_pipeline(self, memory_id: str, content: str) -> dict[str, Any]:
         """Pipeline: Python → Rust → Zig → Mojo → Julia → Python"""
         start = time.time()
         results = {"pipeline": "memory_analysis", "stages": []}
@@ -36,7 +37,7 @@ class PolyglotPipeline:
         results["languages_used"] = len(set(s["language"] for s in results["stages"]))
         return results
 
-    def batch_processing_pipeline(self, memories: List[dict]) -> Dict[str, Any]:
+    def batch_processing_pipeline(self, memories: list[dict]) -> dict[str, Any]:
         """Pipeline: Python → Mojo → Haskell → Python"""
         start = time.time()
         results = {"pipeline": "batch_processing", "stages": []}
@@ -53,7 +54,7 @@ class PolyglotPipeline:
         results["languages_used"] = len(set(s["language"] for s in results["stages"]))
         return results
 
-    def concurrent_search_pipeline(self, query: str, corpus: List) -> Dict[str, Any]:
+    def concurrent_search_pipeline(self, query: str, corpus: list) -> dict[str, Any]:
         """Pipeline: Python → Rust → Julia → Python"""
         start = time.time()
         results = {"pipeline": "concurrent_search", "stages": []}

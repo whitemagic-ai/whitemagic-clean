@@ -4,12 +4,12 @@ Creates enhanced benchmark with adversarial questions and semantic scoring
 """
 
 import json
-from typing import List, Dict, Any
+from typing import Any
 
 
-def generate_v020_test() -> Dict[str, Any]:
+def generate_v020_test() -> dict[str, Any]:
     """Generate V020 test with improved structure."""
-    
+
     test = {
         "version": "V020",
         "generated_at": "2026-02-19T22:30:00Z",
@@ -28,27 +28,27 @@ def generate_v020_test() -> Dict[str, Any]:
         },
         "questions": []
     }
-    
+
     # Add original 100 questions with enhanced structure
     base_questions = _load_base_questions()
-    
+
     for q in base_questions:
         enhanced = _enhance_question(q)
         test["questions"].append(enhanced)
-    
+
     # Add 10 adversarial questions
     test["questions"].extend(_generate_adversarial_questions())
-    
+
     # Add 10 calibration questions
     test["questions"].extend(_generate_calibration_questions())
-    
+
     test["total_questions"] = len(test["questions"])
     test["question_distribution"] = _calculate_distribution(test["questions"])
-    
+
     return test
 
 
-def _load_base_questions() -> List[Dict]:
+def _load_base_questions() -> list[dict]:
     """Load original V019 questions."""
     try:
         with open('/home/lucas/Desktop/whitemagicdev/eval/external_ai_questions.json') as f:
@@ -58,7 +58,7 @@ def _load_base_questions() -> List[Dict]:
         return []
 
 
-def _enhance_question(q: Dict) -> Dict:
+def _enhance_question(q: dict) -> dict:
     """Add V020 enhancements to existing question."""
     enhanced = {
         "question_id": q["question_id"],
@@ -66,21 +66,21 @@ def _enhance_question(q: Dict) -> Dict:
         "question": q["question"],
         "difficulty": q.get("difficulty", "medium"),
         "source_memory_ids": q.get("source_memory_ids", []),
-        
+
         # V020: Multiple acceptable answers
         "expected_answers": [q["expected_answer"]],
         "acceptable_keywords": _extract_keywords(q["expected_answer"]),
-        
+
         # V020: Semantic scoring config
         "scoring": {
             "semantic_weight": 0.7,
             "factual_weight": 0.3,
             "min_pass_score": 0.6
         },
-        
+
         # V020: Required evidence for multi-hop
         "required_evidence": q.get("source_memory_ids", []) if q["question_type"] == "multi_hop" else [],
-        
+
         # V020: Metadata for diagnostics
         "metadata": {
             "requires_synthesis": q["question_type"] in ["multi_hop", "open_domain"],
@@ -91,31 +91,31 @@ def _enhance_question(q: Dict) -> Dict:
     return enhanced
 
 
-def _extract_keywords(answer: str) -> List[str]:
+def _extract_keywords(answer: str) -> list[str]:
     """Extract key factual terms from answer."""
     # Simple keyword extraction
     import re
     # Extract dates, numbers, proper nouns, technical terms
     keywords = []
-    
+
     # Dates
     dates = re.findall(r'\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}\b', answer)
     keywords.extend(dates)
-    
+
     # Numbers with units
     numbers = re.findall(r'\b\d+(?:\.\d+)?\s*(?:tools?|memories?|associations?|MB|GB|%)?\b', answer, re.IGNORECASE)
     keywords.extend(numbers)
-    
+
     # Technical terms (capitalized phrases)
     tech_terms = re.findall(r'\b[A-Z][a-z]+(?:[A-Z][a-z]+)*\b', answer)
     keywords.extend(tech_terms[:5])  # Limit to first 5
-    
+
     return list(set(keywords))
 
 
-def _generate_adversarial_questions() -> List[Dict]:
+def _generate_adversarial_questions() -> list[dict]:
     """Generate questions with false premises to test critical reading."""
-    
+
     adversarial = [
         {
             "question_id": "q_adv_001",
@@ -198,13 +198,13 @@ def _generate_adversarial_questions() -> List[Dict]:
             "correct_behavior": "Report NOT_FOUND"
         }
     ]
-    
+
     return adversarial
 
 
-def _generate_calibration_questions() -> List[Dict]:
+def _generate_calibration_questions() -> list[dict]:
     """Generate questions to test confidence calibration."""
-    
+
     calibration = [
         {
             "question_id": "q_cal_001",
@@ -253,11 +253,11 @@ def _generate_calibration_questions() -> List[Dict]:
             "tests": "High confidence when answer is certain"
         }
     ]
-    
+
     return calibration
 
 
-def _calculate_distribution(questions: List[Dict]) -> Dict[str, int]:
+def _calculate_distribution(questions: list[dict]) -> dict[str, int]:
     """Calculate question type distribution."""
     dist = {}
     for q in questions:
@@ -268,11 +268,11 @@ def _calculate_distribution(questions: List[Dict]) -> Dict[str, int]:
 
 if __name__ == "__main__":
     test = generate_v020_test()
-    
+
     output_path = '/home/lucas/Desktop/whitemagicdev/eval/locomo_v020_test.json'
     with open(output_path, 'w') as f:
         json.dump(test, f, indent=2)
-    
+
     print(f"Generated V020 test: {output_path}")
     print(f"Total questions: {test['total_questions']}")
     print(f"Distribution: {test['question_distribution']}")

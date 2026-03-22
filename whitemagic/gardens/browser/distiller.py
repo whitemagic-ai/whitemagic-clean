@@ -44,7 +44,7 @@ class SimplifiedElement:
     selector: str  # CSS selector to target this element
     text: str = ""
     attributes: dict[str, str] = field(default_factory=dict)
-    children: list["SimplifiedElement"] = field(default_factory=list)
+    children: list[SimplifiedElement] = field(default_factory=list)
     bounds: dict[str, float] | None = None  # x, y, width, height
 
     def to_dict(self) -> dict[str, Any]:

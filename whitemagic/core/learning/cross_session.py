@@ -200,7 +200,7 @@ class CrossSessionLearner:
         if not self._data_file.exists():
             return
         try:
-            with open(self._data_file, "r") as f:
+            with open(self._data_file) as f:
                 data = json.load(f)
             self._session_count = data.get("session_count", 0)
             self._tool_totals = defaultdict(int, data.get("tool_totals", {}))

@@ -10,8 +10,8 @@ from whitemagic.utils.fast_json import loads as _json_loads
 try:
     from rich.console import Console
     from rich.panel import Panel
-    from rich.tree import Tree
     from rich.table import Table
+    from rich.tree import Tree
     HAS_RICH = True
     console = Console()
 except ImportError:

@@ -6,10 +6,11 @@ import hashlib
 import os
 import sqlite3
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 
 from whitemagic.core.memory.unified_types import MemoryGalaxy
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
+
 
 class QuarantineGalaxy(MemoryGalaxy):
     """
@@ -22,7 +23,7 @@ class QuarantineGalaxy(MemoryGalaxy):
     - External library noise (HuggingFace files, etc.)
     """
 
-    def __init__(self, quarantine_path: Optional[str] = None):
+    def __init__(self, quarantine_path: str | None = None):
         if quarantine_path is None:
             quarantine_path = os.path.expanduser(
                 "~/.whitemagic/memory/galaxies/quarantine/whitemagic.db"
@@ -63,7 +64,7 @@ class QuarantineGalaxy(MemoryGalaxy):
         content: str,
         source_galaxy: str,
         reason: str,
-        original_metadata: Optional[Dict] = None
+        original_metadata: dict | None = None
     ) -> bool:
         """Move a memory to quarantine."""
         import sqlite3
@@ -90,7 +91,7 @@ class QuarantineGalaxy(MemoryGalaxy):
             print(f"[Quarantine] Error transferring {memory_id}: {e}")
             return False
 
-    def find_duplicates(self, content: str, threshold: float = 0.95) -> List[Dict]:
+    def find_duplicates(self, content: str, threshold: float = 0.95) -> list[dict]:
         """Find similar content already in quarantine."""
         import sqlite3
 
@@ -113,7 +114,7 @@ class QuarantineGalaxy(MemoryGalaxy):
         conn.close()
         return results
 
-    def get_stats(self) -> Dict:
+    def get_stats(self) -> dict:
         """Get quarantine statistics."""
         import sqlite3
 
@@ -160,10 +161,10 @@ class NoisyMemoryDetector:
         'model.safetensors',
     ]
 
-    def __init__(self, quarantine: Optional[QuarantineGalaxy] = None):
+    def __init__(self, quarantine: QuarantineGalaxy | None = None):
         self.quarantine = quarantine or QuarantineGalaxy()
 
-    def should_quarantine(self, memory: Dict) -> Tuple[bool, str]:
+    def should_quarantine(self, memory: dict) -> tuple[bool, str]:
         """Determine if a memory should be quarantined."""
         content = memory.get('content') or ''
         title = memory.get('title') or ''
@@ -196,7 +197,7 @@ class NoisyMemoryDetector:
         self,
         db_path: str,
         dry_run: bool = True
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Scan active DB and identify quarantine candidates."""
         import sqlite3
 

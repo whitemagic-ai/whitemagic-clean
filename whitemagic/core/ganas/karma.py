@@ -9,10 +9,11 @@ import asyncio
 import json
 import logging
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +94,7 @@ class KarmaTraceLogger:
 
         traces = []
         try:
-            with open(self.trace_file, "r", encoding="utf-8") as f:
+            with open(self.trace_file, encoding="utf-8") as f:
                 # For large files, we should read from the end.
                 # For now, a simple read of all lines is fine for v5.0.0-alpha.
                 lines = f.readlines()

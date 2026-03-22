@@ -1,5 +1,5 @@
 
-with open('whitemagic-rust/Cargo.toml', 'r') as f:
+with open('whitemagic-rust/Cargo.toml') as f:
     content = f.read()
 
 # Add iceoryx2 feature

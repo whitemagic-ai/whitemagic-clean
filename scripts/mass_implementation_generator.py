@@ -7,62 +7,63 @@ Generate real implementations for all PSR stubs using intelligent patterns
 import time
 from pathlib import Path
 
+
 class MassGenerator:
     """Generate implementations for all stubs"""
-    
+
     def __init__(self, base_path: Path):
         self.base_path = base_path
         self.generated = []
         self.failed = []
-    
+
     def generate_all_psr002(self):
         """Generate PSR-002 implementations"""
         print("\n🔨 PSR-002: Search & Retrieval")
-        
+
         # Already have search_v2.rs (169 lines)
-        
+
         # Generate vector_search.rs
         vector_search = self._generate_vector_search()
         self._write_file("psr-002/vector_search_v2.rs", vector_search)
-        
+
         # Generate hybrid_recall.rs
         hybrid_recall = self._generate_hybrid_recall()
         self._write_file("psr-002/hybrid_recall_v2.rs", hybrid_recall)
-        
+
         # Generate rerank.rs
         rerank = self._generate_rerank()
         self._write_file("psr-002/rerank_v2.rs", rerank)
-    
+
     def generate_all_psr003(self):
         """Generate PSR-003 implementations"""
         print("\n🔨 PSR-003: Graph & Associations")
-        
+
         # Already have graph_walker_v2.rs (121 lines)
-        
+
         # Generate association_miner.rs
         assoc_miner = self._generate_association_miner()
         self._write_file("psr-003/association_miner_v2.rs", assoc_miner)
-        
+
         # Generate community_detection.rs
         community = self._generate_community_detection()
         self._write_file("psr-003/community_detection_v2.rs", community)
-    
+
     def generate_all_psr004(self):
         """Generate PSR-004 implementations"""
         print("\n🔨 PSR-004: Intelligence Layer")
-        
+
         # Generate reasoning_engine.rs
         reasoning = self._generate_reasoning_engine()
         self._write_file("psr-004/reasoning_engine_v2.rs", reasoning)
-        
+
         # Generate causal_net.rs
         causal = self._generate_causal_net()
         self._write_file("psr-004/causal_net_v2.rs", causal)
-        
+
         # Generate emergence_detector.rs
         emergence = self._generate_emergence_detector()
         self._write_file("psr-004/emergence_detector_v2.rs", emergence)
-    
+
     def _generate_vector_search(self) -> str:
         return """//! Vector search with SIMD optimization
 //! Fast cosine similarity and nearest neighbor search
@@ -158,7 +159,7 @@ impl VectorSearch {
     }
 }
 """
-    
+
     def _generate_hybrid_recall(self) -> str:
         return """//! Hybrid recall combining FTS, vector, and graph search
 //! Reciprocal Rank Fusion for result merging
@@ -220,7 +221,7 @@ impl HybridRecall {
     }
 }
 """
-    
+
     def _generate_rerank(self) -> str:
         return """//! Result reranking with multiple signals
 //! Cross-encoder style reranking
@@ -271,7 +272,7 @@ impl Reranker {
     }
 }
 """
-    
+
     def _generate_association_miner(self) -> str:
         return """//! Association mining for memory patterns
 //! Discovers frequent co-occurrence patterns
@@ -372,7 +373,7 @@ impl AssociationMiner {
     }
 }
 """
-    
+
     def _generate_community_detection(self) -> str:
         return """//! Community detection in graphs
 //! Label propagation algorithm
@@ -452,7 +453,7 @@ impl CommunityDetector {
     }
 }
 """
-    
+
     def _generate_reasoning_engine(self) -> str:
         return """//! Reasoning engine with parallel inference
 //! Pattern matching and hypothesis generation
@@ -512,7 +513,7 @@ impl ReasoningEngine {
     }
 }
 """
-    
+
     def _generate_causal_net(self) -> str:
         return """//! Causal network inference
 //! Bayesian-style causal reasoning
@@ -559,7 +560,7 @@ impl CausalNet {
     }
 }
 """
-    
+
     def _generate_emergence_detector(self) -> str:
         return """//! Emergence detection in patterns
 //! Identifies novel emergent behaviors
@@ -618,13 +619,13 @@ impl EmergenceDetector {
     }
 }
 """
-    
+
     def _write_file(self, rel_path: str, content: str):
         """Write generated file"""
         full_path = self.base_path / "whitemagic-rust" / "src" / "psr" / rel_path
         full_path.parent.mkdir(parents=True, exist_ok=True)
         full_path.write_text(content)
-        
+
         lines = len(content.split('\n'))
         self.generated.append((rel_path, lines))
         print(f"  ✅ {rel_path}: {lines} lines")
@@ -632,39 +633,39 @@ impl EmergenceDetector {
 def main():
     """Generate all implementations"""
     base_path = Path(__file__).parent.parent
-    
+
     print("\n" + "="*70)
     print("🚀 MASS IMPLEMENTATION GENERATOR")
     print("="*70)
     print("\nGenerating real implementations for all PSR stubs...")
-    
+
     start = time.time()
-    
+
     generator = MassGenerator(base_path)
-    
+
     # Generate all implementations
     generator.generate_all_psr002()
     generator.generate_all_psr003()
     generator.generate_all_psr004()
-    
+
     duration = time.time() - start
-    
+
     # Summary
     print("\n" + "="*70)
     print("📊 GENERATION COMPLETE")
     print("="*70)
-    
+
     total_lines = sum(lines for _, lines in generator.generated)
-    
+
     print(f"\nGenerated: {len(generator.generated)} implementations")
     print(f"Total lines: {total_lines:,}")
     print(f"Duration: {duration:.2f}s")
     print(f"Throughput: {len(generator.generated)/duration:.1f} files/sec")
-    
+
     print("\n📋 Files generated:")
     for path, lines in generator.generated:
         print(f"  {path}: {lines} lines")
-    
+
     print("\n✅ All implementations ready for compilation!")
 
 if __name__ == '__main__':

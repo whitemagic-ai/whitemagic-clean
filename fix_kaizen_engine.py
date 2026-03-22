@@ -1,5 +1,5 @@
 
-with open("whitemagic/core/intelligence/synthesis/kaizen_engine.py", "r") as f:
+with open("whitemagic/core/intelligence/synthesis/kaizen_engine.py") as f:
     content = f.read()
 
 content = content.replace(

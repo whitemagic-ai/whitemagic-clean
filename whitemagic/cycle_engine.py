@@ -301,7 +301,8 @@ class CycleEngine:
             return
         try:
             from whitemagic.core.resonance.gan_ying_enhanced import (
-                ResonanceEvent, EventType,
+                EventType,
+                ResonanceEvent,
             )
 
             # Wu Xing element event

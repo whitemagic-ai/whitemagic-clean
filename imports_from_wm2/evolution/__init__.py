@@ -20,36 +20,32 @@ Scale targets:
 - Real-time code generation from successful mutations
 """
 
-from .hyperevolution_engine import (
-    HyperEvolutionEngine,
-    Gene,
-    Genome,
-    FitnessVector,
-    EvolutionMetrics,
-    GeneLibrary,
-    FitnessEvaluator,
+from .code_generator import (
+    CodeGenerator,
+    apply_mutations_to_codebase,
+    generate_code_from_genome,
 )
-
 from .dream_integration import (
     EvolutionDreamPhase,
     integrate_with_dream_cycle,
 )
-
-from .kaizen_integration import (
-    EvolutionKaizenAnalyzer,
-    extract_improvement_proposals,
+from .hyperevolution_engine import (
+    EvolutionMetrics,
+    FitnessEvaluator,
+    FitnessVector,
+    Gene,
+    GeneLibrary,
+    Genome,
+    HyperEvolutionEngine,
 )
-
-from .code_generator import (
-    CodeGenerator,
-    generate_code_from_genome,
-    apply_mutations_to_codebase,
-)
-
 from .insights_pipeline import (
     InsightsPipeline,
     extract_actionable_insights,
     generate_mutation_recommendations,
+)
+from .kaizen_integration import (
+    EvolutionKaizenAnalyzer,
+    extract_improvement_proposals,
 )
 
 __all__ = [

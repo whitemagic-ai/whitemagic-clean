@@ -14,11 +14,11 @@ import hashlib
 import time
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from whitemagic.core.memory.db_manager import get_db_pool
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+
 
 @dataclass
 class ZodiacEntry:
@@ -26,10 +26,10 @@ class ZodiacEntry:
     timestamp: float
     actor_id: str          # e.g., "clone_alpha_01" or "user"
     action_type: str       # e.g., "memory_create", "file_write", "tool_call"
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
     parent_hash: str       # Link to previous entry in chain
-    context_id: Optional[str] = None
-    consent_token: Optional[str] = None
+    context_id: str | None = None
+    consent_token: str | None = None
     hash_signature: str = field(init=False)
 
     def __post_init__(self):
@@ -51,7 +51,7 @@ class ZodiacEntry:
         hasher.update("||".join(components).encode('utf-8'))
         return hasher.hexdigest()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "entry_id": self.entry_id,
             "timestamp": self.timestamp,
@@ -68,7 +68,7 @@ class ZodiacLedger:
     """In-memory and persistent cryptographic ledger."""
 
     def __init__(self, db_manager=None):
-        self._chain: List[ZodiacEntry] = []
+        self._chain: list[ZodiacEntry] = []
         self._genesis_hash = hashlib.sha256(b"WHITEMAGIC_GENESIS_v16").hexdigest()
         self._current_tail = self._genesis_hash
         self._db = db_manager # Hook for SQLite persistence
@@ -78,9 +78,9 @@ class ZodiacLedger:
         self,
         actor_id: str,
         action_type: str,
-        payload: Dict[str, Any],
-        context_id: Optional[str] = None,
-        consent_token: Optional[str] = None
+        payload: dict[str, Any],
+        context_id: str | None = None,
+        consent_token: str | None = None
     ) -> ZodiacEntry:
         """Record an action in the cryptographic ledger."""
         with self._lock:

@@ -15,9 +15,10 @@ import json
 import os
 import sys
 import time
+from collections.abc import Callable
 from pathlib import Path
 from statistics import mean
-from typing import Any, Callable
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))

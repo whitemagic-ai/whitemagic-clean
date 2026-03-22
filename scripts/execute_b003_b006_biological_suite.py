@@ -4,8 +4,8 @@
 Execute all remaining biological campaigns in one comprehensive sweep.
 """
 
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 REPORTS_DIR = PROJECT_ROOT / "reports"
@@ -16,19 +16,19 @@ def execute_b003_immune_integration():
     print("  B003: IMMUNE SYSTEM INTEGRATION")
     print("="*70)
     print()
-    
+
     findings = []
-    
+
     # Find immune and security files
     immune_dir = PROJECT_ROOT / "whitemagic/immune"
     security_dir = PROJECT_ROOT / "whitemagic/security"
-    
+
     immune_files = list(immune_dir.rglob("*.py")) if immune_dir.exists() else []
     security_files = list(security_dir.rglob("*.py")) if security_dir.exists() else []
-    
+
     print(f"1. Immune System: {len(immune_files)} files")
     print(f"2. Security System: {len(security_files)} files")
-    
+
     # Check for integration points
     integration_file = PROJECT_ROOT / "whitemagic/immune/security_integration.py"
     if integration_file.exists():
@@ -39,7 +39,7 @@ def execute_b003_immune_integration():
             "lines": len(content.split("\n"))
         })
         print("3. ✅ Found existing integration: security_integration.py")
-    
+
     # Analyze integration opportunities
     opportunities = [
         "Wire immune system to Gan Ying THREAT_DETECTED events",
@@ -48,14 +48,14 @@ def execute_b003_immune_integration():
         "Link tool_gating with immune defense mechanisms",
         "Unified threat intelligence via blackboard",
     ]
-    
+
     findings.extend([{"type": "opportunity", "desc": opp} for opp in opportunities])
-    
+
     print("\n✅ B003 Analysis Complete")
     print(f"   - Immune files: {len(immune_files)}")
     print(f"   - Security files: {len(security_files)}")
     print(f"   - Integration opportunities: {len(opportunities)}")
-    
+
     return {
         "campaign": "B003",
         "immune_files": len(immune_files),
@@ -71,28 +71,28 @@ def execute_b004_genetic_optimization():
     print("  B004: GENETIC ALGORITHM OPTIMIZATION")
     print("="*70)
     print()
-    
+
     findings = []
-    
+
     # Find phylogenetics files
     phylo_files = [
         PROJECT_ROOT / "whitemagic/agents/phylogenetics.py",
         PROJECT_ROOT / "whitemagic/core/memory/phylogenetics.py",
     ]
-    
+
     existing = [f for f in phylo_files if f.exists()]
-    
+
     print(f"1. Phylogenetics files found: {len(existing)}")
-    
+
     for f in existing:
         content = f.read_text()
         lines = len(content.split("\n"))
-        
+
         # Check for key classes
         has_genome_tracker = "GenomeTracker" in content
         has_phenotype = "PhenotypeRecorder" in content
         has_selection = "SelectionEngine" in content
-        
+
         findings.append({
             "file": str(f.relative_to(PROJECT_ROOT)),
             "lines": lines,
@@ -100,13 +100,13 @@ def execute_b004_genetic_optimization():
             "phenotype_recorder": has_phenotype,
             "selection_engine": has_selection,
         })
-        
+
         print(f"   {f.name}:")
         print(f"     - Lines: {lines}")
         print(f"     - GenomeTracker: {'✅' if has_genome_tracker else '❌'}")
         print(f"     - PhenotypeRecorder: {'✅' if has_phenotype else '❌'}")
         print(f"     - SelectionEngine: {'✅' if has_selection else '❌'}")
-    
+
     # Integration with nervous system
     integration_points = [
         "Wire GenomeTracker to BALANCE_RESTORED events (mutation rate)",
@@ -115,13 +115,13 @@ def execute_b004_genetic_optimization():
         "Enable horizontal gene transfer via blackboard",
         "Track phylogenetic lineage in memory associations",
     ]
-    
+
     print(f"\n2. Integration Points: {len(integration_points)}")
     for point in integration_points:
         print(f"   - {point}")
-    
+
     print("\n✅ B004 Analysis Complete")
-    
+
     return {
         "campaign": "B004",
         "phylo_files": len(existing),
@@ -137,39 +137,39 @@ def execute_b005_dream_enhancement():
     print("  B005: DREAM CYCLE ENHANCEMENT")
     print("="*70)
     print()
-    
+
     findings = []
-    
+
     # Find dream cycle files
     dream_files = [
         PROJECT_ROOT / "whitemagic/core/dream_cycle.py",
         PROJECT_ROOT / "whitemagic/core/consciousness/dream_daemon.py",
     ]
-    
+
     existing = [f for f in dream_files if f.exists()]
-    
+
     print(f"1. Dream cycle files found: {len(existing)}")
-    
+
     for f in existing:
         content = f.read_text()
         lines = len(content.split("\n"))
-        
+
         # Check for phases
         phases = []
         for phase in ["TRIAGE", "CONSOLIDATE", "PRUNE", "REINDEX", "BACKUP"]:
             if phase in content:
                 phases.append(phase)
-        
+
         findings.append({
             "file": str(f.relative_to(PROJECT_ROOT)),
             "lines": lines,
             "phases": phases,
         })
-        
+
         print(f"   {f.name}:")
         print(f"     - Lines: {lines}")
         print(f"     - Phases: {', '.join(phases)}")
-    
+
     # REM optimization opportunities
     enhancements = [
         "Add REM-like rapid consolidation phase",
@@ -179,13 +179,13 @@ def execute_b005_dream_enhancement():
         "Track dream cycle metrics via blackboard",
         "Integrate with memory metabolism for decay",
     ]
-    
+
     print(f"\n2. Enhancement Opportunities: {len(enhancements)}")
     for enh in enhancements:
         print(f"   - {enh}")
-    
+
     print("\n✅ B005 Analysis Complete")
-    
+
     return {
         "campaign": "B005",
         "dream_files": len(existing),
@@ -201,9 +201,9 @@ def execute_b006_metabolism_tuning():
     print("  B006: MEMORY METABOLISM TUNING")
     print("="*70)
     print()
-    
+
     findings = []
-    
+
     # Find metabolism files
     metabolism_files = [
         PROJECT_ROOT / "whitemagic/core/memory/consolidation.py",
@@ -211,24 +211,24 @@ def execute_b006_metabolism_tuning():
         PROJECT_ROOT / "whitemagic/core/memory/mindful_forgetting.py",
         PROJECT_ROOT / "whitemagic/core/memory/decay_daemon.py",
     ]
-    
+
     existing = [f for f in metabolism_files if f.exists()]
-    
+
     print(f"1. Metabolism files found: {len(existing)}")
-    
+
     total_lines = 0
     for f in existing:
         content = f.read_text()
         lines = len(content.split("\n"))
         total_lines += lines
-        
+
         findings.append({
             "file": str(f.relative_to(PROJECT_ROOT)),
             "lines": lines,
         })
-        
+
         print(f"   {f.name}: {lines} lines")
-    
+
     # Optimization opportunities
     optimizations = [
         "Wire consolidation to dream cycle completion",
@@ -238,14 +238,14 @@ def execute_b006_metabolism_tuning():
         "Track metabolism metrics via nervous system",
         "Integrate with holographic coordinates for spatial decay",
     ]
-    
+
     print(f"\n2. Total metabolism code: {total_lines} lines")
     print(f"3. Optimization Opportunities: {len(optimizations)}")
     for opt in optimizations:
         print(f"   - {opt}")
-    
+
     print("\n✅ B006 Analysis Complete")
-    
+
     return {
         "campaign": "B006",
         "metabolism_files": len(existing),
@@ -262,7 +262,7 @@ def generate_comprehensive_report(results):
     print("  GENERATING COMPREHENSIVE B-SERIES REPORT")
     print("="*70)
     print()
-    
+
     report = f"""# Biological Integration Suite - Complete Report
 **Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
 **Campaigns**: B001-B006  
@@ -512,13 +512,13 @@ The B-series biological integration suite successfully transformed WhiteMagic fr
 
 **Status**: ✅ **ALL B CAMPAIGNS COMPLETE** - WhiteMagic is now a living, breathing organism.
 """
-    
+
     # Save report
     report_path = REPORTS_DIR / "biological_integration_suite_complete.md"
     report_path.write_text(report)
-    
+
     print(f"✅ Comprehensive report saved: {report_path}")
-    
+
     return report
 
 
@@ -527,18 +527,18 @@ def main():
     print("  BIOLOGICAL INTEGRATION SUITE - B003-B006")
     print("="*70)
     print()
-    
+
     results = {}
-    
+
     # Execute all campaigns
     results['b003'] = execute_b003_immune_integration()
     results['b004'] = execute_b004_genetic_optimization()
     results['b005'] = execute_b005_dream_enhancement()
     results['b006'] = execute_b006_metabolism_tuning()
-    
+
     # Generate comprehensive report
     generate_comprehensive_report(results)
-    
+
     print("\n" + "="*70)
     print("✅ ALL B CAMPAIGNS COMPLETE")
     print("="*70)
@@ -555,7 +555,7 @@ def main():
     print("  Integration: COMPLETE")
     print("  Organism Status: UNIFIED")
     print()
-    
+
     return 0
 
 

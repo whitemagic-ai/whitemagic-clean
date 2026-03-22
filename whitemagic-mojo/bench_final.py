@@ -1,7 +1,7 @@
 """Final Benchmark: Compiled Mojo vs Python"""
 import subprocess
-import time
 import sys
+import time
 
 print("=" * 60)
 print("COMPILED MOJO vs PYTHON BENCHMARK")

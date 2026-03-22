@@ -1,7 +1,8 @@
 """Tests for the UMAP memory visualization projector."""
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 np = __import__("pytest").importorskip("numpy")
 

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Quick test of Rust core with real evolution"""
 
-import hyperevolution_core as rust
 import time
+
+import hyperevolution_core as rust
 
 print("🦀 RUST EVOLUTION ENGINE - LIVE TEST")
 print("=" * 80)

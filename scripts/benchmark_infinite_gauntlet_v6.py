@@ -52,7 +52,7 @@ class InfiniteGauntlet:
             start = time.perf_counter_ns()
             fn()
             times.append(time.perf_counter_ns() - start)
-        
+
         median = statistics.median(times)
         p99 = sorted(times)[int(len(times) * 0.99)]
         logger.info(f"  Result: median={self._fmt_ns(median)}, p99={self._fmt_ns(p99)}")
@@ -68,7 +68,7 @@ class InfiniteGauntlet:
         """Test massive parallel execution limits."""
         logger.info(f"⚔️ Parallel Stress: {label} ({count} clones)...")
         start = time.perf_counter()
-        
+
         # Test Rust Tokio Clone Army if available
         try:
             # Note: Rust function might return (elapsed_ms, rate)
@@ -88,12 +88,12 @@ class InfiniteGauntlet:
 
     def run_all(self):
         logger.info("🎬 Starting The Infinite Gauntlet (v6)...")
-        
+
         # 1. Nano-profiling core overhead (Memory & Dispatch)
         from whitemagic.tools.dispatch_table import DISPATCH_TABLE
         tools = list(DISPATCH_TABLE.keys())
         self.profile_nanoseconds("Dispatch Table Lookup", lambda: DISPATCH_TABLE.get(tools[0]), iterations=100000)
-        
+
         from whitemagic.harmony.vector import get_harmony_vector
         hv = get_harmony_vector()
         self.profile_nanoseconds("Harmony Vector Snapshot", lambda: hv.snapshot(), iterations=50000)
@@ -102,7 +102,7 @@ class InfiniteGauntlet:
         import json as _json
         _holo_input = _json.dumps({"id":"t","content":"test memory content for holographic encoding","importance":0.8,"access_count":1,"age_days":1.0,"galactic_distance":0.1})
         self.profile_nanoseconds("Rust 5D Holographic Encode", lambda: rs.holographic_encoder_5d.holographic_encode_single(_holo_input))
-        
+
         _vec_a = [0.1] * 128
         _vec_b = [0.2] * 128
         self.profile_nanoseconds("Rust SIMD Cosine (128-dim)", lambda: rs.rust_cosine_similarity(_vec_a, _vec_b))
@@ -111,7 +111,7 @@ class InfiniteGauntlet:
         # Hardware: 16-core CPU, 15GiB RAM
         clone_count = 1_000_000 if not self.quick else 100_000
         asyncio.run(self.stress_parallelism("Massive Tokio Clone Deployment", count=clone_count))
-        
+
         # 4. PRAT Router Stress
         from whitemagic.tools.prat_router import route_prat_call
         self.profile_nanoseconds("PRAT Multi-Lane Routing", lambda: route_prat_call("gana_winnowing_basket", tool="search_memories"), iterations=50000)
@@ -120,23 +120,23 @@ class InfiniteGauntlet:
         """Run a massive Monte Carlo simulation on world events using the Tokio Clone Army."""
         logger.info(f"🌌 Running World Event Simulation: {scenario_prompt} ({clone_count} clones)")
         start = time.perf_counter()
-        
+
         try:
             # Using the direct Rust bridge for maximum throughput
             # We pass a mixed set of strategies to ensure diversity in the 'world event' paths
             strategies = ["analytical", "creative", "adversarial", "synthesis", "memory_grounded"]
             result_json = rs.tokio_deploy_clones(scenario_prompt, clone_count, strategies)
             result = json.loads(result_json)
-            
+
             elapsed = time.perf_counter() - start
             rate = clone_count / elapsed
-            
+
             logger.info(f"✅ Simulation Complete: {elapsed:.2f}s ({rate/1e6:.2f}M outcomes/s)")
-            
+
             # Extract consensus
             winner = result.get("winner", {})
             avg_conf = result.get("avg_confidence", 0.0)
-            
+
             print("\n" + "="*70)
             print(f"🌍 MONTE CARLO SIMULATION: {scenario_prompt}")
             print("="*70)
@@ -145,7 +145,7 @@ class InfiniteGauntlet:
             print(f"Consensus Strategy: {winner.get('strategy')}")
             print(f"Consensus Response: {winner.get('response')}")
             print("="*70 + "\n")
-            
+
             self.results.append({
                 "label": f"Monte Carlo: {scenario_prompt}",
                 "type": "monte_carlo_sim",
@@ -154,7 +154,7 @@ class InfiniteGauntlet:
                 "consensus": winner.get('response'),
                 "confidence": avg_conf
             })
-            
+
         except Exception as e:
             logger.error(f"❌ Simulation failed: {e}")
 
@@ -162,14 +162,14 @@ if __name__ == "__main__":
     quick_mode = "--quick" in sys.argv
     gauntlet = InfiniteGauntlet(quick=quick_mode)
     gauntlet.run_all()
-    
+
     # Run the user-requested Monte Carlo simulations
     scenarios = [
         "Technological Progress: Impact of decentralized AGI on global energy markets by 2028",
         "Sociopolitical: Rebalancing of world order following the 'Cambrian AI Bubble Pop'",
         "Quantum Signaling: Stability regimes for linear optical gates in noisy personal ecosystems"
     ]
-    
+
     sim_count = 50000 if quick_mode else 250000
     for scenario in scenarios:
         gauntlet.run_monte_carlo_world_events(scenario, clone_count=sim_count)

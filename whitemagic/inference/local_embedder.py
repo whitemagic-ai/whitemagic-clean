@@ -12,7 +12,7 @@ Usage:
 
 import logging
 import time
-from typing import List, Optional, Union
+
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class LocalEmbedder:
     def is_available(self) -> bool:
         return self._available
 
-    def embed(self, texts: Union[str, List[str]], batch_size: int = 256) -> Optional[np.ndarray]:
+    def embed(self, texts: str | list[str], batch_size: int = 256) -> np.ndarray | None:
         """
         Generate embeddings for texts.
         Returns numpy array of shape (N, D) or None if unavailable.
@@ -73,14 +73,14 @@ class LocalEmbedder:
             logger.error(f"Embedding failed: {e}")
             return None
 
-    def embed_query(self, query: str) -> Optional[np.ndarray]:
+    def embed_query(self, query: str) -> np.ndarray | None:
         """Embed a single query string."""
         res = self.embed([query])
         if res is not None and len(res) > 0:
             return res[0]
         return None
 
-    def encode(self, sentences: Union[str, List[str]], batch_size: int = 256, **kwargs) -> List[np.ndarray]:
+    def encode(self, sentences: str | list[str], batch_size: int = 256, **kwargs) -> list[np.ndarray]:
         """
         Alias for embed() to match SentenceTransformer API.
         Returns a list of numpy arrays (or single numpy array if input is string?

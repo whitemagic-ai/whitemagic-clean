@@ -1,5 +1,10 @@
 import logging
-from whitemagic.core.evolution.galaxy_miner import get_galaxy_miner, RUST_GALAXY_MINER_AVAILABLE
+
+from whitemagic.core.evolution.galaxy_miner import (
+    RUST_GALAXY_MINER_AVAILABLE,
+    get_galaxy_miner,
+)
+
 logging.basicConfig(level=logging.DEBUG)
 miner = get_galaxy_miner()
 print("Miner initialized. Rust available:", RUST_GALAXY_MINER_AVAILABLE)

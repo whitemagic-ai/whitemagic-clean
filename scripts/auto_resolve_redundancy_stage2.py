@@ -1,7 +1,7 @@
+import hashlib
 import json
 import os
 import shutil
-import hashlib
 from pathlib import Path
 
 ROOT = Path("/home/lucas/Desktop/whitemagicdev")
@@ -28,31 +28,31 @@ def main():
     print("Finding exact text duplicates...")
     archived_count = 0
     failed_count = 0
-    
+
     ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
-    
+
     for p in pairs:
         path_a = ROOT / p["file_a"]
         path_b = ROOT / p["file_b"]
-        
+
         if not path_a.exists() or not path_b.exists():
             continue
-            
+
         if get_file_hash(path_a) == get_file_hash(path_b):
             print(f"Exact text match found:\n  A: {p['file_a']}\n  B: {p['file_b']}")
-            
+
             target_to_archive = None
             if "legacy" in path_b.name or "archive" in path_b.name or len(str(path_b)) > len(str(path_a)):
                 target_to_archive = path_b
             else:
                 target_to_archive = path_a
-                
+
             rel_target = target_to_archive.relative_to(ROOT)
             dest = ARCHIVE_DIR / rel_target
             dest.parent.mkdir(parents=True, exist_ok=True)
-            
+
             shutil.move(str(target_to_archive), str(dest))
-            
+
             if not test_imports():
                 shutil.move(str(dest), str(target_to_archive))
                 failed_count += 1

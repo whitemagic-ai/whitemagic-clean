@@ -15,14 +15,14 @@ Usage:
 """
 
 import ctypes
+import glob
 import json
 import os
-import glob
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
-def _find_shared_lib() -> Optional[str]:
+def _find_shared_lib() -> str | None:
     """Locate the compiled shared library.
 
     Searches (in order):
@@ -49,7 +49,7 @@ def _find_shared_lib() -> Optional[str]:
 class HaskellDivination:
     """Thin wrapper around the Haskell C FFI exports."""
 
-    def __init__(self, lib_path: Optional[str] = None) -> None:
+    def __init__(self, lib_path: str | None = None) -> None:
         path = lib_path or _find_shared_lib()
         if path is None:
             raise FileNotFoundError(
@@ -149,7 +149,7 @@ class HaskellDivination:
     # ------------------------------------------------------------------
     # High-level helpers
     # ------------------------------------------------------------------
-    def create_hexagram(self, lines: List[int]) -> ctypes.c_void_p:
+    def create_hexagram(self, lines: list[int]) -> ctypes.c_void_p:
         """Create a hexagram from 6 line values (0=Yin, 1=Yang, bottom to top).
 
         Returns an opaque pointer; remember to call free_hexagram when done.
@@ -166,7 +166,7 @@ class HaskellDivination:
         """True when the hexagram has exactly 3 yin and 3 yang lines."""
         return int(self._lib.c_is_balanced_hexagram(ptr)) == 1
 
-    def transition(self, ptr: Any, positions: List[int]) -> Any:
+    def transition(self, ptr: Any, positions: list[int]) -> Any:
         """Flip lines at the given positions (1-6). Returns a NEW pointer."""
         arr = (ctypes.c_int * len(positions))(*positions)
         return self._lib.c_transition_hexagram(ptr, arr, len(positions))
@@ -178,7 +178,7 @@ class HaskellDivination:
     # ------------------------------------------------------------------
     # Convenience: create + number + free in one call
     # ------------------------------------------------------------------
-    def create_and_number(self, lines: List[int]) -> int:
+    def create_and_number(self, lines: list[int]) -> int:
         """Create a hexagram, get its King Wen number, and free immediately."""
         ptr = self.create_hexagram(lines)
         num = self.hexagram_to_number(ptr)
@@ -191,7 +191,7 @@ class HaskellDivination:
     def dharma_evaluate(
         self, tool: str, description: str = "",
         safety: str = "", profile: str = "default",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Evaluate an action against Dharma rules.
 
         Returns dict with: action, severity, explain, rule.
@@ -205,7 +205,7 @@ class HaskellDivination:
     def dharma_evaluate_all(
         self, tool: str, description: str = "",
         safety: str = "", profile: str = "default",
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Return ALL matching Dharma rule decisions."""
         result = self._lib.c_dharma_evaluate_all(
             tool.encode(), description.encode(),
@@ -216,7 +216,7 @@ class HaskellDivination:
     # ------------------------------------------------------------------
     # Dependency Graph (v0.2)
     # ------------------------------------------------------------------
-    def depgraph_plan(self, goal_tool: str) -> Dict[str, Any]:
+    def depgraph_plan(self, goal_tool: str) -> dict[str, Any]:
         """Plan execution chain for a goal tool.
 
         Returns dict with: chain (list), suggestions (list of {tool, weight}).
@@ -224,12 +224,12 @@ class HaskellDivination:
         result = self._lib.c_depgraph_plan(goal_tool.encode())
         return json.loads(result.decode()) if result else {"chain": [], "suggestions": []}
 
-    def depgraph_next_steps(self, tool: str) -> List[Dict[str, Any]]:
+    def depgraph_next_steps(self, tool: str) -> list[dict[str, Any]]:
         """Get suggested next tools after a given tool."""
         result = self._lib.c_depgraph_next_steps(tool.encode())
         return json.loads(result.decode()) if result else []
 
-    def depgraph_topo_sort(self) -> List[str]:
+    def depgraph_topo_sort(self) -> list[str]:
         """Topological sort of all tools in the dependency graph."""
         result = self._lib.c_depgraph_topo_sort()
         parsed = json.loads(result.decode()) if result else []
@@ -239,7 +239,7 @@ class HaskellDivination:
             return [str(item) for item in parsed]
         return []
 
-    def create_and_query(self, lines: List[int]) -> dict:
+    def create_and_query(self, lines: list[int]) -> dict:
         """Full round-trip: create, query number + balance, free, return dict."""
         ptr = self.create_hexagram(lines)
         result = {

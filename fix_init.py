@@ -1,4 +1,4 @@
-with open("whitemagic/autonomous/__init__.py", "r") as f:
+with open("whitemagic/autonomous/__init__.py") as f:
     lines = f.readlines()
 
 out_lines = []

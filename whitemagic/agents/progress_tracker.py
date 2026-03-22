@@ -17,12 +17,12 @@ from __future__ import annotations
 import logging
 import sys
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any, TextIO
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 

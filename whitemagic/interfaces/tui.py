@@ -146,7 +146,9 @@ class GalaxyTUI(App):
         galaxy_stats.clusters = stats.get("total_topics", 0)
 
         # Fetch recent memories for Table and Map
-        from whitemagic.core.intelligence.vector_lake import get_vector_lake  # type: ignore[import-not-found]
+        from whitemagic.core.intelligence.vector_lake import (
+            get_vector_lake,  # type: ignore[import-not-found]
+        )
         lake = get_vector_lake()
         raw_results = lake.get_holographic_sample(limit=100)
 

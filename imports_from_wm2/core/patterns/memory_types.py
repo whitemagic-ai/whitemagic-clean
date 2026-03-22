@@ -5,7 +5,7 @@ Consolidates 4 Memory* variants
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any
 
 
 @dataclass
@@ -15,8 +15,8 @@ class Memory:
     content: str
     memory_type: str
     importance: float = 0.5
-    metadata: Dict[str, Any] = None
-    
+    metadata: dict[str, Any] = None
+
     def __post_init__(self):
         if self.metadata is None:
             self.metadata = {}

@@ -1,5 +1,5 @@
 
-with open('nexus/src-tauri/src/fs_api.rs', 'r') as f:
+with open('nexus/src-tauri/src/fs_api.rs') as f:
     content = f.read()
 
 write_api = """
@@ -14,7 +14,7 @@ if "pub fn write_file" not in content:
     with open('nexus/src-tauri/src/fs_api.rs', 'w') as f:
         f.write(content)
 
-with open('nexus/src-tauri/src/main.rs', 'r') as f:
+with open('nexus/src-tauri/src/main.rs') as f:
     main_content = f.read()
 
 if "fs_api::write_file" not in main_content:

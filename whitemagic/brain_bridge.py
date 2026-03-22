@@ -1,9 +1,9 @@
-import sys
-import json
 import base64
+import json
 import logging
+import sys
 import traceback
-from typing import Any, Dict
+from typing import Any
 
 # Set up logging to stderr so it doesn't interfere with stdout communication
 logging.basicConfig(
@@ -13,7 +13,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("brain_bridge")
 
-def send_response(data: Dict[str, Any]):
+def send_response(data: dict[str, Any]):
     """Send a base64-encoded JSON response to Elixir."""
     try:
         json_str = json.dumps(data)
@@ -23,10 +23,10 @@ def send_response(data: Dict[str, Any]):
     except Exception as e:
         logger.error(f"Error encoding response: {e}")
 
-def handle_ping(args: Dict[str, Any]) -> Dict[str, Any]:
+def handle_ping(args: dict[str, Any]) -> dict[str, Any]:
     return {"status": "ok", "pong": True}
 
-def handle_consolidate(args: Dict[str, Any]) -> Dict[str, Any]:
+def handle_consolidate(args: dict[str, Any]) -> dict[str, Any]:
     try:
         from whitemagic.core.memory.unified import consolidate
         count = consolidate()
@@ -34,12 +34,12 @@ def handle_consolidate(args: Dict[str, Any]) -> Dict[str, Any]:
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-def handle_consult_oracle(args: Dict[str, Any]) -> Dict[str, Any]:
+def handle_consult_oracle(args: dict[str, Any]) -> dict[str, Any]:
     try:
-        from whitemagic.grimoire.auto_cast import get_auto_caster, CastContext
+        from whitemagic.grimoire.auto_cast import CastContext, get_auto_caster
         question = args.get("question", "")
         context = args.get("context", {})
-        
+
         caster = get_auto_caster()
         ctx = CastContext(
             task=question,
@@ -48,23 +48,23 @@ def handle_consult_oracle(args: Dict[str, Any]) -> Dict[str, Any]:
             yin_yang=context.get("yin_yang", "yin")
         )
         results = caster.process_context(ctx)
-        
+
         return {
-            "status": "ok", 
+            "status": "ok",
             "suggestions": [
-                {"spell": r.spell.name, "confidence": round(r.confidence, 3)} 
+                {"spell": r.spell.name, "confidence": round(r.confidence, 3)}
                 for r in results if r.spell
             ]
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-def handle_execute_phase(args: Dict[str, Any]) -> Dict[str, Any]:
+def handle_execute_phase(args: dict[str, Any]) -> dict[str, Any]:
     try:
         from whitemagic.core.dreaming.dream_cycle import get_dream_cycle
         phase = args.get("phase")
         dc = get_dream_cycle()
-        
+
         # Map Elixir phase string to Python method
         phase_map = {
             "triage": dc._dream_triage,
@@ -80,7 +80,7 @@ def handle_execute_phase(args: Dict[str, Any]) -> Dict[str, Any]:
             "enrichment": dc._dream_enrichment,
             "harmonize": dc._dream_harmonize
         }
-        
+
         if phase in phase_map:
             details = phase_map[phase]()
             return {"status": "ok", "details": details}
@@ -92,18 +92,18 @@ def handle_execute_phase(args: Dict[str, Any]) -> Dict[str, Any]:
 
 def main():
     logger.info("Brain Bridge active. Waiting for commands...")
-    
+
     for line in sys.stdin:
         if not line.strip():
             continue
-            
+
         try:
             request = json.loads(line)
             op = request.get("op")
             args = request.get("args", {})
-            
+
             logger.info(f"Received op: {op}")
-            
+
             if op == "ping":
                 response = handle_ping(args)
             elif op == "consolidate":
@@ -114,9 +114,9 @@ def main():
                 response = handle_execute_phase(args)
             else:
                 response = {"status": "error", "message": f"Unknown operation: {op}"}
-                
+
             send_response(response)
-            
+
         except json.JSONDecodeError:
             logger.error(f"Invalid JSON: {line}")
         except Exception:

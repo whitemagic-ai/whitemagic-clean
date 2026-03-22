@@ -44,17 +44,17 @@ def main():
     print("="*60)
     print("RALPH: LIVE HOT PATH TRANSMUTATION")
     print("="*60)
-    
+
     hotpath = analyze_hotpath()
     print(f"\n[PHASE 1] Target Acquired: {hotpath['file']} -> {hotpath['function']}")
-    
+
     out_file = synthesize_mojo_kernel(hotpath['function'])
     print(f"\n[PHASE 2] Generated: {out_file.relative_to(ROOT)}")
-    
+
     print("\n[PHASE 3] Compiling / Validating...")
     # In a real environment, we'd run `mojo build ...`
     print("  [SUCCESS] Mojo SIMD Kernel passes structural validation.")
-    
+
     print("\n[PHASE 4] Phylogenetic Auto-Commit")
     print(f"  [Auto-Commit] Ralph: Transmuted {hotpath['function']} to Mojo SIMD. Est +30% speedup.")
 

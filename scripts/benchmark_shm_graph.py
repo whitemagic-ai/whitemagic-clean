@@ -1,17 +1,18 @@
-import subprocess
-import time
 import json
-import sys
 import os
+import subprocess
+import sys
+import time
 
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
-from whitemagic.core.memory.shm_graph import get_shm_graph
 from whitemagic.core.memory.db_manager import get_db_pool
+from whitemagic.core.memory.shm_graph import get_shm_graph
+
 
 def main():
     db_pool = get_db_pool(os.path.expanduser("~/.whitemagic/memory/whitemagic.db"))
-    
+
     shm_graph = get_shm_graph()
     shm_graph.initialize()
     print("Syncing graph to SHM...")
@@ -43,14 +44,14 @@ def main():
         text=True,
         bufsize=1
     )
-    
+
     proc.stdout.readline()
     proc.stdout.readline()
-    
+
     times = []
     total_nodes = 0
     total_edges = 0
-    
+
     for start_node_id in start_nodes:
         start = time.perf_counter()
         proc.stdin.write(f'{{"op":"walk", "start_id": {start_node_id}}}\n')
@@ -58,19 +59,19 @@ def main():
         res = proc.stdout.readline().strip()
         end = time.perf_counter()
         times.append((end - start) * 1000)
-        
+
         try:
             data = json.loads(res)
             total_nodes += data.get("results", {}).get("nodes_visited", 0)
             total_edges += data.get("results", {}).get("edges_traversed", 0)
         except Exception:
             pass
-        
+
     avg = sum(times) / len(times)
-    
+
     print(f"Koka SHM Walker Results (Total): {total_nodes} nodes, {total_edges} edges")
     print(f"Koka SHM Walker took {avg:.2f}ms (avg over {len(start_nodes)} runs)")
-    
+
     proc.stdin.write('{"op":"quit"}\n')
     proc.stdin.flush()
     proc.kill()

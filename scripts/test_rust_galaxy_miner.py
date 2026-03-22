@@ -18,10 +18,10 @@ print("="*80)
 # Import Rust module
 try:
     from whitemagic.optimization.rust_accelerators import (
+        get_galaxy_stats,
         mine_access_patterns,
         mine_cache_candidates,
         mine_semantic_clusters,
-        get_galaxy_stats,
     )
     print("\n✓ Rust galaxy miner imported successfully")
 except ImportError as e:

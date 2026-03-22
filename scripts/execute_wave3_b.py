@@ -1,10 +1,11 @@
 import os
 
+
 def setup_g003_thought_galaxy():
     print("=== G003: Thought Galaxy Implementation ===")
     galaxy_path = "/home/lucas/Desktop/whitemagicdev/whitemagic/core/evolution/thought_galaxy.py"
     os.makedirs(os.path.dirname(galaxy_path), exist_ok=True)
-    
+
     with open(galaxy_path, "w") as f:
         f.write("""# Thought Galaxy Creation, Scoring, and Recall System
 import math
@@ -46,7 +47,7 @@ class ThoughtGalaxy:
 def setup_g007_wu_xing_scheduler():
     print("=== G007: Wu Xing Waking Scheduler Implementation ===")
     wuxing_path = "/home/lucas/Desktop/whitemagicdev/whitemagic/core/orchestration/wu_xing_scheduler.py"
-    
+
     with open(wuxing_path, "w") as f:
         f.write("""# Wu Xing Waking Scheduler (5-phase state machine)
 from enum import Enum

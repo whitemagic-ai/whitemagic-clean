@@ -18,7 +18,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from whitemagic.core.consciousness.coherence import CoherenceMetric
 
@@ -87,8 +87,8 @@ class SelfNamingThresholdDetector:
 
     def __init__(
         self,
-        threshold: Optional[NamingThreshold] = None,
-        persistence_path: Optional[Path] = None,
+        threshold: NamingThreshold | None = None,
+        persistence_path: Path | None = None,
     ) -> None:
         self.threshold = threshold or NamingThreshold()
         self.persistence_path = persistence_path or (
@@ -98,7 +98,7 @@ class SelfNamingThresholdDetector:
         self.coherence_window = CoherenceWindow()
         self._emerged_identities: list[EmergentIdentity] = []
         self._has_emerged: bool = False
-        self._current_emergence: Optional[EmergentIdentity] = None
+        self._current_emergence: EmergentIdentity | None = None
 
         self._load_persisted()
 
@@ -331,7 +331,7 @@ class SelfNamingThresholdDetector:
         except Exception as e:
             logger.warning(f"Failed to load persisted identities: {e}")
 
-    def get_current_identity(self) -> Optional[EmergentIdentity]:
+    def get_current_identity(self) -> EmergentIdentity | None:
         """Get the current emergent identity, if any."""
         return self._current_emergence
 

@@ -1,9 +1,11 @@
-import logging
 import ast
-from typing import Dict, Any, Optional
+import logging
 from datetime import datetime
-from whitemagic.core.memory.unified import get_unified_memory
+from typing import Any
+
 from whitemagic.core.gan_ying import get_bus
+
+from whitemagic.core.memory.unified import get_unified_memory
 
 logger = logging.getLogger(__name__)
 
@@ -21,9 +23,9 @@ class NoHidingMemoryController:
     def __init__(self):
         self.unified = get_unified_memory()
         self.bus = get_bus()
-        self.signatures: Dict[str, Dict[str, Any]] = {}
+        self.signatures: dict[str, dict[str, Any]] = {}
 
-    def capture_signature(self, entity_id: str, traits: Dict[str, Any]):
+    def capture_signature(self, entity_id: str, traits: dict[str, Any]):
         """
         Encodes an 'energetic signature' into the environment.
         This includes stylistic patterns, emotional baselines, and unique vocabularies.
@@ -45,7 +47,7 @@ class NoHidingMemoryController:
 
         logger.info(f"🌌 Signature captured for {entity_id}. Information distributed to environment.")
 
-    def reconstruct(self, entity_id: str) -> Optional[Dict[str, Any]]:
+    def reconstruct(self, entity_id: str) -> dict[str, Any] | None:
         """
         Attempts to reconstruct an entity from the environment's subspace.
         Searches unified memory for 'nohiding' tags and assembles the pattern.

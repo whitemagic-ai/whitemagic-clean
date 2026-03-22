@@ -56,6 +56,7 @@ def handle_bicameral_reason(**kwargs: Any) -> dict[str, Any]:
 
     try:
         import asyncio
+
         from whitemagic.core.intelligence.bicameral import get_bicameral_reasoner
         reasoner = get_bicameral_reasoner()
 
@@ -186,8 +187,9 @@ def handle_selfmodel_alerts(**kwargs: Any) -> dict[str, Any]:
 
 def handle_worker_status(**kwargs: Any) -> dict[str, Any]:
     """Check if a worker daemon is running and get its stats."""
-    from whitemagic.utils.fast_json import loads as _json_loads
     from pathlib import Path
+
+    from whitemagic.utils.fast_json import loads as _json_loads
     try:
         from whitemagic.config.paths import WM_ROOT
         agents_dir = WM_ROOT / "agents"

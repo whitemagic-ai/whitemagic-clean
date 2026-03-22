@@ -1,5 +1,5 @@
 import math
-from typing import Any, List, Dict, Optional, Tuple
+from typing import Any
 
 try:
     import whitemagic_rust
@@ -14,20 +14,20 @@ except ImportError:
 # Integration Test Shims (v21)
 # These provide the exact API expected by integration tests, bridging to Python or Rust.
 
-def _py_cosine(a: List[float], b: List[float]) -> float:
+def _py_cosine(a: list[float], b: list[float]) -> float:
     d = sum(x * y for x, y in zip(a, b))
     na = math.sqrt(sum(x * x for x in a))
     nb = math.sqrt(sum(x * x for x in b))
     return d / (na * nb) if na > 0 and nb > 0 else 0.0
 
 class VectorSearch:
-    def __init__(self, db_path: Optional[str] = None):
+    def __init__(self, db_path: str | None = None):
         self._vectors = {}
-    def add_vector(self, vid: str, vec: List[float]):
+    def add_vector(self, vid: str, vec: list[float]):
         self._vectors[vid] = vec
-    def cosine_similarity(self, v1: List[float], v2: List[float]) -> float:
+    def cosine_similarity(self, v1: list[float], v2: list[float]) -> float:
         return _py_cosine(v1, v2)
-    def search(self, query_vec: List[float], limit: int = 10) -> List[Tuple[str, float]]:
+    def search(self, query_vec: list[float], limit: int = 10) -> list[tuple[str, float]]:
         scored = []
         for vid, vec in self._vectors.items():
             scored.append((vid, self.cosine_similarity(query_vec, vec)))
@@ -35,14 +35,14 @@ class VectorSearch:
         return scored[:limit]
 
 class HybridRecall:
-    def search(self, query: str, use_fts: bool = True, use_vector: bool = True, limit: int = 10) -> List[Dict[str, Any]]:
+    def search(self, query: str, use_fts: bool = True, use_vector: bool = True, limit: int = 10) -> list[dict[str, Any]]:
         # Mock for integration tests
         return [{"id": "test", "score": 0.9}]
 
 class ReasoningEngine:
     def __init__(self, threshold: float = 0.7):
         self.threshold = threshold
-    def infer(self, premises: List[str], rules: List[tuple]) -> List[str]:
+    def infer(self, premises: list[str], rules: list[tuple]) -> list[str]:
         results = []
         for conds, outcome, weight in rules:
             if all(c in premises for c in conds) and weight >= self.threshold:
@@ -52,7 +52,7 @@ class ReasoningEngine:
 class EmergenceDetector:
     def __init__(self, threshold: float = 0.7):
         self.threshold = threshold
-    def detect(self, patterns: List[str]) -> List[str]:
+    def detect(self, patterns: list[str]) -> list[str]:
         if not patterns:
             return []
         return [patterns[0]] if len(patterns) > 1 else []
@@ -62,7 +62,7 @@ class GraphWalker:
         self._edges = []
     def add_edge(self, src: str, dst: str, weight: float, relation: str):
         self._edges.append((src, dst, weight, relation))
-    def walk(self, start_node: str, max_depth: int = 3, min_weight: float = 0.5) -> List[str]:
+    def walk(self, start_node: str, max_depth: int = 3, min_weight: float = 0.5) -> list[str]:
         return [e[1] for e in self._edges if e[0] == start_node and e[2] >= min_weight]
 
 class CommunityDetection:
@@ -70,7 +70,7 @@ class CommunityDetection:
         self._nodes = {}
     def add_node(self, node: str, community_id: int):
         self._nodes[node] = community_id
-    def get_communities(self) -> Dict[int, List[str]]:
+    def get_communities(self) -> dict[int, list[str]]:
         comms = {}
         for node, cid in self._nodes.items():
             if cid not in comms:
@@ -84,7 +84,7 @@ class MemoryConsolidation:
         self.candidates = []
     def add_candidate(self, mid: str, score: float, accesses: int, age: float):
         self.candidates.append({"id": mid, "score": score, "accesses": accesses, "age": age})
-    def consolidate(self) -> List[str]:
+    def consolidate(self) -> list[str]:
         return [c["id"] for c in self.candidates if c["score"] >= self.threshold]
 
 class MemoryDecay:
@@ -104,7 +104,7 @@ class MemoryLifecycle:
             if mid not in self.transitions: self.transitions[mid] = []
             self.transitions[mid].append((self.stages[mid], stage))
         self.stages[mid] = stage
-    def get_transitions(self, mid: str) -> List[Tuple[str, str]]:
+    def get_transitions(self, mid: str) -> list[tuple[str, str]]:
         return self.transitions.get(mid, [])
 
 class HolographicIndex:
@@ -113,7 +113,7 @@ class HolographicIndex:
         self._coords = {}
     def add(self, memory_id: str, x: float, y: float, z: float, w: float):
         self._coords[memory_id] = [x, y, z, w]
-    def query_nearest(self, x: float, y: float, z: float, w: float, n: int) -> List[Tuple[str, float]]:
+    def query_nearest(self, x: float, y: float, z: float, w: float, n: int) -> list[tuple[str, float]]:
         query = [x, y, z, w]
         scored = []
         for mid, vec in self._coords.items():
@@ -121,7 +121,7 @@ class HolographicIndex:
             scored.append((mid, math.sqrt(dist_sq)))
         scored.sort(key=lambda x: x[1])
         return scored[:n]
-    def query_radius(self, x: float, y: float, z: float, w: float, radius: float) -> List[Tuple[str, float]]:
+    def query_radius(self, x: float, y: float, z: float, w: float, radius: float) -> list[tuple[str, float]]:
         query = [x, y, z, w]
         radius_sq = radius * radius
         results = []
@@ -131,9 +131,9 @@ class HolographicIndex:
                 results.append((mid, math.sqrt(dist_sq)))
         results.sort(key=lambda x: x[1])
         return results
-    def stats(self) -> Dict[str, int]:
+    def stats(self) -> dict[str, int]:
         return {"count": len(self._coords)}
-    def find_clusters(self, radius: float, min_size: int) -> List[Tuple[List[float], List[str]]]:
+    def find_clusters(self, radius: float, min_size: int) -> list[tuple[list[float], list[str]]]:
         # Simple clustering for shim
         return []
 
@@ -141,9 +141,9 @@ class SpatialIndex5D:
     """Shim for the newer 5D Spatial Index."""
     def __init__(self):
         self._coords = {}
-    def add(self, memory_id: str, vec: List[float]):
+    def add(self, memory_id: str, vec: list[float]):
         self._coords[memory_id] = vec
-    def query_nearest(self, query_vec: List[float], k: int) -> List[Tuple[str, float]]:
+    def query_nearest(self, query_vec: list[float], k: int) -> list[tuple[str, float]]:
         scored = []
         for mid, vec in self._coords.items():
             dist_sq = sum((a - b) ** 2 for a, b in zip(query_vec, vec))

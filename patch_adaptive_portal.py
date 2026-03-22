@@ -1,5 +1,5 @@
 
-with open('whitemagic/cascade/adaptive_portal.py', 'r') as f:
+with open('whitemagic/cascade/adaptive_portal.py') as f:
     content = f.read()
 
 # Make sure holographic context injector is imported

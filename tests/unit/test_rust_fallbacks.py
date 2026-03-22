@@ -3,10 +3,11 @@
 PSR-014: Test coverage for _rust_fallbacks module.
 """
 import pytest
+
 from whitemagic.optimization._rust_fallbacks import (
-    _galactic_batch_score_python,
-    _association_mine_python,
     PythonSpatialIndex5D,
+    _association_mine_python,
+    _galactic_batch_score_python,
 )
 
 

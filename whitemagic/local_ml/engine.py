@@ -28,7 +28,9 @@ class LocalMLEngine:  # pragma: no cover - legacy shim
                 "Set WHITEMAGIC_ENABLE_LOCAL_MODELS=1 to enable legacy local-model support."
             )
 
-        from whitemagic._archived.local_models.local_ml.engine import LocalMLEngine as _Impl  # type: ignore[import-not-found]
+        from whitemagic._archived.local_models.local_ml.engine import (
+            LocalMLEngine as _Impl,  # type: ignore[import-not-found]
+        )
 
         # Delegate by swapping class at runtime.
         self.__class__ = _Impl  # type: ignore[misc]
@@ -42,6 +44,8 @@ def get_local_ml_engine() -> Any:
             "Set WHITEMAGIC_ENABLE_LOCAL_MODELS=1 to enable legacy local-model support."
         )
 
-    from whitemagic._archived.local_models.local_ml.engine import get_local_ml_engine as _impl  # type: ignore[import-not-found]
+    from whitemagic._archived.local_models.local_ml.engine import (
+        get_local_ml_engine as _impl,  # type: ignore[import-not-found]
+    )
 
     return _impl()

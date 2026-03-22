@@ -6,12 +6,13 @@ Comprehensive validation of PSR-001 through PSR-010
 
 import json
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any
 
-def validate_psr001() -> Dict[str, Any]:
+
+def validate_psr001() -> dict[str, Any]:
     """Validate PSR-001 Memory Core"""
     base = Path(__file__).parent.parent
-    
+
     results = {
         'campaign': 'PSR-001',
         'name': 'Memory Core',
@@ -21,83 +22,83 @@ def validate_psr001() -> Dict[str, Any]:
         'files_missing': [],
         'expected_speedup': '50-100×'
     }
-    
+
     # Check Rust files
     rust_files = [
         'whitemagic-rust/src/memory/sqlite_backend_v2.rs',
         'whitemagic-rust/src/memory/unified_v2.rs',
         'whitemagic-rust/src/memory/consolidation_v2.rs'
     ]
-    
+
     for f in rust_files:
         path = base / f
         if path.exists():
             results['files_created'].append(f)
         else:
             results['files_missing'].append(f)
-    
+
     # Check Zig files
     zig_files = [
         'whitemagic-zig/src/memory/pattern_engine.zig',
         'whitemagic-zig/src/memory/galactic_map.zig'
     ]
-    
+
     for f in zig_files:
         path = base / f
         if path.exists():
             results['files_created'].append(f)
         else:
             results['files_missing'].append(f)
-    
+
     # Check Mojo files
     mojo_files = [
         'whitemagic-mojo/src/hrr.mojo',
         'whitemagic-mojo/src/surprise_gate.mojo',
         'whitemagic-mojo/src/embedding_index.mojo'
     ]
-    
+
     for f in mojo_files:
         path = base / f
         if path.exists():
             results['files_created'].append(f)
         else:
             results['files_missing'].append(f)
-    
+
     # Check Koka files
     koka_files = ['whitemagic-koka/src/dream_cycle.kk']
-    
+
     for f in koka_files:
         path = base / f
         if path.exists():
             results['files_created'].append(f)
         else:
             results['files_missing'].append(f)
-    
+
     results['completion_rate'] = len(results['files_created']) / results['vcs_total']
     results['status'] = '✅ COMPLETE' if len(results['files_created']) == 9 else '⚠️ PARTIAL'
-    
+
     return results
 
-def validate_psr_campaign(campaign_id: str, expected_files: List[str]) -> Dict[str, Any]:
+def validate_psr_campaign(campaign_id: str, expected_files: list[str]) -> dict[str, Any]:
     """Validate a PSR campaign"""
     base = Path(__file__).parent.parent
-    
+
     results = {
         'campaign': campaign_id,
         'files_created': [],
         'files_missing': []
     }
-    
+
     for f in expected_files:
         path = base / f
         if path.exists():
             results['files_created'].append(f)
         else:
             results['files_missing'].append(f)
-    
+
     results['completion_rate'] = len(results['files_created']) / len(expected_files) if expected_files else 0
     results['status'] = '✅ COMPLETE' if len(results['files_missing']) == 0 else '⚠️ PARTIAL'
-    
+
     return results
 
 def main():
@@ -105,10 +106,10 @@ def main():
     print("\n" + "="*70)
     print("🔍 PSR CAMPAIGN VALIDATION")
     print("="*70)
-    
+
     # Validate PSR-001
     psr001 = validate_psr001()
-    
+
     # Validate PSR-002 through PSR-010
     campaigns = {
         'PSR-002': [
@@ -160,25 +161,25 @@ def main():
             'whitemagic-rust/src/psr/psr-010/test_suite.rs'
         ]
     }
-    
+
     all_results = {'PSR-001': psr001}
-    
+
     for cid, files in campaigns.items():
         result = validate_psr_campaign(cid, files)
         all_results[cid] = result
-    
+
     # Summary
     print("\n📊 VALIDATION SUMMARY")
     print("="*70)
-    
+
     total_campaigns = len(all_results)
     complete_campaigns = sum(1 for r in all_results.values() if r['status'] == '✅ COMPLETE')
     total_files = sum(len(r['files_created']) for r in all_results.values())
-    
+
     print(f"\nCampaigns validated: {total_campaigns}/10")
     print(f"Complete campaigns: {complete_campaigns}/{total_campaigns}")
     print(f"Total files created: {total_files}")
-    
+
     print("\n📋 Per-Campaign Status:")
     for cid in sorted(all_results.keys()):
         result = all_results[cid]
@@ -188,7 +189,7 @@ def main():
         print(f"  {cid}: {result['status']} ({created} files, {rate:.0f}% complete)")
         if missing > 0:
             print(f"    Missing: {missing} files")
-    
+
     # Save report
     report_path = Path(__file__).parent.parent / "reports" / "psr_validation_report.json"
     report = {
@@ -198,9 +199,9 @@ def main():
         'results': all_results
     }
     report_path.write_text(json.dumps(report, indent=2))
-    
+
     print(f"\n✅ Validation report saved: {report_path}")
-    
+
     if complete_campaigns == total_campaigns:
         print("\n🎉 ALL PSR CAMPAIGNS VALIDATED!")
     else:

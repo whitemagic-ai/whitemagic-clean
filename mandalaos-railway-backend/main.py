@@ -13,15 +13,14 @@ Author: WhiteMagic Team
 Version: 0.1.0
 """
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import init_db
-from routers import memories, sessions, health, websocket
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from routers import health, memories, sessions, websocket
 
 
 @asynccontextmanager

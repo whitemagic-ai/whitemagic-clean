@@ -3,7 +3,7 @@
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger("haskell_bridge")
 
@@ -25,7 +25,9 @@ class HaskellBridge:
             haskell_dir = str(_HASKELL_DIR)
             if haskell_dir not in sys.path:
                 sys.path.insert(0, haskell_dir)
-            from haskell_bridge import HaskellDivination  # type: ignore[import-not-found]
+            from haskell_bridge import (
+                HaskellDivination,  # type: ignore[import-not-found]
+            )
 
             self._divination = HaskellDivination()
             self._available = True
@@ -38,7 +40,7 @@ class HaskellBridge:
     def available(self) -> bool:
         return bool(self._available)
 
-    def cast_hexagram(self, lines: Optional[List[int]] = None) -> Dict[str, Any]:
+    def cast_hexagram(self, lines: list[int] | None = None) -> dict[str, Any]:
         """Cast a hexagram from 6 line values (0=Yin, 1=Yang).
 
         If lines is None, generates random lines.

@@ -14,9 +14,9 @@ Objectives:
 
 import json
 import time
-from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from pathlib import Path
+from typing import Any
 
 
 @dataclass
@@ -24,7 +24,7 @@ class ImplementationObjective:
     id: str
     priority: str
     description: str
-    target_files: List[str]
+    target_files: list[str]
     koka_binary: str
     estimated_hours: float
     status: str = "pending"
@@ -32,14 +32,14 @@ class ImplementationObjective:
 
 class KokaImplementationArmy:
     """Deploy implementation armies for Koka integration."""
-    
+
     def __init__(self, root_dir: Path):
         self.root_dir = Path(root_dir)
         self.koka_dir = root_dir / "whitemagic-koka"
-        self.objectives: List[ImplementationObjective] = []
-        self.results: Dict[str, Any] = {}
-    
-    def define_objectives(self) -> List[ImplementationObjective]:
+        self.objectives: list[ImplementationObjective] = []
+        self.results: dict[str, Any] = {}
+
+    def define_objectives(self) -> list[ImplementationObjective]:
         """Define implementation objectives based on scout findings."""
         return [
             ImplementationObjective(
@@ -91,11 +91,11 @@ class KokaImplementationArmy:
                 estimated_hours=8.0
             )
         ]
-    
-    def deploy_army_alpha(self) -> Dict[str, Any]:
+
+    def deploy_army_alpha(self) -> dict[str, Any]:
         """Army Alpha: Create Python→Koka bridge (50K clones)."""
         print("\n[Army Alpha] Deploying 50K clones for KOKA-INT-001...")
-        
+
         bridge_code = '''"""Koka Bridge - Python interface to Koka binaries.
 
 Provides high-level Python API for all Koka runtime binaries.
@@ -211,13 +211,13 @@ class KokaRuntime:
             proc.close()
         self.processes.clear()
 '''
-        
+
         bridge_path = self.root_dir / "whitemagic" / "core" / "acceleration" / "koka_bridge.py"
         bridge_path.parent.mkdir(exist_ok=True)
-        
+
         with open(bridge_path, "w") as f:
             f.write(bridge_code)
-        
+
         return {
             "army": "alpha",
             "clones": 50000,
@@ -225,11 +225,11 @@ class KokaRuntime:
             "deliverable": str(bridge_path.relative_to(self.root_dir)),
             "status": "complete"
         }
-    
-    def deploy_army_beta(self) -> Dict[str, Any]:
+
+    def deploy_army_beta(self) -> dict[str, Any]:
         """Army Beta: Add batch operations to rust_bridge (30K clones)."""
         print("\n[Army Beta] Deploying 30K clones for KOKA-INT-002...")
-        
+
         # The rust_bridge already has batch support, mark as complete
         return {
             "army": "beta",
@@ -239,11 +239,11 @@ class KokaRuntime:
             "status": "already_complete",
             "note": "rust_bridge already supports batch operations"
         }
-    
-    def deploy_army_gamma(self) -> Dict[str, Any]:
+
+    def deploy_army_gamma(self) -> dict[str, Any]:
         """Army Gamma: Metrics and monitoring (40K clones)."""
         print("\n[Army Gamma] Deploying 40K clones for KOKA-INT-003...")
-        
+
         metrics_module = '''"""Koka Metrics Exporter - Prometheus format.
 
 Exports metrics from Koka binaries to Prometheus.
@@ -284,11 +284,11 @@ class KokaMetricsExporter:
             lines.append(f"{key} {value}")
         return "\\n".join(lines)
 '''
-        
+
         metrics_path = self.root_dir / "whitemagic" / "core" / "acceleration" / "koka_metrics.py"
         with open(metrics_path, "w") as f:
             f.write(metrics_module)
-        
+
         return {
             "army": "gamma",
             "clones": 40000,
@@ -296,15 +296,15 @@ class KokaMetricsExporter:
             "deliverable": str(metrics_path.relative_to(self.root_dir)),
             "status": "complete"
         }
-    
-    def deploy_all_armies(self) -> Dict[str, Any]:
+
+    def deploy_all_armies(self) -> dict[str, Any]:
         """Deploy all implementation armies."""
         print("=" * 70)
         print("KOKA IMPLEMENTATION ARMY DEPLOYMENT")
         print("=" * 70)
-        
+
         self.objectives = self.define_objectives()
-        
+
         # Deploy armies
         results = {
             "deployment_id": "koka-phase-2-" + str(int(time.time())),
@@ -312,41 +312,41 @@ class KokaMetricsExporter:
             "total_clones": 0,
             "armies": []
         }
-        
+
         # Army Alpha: Python bridge
         alpha_result = self.deploy_army_alpha()
         results["armies"].append(alpha_result)
         results["total_clones"] += alpha_result["clones"]
-        
+
         # Army Beta: Batch operations
         beta_result = self.deploy_army_beta()
         results["armies"].append(beta_result)
         results["total_clones"] += beta_result["clones"]
-        
+
         # Army Gamma: Metrics
         gamma_result = self.deploy_army_gamma()
         results["armies"].append(gamma_result)
         results["total_clones"] += gamma_result["clones"]
-        
+
         # Mark objectives complete
         for obj in self.objectives[:3]:
             obj.status = "complete"
-        
+
         results["completed_objectives"] = sum(1 for obj in self.objectives if obj.status == "complete")
         results["pending_objectives"] = sum(1 for obj in self.objectives if obj.status == "pending")
-        
+
         self.results = results
         return results
-    
+
     def print_results(self):
         """Print deployment results."""
         print("\n" + "=" * 70)
         print("DEPLOYMENT RESULTS")
         print("=" * 70)
-        
+
         print(f"\nTotal Clones Deployed: {self.results['total_clones']:,}")
         print(f"Objectives: {self.results['completed_objectives']}/{self.results['total_objectives']} complete")
-        
+
         print("\n--- Army Results ---")
         for army in self.results['armies']:
             print(f"\n[{army['army'].upper()}] {army['clones']:,} clones")
@@ -355,31 +355,31 @@ class KokaMetricsExporter:
             print(f"  Deliverable: {army['deliverable']}")
             if 'note' in army:
                 print(f"  Note: {army['note']}")
-        
+
         print("\n--- Pending Objectives ---")
         for obj in self.objectives:
             if obj.status == "pending":
                 print(f"\n{obj.id} [{obj.priority}]")
                 print(f"  {obj.description}")
                 print(f"  Est: {obj.estimated_hours}h")
-        
+
         print("=" * 70)
 
 
 def main():
     """Deploy implementation armies."""
-    
+
     root_dir = Path(__file__).parent.parent
     army = KokaImplementationArmy(root_dir)
     results = army.deploy_all_armies()
     army.print_results()
-    
+
     # Save results
     results_path = root_dir / "reports" / "koka_implementation_army_results.json"
     with open(results_path, "w") as f:
         json.dump(results, f, indent=2)
     print(f"\nResults saved to: {results_path}")
-    
+
     print("\n" + "=" * 70)
     print("IMPLEMENTATION PHASE 2 COMPLETE")
     print("=" * 70)

@@ -40,7 +40,10 @@ from whitemagic.config.paths import (
     WM_ROOT,
 )
 from whitemagic.tools.contract import ENV_VARS, ENVELOPE_VERSION, TOOL_CONTRACT_VERSION
-from whitemagic.tools.tool_surface import get_callable_tool_definitions, get_surface_counts
+from whitemagic.tools.tool_surface import (
+    get_callable_tool_definitions,
+    get_surface_counts,
+)
 
 
 def _has_module(name: str) -> bool:

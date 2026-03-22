@@ -18,34 +18,34 @@ def check_campaign_complete(filepath: Path) -> tuple[bool, int, int]:
     Returns: (is_complete, completed_count, total_count)
     """
     content = filepath.read_text(encoding='utf-8', errors='ignore')
-    
+
     # Find all victory conditions
     checked = re.findall(r'- \[x\]', content, re.IGNORECASE)
     unchecked = re.findall(r'- \[ \]', content, re.IGNORECASE)
-    
+
     completed = len(checked)
     total = completed + len(unchecked)
-    
+
     if total == 0:
         return False, 0, 0
-    
+
     is_complete = len(unchecked) == 0 and completed > 0
     return is_complete, completed, total
 
 def main():
     """Move all 100% complete campaigns."""
     print("🔍 Scanning campaigns for completion status...")
-    
+
     moved = 0
     already_complete = 0
     incomplete = 0
-    
+
     for campaign_file in CAMPAIGNS_DIR.glob("*.md"):
         if campaign_file.name.startswith('.'):
             continue
-        
+
         is_complete, completed, total = check_campaign_complete(campaign_file)
-        
+
         if is_complete:
             # Move to completed folder
             dest = COMPLETED_DIR / campaign_file.name
@@ -57,7 +57,7 @@ def main():
                 moved += 1
         else:
             incomplete += 1
-    
+
     print()
     print("📊 Results:")
     print(f"  ✅ Moved: {moved} campaigns")

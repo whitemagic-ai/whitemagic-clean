@@ -5,11 +5,11 @@ Extracted via trajectory_search API from LevelDB session IDs.
 Each conversation is stored as a LONG_TERM memory with rich metadata.
 """
 
+import hashlib
 import json
 import sqlite3
 import uuid
-import hashlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # The 13 conversations extracted via trajectory_search
@@ -219,7 +219,7 @@ def make_content(conv):
         lines.append(f"- {finding}")
     lines.append("")
     lines.append(f"**Tags:** {', '.join(conv.get('tags', []))}")
-    lines.append(f"**Extracted:** {datetime.now(timezone.utc).isoformat()}")
+    lines.append(f"**Extracted:** {datetime.now(UTC).isoformat()}")
     return "\n".join(lines)
 
 
@@ -228,7 +228,7 @@ def ingest_all(db_path: str):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     inserted = 0
 
     for conv in CONVERSATIONS:

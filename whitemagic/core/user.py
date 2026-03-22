@@ -6,11 +6,10 @@ Used by GirlGana (Nurture) to adapt the system to the user.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-
-from whitemagic.utils.fast_json import loads as _json_loads
 from typing import Any
 
 from whitemagic.config.paths import USER_PROFILE_PATH
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 @dataclass

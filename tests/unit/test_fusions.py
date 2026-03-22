@@ -9,15 +9,15 @@ Tests:
 """
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from whitemagic.core.fusions import (
-    check_proactive_dream,
-    get_wuxing_quadrant_boost,
-    modulate_drive_from_resonance,
-    get_fusion_status,
     _ELEMENT_TO_QUADRANT,
     _QUADRANT_TO_ELEMENT,
+    check_proactive_dream,
+    get_fusion_status,
+    get_wuxing_quadrant_boost,
+    modulate_drive_from_resonance,
 )
 
 
@@ -166,7 +166,10 @@ class TestResonanceDriveModulation(unittest.TestCase):
         mock_drive_fn.return_value = drive
 
         # Record a predecessor in the same quadrant (East)
-        from whitemagic.tools.prat_resonance import ResonanceSnapshot, get_resonance_state
+        from whitemagic.tools.prat_resonance import (
+            ResonanceSnapshot,
+            get_resonance_state,
+        )
         state = get_resonance_state()
         state.record(ResonanceSnapshot(
             gana_name="gana_horn", tool_name=None, operation="search",
@@ -181,7 +184,10 @@ class TestResonanceDriveModulation(unittest.TestCase):
         drive = MagicMock()
         mock_drive_fn.return_value = drive
 
-        from whitemagic.tools.prat_resonance import ResonanceSnapshot, get_resonance_state
+        from whitemagic.tools.prat_resonance import (
+            ResonanceSnapshot,
+            get_resonance_state,
+        )
         state = get_resonance_state()
         state.record(ResonanceSnapshot(
             gana_name="gana_horn", tool_name=None, operation="search",

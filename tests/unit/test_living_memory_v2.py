@@ -543,6 +543,7 @@ class TestBitemporalMigration(unittest.TestCase):
         """The migration dict should include event_time and ingestion_time."""
         # Read the source to verify the columns are in the migration dict
         import inspect
+
         from whitemagic.core.memory.sqlite_backend import SQLiteBackend
         source = inspect.getsource(SQLiteBackend._init_db)
         self.assertIn("event_time", source)
@@ -551,6 +552,7 @@ class TestBitemporalMigration(unittest.TestCase):
     def test_store_sets_ingestion_time(self):
         """The store method should set ingestion_time."""
         import inspect
+
         from whitemagic.core.memory.sqlite_backend import SQLiteBackend
         source = inspect.getsource(SQLiteBackend.store)
         self.assertIn("ingestion_time", source)

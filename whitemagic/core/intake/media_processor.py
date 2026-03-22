@@ -260,8 +260,10 @@ class ImageProcessor:
         """Use Ollama vision model for image captioning."""
         try:
             import base64
-            from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
             import urllib.request
+
+            from whitemagic.utils.fast_json import dumps_str as _json_dumps
+            from whitemagic.utils.fast_json import loads as _json_loads
 
             # Read and base64-encode the image
             image_data = base64.b64encode(path.read_bytes()).decode("utf-8")

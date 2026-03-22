@@ -16,8 +16,6 @@ from __future__ import annotations
 import logging
 import os
 import shutil
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 import subprocess
 import tempfile
 import threading
@@ -27,6 +25,8 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 

@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
 import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ class AutoimmuneSystem:
             return
 
         latest = max(pattern_files, key=lambda p: p.stat().st_mtime)
-        with open(latest, "r") as f:
+        with open(latest) as f:
             data = json.load(f)
 
         # Convert anti-patterns

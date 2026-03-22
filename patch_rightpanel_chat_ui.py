@@ -1,6 +1,6 @@
 import re
 
-with open('nexus/src/components/panels/RightPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/RightPanel.tsx') as f:
     content = f.read()
 
 # Make the chat UI look more like Windsurf Cascade
@@ -38,7 +38,7 @@ pill_replacement = """                  <div
                     
                     {msg.content.replace(/I am looking at `.*`\\.\\s*/, '')}
                   </div>"""
-                  
+
 content = re.sub(r'                  <div\n                    className=\{`max-w-\[85%\] rounded-lg px-3 py-2 text-sm \$\{\n                      msg\.role === "user"\n                        \? "bg-wm-purple-500/20 text-gray-200"\n                        : "bg-wm-bg text-gray-300"\n                    \}`\}\n                  >\n                    \{msg\.content\}\n                  <\/div>', pill_replacement, content)
 
 # Make sure imports are present

@@ -4,8 +4,8 @@ Targets: PSR-011, PSR-012, PSR-013, PSR-014, PSR-015, F001
 """
 import subprocess
 import sys
-import time
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 

@@ -1,9 +1,10 @@
-import struct
-import posix_ipc
-import mmap
 import logging
+import mmap
+import struct
 import threading
+
 import numpy as np
+import posix_ipc
 
 logger = logging.getLogger(__name__)
 

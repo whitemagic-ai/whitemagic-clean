@@ -8,10 +8,10 @@ Policy (AI-first / OSS-friendly):
 - Whitemagic should not write runtime state into the repo by default.
 - Callers can explicitly set `WM_STATE_ROOT` to place state wherever they want.
 """
-from typing import Any
 import os
 import tempfile
 from pathlib import Path
+from typing import Any
 
 
 def get_project_root() -> Path:

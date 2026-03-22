@@ -1,6 +1,6 @@
 import re
 
-with open('whitemagic/security/zodiac/ledger.py', 'r') as f:
+with open('whitemagic/security/zodiac/ledger.py') as f:
     content = f.read()
 
 # Make it use Rust ZodiacLedger if available, otherwise fallback

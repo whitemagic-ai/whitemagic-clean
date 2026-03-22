@@ -4,11 +4,11 @@ Tracks tool latency, errors, and success rates.
 
 import logging
 from collections import deque
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
 logger = logging.getLogger(__name__)
 

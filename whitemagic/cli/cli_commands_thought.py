@@ -6,8 +6,10 @@ wm thought status/recall/score
 """
 
 import click
-from whitemagic.core.memory.thought_galaxy import ThoughtGalaxy
+
 from whitemagic.config import paths
+from whitemagic.core.memory.thought_galaxy import ThoughtGalaxy
+
 
 @click.group(name="thought")
 def thought_cli() -> None:

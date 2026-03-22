@@ -33,7 +33,9 @@ def homeostasis_check() -> None:
     click.echo("\n⚖️  Homeostasis Check")
     click.echo("=" * 30)
     try:
-        from whitemagic.homeostasis import HomeostaticMonitor  # type: ignore[import-not-found]
+        from whitemagic.homeostasis import (
+            HomeostaticMonitor,  # type: ignore[import-not-found]
+        )
         monitor = HomeostaticMonitor()
         status_data = monitor.check_status()
         click.echo(f"✅ Status: {status_data.get('status', 'unknown')}")
@@ -63,7 +65,9 @@ def doctor_deep() -> None:
         click.echo(f"⚠️  Grimoire audit failed: {e}")
 
     try:
-        from whitemagic.core.mansion_bridge import get_mansion_bridge  # type: ignore[import-not-found]
+        from whitemagic.core.mansion_bridge import (
+            get_mansion_bridge,  # type: ignore[import-not-found]
+        )
         bridge = get_mansion_bridge()
         click.echo("\n🚀 Polyglot Acceleration")
         status = bridge.get_status()
@@ -185,7 +189,10 @@ def rabbit_hole_start(topic: str) -> None:
     click.echo("\n🐇 Rabbit Hole Start")
     click.echo("=" * 30)
     try:
-        from whitemagic.gardens.wisdom.rabbit_hole import RabbitHoleEntry, ResearchReport
+        from whitemagic.gardens.wisdom.rabbit_hole import (
+            RabbitHoleEntry,
+            ResearchReport,
+        )
         entry = RabbitHoleEntry(term=topic, depth=0)
         report = ResearchReport(title=f"Research: {topic}", topics=[topic])
         report.entries.append(entry)

@@ -135,13 +135,13 @@ def test_gana(gana_name, tests):
         "errors": [],
         "tools_tested": [],
     }
-    
+
     for tool_name, args in tests:
         start = time.time()
         try:
             result = call_tool(tool_name, **args)
             latency = (time.time() - start) * 1000
-            
+
             if isinstance(result, dict):
                 status = result.get("status")
                 if status == "success":
@@ -182,7 +182,7 @@ def test_gana(gana_name, tests):
                     "latency_ms": round(latency, 1)
                 })
                 print(f"  ✓ {tool_name:40s} ({latency:6.1f}ms)")
-                
+
         except Exception as e:
             results["failed"] += 1
             error_msg = str(e)[:100]
@@ -196,7 +196,7 @@ def test_gana(gana_name, tests):
                 "error": error_msg
             })
             print(f"  ✗ {tool_name:40s} EXCEPTION: {error_msg}")
-    
+
     return results
 
 def main():
@@ -204,39 +204,39 @@ def main():
     print("FINAL GANA DIAGNOSTIC - All 28 Ganas")
     print("="*80)
     print()
-    
+
     all_results = []
     total_passed = 0
     total_failed = 0
-    
+
     for gana_name in sorted(GANA_TESTS.keys()):
         print(f"\n{'='*80}")
         print(f"Testing {gana_name}")
         print("="*80)
-        
+
         tests = GANA_TESTS[gana_name]
         results = test_gana(gana_name, tests)
         all_results.append(results)
-        
+
         total_passed += results["passed"]
         total_failed += results["failed"]
-        
+
         pass_rate = (results["passed"] / (results["passed"] + results["failed"]) * 100) if (results["passed"] + results["failed"]) > 0 else 0
         print(f"\n{gana_name}: {results['passed']}/{results['passed'] + results['failed']} passed ({pass_rate:.1f}%)")
-    
+
     # Summary
     print("\n" + "="*80)
     print("FINAL SUMMARY")
     print("="*80)
-    
+
     total_tests = total_passed + total_failed
     overall_pass_rate = (total_passed / total_tests * 100) if total_tests > 0 else 0
-    
+
     print(f"\nTotal Tests: {total_tests}")
     print(f"Passed: {total_passed}")
     print(f"Failed: {total_failed}")
     print(f"Pass Rate: {overall_pass_rate:.1f}%")
-    
+
     # Gana-level summary
     print("\nGana-level Results:")
     for result in all_results:
@@ -244,7 +244,7 @@ def main():
         rate = (result["passed"] / total * 100) if total > 0 else 0
         status = "✓" if result["failed"] == 0 else "✗"
         print(f"  {status} {result['gana']:30s} {result['passed']}/{total} ({rate:5.1f}%)")
-    
+
     # Failed tools
     if total_failed > 0:
         print(f"\nFailed Tools ({total_failed}):")
@@ -253,7 +253,7 @@ def main():
                 print(f"\n  {result['gana']}:")
                 for error in result["errors"]:
                     print(f"    - {error['tool']}: {error['error']}")
-    
+
     # Save report
     report_file = Path(__file__).parent.parent / "reports" / "final_gana_diagnostic.json"
     with open(report_file, 'w') as f:
@@ -266,9 +266,9 @@ def main():
             },
             "ganas": all_results
         }, f, indent=2)
-    
+
     print(f"\n✓ Report saved to: {report_file}")
-    
+
     # Exit code based on pass rate
     if overall_pass_rate >= 95:
         return 0

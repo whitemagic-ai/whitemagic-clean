@@ -6,10 +6,9 @@ Identifies duplicate memories and noise (logs, tracebacks, empty content)
 for purging or rehabilitation.
 """
 
-import re
 import hashlib
-from typing import List
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +56,7 @@ def is_noise(content: str, title: str = "") -> bool:
 
     return False
 
-def find_duplicates(cursor, batch_size: int = 1000) -> List[str]:
+def find_duplicates(cursor, batch_size: int = 1000) -> list[str]:
     """
     Find IDs of memories that are exact content duplicates of ACTIVE memories.
     Active memories are the source of truth. Any quarantined memory with same hash as active is a dupe.

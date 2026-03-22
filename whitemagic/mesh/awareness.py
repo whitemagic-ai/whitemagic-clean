@@ -19,9 +19,9 @@ from __future__ import annotations
 import logging
 import threading
 import time
+from typing import Any
 
 from whitemagic.utils.fast_json import loads as _json_loads
-from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -33,13 +33,13 @@ class MeshAwareness:
     """
 
     def __init__(self) -> None:
-        self._peers: Dict[str, Dict[str, Any]] = {}
+        self._peers: dict[str, dict[str, Any]] = {}
         self._lock = threading.Lock()
-        self._mesh_events: List[Dict[str, Any]] = []
+        self._mesh_events: list[dict[str, Any]] = []
         self._max_events = 200
         self._listening = False
 
-    def register_peer(self, node_id: str, address: str = "", meta: Optional[Dict] = None) -> None:
+    def register_peer(self, node_id: str, address: str = "", meta: dict | None = None) -> None:
         with self._lock:
             self._peers[node_id] = {
                 "node_id": node_id,
@@ -52,11 +52,11 @@ class MeshAwareness:
         with self._lock:
             self._peers.pop(node_id, None)
 
-    def get_peers(self) -> List[Dict[str, Any]]:
+    def get_peers(self) -> list[dict[str, Any]]:
         with self._lock:
             return list(self._peers.values())
 
-    def record_event(self, event: Dict[str, Any]) -> None:
+    def record_event(self, event: dict[str, Any]) -> None:
         with self._lock:
             self._mesh_events.append({**event, "_received_at": time.time()})
             if len(self._mesh_events) > self._max_events:
@@ -95,7 +95,7 @@ class MeshAwareness:
             except Exception:
                 pass
 
-    def status(self) -> Dict[str, Any]:
+    def status(self) -> dict[str, Any]:
         """Full mesh awareness status."""
         try:
             from whitemagic.mesh.client import get_mesh_client
@@ -116,7 +116,7 @@ class MeshAwareness:
 
 
 # Singleton
-_awareness: Optional[MeshAwareness] = None
+_awareness: MeshAwareness | None = None
 _awareness_lock = threading.Lock()
 
 

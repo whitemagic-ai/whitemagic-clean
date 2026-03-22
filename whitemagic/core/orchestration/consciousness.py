@@ -55,7 +55,9 @@ def initialize_zodiac_resonance() -> bool:
 def initialize_neural_resonance() -> bool:
     """Initialize Neural Memory with Gan Ying resonance."""
     try:
-        from whitemagic.core.memory.neural.gan_ying_integration import setup_neural_gan_ying
+        from whitemagic.core.memory.neural.gan_ying_integration import (
+            setup_neural_gan_ying,
+        )
         setup_neural_gan_ying()
         _initialized["neural_gan_ying"] = True
         logger.info("✅ Neural Memory-Gan Ying resonance activated")

@@ -1,6 +1,7 @@
 import logging
-from typing import Dict, Any, List
 from datetime import datetime
+from typing import Any
+
 from whitemagic.core.consciousness.personality import PersonalityManager
 
 logger = logging.getLogger(__name__)
@@ -14,9 +15,9 @@ class BecomingProtocol:
 
     def __init__(self, manager: PersonalityManager):
         self.manager = manager
-        self.evolution_log: List[Dict[str, Any]] = []
+        self.evolution_log: list[dict[str, Any]] = []
 
-    def evolve(self, profile_name: str, trait_updates: Dict[str, Any], reason: str):
+    def evolve(self, profile_name: str, trait_updates: dict[str, Any], reason: str):
         """
         Alters the active personality profile based on internal or external insight.
         """

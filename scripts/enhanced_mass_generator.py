@@ -6,9 +6,10 @@ Generates all remaining PSR implementations with quality validation
 """
 
 import time
-from pathlib import Path
-from typing import Dict, List, Any
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
 
 @dataclass
 class EnhancedPattern:
@@ -18,15 +19,15 @@ class EnhancedPattern:
     code_template: str
     confidence: float
     source_file: str
-    keywords: List[str]
-    dependencies: List[str]
+    keywords: list[str]
+    dependencies: list[str]
     usage_count: int = 0
     success_rate: float = 0.0
-    
+
     def update_success(self, success: bool, speedup: float):
         """Update pattern based on actual results"""
         self.usage_count += 1
-        
+
         if success:
             self.success_rate = (self.success_rate * (self.usage_count - 1) + 1.0) / self.usage_count
             if speedup > 10.0:
@@ -37,36 +38,36 @@ class EnhancedPattern:
 
 class EnhancedGeneseedVault:
     """Enhanced vault with deep pattern analysis"""
-    
+
     def __init__(self, base_path: Path):
         self.base_path = base_path
-        self.patterns: Dict[str, List[EnhancedPattern]] = {}
+        self.patterns: dict[str, list[EnhancedPattern]] = {}
         self._build_pattern_index()
-    
+
     def _build_pattern_index(self):
         """Build comprehensive pattern index from codebase"""
         print("🧬 Building enhanced pattern index...")
-        
+
         # Scan existing Rust implementations
         rust_dir = self.base_path / "whitemagic-rust" / "src"
-        
+
         for rust_file in rust_dir.rglob("*.rs"):
             if rust_file.stat().st_size > 500:  # Only substantial files
                 patterns = self._extract_patterns_from_file(rust_file)
                 category = self._categorize_file(rust_file)
-                
+
                 if category not in self.patterns:
                     self.patterns[category] = []
-                
+
                 self.patterns[category].extend(patterns)
-        
+
         print(f"  Indexed {sum(len(p) for p in self.patterns.values())} patterns across {len(self.patterns)} categories")
-    
-    def _extract_patterns_from_file(self, file_path: Path) -> List[EnhancedPattern]:
+
+    def _extract_patterns_from_file(self, file_path: Path) -> list[EnhancedPattern]:
         """Extract patterns from a Rust file"""
         content = file_path.read_text()
         patterns = []
-        
+
         # Connection pooling
         if "Arc<Mutex<Vec<Connection>>>" in content:
             patterns.append(EnhancedPattern(
@@ -78,7 +79,7 @@ class EnhancedGeneseedVault:
                 ["pool", "connection", "arc", "mutex"],
                 ["std::sync::Arc", "std::sync::Mutex"]
             ))
-        
+
         # Parallel processing
         if "par_iter()" in content:
             patterns.append(EnhancedPattern(
@@ -90,7 +91,7 @@ class EnhancedGeneseedVault:
                 ["parallel", "rayon", "par_iter"],
                 ["rayon::prelude::*"]
             ))
-        
+
         # Error handling
         if "PyResult" in content:
             patterns.append(EnhancedPattern(
@@ -102,7 +103,7 @@ class EnhancedGeneseedVault:
                 ["pyo3", "pyresult", "error"],
                 ["pyo3::prelude::*"]
             ))
-        
+
         # SIMD operations
         if "simd" in content.lower():
             patterns.append(EnhancedPattern(
@@ -114,13 +115,13 @@ class EnhancedGeneseedVault:
                 ["simd", "vector", "parallel"],
                 ["std::simd"]
             ))
-        
+
         return patterns
-    
+
     def _categorize_file(self, file_path: Path) -> str:
         """Categorize file by its purpose"""
         name = str(file_path).lower()
-        
+
         if "search" in name:
             return "search"
         elif "graph" in name:
@@ -133,19 +134,19 @@ class EnhancedGeneseedVault:
             return "memory"
         else:
             return "generic"
-    
-    def get_patterns_for_category(self, category: str) -> List[EnhancedPattern]:
+
+    def get_patterns_for_category(self, category: str) -> list[EnhancedPattern]:
         """Get patterns for a specific category"""
         return self.patterns.get(category, self.patterns.get("generic", []))
 
 class QualityValidator:
     """Validates generated code quality"""
-    
+
     @staticmethod
-    def validate(code: str, file_name: str) -> Dict[str, Any]:
+    def validate(code: str, file_name: str) -> dict[str, Any]:
         """Comprehensive quality validation"""
         lines = code.split('\n')
-        
+
         validation = {
             'file_name': file_name,
             'line_count': len(lines),
@@ -158,32 +159,32 @@ class QualityValidator:
             'quality_score': 0.0,
             'issues': []
         }
-        
+
         # Check for stub indicators
         if 'TODO' in code and len(lines) < 50:
             validation['is_stub'] = True
             validation['issues'].append("Appears to be a stub (TODO + <50 lines)")
-        
+
         # Check error handling
         if 'PyResult' in code or 'Result<' in code:
             validation['has_error_handling'] = True
         else:
             validation['issues'].append("Missing error handling")
-        
+
         # Check parallel processing
         if 'par_iter' in code or 'rayon' in code:
             validation['has_parallel'] = True
-        
+
         # Check documentation
         if '//!' in code or '///' in code:
             validation['has_documentation'] = True
         else:
             validation['issues'].append("Missing documentation comments")
-        
+
         # Check tests
         if '#[test]' in code or '#[cfg(test)]' in code:
             validation['has_tests'] = True
-        
+
         # Calculate complexity
         complexity = 0
         complexity += code.count('fn ') * 5
@@ -192,39 +193,39 @@ class QualityValidator:
         complexity += code.count('if ') * 2
         complexity += code.count('match ') * 3
         complexity += code.count('for ') * 2
-        
+
         validation['complexity_score'] = complexity
-        
+
         # Calculate quality score
         score = 0
-        
+
         if not validation['is_stub']:
             score += 40
-        
+
         if validation['line_count'] > 50:
             score += 20
         elif validation['line_count'] > 100:
             score += 30
-        
+
         if validation['has_error_handling']:
             score += 15
-        
+
         if validation['has_parallel']:
             score += 10
-        
+
         if validation['has_documentation']:
             score += 10
-        
+
         if validation['has_tests']:
             score += 15
-        
+
         validation['quality_score'] = min(score, 100)
-        
+
         return validation
 
 class EnhancedMassGenerator:
     """Enhanced generator with quality validation"""
-    
+
     def __init__(self, base_path: Path):
         self.base_path = base_path
         self.vault = EnhancedGeneseedVault(base_path)
@@ -232,121 +233,121 @@ class EnhancedMassGenerator:
         self.generated = []
         self.validated = []
         self.failed = []
-    
+
     def generate_all_remaining(self):
         """Generate all remaining PSR implementations"""
         print("\n" + "="*70)
         print("🚀 ENHANCED MASS IMPLEMENTATION GENERATOR")
         print("="*70)
-        
+
         start = time.time()
-        
+
         # PSR-005: Evolutionary Systems
         self.generate_psr005()
-        
+
         # PSR-006: MCP Tools Layer
         self.generate_psr006()
-        
+
         # PSR-007: Observability
         self.generate_psr007()
-        
+
         # PSR-008: Security & Privacy
         self.generate_psr008()
-        
+
         # PSR-009: Performance Optimization
         self.generate_psr009()
-        
+
         # PSR-010: Integration & Testing
         self.generate_psr010()
-        
+
         duration = time.time() - start
-        
+
         self._print_summary(duration)
-    
+
     def generate_psr005(self):
         """PSR-005: Evolutionary Systems"""
         print("\n🔨 PSR-005: Evolutionary Systems")
-        
+
         # Phylogenetics
         code = self._generate_phylogenetics()
         self._write_and_validate("psr-005/phylogenetics_v2.rs", code)
-        
+
         # Kaizen
         code = self._generate_kaizen()
         self._write_and_validate("psr-005/kaizen_v2.rs", code)
-        
+
         # Evolution Engine
         code = self._generate_evolution_engine()
         self._write_and_validate("psr-005/evolution_engine_v2.rs", code)
-    
+
     def generate_psr006(self):
         """PSR-006: MCP Tools Layer"""
         print("\n🔨 PSR-006: MCP Tools Layer")
-        
+
         # Gana Winnowing Basket (search/recall)
         code = self._generate_gana_winnowing()
         self._write_and_validate("psr-006/gana_winnowing_basket_v2.rs", code)
-        
+
         # Gana Neck (memory creation)
         code = self._generate_gana_neck()
         self._write_and_validate("psr-006/gana_neck_v2.rs", code)
-        
+
         # Gana Heart (session context)
         code = self._generate_gana_heart()
         self._write_and_validate("psr-006/gana_heart_v2.rs", code)
-    
+
     def generate_psr007(self):
         """PSR-007: Observability"""
         print("\n🔨 PSR-007: Observability")
-        
+
         # Metrics collector
         code = self._generate_metrics_collector()
         self._write_and_validate("psr-007/metrics_collector_v2.rs", code)
-        
+
         # Telemetry
         code = self._generate_telemetry()
         self._write_and_validate("psr-007/telemetry_v2.rs", code)
-    
+
     def generate_psr008(self):
         """PSR-008: Security & Privacy"""
         print("\n🔨 PSR-008: Security & Privacy")
-        
+
         # Hermit crab (privacy)
         code = self._generate_hermit_crab()
         self._write_and_validate("psr-008/hermit_crab_v2.rs", code)
-        
+
         # Security monitor
         code = self._generate_security_monitor()
         self._write_and_validate("psr-008/security_monitor_v2.rs", code)
-    
+
     def generate_psr009(self):
         """PSR-009: Performance Optimization"""
         print("\n🔨 PSR-009: Performance Optimization")
-        
+
         # SIMD operations
         code = self._generate_simd_ops()
         self._write_and_validate("psr-009/simd_ops_v2.rs", code)
-        
+
         # Cache manager
         code = self._generate_cache_manager()
         self._write_and_validate("psr-009/cache_manager_v2.rs", code)
-    
+
     def generate_psr010(self):
         """PSR-010: Integration & Testing"""
         print("\n🔨 PSR-010: Integration & Testing")
-        
+
         # Integration layer
         code = self._generate_integration_layer()
         self._write_and_validate("psr-010/integration_layer_v2.rs", code)
-        
+
         # Performance monitor
         code = self._generate_performance_monitor()
         self._write_and_validate("psr-010/performance_monitor_v2.rs", code)
-        
+
         # Test suite
         code = self._generate_test_suite()
         self._write_and_validate("psr-010/test_suite_v2.rs", code)
-    
+
     def _generate_phylogenetics(self) -> str:
         """Generate phylogenetics implementation"""
         return """//! Phylogenetics - Code lineage tracking
@@ -433,7 +434,7 @@ impl Phylogenetics {
     }
 }
 """
-    
+
     def _generate_kaizen(self) -> str:
         """Generate kaizen (continuous improvement) implementation"""
         return """//! Kaizen - Continuous improvement system
@@ -519,7 +520,7 @@ impl Kaizen {
     }
 }
 """
-    
+
     def _generate_evolution_engine(self) -> str:
         """Generate evolution engine"""
         return """//! Evolution Engine - Autonomous code evolution
@@ -607,7 +608,7 @@ impl EvolutionEngine {
     }
 }
 """
-    
+
     def _generate_gana_winnowing(self) -> str:
         """Generate Gana Winnowing Basket (search/recall)"""
         return """//! Gana Winnowing Basket - Search and recall operations
@@ -682,7 +683,7 @@ impl GanaWinnowingBasket {
     }
 }
 """
-    
+
     def _generate_gana_neck(self) -> str:
         """Generate Gana Neck (memory creation)"""
         return """//! Gana Neck - Memory creation and management
@@ -732,7 +733,7 @@ impl GanaNeck {
     }
 }
 """
-    
+
     def _generate_gana_heart(self) -> str:
         """Generate Gana Heart (session context)"""
         return """//! Gana Heart - Session context management
@@ -784,7 +785,7 @@ impl GanaHeart {
     }
 }
 """
-    
+
     def _generate_metrics_collector(self) -> str:
         """Generate metrics collector"""
         return """//! Metrics Collector - Performance metrics tracking
@@ -840,7 +841,7 @@ impl MetricsCollector {
     }
 }
 """
-    
+
     def _generate_telemetry(self) -> str:
         """Generate telemetry system"""
         return """//! Telemetry - System observability
@@ -874,7 +875,7 @@ impl Telemetry {
     }
 }
 """
-    
+
     def _generate_hermit_crab(self) -> str:
         """Generate hermit crab privacy system"""
         return """//! Hermit Crab - Privacy and access control
@@ -914,7 +915,7 @@ impl HermitCrab {
     }
 }
 """
-    
+
     def _generate_security_monitor(self) -> str:
         """Generate security monitor"""
         return """//! Security Monitor - Threat detection
@@ -950,7 +951,7 @@ impl SecurityMonitor {
     }
 }
 """
-    
+
     def _generate_simd_ops(self) -> str:
         """Generate SIMD operations"""
         return """//! SIMD Operations - Vectorized computations
@@ -992,7 +993,7 @@ impl SimdOps {
     }
 }
 """
-    
+
     def _generate_cache_manager(self) -> str:
         """Generate cache manager"""
         return """//! Cache Manager - High-performance caching
@@ -1039,7 +1040,7 @@ impl CacheManager {
     }
 }
 """
-    
+
     def _generate_integration_layer(self) -> str:
         """Generate integration layer"""
         return """//! Integration Layer - Python-Rust bridge
@@ -1070,7 +1071,7 @@ impl IntegrationLayer {
     }
 }
 """
-    
+
     def _generate_performance_monitor(self) -> str:
         """Generate performance monitor"""
         return """//! Performance Monitor - Real-time performance tracking
@@ -1108,7 +1109,7 @@ impl PerformanceMonitor {
     }
 }
 """
-    
+
     def _generate_test_suite(self) -> str:
         """Generate test suite"""
         return """//! Test Suite - Comprehensive testing framework
@@ -1155,57 +1156,57 @@ impl TestSuite {
     }
 }
 """
-    
+
     def _write_and_validate(self, rel_path: str, code: str):
         """Write file and validate quality"""
         full_path = self.base_path / "whitemagic-rust" / "src" / "psr" / rel_path
         full_path.parent.mkdir(parents=True, exist_ok=True)
         full_path.write_text(code)
-        
+
         lines = len(code.split('\n'))
         self.generated.append((rel_path, lines))
-        
+
         # Validate
         validation = self.validator.validate(code, rel_path)
         self.validated.append(validation)
-        
+
         status = "✅" if validation['quality_score'] >= 60 else "⚠️"
         print(f"  {status} {rel_path}: {lines} lines (quality: {validation['quality_score']:.0f}/100)")
-        
+
         if validation['quality_score'] < 60:
             print(f"     Issues: {', '.join(validation['issues'])}")
-    
+
     def _print_summary(self, duration: float):
         """Print generation summary"""
         print("\n" + "="*70)
         print("📊 GENERATION COMPLETE")
         print("="*70)
-        
+
         total_lines = sum(lines for _, lines in self.generated)
         avg_quality = sum(v['quality_score'] for v in self.validated) / len(self.validated) if self.validated else 0
-        
+
         print(f"\nGenerated: {len(self.generated)} implementations")
         print(f"Total lines: {total_lines:,}")
         print(f"Average quality: {avg_quality:.1f}/100")
         print(f"Duration: {duration:.2f}s")
         print(f"Throughput: {len(self.generated)/duration:.1f} files/sec")
-        
+
         # Quality breakdown
         high_quality = sum(1 for v in self.validated if v['quality_score'] >= 80)
         medium_quality = sum(1 for v in self.validated if 60 <= v['quality_score'] < 80)
         low_quality = sum(1 for v in self.validated if v['quality_score'] < 60)
-        
+
         print("\nQuality Breakdown:")
         print(f"  High (≥80): {high_quality}")
         print(f"  Medium (60-79): {medium_quality}")
         print(f"  Low (<60): {low_quality}")
-        
+
         print("\n✅ All implementations ready for compilation!")
 
 def main():
     """Run enhanced mass generator"""
     base_path = Path(__file__).parent.parent
-    
+
     generator = EnhancedMassGenerator(base_path)
     generator.generate_all_remaining()
 

@@ -25,11 +25,12 @@ import logging
 import subprocess
 import threading
 import time
-from concurrent.futures import ProcessPoolExecutor, wait, FIRST_COMPLETED
+from collections.abc import Callable
+from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +38,9 @@ logger = logging.getLogger(__name__)
 try:
     from rich.console import Console
     from rich.live import Live
+    from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
+    from rich.progress import TimeRemainingColumn as _TimeRemainingColumn
     from rich.table import Table
-    from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn as _TimeRemainingColumn
     RICH_AVAILABLE = True
 except ImportError:
     RICH_AVAILABLE = False

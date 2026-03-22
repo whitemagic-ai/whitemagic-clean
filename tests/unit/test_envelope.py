@@ -1,13 +1,17 @@
 """Tests for whitemagic.tools.envelope — envelope construction & coercion."""
 import json
-from datetime import datetime, date
+from datetime import date, datetime
 from enum import Enum
 from pathlib import Path
 
-
-from whitemagic.tools.envelope import ok, err, is_enveloped, normalize_raw, coerce_jsonable
 from whitemagic.tools.contract import ENVELOPE_VERSION, TOOL_CONTRACT_VERSION
-
+from whitemagic.tools.envelope import (
+    coerce_jsonable,
+    err,
+    is_enveloped,
+    normalize_raw,
+    ok,
+)
 
 # ---------------------------------------------------------------------------
 # coerce_jsonable

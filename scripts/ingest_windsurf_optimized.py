@@ -13,12 +13,11 @@ Optimizations:
 Expected: 10-20 memories/sec (5-10x faster than baseline)
 """
 
-import sqlite3
 import hashlib
 import json
-from pathlib import Path
+import sqlite3
 from datetime import datetime
-from typing import List, Dict
+from pathlib import Path
 
 DB_PATH = Path.home() / ".whitemagic" / "memory" / "whitemagic.db"
 
@@ -26,7 +25,7 @@ def content_hash(text: str) -> str:
     """Generate SHA-256 hash."""
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
-def batch_ingest_optimized(sessions: List[Dict], contents: List[str]) -> Dict:
+def batch_ingest_optimized(sessions: list[dict], contents: list[str]) -> dict:
     """
     Optimized batch ingestion with:
     - Single transaction for all inserts
@@ -35,7 +34,7 @@ def batch_ingest_optimized(sessions: List[Dict], contents: List[str]) -> Dict:
     """
     import time
     t0 = time.time()
-    
+
     # Open with optimizations
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA journal_mode=WAL")
@@ -43,23 +42,23 @@ def batch_ingest_optimized(sessions: List[Dict], contents: List[str]) -> Dict:
     conn.execute("PRAGMA cache_size=-131072")  # 128MB
     conn.execute("PRAGMA temp_store=MEMORY")
     conn.execute("PRAGMA mmap_size=536870912")  # 512MB
-    
+
     # Single transaction for all
     conn.execute("BEGIN TRANSACTION")
-    
+
     inserted = 0
     skipped = 0
-    
+
     for session, content in zip(sessions, contents):
         if not content or len(content) < 100:
             skipped += 1
             continue
-        
+
         memory_id = hashlib.sha256(session["id"].encode()).hexdigest()[:16]
         now = datetime.now().isoformat()
         c_hash = content_hash(content)
         title = f"Windsurf Session: {session['title']}"
-        
+
         # Check if exists
         cursor = conn.execute(
             "SELECT 1 FROM memories WHERE id = ? LIMIT 1",
@@ -68,7 +67,7 @@ def batch_ingest_optimized(sessions: List[Dict], contents: List[str]) -> Dict:
         if cursor.fetchone():
             skipped += 1
             continue
-        
+
         # Insert memory
         try:
             conn.execute(
@@ -91,22 +90,22 @@ def batch_ingest_optimized(sessions: List[Dict], contents: List[str]) -> Dict:
                     }),
                 ),
             )
-            
+
             # Insert tags
             for tag in session["tags"]:
                 conn.execute(
                     "INSERT OR IGNORE INTO tags (memory_id, tag) VALUES (?, ?)",
                     (memory_id, tag),
                 )
-            
+
             inserted += 1
-            
+
         except sqlite3.IntegrityError:
             skipped += 1
-    
+
     # Commit transaction
     conn.execute("COMMIT")
-    
+
     # Rebuild FTS if we inserted anything
     if inserted > 0:
         try:
@@ -114,11 +113,11 @@ def batch_ingest_optimized(sessions: List[Dict], contents: List[str]) -> Dict:
             conn.commit()
         except Exception:
             pass
-    
+
     conn.close()
-    
+
     elapsed = time.time() - t0
-    
+
     return {
         "status": "success",
         "inserted": inserted,

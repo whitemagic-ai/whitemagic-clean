@@ -16,21 +16,21 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, fields
-from datetime import datetime, timezone
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
+from datetime import UTC, datetime
 from pathlib import Path
 from threading import Lock
 from typing import Any
 
 from whitemagic.config.paths import WM_ROOT
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 from whitemagic.utils.fileio import atomic_write, file_lock
 
 from .embedding_index import get_embedding_index
 from .seen_registry import get_seen_registry
 from .timeline import get_timeline
 
-_matrix_instance: "MemoryMatrix" | None = None
+_matrix_instance: MemoryMatrix | None = None
 _matrix_lock = Lock()
 
 
@@ -95,9 +95,9 @@ class MemoryMatrix:
 
     def _new_session(self) -> None:
         """Create new session."""
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         self._session = SessionContext(
-            session_id=f"session_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
+            session_id=f"session_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}",
             started=now,
             last_activity=now,
         )
@@ -148,7 +148,7 @@ class MemoryMatrix:
             context: Why this interaction happened
 
         """
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         # Update session
         if self._session:
@@ -217,7 +217,7 @@ class MemoryMatrix:
             by_type[event.event_type] = by_type.get(event.event_type, 0) + 1
 
         return {
-            "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            "date": datetime.now(UTC).strftime("%Y-%m-%d"),
             "total_events": len(events),
             "by_type": by_type,
             "files_seen": len(self.seen.get_recent(24)),
@@ -330,7 +330,7 @@ class MemoryMatrix:
             "meta": {
                 "total_nodes": len(nodes),
                 "total_connections": len(connections),
-                "generated": datetime.now(timezone.utc).isoformat(),
+                "generated": datetime.now(UTC).isoformat(),
             },
         }
 

@@ -4,11 +4,12 @@ Orchestrates self-evolving agentic deployments based on Self-Model alerts
 and Codebase Census bottlenecks.
 """
 
-import logging
 import asyncio
+import logging
 from pathlib import Path
-from whitemagic.core.intelligence.self_model import get_self_model
+
 from whitemagic.core.acceleration.polyglot_accelerator import get_accelerator
+from whitemagic.core.intelligence.self_model import get_self_model
 
 logger = logging.getLogger(__name__)
 

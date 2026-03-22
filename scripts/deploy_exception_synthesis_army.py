@@ -7,8 +7,8 @@ Extract and synthesize all exception patterns from whitemagicpublic
 
 import ast
 import json
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
 PUBLIC_ROOT = Path.home() / "Desktop" / "whitemagicpublic"
@@ -27,12 +27,12 @@ def extract_exception_patterns(codebase_path: Path) -> dict:
         "raise_statements": [],
         "exception_hierarchies": defaultdict(list),
     }
-    
+
     for py_file in codebase_path.rglob("*.py"):
         try:
             content = py_file.read_text(encoding='utf-8')
             tree = ast.parse(content)
-            
+
             for node in ast.walk(tree):
                 # Custom exception classes
                 if isinstance(node, ast.ClassDef):
@@ -45,11 +45,11 @@ def extract_exception_patterns(codebase_path: Path) -> dict:
                             "lineno": node.lineno,
                             "docstring": ast.get_docstring(node),
                         })
-                        
+
                         # Build hierarchy
                         for base in bases:
                             patterns["exception_hierarchies"][base].append(node.name)
-                
+
                 # Try-except blocks
                 elif isinstance(node, ast.Try):
                     for handler in node.handlers:
@@ -61,7 +61,7 @@ def extract_exception_patterns(codebase_path: Path) -> dict:
                             "has_else": len(node.orelse) > 0,
                             "has_finally": len(node.finalbody) > 0,
                         })
-                
+
                 # Raise statements
                 elif isinstance(node, ast.Raise):
                     if node.exc:
@@ -71,28 +71,28 @@ def extract_exception_patterns(codebase_path: Path) -> dict:
                             "file": str(py_file.relative_to(codebase_path)),
                             "lineno": node.lineno,
                         })
-        
+
         except Exception:
             continue
-    
+
     # Convert defaultdict to regular dict
     patterns["exception_hierarchies"] = dict(patterns["exception_hierarchies"])
-    
+
     return patterns
 
 def generate_exception_subsystem(patterns: dict) -> str:
     """Generate unified exception subsystem for WM2."""
-    
+
     total_exceptions = len(patterns["exception_classes"])
     total_handlers = len(patterns["try_except_blocks"])
-    
+
     # Get top exception types
     exception_counts = defaultdict(int)
     for block in patterns["try_except_blocks"]:
         exception_counts[block["exception_type"]] += 1
-    
+
     top_exceptions = sorted(exception_counts.items(), key=lambda x: x[1], reverse=True)[:10]
-    
+
     return f'''"""
 WM2 Exception Subsystem
 ========================
@@ -216,37 +216,37 @@ class ExceptionSubsystem(BaseEngine, Serializable, MetricCollector):
 def main():
     print("🔍 Extracting exception patterns from whitemagicpublic...")
     print()
-    
+
     public_whitemagic = PUBLIC_ROOT / "whitemagic"
-    
+
     if not public_whitemagic.exists():
         print("❌ whitemagicpublic not found")
         return
-    
+
     patterns = extract_exception_patterns(public_whitemagic)
-    
+
     print("✅ Extracted exception patterns:")
     print(f"   Custom exception classes: {len(patterns['exception_classes']):,}")
     print(f"   Try-except blocks: {len(patterns['try_except_blocks']):,}")
     print(f"   Raise statements: {len(patterns['raise_statements']):,}")
     print(f"   Exception hierarchies: {len(patterns['exception_hierarchies']):,}")
     print()
-    
+
     # Save patterns
     results_path = PROJECT_ROOT / "reports" / "exception_patterns.json"
     results_path.write_text(json.dumps(patterns, indent=2))
-    
+
     # Generate subsystem
     print("📝 Generating ExceptionSubsystem for WM2...")
     subsystem_code = generate_exception_subsystem(patterns)
-    
+
     subsystem_path = WM2_ROOT / "synthesized" / "exception_subsystem.py"
     subsystem_path.parent.mkdir(parents=True, exist_ok=True)
     subsystem_path.write_text(subsystem_code)
-    
+
     print(f"   ✅ Created: {subsystem_path.relative_to(WM2_ROOT)}")
     print()
-    
+
     print("=" * 80)
     print("EXCEPTION SYNTHESIS COMPLETE")
     print("=" * 80)

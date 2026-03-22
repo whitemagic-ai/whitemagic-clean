@@ -17,14 +17,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
 from whitemagic.config.paths import WM_ROOT
 from whitemagic.utils.core import parse_datetime
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 class ActivityType(Enum):

@@ -27,37 +27,37 @@ class OmegaPulse:
 
     async def run_all(self):
         logger.info("⚡ INITIATING OMEGA PULSE — Full System Introspection")
-        
+
         # 1. Dream Cycle (12 Phases)
         await self.step("dream_cycle", self._run_dream_cycle)
-        
+
         # 2. Kaizen Engine
         await self.step("kaizen", self._run_kaizen)
-        
+
         # 3. Emergence Engine
         await self.step("emergence", self._run_emergence)
-        
+
         # 4. Quantum Engine
         await self.step("quantum", self._run_quantum)
-        
+
         # 5. Autodidactic Loop
         await self.step("autodidactic", self._run_autodidactic)
-        
+
         # 6. Apotheosis Engine
         await self.step("apotheosis", self._run_apotheosis)
-        
+
         # 7. Salience Arbiter
         await self.step("salience", self._run_salience)
-        
+
         # 8. Pattern Engine
         await self.step("patterns", self._run_patterns)
-        
+
         # 9. Galactic Telepathy
         await self.step("telepathy", self._run_telepathy)
-        
+
         # 10. Neuro-Score
         await self.step("neuro_health", self._run_neuro_health)
-        
+
         # 11. Dharma Audit
         await self.step("dharma", self._run_dharma)
 
@@ -92,7 +92,9 @@ class OmegaPulse:
         return report
 
     def _run_kaizen(self):
-        from whitemagic.core.intelligence.synthesis.kaizen_engine import get_kaizen_engine
+        from whitemagic.core.intelligence.synthesis.kaizen_engine import (
+            get_kaizen_engine,
+        )
         engine = get_kaizen_engine()
         report = engine.analyze()
         return {
@@ -101,7 +103,9 @@ class OmegaPulse:
         }
 
     def _run_emergence(self):
-        from whitemagic.core.intelligence.agentic.emergence_engine import get_emergence_engine
+        from whitemagic.core.intelligence.agentic.emergence_engine import (
+            get_emergence_engine,
+        )
         ee = get_emergence_engine()
         insights = ee.scan_for_emergence()
         return [i.to_dict() for i in insights]
@@ -111,11 +115,11 @@ class OmegaPulse:
         from whitemagic.core.memory.unified import get_unified_memory
         engine = QuantumEngine()
         um = get_unified_memory()
-        
+
         # Test Grover search on recent memories
         recent = um.list_recent(limit=20)
         if not recent: return "No memories for quantum test"
-        
+
         # Oracle: items containing 'architecture'
         results = engine.grover_search(recent, lambda m: "architecture" in str(m.content).lower())
         return {
@@ -134,15 +138,18 @@ class OmegaPulse:
         return ae.status() if hasattr(ae, 'status') else "Engine active"
 
     def _run_salience(self):
-        from whitemagic.core.resonance.salience_arbiter import get_salience_arbiter
         from whitemagic.core.memory.unified import get_unified_memory
-        from whitemagic.core.resonance.gan_ying_enhanced import ResonanceEvent, EventType
-        
+        from whitemagic.core.resonance.gan_ying_enhanced import (
+            EventType,
+            ResonanceEvent,
+        )
+        from whitemagic.core.resonance.salience_arbiter import get_salience_arbiter
+
         sa = get_salience_arbiter()
         um = get_unified_memory()
         memories = um.list_recent(limit=5)
         if not memories: return "No data"
-        
+
         scored = []
         for m in memories:
             event = ResonanceEvent(
@@ -170,18 +177,19 @@ class OmegaPulse:
         return go_mesh_status()
 
     def _run_neuro_health(self):
-        from whitemagic.config import DB_PATH
         import sqlite3
+
+        from whitemagic.config import DB_PATH
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-        
+
         cur.execute("SELECT AVG(neuro_score) as avg_ns, AVG(novelty_score) as avg_novelty, COUNT(*) as count FROM memories")
         row = cur.fetchone()
-        
+
         cur.execute("SELECT memory_type, COUNT(*) as count FROM memories GROUP BY memory_type")
         types = {r["memory_type"]: r["count"] for r in cur.fetchall()}
-        
+
         return {
             "avg_neuro_score": row["avg_ns"],
             "avg_novelty": row["avg_novelty"],

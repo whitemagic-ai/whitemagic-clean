@@ -1,8 +1,9 @@
-from whitemagic.security.zodiac.ledger import get_ledger
+import uuid
+from pathlib import Path
+
 from whitemagic.core.memory.sqlite_backend import SQLiteBackend
 from whitemagic.core.memory.unified_types import Memory, MemoryType
-from pathlib import Path
-import uuid
+from whitemagic.security.zodiac.ledger import get_ledger
 
 # Initialize the ledger
 ledger = get_ledger()
@@ -22,6 +23,7 @@ print(f"Chain valid: {ledger.verify_chain()}")
 
 # Check DB persistence
 import sqlite3
+
 conn = sqlite3.connect("/home/lucas/.whitemagic/memory/whitemagic.db")
 row = conn.execute("SELECT * FROM zodiac_ledger WHERE entry_id = ?", (entry.entry_id,)).fetchone()
 print(f"Found in DB: {row is not None}")

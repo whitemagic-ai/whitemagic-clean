@@ -6,7 +6,6 @@ without requiring external services (Redis, Ollama).
 """
 from unittest.mock import patch
 
-
 # ---------------------------------------------------------------------------
 # Task Distribution Tests (no external deps)
 # ---------------------------------------------------------------------------
@@ -47,7 +46,8 @@ class TestTaskDistribution:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.task_dist import (
-            handle_task_distribute, handle_task_status
+            handle_task_distribute,
+            handle_task_status,
         )
         handle_task_distribute(command="echo hi", task_type="general")
         handle_task_distribute(command="echo bye", task_type="testing")
@@ -63,7 +63,8 @@ class TestTaskDistribution:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.task_dist import (
-            handle_task_distribute, handle_task_status
+            handle_task_distribute,
+            handle_task_status,
         )
         create_result = handle_task_distribute(command="echo hi")
         task_id = create_result["task"]["id"]
@@ -87,7 +88,8 @@ class TestTaskDistribution:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.task_dist import (
-            handle_task_distribute, handle_task_list
+            handle_task_distribute,
+            handle_task_list,
         )
         handle_task_distribute(command="make", task_type="build")
         handle_task_distribute(command="pytest", task_type="testing")
@@ -103,7 +105,9 @@ class TestTaskDistribution:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.task_dist import (
-            handle_task_distribute, handle_task_complete, handle_task_status
+            handle_task_complete,
+            handle_task_distribute,
+            handle_task_status,
         )
         create_result = handle_task_distribute(command="echo done")
         task_id = create_result["task"]["id"]
@@ -123,7 +127,8 @@ class TestTaskDistribution:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.task_dist import (
-            handle_task_distribute, handle_task_complete
+            handle_task_complete,
+            handle_task_distribute,
         )
         create_result = handle_task_distribute(command="fail_cmd")
         task_id = create_result["task"]["id"]
@@ -164,7 +169,10 @@ class TestVoting:
         import whitemagic.config.paths as paths_mod
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
-        from whitemagic.tools.handlers.voting import handle_vote_create, handle_vote_cast
+        from whitemagic.tools.handlers.voting import (
+            handle_vote_cast,
+            handle_vote_create,
+        )
         session = handle_vote_create(problem="Best framework?")
         sid = session["session_id"]
 
@@ -182,7 +190,10 @@ class TestVoting:
         import whitemagic.config.paths as paths_mod
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
-        from whitemagic.tools.handlers.voting import handle_vote_create, handle_vote_cast
+        from whitemagic.tools.handlers.voting import (
+            handle_vote_cast,
+            handle_vote_create,
+        )
         session = handle_vote_create(problem="Test question")
         sid = session["session_id"]
 
@@ -198,7 +209,9 @@ class TestVoting:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.voting import (
-            handle_vote_create, handle_vote_cast, handle_vote_analyze
+            handle_vote_analyze,
+            handle_vote_cast,
+            handle_vote_create,
         )
         session = handle_vote_create(problem="Optimize query?")
         sid = session["session_id"]
@@ -218,7 +231,9 @@ class TestVoting:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.voting import (
-            handle_vote_create, handle_vote_cast, handle_vote_analyze
+            handle_vote_analyze,
+            handle_vote_cast,
+            handle_vote_create,
         )
         session = handle_vote_create(problem="Close test")
         sid = session["session_id"]
@@ -231,7 +246,10 @@ class TestVoting:
         import whitemagic.config.paths as paths_mod
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
-        from whitemagic.tools.handlers.voting import handle_vote_create, handle_vote_list
+        from whitemagic.tools.handlers.voting import (
+            handle_vote_create,
+            handle_vote_list,
+        )
         handle_vote_create(problem="Q1")
         handle_vote_create(problem="Q2")
 
@@ -244,7 +262,9 @@ class TestVoting:
         monkeypatch.setattr(paths_mod, "WM_ROOT", tmp_path)
 
         from whitemagic.tools.handlers.voting import (
-            handle_vote_create, handle_vote_cast, handle_vote_analyze
+            handle_vote_analyze,
+            handle_vote_cast,
+            handle_vote_create,
         )
         session = handle_vote_create(problem="Closed test")
         sid = session["session_id"]

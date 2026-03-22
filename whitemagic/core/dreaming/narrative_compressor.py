@@ -390,7 +390,9 @@ class NarrativeCompressor:
         """
         # Try LLM synthesis
         try:
-            from whitemagic.tools.handlers.ollama import handle_ollama_generate as _ollama_generate
+            from whitemagic.tools.handlers.ollama import (
+                handle_ollama_generate as _ollama_generate,
+            )
             evidence_text = "\n".join(contents[:10])
             tags_text = ", ".join(sorted(cluster.shared_tags)[:10])
             prompt = (

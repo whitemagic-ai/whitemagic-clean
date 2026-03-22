@@ -1,5 +1,6 @@
 import logging
 import sys
+
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
 from whitemagic.core.acceleration.koka_native_bridge import KokaNativeBridge

@@ -9,12 +9,11 @@ from pathlib import Path
 from typing import Any, TypeVar, cast
 from uuid import uuid4
 
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
-from whitemagic.tools.errors import ToolExecutionError
-
 # Tool contract helpers (AI-first)
 from whitemagic.config.paths import WM_ROOT, ensure_paths
-from whitemagic.tools.errors import ErrorCode
+from whitemagic.tools.errors import ErrorCode, ToolExecutionError
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 from whitemagic.utils.time import now_iso, override_now
 
 logger = logging.getLogger(__name__)
@@ -310,7 +309,10 @@ def _nervous_system_check(tool_name: str) -> tuple[bool, str]:
     Returns (allowed, reason).
     """
     try:
-        from whitemagic.core.acceleration.dispatch_bridge import DispatchResult, get_dispatch
+        from whitemagic.core.acceleration.dispatch_bridge import (
+            DispatchResult,
+            get_dispatch,
+        )
         bridge = get_dispatch()
         # Map tool name to a generic tool_id (0-27) via hash
         tool_id = hash(tool_name) % 28
@@ -330,8 +332,8 @@ def _nervous_system_post(tool_name: str, duration: float, success: bool) -> None
     """Post-dispatch: sync Harmony Vector to StateBoard and publish to EventRing."""
     # Sync Harmony Vector → StateBoard mmap
     try:
-        from whitemagic.harmony.vector import get_harmony_vector
         from whitemagic.core.acceleration.state_board_bridge import get_state_board
+        from whitemagic.harmony.vector import get_harmony_vector
         hv = get_harmony_vector()
         snap = hv.snapshot()
         board = get_state_board()

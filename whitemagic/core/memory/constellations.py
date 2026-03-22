@@ -920,7 +920,8 @@ class ConstellationDetector:
           - forgotten_concepts: constellations that disappeared
         """
         import math as _math
-        from datetime import datetime as _dt, timedelta as _td
+        from datetime import datetime as _dt
+        from datetime import timedelta as _td
 
         cutoff = (_dt.now() - _td(days=window_days)).isoformat()
         results: list[dict[str, Any]] = []
@@ -1087,8 +1088,8 @@ class ConstellationDetector:
         if not novel and not forgotten:
             return
         try:
-            from whitemagic.core.resonance.gan_ying_enhanced import EventType
             from whitemagic.core.resonance.gan_ying import emit_event
+            from whitemagic.core.resonance.gan_ying_enhanced import EventType
 
             for name in novel:
                 emit_event(

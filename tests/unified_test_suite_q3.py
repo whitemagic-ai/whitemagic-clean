@@ -7,10 +7,11 @@ Tests all 9 language SDKs with standardized test vectors.
 import json
 import subprocess
 import sys
-from pathlib import Path
-from typing import Dict, List, Any
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
+from typing import Any
+
 
 class TestStatus(Enum):
     PASS = "pass"
@@ -119,12 +120,12 @@ LANGUAGE_SDKS = {
 
 class UnifiedTestSuite:
     """Runs standardized tests across all 9 language SDKs."""
-    
+
     def __init__(self, base_path: Path = Path("/home/lucas/Desktop/whitemagicdev")):
         self.base_path = base_path
-        self.results: List[TestResult] = []
-        
-    def run_all(self) -> Dict[str, Any]:
+        self.results: list[TestResult] = []
+
+    def run_all(self) -> dict[str, Any]:
         """Execute full test suite across all languages."""
         print("=" * 60)
         print("WhiteMagic Q3 Unified Cross-Language Test Suite")
@@ -132,16 +133,16 @@ class UnifiedTestSuite:
         print(f"Languages: {len(LANGUAGE_SDKS)}")
         print(f"Test vectors: {len(TEST_VECTORS)}")
         print()
-        
+
         for lang, config in LANGUAGE_SDKS.items():
             self._test_language(lang, config)
-            
+
         return self._generate_report()
-    
-    def _test_language(self, lang: str, config: Dict[str, Any]) -> None:
+
+    def _test_language(self, lang: str, config: dict[str, Any]) -> None:
         """Test a single language SDK."""
         print(f"\n[{lang.upper()}] Testing...")
-        
+
         sdk_path = self.base_path / config["path"]
         if not sdk_path.exists():
             print(f"  ⚠️  SDK path not found: {sdk_path}")
@@ -153,14 +154,14 @@ class UnifiedTestSuite:
                 error="SDK directory not found"
             ))
             return
-            
+
         # Check FFI interface file
         ffi_file = self._find_ffi_file(sdk_path, lang)
         if ffi_file:
             print(f"  ✓ FFI interface: {ffi_file.name}")
         else:
             print("  ⚠️  FFI interface not found")
-            
+
         # Run language tests
         start = __import__('time').time()
         try:
@@ -172,14 +173,14 @@ class UnifiedTestSuite:
                 timeout=60
             )
             duration = (__import__('time').time() - start) * 1000
-            
+
             if result.returncode == 0:
                 status = TestStatus.PASS
                 print(f"  ✓ Tests passed ({duration:.0f}ms)")
             else:
                 status = TestStatus.FAIL
                 print(f"  ✗ Tests failed ({duration:.0f}ms)")
-                
+
             self.results.append(TestResult(
                 language=lang,
                 test_name="unit_tests",
@@ -188,7 +189,7 @@ class UnifiedTestSuite:
                 output=result.stdout[-500:] if result.stdout else "",
                 error=result.stderr[-500:] if result.stderr else ""
             ))
-            
+
         except subprocess.TimeoutExpired:
             print("  ⏱  Timeout after 60s")
             self.results.append(TestResult(
@@ -216,7 +217,7 @@ class UnifiedTestSuite:
                 duration_ms=0,
                 error=str(e)
             ))
-    
+
     def _find_ffi_file(self, sdk_path: Path, lang: str) -> Path | None:
         """Find the FFI interface definition file."""
         patterns = {
@@ -230,21 +231,21 @@ class UnifiedTestSuite:
             "mojo": ["src/ffi.mojo"],
             "koka": ["src/ffi.kk"]
         }
-        
+
         for pattern in patterns.get(lang, []):
             matches = list(sdk_path.glob(pattern))
             if matches:
                 return matches[0]
         return None
-    
-    def _generate_report(self) -> Dict[str, Any]:
+
+    def _generate_report(self) -> dict[str, Any]:
         """Generate comprehensive test report."""
         total = len(self.results)
         passed = sum(1 for r in self.results if r.status == TestStatus.PASS)
         failed = sum(1 for r in self.results if r.status == TestStatus.FAIL)
         skipped = sum(1 for r in self.results if r.status == TestStatus.SKIP)
         not_impl = sum(1 for r in self.results if r.status == TestStatus.NOT_IMPL)
-        
+
         report = {
             "timestamp": __import__('datetime').datetime.now().isoformat(),
             "summary": {
@@ -267,7 +268,7 @@ class UnifiedTestSuite:
                 for r in self.results
             ]
         }
-        
+
         # Add language-specific details
         for lang, config in LANGUAGE_SDKS.items():
             lang_results = [r for r in self.results if r.language == lang]
@@ -278,13 +279,13 @@ class UnifiedTestSuite:
                 "tests_run": len(lang_results),
                 "tests_passed": sum(1 for r in lang_results if r.status == TestStatus.PASS)
             }
-        
+
         # Save report
         report_path = self.base_path / "reports" / "unified_test_suite_q3.json"
         report_path.parent.mkdir(exist_ok=True)
         with open(report_path, 'w') as f:
             json.dump(report, f, indent=2)
-            
+
         # Print summary
         print("\n" + "=" * 60)
         print("Q3 Unified Test Suite - Summary")
@@ -292,14 +293,14 @@ class UnifiedTestSuite:
         print(f"Total: {total} | Passed: {passed} | Failed: {failed} | Skipped: {skipped}")
         print(f"Pass Rate: {report['summary']['pass_rate']}")
         print(f"Report saved: {report_path}")
-        
+
         return report
 
 
 def main():
     suite = UnifiedTestSuite()
     results = suite.run_all()
-    
+
     # Exit with appropriate code
     if results["summary"]["failed"] > 0:
         sys.exit(1)

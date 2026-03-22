@@ -8,9 +8,9 @@ Tests the "Parallel Magic" components:
 3. AdaptiveParallelExecutor (Python)
 """
 
-import time
 import asyncio
 import logging
+import time
 
 # Setup paths - rely on installed package
 # ROOT_DIR = Path(__file__).parent.parent.parent
@@ -40,39 +40,43 @@ def test_mojo_bridge():
         logger.info("✅ MojoEncoderBridge initialized.")
         logger.info(f"   Mojo available: {encoder.mojo_available}")
         logger.info(f"   Mojo binary: {encoder.mojo_bin}")
-        
+
         # Test encoding (will use fallback if mojo missing)
         dummy_mem = {"id": "test", "content": "Hello World", "tags": ["test"]}
         coords = encoder.encode(dummy_mem)
         logger.info(f"✅ Encoding test result: {coords}")
-        
+
     except Exception as e:
         logger.error(f"❌ Mojo Bridge test failed: {e}")
 
 async def test_parallel_executor():
     logger.info("\n--- Testing AdaptiveParallelExecutor ---")
     try:
-        from whitemagic.cascade.advanced_parallel import AdaptiveParallelExecutor, ParallelTask, ParallelTier
-        
+        from whitemagic.cascade.advanced_parallel import (
+            AdaptiveParallelExecutor,
+            ParallelTask,
+            ParallelTier,
+        )
+
         executor = AdaptiveParallelExecutor()
         logger.info("✅ AdaptiveParallelExecutor initialized.")
-        
+
         # Define a simple task
         def dummy_task(x):
             time.sleep(0.01)
             return x * x
-            
+
         tasks = [ParallelTask(id=str(i), func=dummy_task, args=(i,)) for i in range(10)]
         logger.info(f"   Created {len(tasks)} dummy tasks.")
-        
+
         # Run them
         start = time.time()
         results = await executor.execute_parallel(tasks, tier=ParallelTier.TIER_0_TRIGRAMS)
         duration = time.time() - start
-        
+
         logger.info(f"✅ Execution complete. Results: {results[:5]}...")
         logger.info(f"   Duration: {duration:.4f}s")
-        
+
     except ImportError as e:
         logger.error(f"❌ Could not import AdaptiveParallelExecutor: {e}")
     except Exception as e:
@@ -85,14 +89,14 @@ if __name__ == "__main__":
         multiprocessing.set_start_method('spawn')
     except RuntimeError:
         pass
-        
+
     test_rust_bridge()
     test_mojo_bridge()
-    
+
     # Add timeout to async execution
     try:
         asyncio.run(asyncio.wait_for(test_parallel_executor(), timeout=10.0))
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.error("❌ Parallel execution timed out!")
     except Exception as e:
         logger.error(f"❌ Execution failed: {e}")

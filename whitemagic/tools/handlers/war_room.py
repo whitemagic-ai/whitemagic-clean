@@ -1,6 +1,7 @@
 """War Room tool handlers."""
 import logging
 from typing import Any
+
 from whitemagic.core.intelligence.wisdom.art_of_war import get_war_engine
 
 logger = logging.getLogger(__name__)

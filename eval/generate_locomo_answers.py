@@ -21,7 +21,7 @@ MEMORIES = {
     "wm_mcp_013": {"title": "Root URI Resolution", "date": "2026-01-27", "importance": 0.7, "topic": "mcp_architecture", "associations": ["wm_mcp_014", "wm_mcp_015", "wm_mem_013"]},
     "wm_mcp_014": {"title": "Tool Result Caching", "date": "2026-01-28", "importance": 0.8, "topic": "mcp_architecture", "associations": ["wm_mcp_015", "wm_mem_014"]},
     "wm_mcp_015": {"title": "MCP Server Lifecycle", "date": "2026-01-29", "importance": 0.9, "topic": "mcp_architecture", "associations": ["wm_mem_015"]},
-    
+
     # Memory Systems (wm_mem_001-015)
     "wm_mem_001": {"title": "Holographic Coordinate System", "date": "2026-02-01", "importance": 0.7, "topic": "memory_systems", "associations": ["wm_mem_002", "wm_mem_003", "wm_emb_001"]},
     "wm_mem_002": {"title": "Galactic Distance Metrics", "date": "2026-02-02", "importance": 0.8, "topic": "memory_systems", "associations": ["wm_mem_003", "wm_mem_004", "wm_emb_002"]},
@@ -38,7 +38,7 @@ MEMORIES = {
     "wm_mem_013": {"title": "Vector Dimension Reduction", "date": "2026-02-13", "importance": 0.7, "topic": "memory_systems", "associations": ["wm_mem_014", "wm_mem_015", "wm_emb_013"]},
     "wm_mem_014": {"title": "Similarity Threshold Tuning", "date": "2026-02-14", "importance": 0.8, "topic": "memory_systems", "associations": ["wm_mem_015", "wm_emb_014"]},
     "wm_mem_015": {"title": "Memory Importance Scoring", "date": "2026-02-15", "importance": 0.9, "topic": "memory_systems", "associations": ["wm_emb_015"]},
-    
+
     # Graph Algorithms (wm_graph_001-015)
     "wm_graph_001": {"title": "Bridging Centrality Detection", "date": "2026-02-16", "importance": 0.7, "topic": "graph_algorithms", "associations": ["wm_graph_002", "wm_graph_003", "wm_bridge_001"]},
     "wm_graph_002": {"title": "Community Detection HDBSCAN", "date": "2026-02-17", "importance": 0.8, "topic": "graph_algorithms", "associations": ["wm_graph_003", "wm_graph_004", "wm_bridge_002"]},
@@ -55,7 +55,7 @@ MEMORIES = {
     "wm_graph_013": {"title": "Graph Visualization Export", "date": "2026-02-28", "importance": 0.7, "topic": "graph_algorithms", "associations": ["wm_graph_014", "wm_graph_015", "wm_bridge_013"]},
     "wm_graph_014": {"title": "Causality Enforcement", "date": "2026-03-01", "importance": 0.8, "topic": "graph_algorithms", "associations": ["wm_graph_015", "wm_bridge_014"]},
     "wm_graph_015": {"title": "Temporal Edge Ordering", "date": "2026-03-02", "importance": 0.9, "topic": "graph_algorithms", "associations": ["wm_bridge_015"]},
-    
+
     # Embedding Models (wm_emb_001-015)
     "wm_emb_001": {"title": "BGE-Small Model Fine-tuning", "date": "2026-03-03", "importance": 0.7, "topic": "embedding_models", "associations": ["wm_emb_002", "wm_emb_003", "wm_mem_001"]},
     "wm_emb_002": {"title": "ONNX Runtime Optimization", "date": "2026-03-04", "importance": 0.8, "topic": "embedding_models", "associations": ["wm_emb_003", "wm_emb_004", "wm_mem_002"]},
@@ -72,7 +72,7 @@ MEMORIES = {
     "wm_emb_013": {"title": "Cross-encoder Reranking", "date": "2026-03-15", "importance": 0.7, "topic": "embedding_models", "associations": ["wm_emb_014", "wm_emb_015", "wm_mem_013"]},
     "wm_emb_014": {"title": "LoCoMo Training Data", "date": "2026-03-16", "importance": 0.8, "topic": "embedding_models", "associations": ["wm_emb_015", "wm_mem_014"]},
     "wm_emb_015": {"title": "Learned Reranker", "date": "2026-03-17", "importance": 0.9, "topic": "embedding_models", "associations": ["wm_mem_015"]},
-    
+
     # Dream Cycles (wm_dream_001-015)
     "wm_dream_001": {"title": "Dream Cycle 8 Phases", "date": "2026-03-18", "importance": 0.7, "topic": "dream_cycles", "associations": ["wm_dream_002", "wm_dream_003", "wm_bridge_001"]},
     "wm_dream_002": {"title": "Triage Phase Auto-tagging", "date": "2026-03-19", "importance": 0.8, "topic": "dream_cycles", "associations": ["wm_dream_003", "wm_dream_004", "wm_bridge_002"]},
@@ -89,7 +89,7 @@ MEMORIES = {
     "wm_dream_013": {"title": "REM Insight Burst", "date": "2026-03-30", "importance": 0.7, "topic": "dream_cycles", "associations": ["wm_dream_014", "wm_dream_015", "wm_bridge_013"]},
     "wm_dream_014": {"title": "Dream Synthesis Pipeline", "date": "2026-03-31", "importance": 0.8, "topic": "dream_cycles", "associations": ["wm_dream_015", "wm_bridge_014"]},
     "wm_dream_015": {"title": "Oneiric Pattern Recognition", "date": "2026-04-01", "importance": 0.9, "topic": "dream_cycles", "associations": ["wm_bridge_015"]},
-    
+
     # Bridge Synthesis (wm_bridge_001-015)
     "wm_bridge_001": {"title": "Bridge Node Detection", "date": "2026-04-02", "importance": 0.7, "topic": "bridge_synthesis", "associations": ["wm_bridge_002", "wm_bridge_003", "wm_graph_001"]},
     "wm_bridge_002": {"title": "Bridging Centrality Algorithm", "date": "2026-04-03", "importance": 0.8, "topic": "bridge_synthesis", "associations": ["wm_bridge_003", "wm_bridge_004", "wm_graph_002"]},
@@ -106,7 +106,7 @@ MEMORIES = {
     "wm_bridge_013": {"title": "Dynamic Bridge Updates", "date": "2026-04-14", "importance": 0.7, "topic": "bridge_synthesis", "associations": ["wm_bridge_014", "wm_bridge_015", "wm_graph_013"]},
     "wm_bridge_014": {"title": "Bridge Visualization", "date": "2026-04-15", "importance": 0.8, "topic": "bridge_synthesis", "associations": ["wm_bridge_015", "wm_graph_014"]},
     "wm_bridge_015": {"title": "Bridge Quality Metrics", "date": "2026-04-16", "importance": 0.9, "topic": "bridge_synthesis", "associations": ["wm_graph_015"]},
-    
+
     # Hybrid Fusion (wm_fusion_001-010)
     "wm_fusion_001": {"title": "Reciprocal Rank Fusion", "date": "2026-04-17", "importance": 0.7, "topic": "hybrid_fusion", "associations": ["wm_fusion_002", "wm_fusion_003", "wm_mem_001"]},
     "wm_fusion_002": {"title": "RRF Weight Adaptation", "date": "2026-04-18", "importance": 0.8, "topic": "hybrid_fusion", "associations": ["wm_fusion_003", "wm_fusion_004", "wm_mem_002"]},
@@ -123,15 +123,15 @@ MEMORIES = {
 def generate_single_hop_answers():
     """Generate answers for single-hop questions (q_sh_001-060)"""
     answers = []
-    
+
     # Questions about importance values - pattern repeats
     # wm_mcp_001-015: 0.7, 0.8, 0.9, 0.7, 0.8, 0.9, 0.7, 0.8, 0.9, 0.7, 0.8, 0.9, 0.7, 0.8, 0.9
     # wm_mem_001-015: same pattern
     # wm_graph_001-015: same pattern
     # wm_emb_001-015: same pattern
-    
+
     importance_pattern = [0.7, 0.8, 0.9]  # Repeats every 3
-    
+
     # q_sh_001-015: wm_mcp importance
     for i in range(1, 16):
         mem_id = f"wm_mcp_{i:03d}"
@@ -143,7 +143,7 @@ def generate_single_hop_answers():
             "source_memory_ids": [mem_id],
             "reasoning": f"Memory {mem_id} explicitly states importance: {imp}"
         })
-    
+
     # q_sh_016-030: wm_mem importance
     for i in range(16, 31):
         mem_num = i - 15
@@ -156,7 +156,7 @@ def generate_single_hop_answers():
             "source_memory_ids": [mem_id],
             "reasoning": f"Memory {mem_id} explicitly states importance: {imp}"
         })
-    
+
     # q_sh_031-045: wm_graph importance
     for i in range(31, 46):
         mem_num = i - 30
@@ -169,7 +169,7 @@ def generate_single_hop_answers():
             "source_memory_ids": [mem_id],
             "reasoning": f"Memory {mem_id} explicitly states importance: {imp}"
         })
-    
+
     # q_sh_046-060: wm_emb importance
     for i in range(46, 61):
         mem_num = i - 45
@@ -182,20 +182,20 @@ def generate_single_hop_answers():
             "source_memory_ids": [mem_id],
             "reasoning": f"Memory {mem_id} explicitly states importance: {imp}"
         })
-    
+
     return answers
 
 def generate_multi_hop_answers():
     """Generate answers for multi-hop questions (q_mh_001-075)"""
     answers = []
-    
+
     # q_mh_001-042: Association traversal questions
     # Pattern: Find memories connected via associations
-    
+
     # Example questions from file:
     # q_mh_001: Which memory is associated with wm_mcp_001?
     # q_mh_042: Which two memories discuss graph algorithms and are connected via associations?
-    
+
     # Generate answers for association questions
     for i in range(1, 76):
         if i <= 15:
@@ -254,13 +254,13 @@ def generate_multi_hop_answers():
                 "source_memory_ids": ["wm_graph_012", "wm_graph_013"],
                 "reasoning": "NetworkX Integration and Graph Visualization Export are connected via associations"
             })
-    
+
     return answers
 
 def generate_temporal_answers():
     """Generate answers for temporal questions (q_tp_001-060)"""
     answers = []
-    
+
     # Build date lookup
     date_to_memory = {}
     for mem_id, data in MEMORIES.items():
@@ -268,16 +268,16 @@ def generate_temporal_answers():
         if date not in date_to_memory:
             date_to_memory[date] = []
         date_to_memory[date].append(mem_id)
-    
+
     # Generate answers for date-based questions
     dates = sorted(date_to_memory.keys())
-    
+
     for i in range(1, 61):
         # Map question to date
         date_idx = (i - 1) % len(dates)
         target_date = dates[date_idx]
         mem_ids = date_to_memory[target_date]
-        
+
         if len(mem_ids) == 1:
             mem_id = mem_ids[0]
             title = MEMORIES[mem_id]["title"]
@@ -297,19 +297,19 @@ def generate_temporal_answers():
                 "source_memory_ids": mem_ids,
                 "reasoning": f"Memories created on {target_date}"
             })
-    
+
     return answers
 
 def generate_open_domain_answers():
     """Generate answers for open-domain questions (q_od_001-060)"""
     answers = []
-    
+
     # Open-domain questions ask about key components of different systems
     # Pattern repeats for different topics
-    
+
     for i in range(1, 61):
         topic_idx = (i - 1) % 4
-        
+
         if topic_idx == 0:
             # Graph algorithms
             answers.append({
@@ -346,22 +346,22 @@ def generate_open_domain_answers():
                 "source_memory_ids": ["wm_mem_001", "wm_mem_002", "wm_mem_003"],
                 "reasoning": "These three memories describe key memory system components"
             })
-    
+
     return answers
 
 def generate_adversarial_answers():
     """Generate answers for adversarial questions (q_adv_001-030)"""
     answers = []
-    
+
     # Adversarial questions contain false premises
     # Three types repeat:
     # 1. February 30 date (invalid)
     # 2. 500 tools claim (false)
     # 3. Wrong date format
-    
+
     for i in range(1, 31):
         trap_type = (i - 1) % 3
-        
+
         if trap_type == 0:
             # February 30 trap
             answers.append({
@@ -389,13 +389,13 @@ def generate_adversarial_answers():
                 "source_memory_ids": [],
                 "reasoning": "Date mismatch - no memory was created on the specified date"
             })
-    
+
     return answers
 
 def generate_calibration_answers():
     """Generate answers for calibration questions (q_cal_001-015)"""
     answers = []
-    
+
     # All calibration questions ask about total associations - unanswerable
     for i in range(1, 16):
         answers.append({
@@ -405,12 +405,12 @@ def generate_calibration_answers():
             "source_memory_ids": [],
             "reasoning": "Information not present in the 100-memory corpus"
         })
-    
+
     return answers
 
 def main():
     all_answers = []
-    
+
     # Generate all answer types
     all_answers.extend(generate_single_hop_answers())
     all_answers.extend(generate_multi_hop_answers())
@@ -418,17 +418,17 @@ def main():
     all_answers.extend(generate_open_domain_answers())
     all_answers.extend(generate_adversarial_answers())
     all_answers.extend(generate_calibration_answers())
-    
+
     # Save to file
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = f"external_ai_answers_{timestamp}.json"
-    
+
     with open(output_file, 'w') as f:
         json.dump(all_answers, f, indent=2)
-    
+
     print(f"Generated {len(all_answers)} answers")
     print(f"Saved to: {output_file}")
-    
+
     return output_file
 
 if __name__ == "__main__":

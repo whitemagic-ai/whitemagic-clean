@@ -15,8 +15,8 @@ def vault_group() -> None:
 @click.option("--passphrase", "-p", prompt=True, hide_input=True, confirmation_prompt=True, help="Passphrase for vault encryption")
 def vault_init(passphrase: str) -> None:
     """Initialize the encrypted vault."""
-    from whitemagic.security.vault import Vault
     from whitemagic.config.paths import WM_ROOT
+    from whitemagic.security.vault import Vault
     Vault(passphrase=passphrase)
     click.echo(f"Vault initialized at {WM_ROOT / 'vault' / 'secrets.db'}")
     click.echo("Your secrets are encrypted with AES-256.")

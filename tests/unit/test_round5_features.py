@@ -16,7 +16,6 @@ Covers:
 import json
 import unittest
 
-
 # ---------------------------------------------------------------------------
 # 1. Gnosis compact mode
 # ---------------------------------------------------------------------------
@@ -123,7 +122,9 @@ class TestStarterPacks(unittest.TestCase):
         self.assertEqual(result_err["status"], "error")
 
     def test_handler_suggest(self):
-        from whitemagic.tools.handlers.agent_ergonomics import handle_starter_packs_suggest
+        from whitemagic.tools.handlers.agent_ergonomics import (
+            handle_starter_packs_suggest,
+        )
         result = handle_starter_packs_suggest(context="I need to coordinate agents")
         self.assertEqual(result["status"], "success")
         self.assertEqual(result["suggested_pack"], "coordination")
@@ -136,13 +137,13 @@ class TestStarterPacks(unittest.TestCase):
 class TestRateLimiter(unittest.TestCase):
 
     def test_allows_normal_calls(self):
-        from whitemagic.tools.rate_limiter import RateLimiter, RateLimitConfig
+        from whitemagic.tools.rate_limiter import RateLimitConfig, RateLimiter
         limiter = RateLimiter(RateLimitConfig(per_tool_rpm=100, global_rpm=500, burst_allowance=5))
         result = limiter.check("agent_1", "gnosis")
         self.assertIsNone(result)
 
     def test_blocks_excessive_calls(self):
-        from whitemagic.tools.rate_limiter import RateLimiter, RateLimitConfig
+        from whitemagic.tools.rate_limiter import RateLimitConfig, RateLimiter
         limiter = RateLimiter(RateLimitConfig(per_tool_rpm=5, global_rpm=500, burst_allowance=0))
         for _ in range(5):
             limiter.check("agent_1", "my_custom_tool")
@@ -153,7 +154,7 @@ class TestRateLimiter(unittest.TestCase):
         self.assertIn("retry_after_seconds", result)
 
     def test_global_limit(self):
-        from whitemagic.tools.rate_limiter import RateLimiter, RateLimitConfig
+        from whitemagic.tools.rate_limiter import RateLimitConfig, RateLimiter
         limiter = RateLimiter(RateLimitConfig(per_tool_rpm=100, global_rpm=3, burst_allowance=0))
         for i in range(3):
             limiter.check("agent_1", f"tool_{i}")
@@ -162,7 +163,7 @@ class TestRateLimiter(unittest.TestCase):
         self.assertEqual(result["error_code"], "rate_limited")
 
     def test_different_agents_independent(self):
-        from whitemagic.tools.rate_limiter import RateLimiter, RateLimitConfig
+        from whitemagic.tools.rate_limiter import RateLimitConfig, RateLimiter
         limiter = RateLimiter(RateLimitConfig(per_tool_rpm=3, global_rpm=500, burst_allowance=0))
         for _ in range(3):
             limiter.check("agent_A", "my_custom_tool")
@@ -172,7 +173,7 @@ class TestRateLimiter(unittest.TestCase):
         self.assertIsNone(limiter.check("agent_B", "my_custom_tool"))
 
     def test_stats(self):
-        from whitemagic.tools.rate_limiter import RateLimiter, RateLimitConfig
+        from whitemagic.tools.rate_limiter import RateLimitConfig, RateLimiter
         limiter = RateLimiter(RateLimitConfig(per_tool_rpm=2, burst_allowance=0))
         limiter.check("agent_1", "my_custom_tool")
         limiter.check("agent_1", "my_custom_tool")

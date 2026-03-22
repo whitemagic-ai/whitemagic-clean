@@ -17,7 +17,9 @@ class TestCommunityMaintainer:
     """Test the incremental community maintenance system."""
 
     def test_propagate_no_neighbors(self):
-        from whitemagic.core.intelligence.community_maintenance import CommunityMaintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            CommunityMaintainer,
+        )
 
         m = CommunityMaintainer()
         result = m.propagate_label("mem1", neighbors=[])
@@ -25,7 +27,9 @@ class TestCommunityMaintainer:
         assert result.assigned_community is None
 
     def test_propagate_weak_neighbors(self):
-        from whitemagic.core.intelligence.community_maintenance import CommunityMaintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            CommunityMaintainer,
+        )
 
         m = CommunityMaintainer()
         # Neighbors with weight below MIN_PROPAGATION_WEIGHT
@@ -33,7 +37,9 @@ class TestCommunityMaintainer:
         assert result.action == "no_neighbors"
 
     def test_propagate_creates_new_community(self):
-        from whitemagic.core.intelligence.community_maintenance import CommunityMaintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            CommunityMaintainer,
+        )
 
         m = CommunityMaintainer()
         # Strong neighbors but none have communities yet
@@ -46,7 +52,9 @@ class TestCommunityMaintainer:
         assert result.assigned_community is not None
 
     def test_propagate_assigns_existing_community(self):
-        from whitemagic.core.intelligence.community_maintenance import CommunityMaintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            CommunityMaintainer,
+        )
 
         m = CommunityMaintainer()
         # Create a community first
@@ -63,7 +71,9 @@ class TestCommunityMaintainer:
         assert r2.assigned_community == community_id
 
     def test_get_community(self):
-        from whitemagic.core.intelligence.community_maintenance import CommunityMaintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            CommunityMaintainer,
+        )
 
         m = CommunityMaintainer()
         r = m.propagate_label("mem1", neighbors=[("n1", 0.8), ("n2", 0.7)], memory_tags=["test"])
@@ -72,7 +82,9 @@ class TestCommunityMaintainer:
         assert community.community_id == r.assigned_community
 
     def test_merge_communities(self):
-        from whitemagic.core.intelligence.community_maintenance import CommunityMaintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            CommunityMaintainer,
+        )
 
         m = CommunityMaintainer()
         r1 = m.propagate_label("a1", neighbors=[("x1", 0.8), ("x2", 0.7)], memory_tags=["group_a"])
@@ -84,7 +96,9 @@ class TestCommunityMaintainer:
         assert m.get_community("a1").community_id == m.get_community("b1").community_id
 
     def test_check_health(self):
-        from whitemagic.core.intelligence.community_maintenance import CommunityMaintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            CommunityMaintainer,
+        )
 
         m = CommunityMaintainer()
         m.propagate_label("a", neighbors=[("n1", 0.8), ("n2", 0.7)], memory_tags=["x"])
@@ -93,7 +107,9 @@ class TestCommunityMaintainer:
         assert "total_members" in health
 
     def test_import_batch_communities(self):
-        from whitemagic.core.intelligence.community_maintenance import CommunityMaintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            CommunityMaintainer,
+        )
 
         m = CommunityMaintainer()
         assignments = {"mem1": 0, "mem2": 0, "mem3": 1, "mem4": 1, "mem5": 2}
@@ -104,7 +120,9 @@ class TestCommunityMaintainer:
         assert m.get_community("mem1").label == "Python"
 
     def test_get_status(self):
-        from whitemagic.core.intelligence.community_maintenance import CommunityMaintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            CommunityMaintainer,
+        )
 
         m = CommunityMaintainer()
         m.propagate_label("a", neighbors=[("n1", 0.8), ("n2", 0.7)], memory_tags=["x"])
@@ -113,7 +131,9 @@ class TestCommunityMaintainer:
         assert "total_propagations" in status
 
     def test_singleton(self):
-        from whitemagic.core.intelligence.community_maintenance import get_community_maintainer
+        from whitemagic.core.intelligence.community_maintenance import (
+            get_community_maintainer,
+        )
 
         m1 = get_community_maintainer()
         m2 = get_community_maintainer()

@@ -16,13 +16,14 @@ from __future__ import annotations
 
 import ast
 import re
+
+# Add project root to path
+import sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-# Add project root to path
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from whitemagic.core.garden_directory import (
@@ -35,14 +36,14 @@ def get_all_source_files(root: Path) -> list[Path]:
     """Get all source files to map."""
     extensions = {".py", ".rs", ".ex", ".exs", ".go", ".mojo", ".zig", ".hs", ".kk", ".jl", ".ts", ".tsx", ".js", ".jsx", ".md", ".json", ".yaml", ".yml", ".toml", ".sh"}
     files = []
-    
+
     # Skip patterns
     skip_dirs = {
-        ".git", ".venv", "__pycache__", "node_modules", ".mypy_cache", 
+        ".git", ".venv", "__pycache__", "node_modules", ".mypy_cache",
         "target", "_build", "deps", "_archives", ".pixi", ".koka", ".koka_build",
         "monte_carlo_output", "models", "materialized_artifact",
     }
-    
+
     for ext in extensions:
         for f in root.rglob(f"*{ext}"):
             # Skip unwanted directories
@@ -55,7 +56,7 @@ def get_all_source_files(root: Path) -> list[Path]:
             except OSError:
                 continue
             files.append(f)
-    
+
     return sorted(files)
 
 
@@ -97,19 +98,19 @@ def extract_go_functions(content: str) -> list[str]:
 def extract_generic_functions(content: str, ext: str) -> list[str]:
     """Extract function-like patterns from any file."""
     functions = []
-    
+
     if ext in {".ex", ".exs"}:
         # Elixir: def name( do:
         functions = re.findall(r"def\s+(\w+)", content)
         functions.extend(re.findall(r"defp\s+(\w+)", content))
     elif ext == ".hs":
-        # Haskell: name :: Type or name = 
+        # Haskell: name :: Type or name =
         functions = re.findall(r"^(\w+)\s*::", content, re.MULTILINE)
     elif ext == ".kk":
         # Koka: fun name(
         functions = re.findall(r"fun\s+(\w+)", content)
     elif ext == ".jl":
-        # Julia: function name( or name( = 
+        # Julia: function name( or name( =
         functions = re.findall(r"function\s+(\w+)", content)
     elif ext == ".zig":
         # Zig: pub fn name(
@@ -118,18 +119,18 @@ def extract_generic_functions(content: str, ext: str) -> list[str]:
         # Mojo: fn name( or def name(
         functions = re.findall(r"(?:fn|def)\s+(\w+)", content)
     elif ext in {".ts", ".tsx", ".js", ".jsx"}:
-        # TypeScript/JavaScript: function name( or const name = 
+        # TypeScript/JavaScript: function name( or const name =
         functions = re.findall(r"function\s+(\w+)", content)
         functions.extend(re.findall(r"const\s+(\w+)\s*=", content))
         functions.extend(re.findall(r"export\s+(?:function|const)\s+(\w+)", content))
-    
+
     return functions[:50]
 
 
 def get_file_functions(file_path: Path, content: str) -> list[str]:
     """Get public functions from a file based on type."""
     ext = file_path.suffix
-    
+
     if ext == ".py":
         return extract_python_functions(content)
     elif ext == ".rs":
@@ -143,7 +144,7 @@ def get_file_functions(file_path: Path, content: str) -> list[str]:
 def scan_and_map_files(root: Path, directory: GardenDirectory) -> dict[str, Any]:
     """Scan all files and map to gardens."""
     files = get_all_source_files(root)
-    
+
     stats = {
         "total_files": len(files),
         "by_garden": defaultdict(int),
@@ -153,40 +154,40 @@ def scan_and_map_files(root: Path, directory: GardenDirectory) -> dict[str, Any]
         "errors": [],
         "low_confidence": [],
     }
-    
+
     print(f"📂 Scanning {len(files)} files...")
-    
+
     for i, file_path in enumerate(files):
         if (i + 1) % 500 == 0:
             print(f"  Processed {i + 1}/{len(files)} files...")
-        
+
         try:
             content = file_path.read_text(encoding="utf-8", errors="replace")
         except Exception as e:
             stats["errors"].append(f"{file_path}: {e}")
             continue
-        
+
         # Get relative path
         rel_path = str(file_path.relative_to(root))
-        
+
         # Extract functions
         functions = get_file_functions(file_path, content)
-        
+
         # Analyze for garden
         mapping = analyze_file_for_garden(rel_path, content, functions)
-        
+
         # Register
         directory.register_file(mapping)
-        
+
         # Update stats
         stats["by_garden"][mapping.primary_garden] += 1
         stats["by_file_type"][mapping.file_type] += 1
         stats["by_quadrant"][mapping.quadrant] += 1
         stats["by_element"][mapping.element] += 1
-        
+
         if mapping.confidence < 0.3:
             stats["low_confidence"].append(rel_path)
-    
+
     return stats
 
 
@@ -214,17 +215,17 @@ def generate_report(directory: GardenDirectory, stats: dict[str, Any], output_pa
         "| Garden | Files | Gana | Element | Quadrant |",
         "|--------|-------|------|---------|----------|",
     ]
-    
+
     # Get garden entries for lookup
     from whitemagic.core.intelligence.garden_gana_registry import get_by_garden
-    
+
     for garden, count in sorted(stats["by_garden"].items(), key=lambda x: -x[1]):
         entry = get_by_garden(garden)
         if entry:
             lines.append(f"| {garden} | {count} | {entry.gana} | {entry.element.value} | {entry.quadrant.value.split()[0]} |")
         else:
             lines.append(f"| {garden} | {count} | - | - | - |")
-    
+
     lines.extend([
         "",
         "## File Type Distribution",
@@ -232,10 +233,10 @@ def generate_report(directory: GardenDirectory, stats: dict[str, Any], output_pa
         "| Type | Count |",
         "|------|-------|",
     ])
-    
+
     for ftype, count in sorted(stats["by_file_type"].items(), key=lambda x: -x[1]):
         lines.append(f"| {ftype} | {count} |")
-    
+
     lines.extend([
         "",
         "## Quadrant Distribution",
@@ -243,11 +244,11 @@ def generate_report(directory: GardenDirectory, stats: dict[str, Any], output_pa
         "| Quadrant | Files |",
         "|----------|-------|",
     ])
-    
+
     for quadrant, count in sorted(stats["by_quadrant"].items(), key=lambda x: -x[1]):
         if quadrant:
             lines.append(f"| {quadrant.split()[0]} | {count} |")
-    
+
     lines.extend([
         "",
         "## Element Distribution",
@@ -255,11 +256,11 @@ def generate_report(directory: GardenDirectory, stats: dict[str, Any], output_pa
         "| Element | Files |",
         "|---------|-------|",
     ])
-    
+
     for element, count in sorted(stats["by_element"].items(), key=lambda x: -x[1]):
         if element:
             lines.append(f"| {element} | {count} |")
-    
+
     lines.extend([
         "",
         "## Coverage Analysis",
@@ -269,7 +270,7 @@ def generate_report(directory: GardenDirectory, stats: dict[str, Any], output_pa
         f"- **Errors**: {len(stats['errors'])}",
         "",
     ])
-    
+
     if stats["low_confidence"][:20]:
         lines.append("### Low Confidence Files (sample)")
         lines.append("")
@@ -278,7 +279,7 @@ def generate_report(directory: GardenDirectory, stats: dict[str, Any], output_pa
         if len(stats["low_confidence"]) > 20:
             lines.append(f"- ... and {len(stats['low_confidence']) - 20} more")
         lines.append("")
-    
+
     if stats["errors"][:10]:
         lines.append("### Errors (sample)")
         lines.append("")
@@ -286,13 +287,13 @@ def generate_report(directory: GardenDirectory, stats: dict[str, Any], output_pa
             lines.append(f"- {err}")
         if len(stats["errors"]) > 10:
             lines.append(f"- ... and {len(stats['errors']) - 10} more")
-    
+
     lines.extend([
         "",
         "---",
         "*Report generated by S025 Garden Organization Campaign*",
     ])
-    
+
     output_path.write_text("\n".join(lines))
     print(f"📄 Report saved to {output_path}")
 
@@ -302,29 +303,29 @@ def main() -> None:
     root = Path(__file__).parent.parent
     registry_path = root / "data" / "garden_file_registry.json"
     report_path = root / "reports" / "garden_ownership_report.md"
-    
+
     # Ensure directories exist
     registry_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     print("=" * 60)
     print("🌸 S025: Garden Organization — File-to-Garden Mapping")
     print("=" * 60)
     print()
-    
+
     # Create directory
     directory = GardenDirectory(registry_path)
-    
+
     # Scan and map
     stats = scan_and_map_files(root, directory)
-    
+
     # Save registry
     directory.save()
     print(f"\nRegistry saved to {registry_path}")
-    
+
     # Generate report
     generate_report(directory, stats, report_path)
-    
+
     # Print summary
     print()
     print("=" * 60)

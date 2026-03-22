@@ -13,10 +13,12 @@ Total patterns: 1036
 """
 
 import asyncio
-from typing import Any, Dict, List, Optional, Callable, AsyncIterator
+from collections.abc import AsyncIterator, Callable
+from typing import Any
+
 from wm2.core import BaseEngine
-from wm2.core.serializable import Serializable
 from wm2.core.metrics import MetricCollector, tracked
+from wm2.core.serializable import Serializable
 
 
 class AsyncSubsystem(BaseEngine, Serializable, MetricCollector):
@@ -29,14 +31,14 @@ class AsyncSubsystem(BaseEngine, Serializable, MetricCollector):
     - Async context managers
     - Async generators
     """
-    
+
     def __init__(self, name: str = "async_subsystem"):
         BaseEngine.__init__(self, name=name)
         MetricCollector.__init__(self)
-        self.loop: Optional[asyncio.AbstractEventLoop] = None
-        self.tasks: List[asyncio.Task] = []
+        self.loop: asyncio.AbstractEventLoop | None = None
+        self.tasks: list[asyncio.Task] = []
         self.active = False
-    
+
     @tracked
     def initialize(self):
         """Initialize async subsystem."""
@@ -45,37 +47,37 @@ class AsyncSubsystem(BaseEngine, Serializable, MetricCollector):
         except RuntimeError:
             self.loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
-        
+
         self.active = True
         self.record_metric("initialized", True)
-    
+
     @tracked
     async def execute_async(self, coro: Callable) -> Any:
         """Execute an async coroutine."""
         if not self.active:
             self.initialize()
-        
+
         return await coro()
-    
+
     @tracked
-    async def gather_tasks(self, *coros: Callable) -> List[Any]:
+    async def gather_tasks(self, *coros: Callable) -> list[Any]:
         """Execute multiple async tasks concurrently."""
         if not self.active:
             self.initialize()
-        
+
         results = await asyncio.gather(*[coro() for coro in coros])
         self.record_metric("tasks_gathered", len(coros))
         return results
-    
+
     @tracked
     async def async_generator_example(self) -> AsyncIterator[int]:
         """Example async generator pattern."""
         for i in range(10):
             await asyncio.sleep(0.01)
             yield i
-    
+
     @tracked
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get comprehensive statistics."""
         return {
             **BaseEngine.get_stats(self),

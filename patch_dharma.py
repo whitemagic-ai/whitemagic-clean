@@ -1,6 +1,6 @@
 import re
 
-with open('whitemagic-rust/src/sutra_kernel/dharma_engine.rs', 'r') as f:
+with open('whitemagic-rust/src/sutra_kernel/dharma_engine.rs') as f:
     content = f.read()
 
 # Add PyO3 imports and macros

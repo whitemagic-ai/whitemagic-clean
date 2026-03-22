@@ -8,21 +8,22 @@ Usage:
     python3 whitemagic/alchemy/transmutation_pipeline.py
 """
 
-import sqlite3
 import logging
-import time
-from pathlib import Path
+import sqlite3
 
 # Add project root to path if running directly
 import sys
+import time
+from pathlib import Path
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from whitemagic.alchemy.nigredo import NigredoClassifier
 from whitemagic.alchemy.albedo import AlbedoPurifier
-from whitemagic.alchemy.rubedo import RubedoSynthesizer
 from whitemagic.alchemy.holocron import Holocron
+from whitemagic.alchemy.nigredo import NigredoClassifier
+from whitemagic.alchemy.rubedo import RubedoSynthesizer
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

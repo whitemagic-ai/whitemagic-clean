@@ -18,7 +18,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -420,7 +419,11 @@ class TestSurpriseGate:
         assert verdict.action in (SurpriseAction.CREATE, SurpriseAction.CREATE_BOOSTED)
 
     def test_apply_boosted(self):
-        from whitemagic.core.memory.surprise_gate import SurpriseAction, SurpriseGate, SurpriseVerdict
+        from whitemagic.core.memory.surprise_gate import (
+            SurpriseAction,
+            SurpriseGate,
+            SurpriseVerdict,
+        )
         gate = SurpriseGate()
         verdict = SurpriseVerdict(
             action=SurpriseAction.CREATE_BOOSTED,
@@ -433,7 +436,11 @@ class TestSurpriseGate:
         assert result["metadata"]["surprise_boosted"] is True
 
     def test_apply_reinforce(self):
-        from whitemagic.core.memory.surprise_gate import SurpriseAction, SurpriseGate, SurpriseVerdict
+        from whitemagic.core.memory.surprise_gate import (
+            SurpriseAction,
+            SurpriseGate,
+            SurpriseVerdict,
+        )
         gate = SurpriseGate()
         verdict = SurpriseVerdict(
             action=SurpriseAction.REINFORCE,

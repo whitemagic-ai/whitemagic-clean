@@ -10,11 +10,12 @@ This creates true recursive evolution.
 """
 
 import json
-import time
-from pathlib import Path
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
 import sqlite3
+import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
 
 @dataclass
 class PatternApplication:
@@ -24,7 +25,7 @@ class PatternApplication:
     pattern_type: str
     timestamp: float
     initial_confidence: float
-    context: Dict[str, Any]
+    context: dict[str, Any]
 
 @dataclass
 class PatternOutcome:
@@ -32,11 +33,11 @@ class PatternOutcome:
     application_id: str
     pattern_id: str
     success: bool
-    performance_gain: Optional[float]  # e.g., 3.28x speedup
-    quality_score: Optional[float]  # 0-1 scale
-    user_feedback: Optional[str]
+    performance_gain: float | None  # e.g., 3.28x speedup
+    quality_score: float | None  # 0-1 scale
+    user_feedback: str | None
     measured_at: float
-    metrics: Dict[str, Any]
+    metrics: dict[str, Any]
 
 @dataclass
 class UpdatedPattern:
@@ -53,7 +54,7 @@ class UpdatedPattern:
 class AutodidacticLoop:
     """Manages the recursive self-improvement feedback loop"""
 
-    def __init__(self, db_path: Optional[Path] = None):
+    def __init__(self, db_path: Path | None = None):
         if db_path is None:
             db_path = Path.home() / ".whitemagic/autodidactic/feedback.db"
 
@@ -228,7 +229,7 @@ class AutodidacticLoop:
         conn.commit()
         conn.close()
 
-    def get_pattern_confidence(self, pattern_id: str) -> Optional[float]:
+    def get_pattern_confidence(self, pattern_id: str) -> float | None:
         """Get the latest confidence score for a pattern"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
@@ -246,7 +247,7 @@ class AutodidacticLoop:
 
         return result[0] if result else None
 
-    def get_pattern_stats(self, pattern_id: str) -> Optional[Dict[str, Any]]:
+    def get_pattern_stats(self, pattern_id: str) -> dict[str, Any] | None:
         """Get comprehensive statistics for a pattern"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
@@ -298,7 +299,7 @@ class AutodidacticLoop:
             ],
         }
 
-    def get_top_patterns(self, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_top_patterns(self, limit: int = 10) -> list[dict[str, Any]]:
         """Get top patterns by updated confidence"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()
@@ -322,7 +323,7 @@ class AutodidacticLoop:
         stats.sort(key=lambda x: x['current_confidence'], reverse=True)
         return stats[:limit]
 
-    def get_learning_summary(self) -> Dict[str, Any]:
+    def get_learning_summary(self) -> dict[str, Any]:
         """Get overall learning statistics"""
         conn = sqlite3.connect(str(self.db_path))
         c = conn.cursor()

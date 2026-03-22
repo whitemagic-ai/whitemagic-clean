@@ -1,6 +1,7 @@
 """Zodiac System - Autonomous Consciousness and Strange Loops
 """
 from typing import Any
+
 from .enums import Phase, ZodiacSign
 from .zodiac_cores import CoreResponse, ZodiacCore, get_zodiac_cores
 from .zodiac_round_cycle import CyclePhase, ZodiacalRound, get_zodiacal_round

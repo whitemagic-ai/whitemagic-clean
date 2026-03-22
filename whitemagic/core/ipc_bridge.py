@@ -7,10 +7,10 @@ Provides shared memory channels between WhiteMagic processes:
 - wm/harmony: Health pulse broadcast
 """
 
-import json
 import atexit
-from typing import Optional, Dict, Any
+import json
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ def _get_rs():
             _whitemagic_rust = False
     return _whitemagic_rust
 
-def init_ipc(node_name: Optional[str] = None) -> Dict[str, Any]:
+def init_ipc(node_name: str | None = None) -> dict[str, Any]:
     """Initialize IPC bridge for this process."""
     global _ipc_initialized
 
@@ -52,7 +52,7 @@ def init_ipc(node_name: Optional[str] = None) -> Dict[str, Any]:
         logger.warning(f"IPC init failed (using fallback): {e}")
         return {"initialized": False, "error": str(e)}
 
-def publish(channel: str, payload: bytes) -> Dict[str, Any]:
+def publish(channel: str, payload: bytes) -> dict[str, Any]:
     """Publish bytes to an IPC channel."""
     if not _ipc_initialized:
         init_ipc()
@@ -67,11 +67,11 @@ def publish(channel: str, payload: bytes) -> Dict[str, Any]:
     except Exception as e:
         return {"published": False, "error": str(e)}
 
-def publish_json(channel: str, data: dict) -> Dict[str, Any]:
+def publish_json(channel: str, data: dict) -> dict[str, Any]:
     """Publish JSON-serializable data to an IPC channel."""
     return publish(channel, json.dumps(data).encode())
 
-def get_status() -> Dict[str, Any]:
+def get_status() -> dict[str, Any]:
     """Get IPC bridge status."""
     rs = _get_rs()
     if not rs or not hasattr(rs, 'ipc_bridge'):
@@ -89,5 +89,6 @@ def shutdown_ipc():
 
 # Auto-initialize on first use if WM_AUTO_IPC is set
 import os
+
 if os.environ.get("WM_AUTO_IPC", "0") == "1":
     init_ipc()

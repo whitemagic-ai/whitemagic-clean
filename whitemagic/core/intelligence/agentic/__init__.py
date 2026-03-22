@@ -2,6 +2,7 @@
 
 # Core agentic modules - lazy imports to avoid circular dependencies
 from typing import Any
+
 from .anti_loop import get_anti_loop
 from .auto_activation import activate
 from .coherence_persistence import get_coherence

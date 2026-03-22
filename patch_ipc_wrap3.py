@@ -1,5 +1,5 @@
 
-with open('whitemagic-rust/src/ipc_bridge.rs', 'r') as f:
+with open('whitemagic-rust/src/ipc_bridge.rs') as f:
     content = f.read()
 
 # Fix the PyO3 wrappers. In recent pyo3 versions, the module requires explicit imports for wrap_pyfunction

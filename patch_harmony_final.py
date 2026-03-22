@@ -1,6 +1,6 @@
 import re
 
-with open('nexus/src/components/center/HarmonyDashboard.tsx', 'r') as f:
+with open('nexus/src/components/center/HarmonyDashboard.tsx') as f:
     content = f.read()
 
 # Fix the broken HTML structure

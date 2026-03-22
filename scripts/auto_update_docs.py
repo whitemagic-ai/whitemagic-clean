@@ -1,7 +1,7 @@
+import datetime
 import json
 import re
 from pathlib import Path
-import datetime
 
 # Paths
 ROOT = Path("/home/lucas/Desktop/whitemagicdev")
@@ -27,11 +27,11 @@ def get_census_stats():
         content = census_md.read_text()
         py_match = re.search(r'\|\s*\*\*Python\*\*\s*\|\s*\*\*(\d+)\*\*\s*\|\s*\*\*([0-9,]+)\*\*', content)
         if py_match: stats["Python"] = py_match.group(2)
-        
+
         for lang in ["Rust", "Zig", "Go", "Haskell", "Elixir", "TypeScript", "Mojo", "Julia", "Koka"]:
             match = re.search(r'\|\s*' + lang + r'\s*\|\s*\d+\s*\|\s*([0-9,]+)\s*\|', content)
             if match: stats[lang] = match.group(1)
-                
+
         gt_match = re.search(r'\|\s*\*\*Grand total\*\*\s*\|\s*\*\*([\d,]+) files, ([0-9,]+) LOC\*\*', content)
         if gt_match:
             stats["total_files"] = gt_match.group(1)
@@ -42,14 +42,14 @@ def update_file_version_and_stats(filepath, version, stats=None):
     if not filepath.exists():
         return
     content = filepath.read_text()
-    
+
     # Generic version bumps for v15.8 -> v18.1
     content = re.sub(r'v15\.8\.0', f'v{version}', content)
     content = re.sub(r'v15\.8', f'v{version[:4]}', content)
-    
+
     today = datetime.datetime.now().strftime("%Y.%m.%d")
     content = re.sub(r'BUILD 2026\.\d+\.\d+', f'BUILD {today}', content)
-    
+
     if stats and filepath.name == "index.html":
         for lang in ["Python", "Rust", "Zig", "Go", "Haskell", "Elixir", "TypeScript", "Mojo", "Julia", "Koka"]:
             if lang in stats:
@@ -77,9 +77,9 @@ if __name__ == "__main__":
     version = read_version()
     print(f"Current version: {version}")
     stats = get_census_stats()
-    
+
     for f in [FRONTEND_INDEX, LLMS_TXT, SKILL_MD, README_MD, SYSTEM_MAP, AI_PRIMARY]:
         update_file_version_and_stats(f, version, stats)
-        
+
     update_agent_json(version)
     print("All core documentation updated to match current state.")

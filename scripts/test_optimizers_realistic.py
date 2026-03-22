@@ -8,8 +8,8 @@ Tests optimizers against simulated real workloads to show actual benefits.
 
 import sys
 import time
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -36,25 +36,25 @@ def test_memory_workflow_without_optimization():
     print("\n" + "="*80)
     print("BASELINE: Memory Workflow (No Optimization)")
     print("="*80)
-    
+
     start = time.time()
-    
+
     for i in range(20):
         memory_id = f"mem_{i}"
-        
+
         # Step 1: Create memory
         # Step 2: Compute semantic links (EXPENSIVE - 15ms)
         simulate_expensive_semantic_search(memory_id)
-        
+
         # Step 3: Consolidate (EXPENSIVE - 10ms)
         simulate_consolidation_computation(memory_id)
-    
+
     elapsed_ms = (time.time() - start) * 1000
-    
+
     print("✓ Processed 20 memories")
     print(f"  Total time: {elapsed_ms:.2f}ms")
     print(f"  Avg per memory: {elapsed_ms/20:.2f}ms")
-    
+
     return elapsed_ms
 
 
@@ -63,21 +63,21 @@ def test_memory_workflow_with_optimization():
     print("\n" + "="*80)
     print("OPTIMIZED: Memory Workflow (With Caching)")
     print("="*80)
-    
+
     optimizer = get_memory_optimizer()
     optimizer.clear_cache()  # Start fresh
-    
+
     start = time.time()
-    
+
     for i in range(20):
         memory_id = f"mem_{i}"
         memory_data = {"id": memory_id, "importance": 0.8}
-        
+
         # Step 1: Create memory
-        
+
         # Step 2: Get semantic links (CACHED after first computation)
         cached_links = optimizer.pre_compute_semantic_links(memory_id, memory_data)
-        
+
         if cached_links is None or memory_id not in optimizer.link_cache:
             # Cache miss - do expensive computation
             links = simulate_expensive_semantic_search(memory_id)
@@ -85,10 +85,10 @@ def test_memory_workflow_with_optimization():
         else:
             # Cache hit - instant retrieval
             links = cached_links
-        
+
         # Step 3: Get consolidation data (CACHED if pre-warmed)
         cached_consolidation = optimizer.get_consolidation_data(memory_id)
-        
+
         if cached_consolidation is None:
             # Pre-warm for next time
             optimizer.pre_warm_consolidation(memory_id, memory_data)
@@ -97,16 +97,16 @@ def test_memory_workflow_with_optimization():
         else:
             # Cache hit - instant retrieval
             pass
-    
+
     elapsed_ms = (time.time() - start) * 1000
-    
+
     metrics = optimizer.get_metrics()
-    
+
     print("✓ Processed 20 memories")
     print(f"  Total time: {elapsed_ms:.2f}ms")
     print(f"  Avg per memory: {elapsed_ms/20:.2f}ms")
     print(f"  Cache hit rate: {metrics['cache_hit_rate']:.1%}")
-    
+
     return elapsed_ms
 
 
@@ -115,25 +115,25 @@ def test_pattern_workflow_without_optimization():
     print("\n" + "="*80)
     print("BASELINE: Pattern Detection (No Optimization)")
     print("="*80)
-    
+
     start = time.time()
-    
+
     for i in range(15):
-        
+
         # Step 1: Detect pattern
         # Step 2: Load UI components (EXPENSIVE - 8ms)
         time.sleep(0.008)
-        
+
         # Step 3: User confirms
         # Step 4: Detect related patterns (EXPENSIVE - 12ms)
         time.sleep(0.012)
-    
+
     elapsed_ms = (time.time() - start) * 1000
-    
+
     print("✓ Processed 15 patterns")
     print(f"  Total time: {elapsed_ms:.2f}ms")
     print(f"  Avg per pattern: {elapsed_ms/15:.2f}ms")
-    
+
     return elapsed_ms
 
 
@@ -142,20 +142,20 @@ def test_pattern_workflow_with_optimization():
     print("\n" + "="*80)
     print("OPTIMIZED: Pattern Detection (With Pre-warming & Batching)")
     print("="*80)
-    
+
     optimizer = get_pattern_optimizer()
-    
+
     start = time.time()
-    
+
     for i in range(15):
         pattern_id = f"pattern_{i}"
         pattern_data = {"id": pattern_id, "confidence": 0.9}
-        
+
         # Step 1: Detect pattern
-        
+
         # Step 2: Get UI components (CACHED if pre-warmed)
         cached_ui = optimizer.get_ui_data(pattern_id)
-        
+
         if cached_ui is None:
             # Pre-warm for instant access
             optimizer.pre_warm_confirmation_ui(pattern_id, pattern_data)
@@ -164,26 +164,26 @@ def test_pattern_workflow_with_optimization():
         else:
             # Cache hit - instant
             pass
-        
+
         # Step 3: User confirms
-        
+
         # Step 4: Add to batch (processed in bulk later)
         optimizer.add_to_batch(pattern_id, pattern_data)
-    
+
     # Batch process all related pattern detections at once
     # (Much faster than individual processing)
     time.sleep(0.006 * (15 / optimizer.batch_size))  # Batching is 2x faster
     optimizer.force_batch_process()
-    
+
     elapsed_ms = (time.time() - start) * 1000
-    
+
     metrics = optimizer.get_metrics()
-    
+
     print("✓ Processed 15 patterns")
     print(f"  Total time: {elapsed_ms:.2f}ms")
     print(f"  Avg per pattern: {elapsed_ms/15:.2f}ms")
     print(f"  Cache hit rate: {metrics['cache_hit_rate']:.1%}")
-    
+
     return elapsed_ms
 
 
@@ -193,16 +193,16 @@ def main():
     print("REALISTIC OPTIMIZER PERFORMANCE TESTS")
     print("="*80)
     print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-    
+
     # Test Memory Workflow
     print("\n" + "🧠 MEMORY WORKFLOW OPTIMIZATION")
     print("="*80)
-    
+
     baseline_memory = test_memory_workflow_without_optimization()
     optimized_memory = test_memory_workflow_with_optimization()
-    
+
     memory_improvement = ((baseline_memory - optimized_memory) / baseline_memory) * 100
-    
+
     print("\n" + "-"*80)
     print("Memory Workflow Results:")
     print("-"*80)
@@ -210,16 +210,16 @@ def main():
     print(f"  Optimized: {optimized_memory:.2f}ms")
     print(f"  Improvement: {memory_improvement:.1f}%")
     print(f"  Latency saved: {baseline_memory - optimized_memory:.2f}ms")
-    
+
     # Test Pattern Workflow
     print("\n\n" + "🔍 PATTERN LEARNING OPTIMIZATION")
     print("="*80)
-    
+
     baseline_pattern = test_pattern_workflow_without_optimization()
     optimized_pattern = test_pattern_workflow_with_optimization()
-    
+
     pattern_improvement = ((baseline_pattern - optimized_pattern) / baseline_pattern) * 100
-    
+
     print("\n" + "-"*80)
     print("Pattern Learning Results:")
     print("-"*80)
@@ -227,24 +227,24 @@ def main():
     print(f"  Optimized: {optimized_pattern:.2f}ms")
     print(f"  Improvement: {pattern_improvement:.1f}%")
     print(f"  Latency saved: {baseline_pattern - optimized_pattern:.2f}ms")
-    
+
     # Overall Summary
     print("\n\n" + "="*80)
     print("OVERALL RESULTS")
     print("="*80)
-    
+
     total_baseline = baseline_memory + baseline_pattern
     total_optimized = optimized_memory + optimized_pattern
     total_improvement = ((total_baseline - total_optimized) / total_baseline) * 100
-    
+
     print(f"\nTotal baseline time: {total_baseline:.2f}ms")
     print(f"Total optimized time: {total_optimized:.2f}ms")
     print(f"Overall improvement: {total_improvement:.1f}%")
     print(f"Total latency saved: {total_baseline - total_optimized:.2f}ms")
-    
+
     # Validation
     success = memory_improvement > 0 and pattern_improvement > 0
-    
+
     print("\n" + "="*80)
     if success:
         print("✓ OPTIMIZATIONS VALIDATED")
@@ -264,7 +264,7 @@ def main():
         print("✗ OPTIMIZATION VALIDATION FAILED")
         print("="*80)
         print("\nReview results above")
-    
+
     return 0 if success else 1
 
 

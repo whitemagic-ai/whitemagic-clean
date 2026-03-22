@@ -1,6 +1,6 @@
 import re
 
-with open('nexus/src/components/panels/RightPanel.tsx', 'r') as f:
+with open('nexus/src/components/panels/RightPanel.tsx') as f:
     content = f.read()
 
 # Fix the duplicate imports in RightPanel.tsx

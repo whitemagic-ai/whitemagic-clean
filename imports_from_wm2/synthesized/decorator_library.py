@@ -7,8 +7,9 @@ Total decorators: 350
 Total uses: 1175
 """
 
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 F = TypeVar('F', bound=Callable[..., Any])
 
@@ -39,14 +40,14 @@ F = TypeVar('F', bound=Callable[..., Any])
 def cached(func: F) -> F:
     """Cache function results."""
     cache = {}
-    
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         key = str(args) + str(kwargs)
         if key not in cache:
             cache[key] = func(*args, **kwargs)
         return cache[key]
-    
+
     return wrapper
 
 

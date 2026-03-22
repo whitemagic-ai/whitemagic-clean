@@ -86,24 +86,24 @@ def create_gana_constellations(conn: sqlite3.Connection, dry_run: bool = False) 
     cur = conn.cursor()
     results = {"created": 0, "updated": 0, "members_assigned": 0}
     theme_gana_mapping = _get_theme_gana_mapping()
-    
+
     # Get current state
     current = get_current_constellations(conn)
     logger.info(f"Current constellations: {len(current)}")
-    
+
     # Process each theme
     for theme, mansion in theme_gana_mapping.items():
         const_name = gana_constellation_name(mansion)
-        
+
         # Get memories with this tag
         memory_ids = get_tagged_memories(conn, theme)
-        
+
         if not memory_ids:
             logger.info(f"No memories found for theme '{theme}'")
             continue
-        
+
         logger.info(f"Theme '{theme}' → {mansion.pinyin} ({mansion.meaning}): {len(memory_ids)} memories")
-        
+
         # Check if constellation exists
         if const_name not in current:
             # Create new constellation
@@ -129,10 +129,10 @@ def create_gana_constellations(conn: sqlite3.Connection, dry_run: bool = False) 
             results["updated"] += 1
             results["members_assigned"] += len(memory_ids)
             logger.info(f"  Updated constellation '{const_name}' (+{len(memory_ids)} members)")
-    
+
     if not dry_run:
         conn.commit()
-    
+
     return results
 
 
@@ -141,12 +141,12 @@ def ensure_all_28_ganas(conn: sqlite3.Connection, dry_run: bool = False) -> dict
     cur = conn.cursor()
     results = {"created": 0}
     LunarMansion = _get_lunar_mansion()
-    
+
     current = get_current_constellations(conn)
-    
+
     for mansion in LunarMansion:
         const_name = gana_constellation_name(mansion)
-        
+
         if const_name not in current:
             logger.info(f"Creating empty Gana constellation: {const_name}")
             if not dry_run:
@@ -157,37 +157,37 @@ def ensure_all_28_ganas(conn: sqlite3.Connection, dry_run: bool = False) -> dict
                     VALUES (?, ?, ?, ?)
                 """, (f"__gana_placeholder__:{const_name}", const_name, 0.0, datetime.now().isoformat()))
             results["created"] += 1
-    
+
     if not dry_run:
         conn.commit()
-    
+
     return results
 
 
 def main():
     logger.info("=== FOLDING GARDENS INTO 28 GANAS ===")
-    
+
     conn = sqlite3.connect(str(_get_db_path()))
-    
+
     # Step 1: Create Gana-aligned constellations from themes
     logger.info("\n--- Phase 1: Map themes to Ganas ---")
     results1 = create_gana_constellations(conn, dry_run=False)
     logger.info(f"Results: {results1}")
-    
+
     # Step 2: Ensure all 28 Ganas exist
     logger.info("\n--- Phase 2: Ensure all 28 Ganas ---")
     results2 = ensure_all_28_ganas(conn, dry_run=False)
     logger.info(f"Results: {results2}")
-    
+
     # Final count
     logger.info("\n--- Final State ---")
     final = get_current_constellations(conn)
     gana_count = sum(1 for name in final.keys() if name.startswith("Gana_"))
     logger.info(f"Total constellations: {len(final)}")
     logger.info(f"Gana constellations: {gana_count}/28")
-    
+
     conn.close()
-    
+
     return {"themes_folded": results1, "ganas_created": results2, "total_constellations": len(final)}
 
 

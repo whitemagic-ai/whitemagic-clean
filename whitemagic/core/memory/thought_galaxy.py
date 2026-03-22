@@ -6,12 +6,12 @@ Manages the "Thought Galaxy" — a dedicated storage zone for Cognitive Episodes
 Enables introspection, pattern mining, and retrieval of past reasoning strategies.
 """
 
-import sqlite3
 import json
 import logging
-from typing import List, Optional, Dict, Any
-from datetime import datetime
+import sqlite3
 import uuid
+from datetime import datetime
+from typing import Any
 
 from whitemagic.core.memory.cognitive_episode import CognitiveEpisode
 
@@ -68,7 +68,7 @@ class ThoughtGalaxy:
             ))
         logger.info(f"Recorded cognitive episode {episode.id} (score: {episode.outcome_score})")
 
-    def recall_best_strategies(self, task_type: str, min_score: float = 0.5, limit: int = 5) -> List[CognitiveEpisode]:
+    def recall_best_strategies(self, task_type: str, min_score: float = 0.5, limit: int = 5) -> list[CognitiveEpisode]:
         """Retrieve high-scoring episodes for a similar task, including Golden Rules."""
         episodes = []
 
@@ -112,7 +112,7 @@ class ThoughtGalaxy:
         episodes.sort(key=lambda x: x.outcome_score, reverse=True)
         return episodes[:limit]
 
-    def get_anti_patterns(self, task_type: Optional[str] = None, limit: int = 5) -> List[CognitiveEpisode]:
+    def get_anti_patterns(self, task_type: str | None = None, limit: int = 5) -> list[CognitiveEpisode]:
         """Retrieve lowest-scoring episodes (what NOT to do)."""
         query = "SELECT * FROM cognitive_episodes WHERE outcome_score < 0"
         params = []
@@ -142,7 +142,7 @@ class ThoughtGalaxy:
             tags=json.loads(row["tags"])
         )
 
-    def stats(self) -> Dict[str, Any]:
+    def stats(self) -> dict[str, Any]:
         """Return statistics about the thought galaxy."""
         with sqlite3.connect(self.db_path) as conn:
             count = conn.execute("SELECT COUNT(*) FROM cognitive_episodes").fetchone()[0]

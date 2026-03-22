@@ -15,10 +15,10 @@ Each cycle refines objectives until victory conditions are met.
 
 import json
 import time
-from dataclasses import dataclass, field, asdict
-from typing import Dict, List, Optional, Any
-from pathlib import Path
+from dataclasses import asdict, dataclass, field
 from enum import Enum
+from pathlib import Path
+from typing import Any
 
 
 class PipelinePhase(Enum):
@@ -54,10 +54,10 @@ class ObjectiveRefinement:
     """Tracks transformation from vague → specific"""
     original: str
     refined: str
-    metrics: List[str]
-    baseline: Optional[Dict[str, Any]] = None
-    target: Optional[Dict[str, Any]] = None
-    verification_method: Optional[str] = None
+    metrics: list[str]
+    baseline: dict[str, Any] | None = None
+    target: dict[str, Any] | None = None
+    verification_method: str | None = None
     confidence: float = 0.0
 
 
@@ -68,8 +68,8 @@ class StrategySimulation:
     predicted_success_rate: float
     predicted_duration: float
     predicted_clone_count: int
-    risks: List[str]
-    dependencies: List[str]
+    risks: list[str]
+    dependencies: list[str]
     consensus_votes: int = 0
     rank: int = 0
 
@@ -79,15 +79,15 @@ class CycleMetrics:
     """Metrics for one complete cycle"""
     cycle_number: int
     start_time: float
-    end_time: Optional[float] = None
-    phase_durations: Dict[str, float] = field(default_factory=dict)
+    end_time: float | None = None
+    phase_durations: dict[str, float] = field(default_factory=dict)
     findings_count: int = 0
     objectives_refined: int = 0
     strategies_generated: int = 0
     clones_deployed: int = 0
     victory_conditions_met: int = 0
     victory_conditions_total: int = 0
-    improvements_from_last_cycle: List[str] = field(default_factory=list)
+    improvements_from_last_cycle: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -99,22 +99,22 @@ class PipelineState:
     total_cycles: int = 0
 
     # Accumulated knowledge across cycles
-    scout_findings: List[Dict[str, Any]] = field(default_factory=list)
-    discovered_patterns: List[Dict[str, Any]] = field(default_factory=list)
-    refined_objectives: List[ObjectiveRefinement] = field(default_factory=list)
-    strategy_simulations: List[StrategySimulation] = field(default_factory=list)
-    execution_results: List[Dict[str, Any]] = field(default_factory=list)
-    verification_results: List[Dict[str, Any]] = field(default_factory=list)
+    scout_findings: list[dict[str, Any]] = field(default_factory=list)
+    discovered_patterns: list[dict[str, Any]] = field(default_factory=list)
+    refined_objectives: list[ObjectiveRefinement] = field(default_factory=list)
+    strategy_simulations: list[StrategySimulation] = field(default_factory=list)
+    execution_results: list[dict[str, Any]] = field(default_factory=list)
+    verification_results: list[dict[str, Any]] = field(default_factory=list)
 
     # Cycle history
-    cycle_metrics: List[CycleMetrics] = field(default_factory=list)
+    cycle_metrics: list[CycleMetrics] = field(default_factory=list)
 
     # Victory tracking
     victory_achieved: bool = False
-    victory_cycle: Optional[int] = None
+    victory_cycle: int | None = None
     stagnation_count: int = 0  # Cycles without progress
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization"""
         return {
             'campaign_codename': self.campaign_codename,
@@ -145,20 +145,20 @@ class TacticalPipeline:
     - Reflect phase learns from results and prepares next cycle
     """
 
-    def __init__(self, campaign_codename: str, state_dir: Optional[Path] = None):
+    def __init__(self, campaign_codename: str, state_dir: Path | None = None):
         self.campaign_codename = campaign_codename
         self.state_dir = state_dir or Path.home() / ".whitemagic" / "pipeline_state"
         self.state_dir.mkdir(parents=True, exist_ok=True)
 
         self.state = self._load_or_create_state()
-        self.current_cycle_metrics: Optional[CycleMetrics] = None
+        self.current_cycle_metrics: CycleMetrics | None = None
 
     def _load_or_create_state(self) -> PipelineState:
         """Load existing state or create new"""
         state_file = self.state_dir / f"{self.campaign_codename}_pipeline.json"
 
         if state_file.exists():
-            with open(state_file, 'r') as f:
+            with open(state_file) as f:
                 data = json.load(f)
                 # Reconstruct enums and dataclasses
                 state = PipelineState(
@@ -240,7 +240,7 @@ class TacticalPipeline:
 
     # ========== PHASE 1: SCOUT (YIN) ==========
 
-    def scout(self, scout_fn) -> List[Dict[str, Any]]:
+    def scout(self, scout_fn) -> list[dict[str, Any]]:
         """
         Phase 1: Scout and explore terrain
 
@@ -263,7 +263,7 @@ class TacticalPipeline:
 
     # ========== PHASE 2: DISCOVER (YIN) ==========
 
-    def discover(self, discover_fn) -> List[Dict[str, Any]]:
+    def discover(self, discover_fn) -> list[dict[str, Any]]:
         """
         Phase 2: Discover patterns and identify gaps
 
@@ -284,7 +284,7 @@ class TacticalPipeline:
 
     # ========== PHASE 3: CLARIFY (YIN) ==========
 
-    def clarify(self, clarify_fn) -> List[ObjectiveRefinement]:
+    def clarify(self, clarify_fn) -> list[ObjectiveRefinement]:
         """
         Phase 3: Convert vague objectives → specific + measurable
 
@@ -307,7 +307,7 @@ class TacticalPipeline:
 
     # ========== PHASE 4: PLAN (YIN) ==========
 
-    def plan(self, plan_fn) -> List[StrategySimulation]:
+    def plan(self, plan_fn) -> list[StrategySimulation]:
         """
         Phase 4: Generate strategies, simulate, rank by consensus
 
@@ -335,7 +335,7 @@ class TacticalPipeline:
 
     # ========== PHASE 5: EXECUTE (YANG) ==========
 
-    def execute(self, execute_fn) -> Dict[str, Any]:
+    def execute(self, execute_fn) -> dict[str, Any]:
         """
         Phase 5: Deploy parallel armies with top-ranked strategy
 
@@ -364,7 +364,7 @@ class TacticalPipeline:
 
     # ========== PHASE 6: VERIFY (YANG) ==========
 
-    def verify(self, verify_fn) -> Dict[str, Any]:
+    def verify(self, verify_fn) -> dict[str, Any]:
         """
         Phase 6: Check victory conditions and measure results
 
@@ -394,7 +394,7 @@ class TacticalPipeline:
 
     # ========== PHASE 7: REFLECT (YIN) ==========
 
-    def reflect(self, reflect_fn) -> Dict[str, Any]:
+    def reflect(self, reflect_fn) -> dict[str, Any]:
         """
         Phase 7: Learn from cycle, prepare for next iteration
 
@@ -443,7 +443,7 @@ class TacticalPipeline:
         """Get current phase polarity (Yin or Yang)"""
         return PHASE_POLARITY[self.state.current_phase]
 
-    def get_cycle_summary(self) -> Dict[str, Any]:
+    def get_cycle_summary(self) -> dict[str, Any]:
         """Get summary of current cycle"""
         return {
             'cycle_number': self.state.current_cycle,

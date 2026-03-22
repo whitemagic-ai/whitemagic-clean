@@ -2,13 +2,13 @@
 Implements title-boosted vector scoring to lift recall from 48% → 70%.
 """
 
-import numpy as np
-import sqlite3
-import re
-from pathlib import Path
-from typing import List, Optional
-from dataclasses import dataclass
 import logging
+import re
+import sqlite3
+from dataclasses import dataclass
+from pathlib import Path
+
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -33,12 +33,12 @@ class OpenDomainRecall:
     4. HNSW approximate search for speed
     """
 
-    def __init__(self, db_path: Optional[Path] = None):
+    def __init__(self, db_path: Path | None = None):
         self.db_path = db_path or Path.home() / ".whitemagic/memory/whitemagic.db"
         self.title_boost = 2.0  # Multiplier for title matches
         self.min_title_match = 0.3  # Minimum similarity for title boosting
 
-    def _tokenize(self, text: str) -> List[str]:
+    def _tokenize(self, text: str) -> list[str]:
         """Simple tokenization for keyword matching."""
         text = text.lower()
         text = re.sub(r'[^\w\s]', ' ', text)
@@ -86,7 +86,7 @@ class OpenDomainRecall:
         query: str,
         query_embedding: np.ndarray,
         k: int = 30
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Search memories with title-boosted scoring.
 
         Returns top-k results combining vector, title, and keyword scores.
@@ -154,7 +154,7 @@ class OpenDomainRecall:
         query_embedding: np.ndarray,
         k: int = 30,
         rrf_k: float = 60.0
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Hybrid search using Reciprocal Rank Fusion.
 
         Combines multiple retrieval strategies with RRF for robust ranking.
@@ -192,11 +192,11 @@ class OpenDomainRecall:
 
         return final_results
 
-    def _vector_search(self, query_embedding: np.ndarray, k: int) -> List[SearchResult]:
+    def _vector_search(self, query_embedding: np.ndarray, k: int) -> list[SearchResult]:
         """Pure vector similarity search."""
         return self.search_with_title_boost("", query_embedding, k=k)
 
-    def _title_search(self, query: str, k: int) -> List[SearchResult]:
+    def _title_search(self, query: str, k: int) -> list[SearchResult]:
         """Title-only search."""
         conn = sqlite3.connect(str(self.db_path))
         cursor = conn.execute("""
@@ -223,7 +223,7 @@ class OpenDomainRecall:
         results.sort(key=lambda r: r.score, reverse=True)
         return results[:k]
 
-    def _keyword_search(self, query: str, k: int) -> List[SearchResult]:
+    def _keyword_search(self, query: str, k: int) -> list[SearchResult]:
         """Keyword/FTS search."""
         conn = sqlite3.connect(str(self.db_path))
 

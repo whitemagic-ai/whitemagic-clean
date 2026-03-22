@@ -4,6 +4,7 @@
 import sys
 import time
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 print("\n" + "="*70)
@@ -28,7 +29,7 @@ try:
     from whitemagic.core.memory.unified_v2 import UnifiedMemoryV2
     um = UnifiedMemoryV2()
     print(f"   ✅ Backend: {um}")
-    
+
     # Check if using Rust
     if hasattr(um, 'engine') and um.engine is not None:
         print("   ✅ Using Rust MemoryEngine")
@@ -45,7 +46,7 @@ print("\n3. Testing cache system...")
 try:
     # Warm up with a simple query (will fail search but should cache)
     test_query = "test cache functionality"
-    
+
     # First call (cache miss)
     start = time.perf_counter()
     try:
@@ -53,16 +54,16 @@ try:
     except Exception:
         pass  # Search will fail, but cache should work
     first_time = time.perf_counter() - start
-    
+
     # Check cache stats
     stats = um.cache_stats()
     print(f"   ✅ Cache stats after query: {stats}")
-    
+
     if stats.get('query_entries', 0) > 0 or stats.get('total_misses', 0) > 0:
         print("   ✅ Cache is tracking queries")
     else:
         print("   ⚠️  Cache may not be active")
-        
+
 except Exception as e:
     print(f"   ⚠️  Cache test error: {e}")
 
@@ -71,13 +72,13 @@ print("\n4. Testing performance baseline...")
 try:
     from whitemagic.core.memory.unified import UnifiedMemory
     um_old = UnifiedMemory()
-    
+
     test_queries = [
         "rust optimization",
         "python memory",
         "cache system",
     ]
-    
+
     # Time old system
     old_times = []
     for q in test_queries:
@@ -87,10 +88,10 @@ try:
         except Exception:
             pass
         old_times.append(time.perf_counter() - start)
-    
+
     avg_old = sum(old_times) / len(old_times) * 1000
     print(f"   ✅ Python baseline: {avg_old:.2f}ms avg")
-    
+
     # Time new system
     new_times = []
     for q in test_queries:
@@ -100,16 +101,16 @@ try:
         except Exception:
             pass
         new_times.append(time.perf_counter() - start)
-    
+
     avg_new = sum(new_times) / len(new_times) * 1000
     print(f"   ✅ Rust+Zig: {avg_new:.2f}ms avg")
-    
+
     if avg_new < avg_old:
         speedup = avg_old / avg_new
         print(f"   🚀 Speedup: {speedup:.1f}×")
     else:
         print("   ⚠️  No speedup yet (still delegating to Python)")
-        
+
 except Exception as e:
     print(f"   ⚠️  Performance test error: {e}")
 

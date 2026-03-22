@@ -1,5 +1,5 @@
 
-with open('nexus/src/components/center/CenterContent.tsx', 'r') as f:
+with open('nexus/src/components/center/CenterContent.tsx') as f:
     content = f.read()
 
 # Add GhostTextAutocompletion

@@ -1,6 +1,6 @@
 import json
 
-with open('nexus/src-tauri/tauri.conf.json', 'r') as f:
+with open('nexus/src-tauri/tauri.conf.json') as f:
     data = json.load(f)
 
 # Need to configure the FS scope properly for Tauri V2

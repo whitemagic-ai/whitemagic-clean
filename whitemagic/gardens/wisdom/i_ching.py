@@ -57,9 +57,13 @@ class IChingAdvisor:
         Binary perfection: 8 trigrams² = 64 (same as DNA codons)
         """
         try:
-            from whitemagic.gardens.wisdom.hexagram_data import COMPLETE_HEXAGRAMS  # type: ignore[import-not-found]
+            from whitemagic.gardens.wisdom.hexagram_data import (
+                COMPLETE_HEXAGRAMS,  # type: ignore[import-not-found]
+            )
         except ImportError:
-            from whitemagic.oracle.hexagram_data import COMPLETE_HEXAGRAMS  # type: ignore[import-not-found]
+            from whitemagic.oracle.hexagram_data import (
+                COMPLETE_HEXAGRAMS,  # type: ignore[import-not-found]
+            )
 
         # Load all 64 complete hexagrams
         self.hexagrams = {}

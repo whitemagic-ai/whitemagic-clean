@@ -38,15 +38,17 @@ def _disabled_error() -> RuntimeError:
     )
 
 
-def get_model_info() -> Dict[str, object]:
+def get_model_info() -> dict[str, object]:
     if not _enabled():
         return {"available": False, "models": [], "backend": "none", "archived": True}
 
-    from whitemagic._archived.local_models.local_ml import get_model_info as _impl  # type: ignore[import-not-found]
+    from whitemagic._archived.local_models.local_ml import (
+        get_model_info as _impl,  # type: ignore[import-not-found]
+    )
 
     result = _impl()
     if isinstance(result, dict):
-        return cast("Dict[str, object]", result)
+        return cast("dict[str, object]", result)
     return {"available": False, "models": [], "backend": "none", "archived": True}
 
 
@@ -54,7 +56,9 @@ def get_local_ml_engine() -> Any:
     if not _enabled():
         raise _disabled_error()
 
-    from whitemagic._archived.local_models.local_ml.engine import get_local_ml_engine as _impl  # type: ignore[import-not-found]
+    from whitemagic._archived.local_models.local_ml.engine import (
+        get_local_ml_engine as _impl,  # type: ignore[import-not-found]
+    )
 
     return _impl()
 
@@ -63,7 +67,9 @@ def get_engine() -> Any:
     if not _enabled():
         raise _disabled_error()
 
-    from whitemagic._archived.local_models.local_ml.inference_engine import get_engine as _impl  # type: ignore[import-not-found]
+    from whitemagic._archived.local_models.local_ml.inference_engine import (
+        get_engine as _impl,  # type: ignore[import-not-found]
+    )
 
     return _impl()
 

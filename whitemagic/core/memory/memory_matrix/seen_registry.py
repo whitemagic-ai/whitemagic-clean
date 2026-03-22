@@ -18,21 +18,21 @@ from __future__ import annotations
 
 import hashlib
 import logging
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from threading import Lock
 from typing import Any
 
 from whitemagic.config.paths import WM_ROOT
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 from whitemagic.utils.fileio import atomic_write, file_lock
 
 logger = logging.getLogger(__name__)
 
 # Singleton instance
-_registry_instance: "SeenRegistry" | None = None
+_registry_instance: SeenRegistry | None = None
 _registry_lock = Lock()
 
 
@@ -54,7 +54,7 @@ class SeenEntry:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, data: dict) -> "SeenEntry":
+    def from_dict(cls, data: dict) -> SeenEntry:
         return cls(**data)
 
 
@@ -90,7 +90,7 @@ class SeenRegistry:
         """Save registry to disk."""
         data = {
             "version": "1.0",
-            "updated": datetime.now(timezone.utc).isoformat(),
+            "updated": datetime.now(UTC).isoformat(),
             "total_entries": len(self._entries),
             "entries": {k: v.to_dict() for k, v in self._entries.items()},
         }
@@ -133,7 +133,7 @@ class SeenRegistry:
         """Count lines in text file."""
         try:
             return len(Path(path).read_text().splitlines())
-        except IOError:
+        except OSError:
             return None
 
     def mark_seen(
@@ -150,7 +150,7 @@ class SeenRegistry:
             The SeenEntry record
 
         """
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         abs_path = str(Path(path).resolve())
 
         if abs_path in self._entries:

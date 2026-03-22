@@ -11,15 +11,15 @@ Mode selection:
 - "adaptive": Choose based on operation complexity (default)
 """
 
+import queue
 import subprocess
+import threading
 import time
+from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Generator
-import queue
-import threading
 
 KOKA_DIR = Path(__file__).parent.parent / "whitemagic-koka"
 _DEFAULT_HYBRID_PROCESS_TIMEOUT_S = 5.0

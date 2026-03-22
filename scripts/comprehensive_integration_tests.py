@@ -6,33 +6,34 @@ Creates real integration tests for all PSR implementations
 
 from pathlib import Path
 
+
 class IntegrationTestGenerator:
     """Generates comprehensive integration tests"""
-    
+
     def __init__(self, base_path: Path):
         self.base_path = base_path
         self.generated = []
-    
+
     def generate_all_tests(self):
         """Generate all integration tests"""
         print("\n" + "="*70)
         print("🧪 COMPREHENSIVE INTEGRATION TEST GENERATION")
         print("="*70)
-        
+
         # PSR-001: Memory Core
         self._generate_memory_tests()
-        
+
         # PSR-002: Search
         self._generate_search_tests()
-        
+
         # PSR-003: Graph
         self._generate_graph_tests()
-        
+
         # PSR-004: Intelligence
         self._generate_intelligence_tests()
-        
+
         self._print_summary()
-    
+
     def _generate_memory_tests(self):
         """Generate memory core integration tests"""
         test_code = '''"""Integration tests for PSR-001 Memory Core"""
@@ -113,9 +114,9 @@ class TestMemoryLifecycle:
         assert len(transitions) == 1
         assert transitions[0] == ("short_term", "long_term")
 '''
-        
+
         self._write_test("test_memory_integration.py", test_code)
-    
+
     def _generate_search_tests(self):
         """Generate search integration tests"""
         test_code = '''"""Integration tests for PSR-002 Search"""
@@ -171,9 +172,9 @@ class TestHybridRecall:
         assert isinstance(results, list)
         assert len(results) <= 5
 '''
-        
+
         self._write_test("test_search_integration.py", test_code)
-    
+
     def _generate_graph_tests(self):
         """Generate graph integration tests"""
         test_code = '''"""Integration tests for PSR-003 Graph"""
@@ -233,9 +234,9 @@ class TestCommunityDetection:
         
         assert len(communities) >= 2
 '''
-        
+
         self._write_test("test_graph_integration.py", test_code)
-    
+
     def _generate_intelligence_tests(self):
         """Generate intelligence layer tests"""
         test_code = '''"""Integration tests for PSR-004 Intelligence"""
@@ -295,30 +296,30 @@ class TestEmergenceDetector:
         
         assert len(results) > 0
 '''
-        
+
         self._write_test("test_intelligence_integration.py", test_code)
-    
+
     def _write_test(self, filename: str, code: str):
         """Write test file"""
         test_path = self.base_path / "tests" / "integration" / filename
         test_path.parent.mkdir(parents=True, exist_ok=True)
         test_path.write_text(code)
-        
+
         lines = len(code.split('\n'))
         self.generated.append((filename, lines))
         print(f"  ✅ {filename}: {lines} lines")
-    
+
     def _print_summary(self):
         """Print summary"""
         print("\n" + "="*70)
         print("📊 TEST GENERATION SUMMARY")
         print("="*70)
-        
+
         total_lines = sum(lines for _, lines in self.generated)
-        
+
         print(f"\nGenerated: {len(self.generated)} test files")
         print(f"Total lines: {total_lines}")
-        
+
         print("\n✅ Integration tests ready!")
         print("\nTo run tests:")
         print("  pytest tests/integration/ -v")
@@ -326,7 +327,7 @@ class TestEmergenceDetector:
 def main():
     """Generate integration tests"""
     base_path = Path(__file__).parent.parent
-    
+
     generator = IntegrationTestGenerator(base_path)
     generator.generate_all_tests()
 

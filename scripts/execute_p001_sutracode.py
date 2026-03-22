@@ -1,13 +1,14 @@
 import os
 import subprocess
 
+
 def setup_sutracode_kernel():
     print("=== P001: Implementing SutraCode Kernel & Zodiac Ledger ===")
-    
+
     # 1. Create the Zodiac Ledger in Rust
     ledger_path = "/home/lucas/Desktop/whitemagicdev/whitemagic-rust/src/sutra_kernel/zodiac_ledger.rs"
     os.makedirs(os.path.dirname(ledger_path), exist_ok=True)
-    
+
     with open(ledger_path, "w") as f:
         f.write("""use serde::{Deserialize, Serialize};
 use sha2::{Sha256, Digest};
@@ -142,14 +143,14 @@ pub use dharma_engine::{DharmaEngine, ActionVerdict};
 
     print("[OK] Rust SutraCode Kernel & Zodiac Ledger injected.")
     print("Compiling Rust core...")
-    
+
     result = subprocess.run(
-        ["cargo", "build", "--release"], 
+        ["cargo", "build", "--release"],
         cwd="/home/lucas/Desktop/whitemagicdev/whitemagic-rust",
         capture_output=True,
         text=True
     )
-    
+
     if result.returncode == 0:
         print("[OK] Rust Core Compiled successfully with SutraCode.")
     else:

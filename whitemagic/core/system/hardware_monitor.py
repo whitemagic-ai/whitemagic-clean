@@ -7,8 +7,8 @@ Prevents system overload while maximizing throughput.
 import os
 import subprocess
 from dataclasses import dataclass
-from typing import Optional
 from pathlib import Path
+
 
 @dataclass
 class HardwareProfile:
@@ -48,7 +48,7 @@ def detect_hardware() -> HardwareProfile:
     """Detect current hardware capabilities using /proc and standard tools."""
     # CPU - read from /proc/cpuinfo
     try:
-        with open('/proc/cpuinfo', 'r') as f:
+        with open('/proc/cpuinfo') as f:
             cpuinfo = f.read()
         cpu_threads = cpuinfo.count('processor')
         # Estimate physical cores (rough approximation)
@@ -59,7 +59,7 @@ def detect_hardware() -> HardwareProfile:
 
     # RAM - read from /proc/meminfo
     try:
-        with open('/proc/meminfo', 'r') as f:
+        with open('/proc/meminfo') as f:
             meminfo = f.read()
         for line in meminfo.split('\n'):
             if line.startswith('MemTotal:'):
@@ -153,7 +153,7 @@ def check_resource_headroom() -> dict:
     """Check current resource headroom using /proc."""
     try:
         # Read memory info
-        with open('/proc/meminfo', 'r') as f:
+        with open('/proc/meminfo') as f:
             meminfo = f.read()
         total_kb = avail_kb = 0
         for line in meminfo.split('\n'):
@@ -183,7 +183,7 @@ def check_resource_headroom() -> dict:
         }
 
 # Global hardware profile (cached)
-_HARDWARE_PROFILE: Optional[HardwareProfile] = None
+_HARDWARE_PROFILE: HardwareProfile | None = None
 
 def get_hardware_profile() -> HardwareProfile:
     """Get cached hardware profile."""

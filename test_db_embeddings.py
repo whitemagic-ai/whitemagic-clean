@@ -1,5 +1,5 @@
-import sqlite3
 import os
+import sqlite3
 
 db_path = os.path.expanduser("~/.whitemagic/memory/whitemagic.db")
 db = sqlite3.connect(db_path)

@@ -10,7 +10,7 @@ This is the event-driven nervous system of WhiteMagic.
 """
 import os
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .gan_ying_async import (
@@ -37,7 +37,7 @@ listen_for = listen_to
 # Public emit wrapper
 # ---------------------------------------------------------------------------
 
-def _normalize_event_type(event_type: Union[EventType, str]) -> EventType:
+def _normalize_event_type(event_type: EventType | str) -> EventType:
     if isinstance(event_type, EventType):
         return event_type
     # Try value match first (EventType values are snake_case strings)

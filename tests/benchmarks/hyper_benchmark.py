@@ -1,8 +1,9 @@
 import asyncio
-import time
-import random
 import logging
-from whitemagic.core.memory.unified import get_unified_memory, MemoryType
+import random
+import time
+
+from whitemagic.core.memory.unified import MemoryType, get_unified_memory
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -16,9 +17,9 @@ async def stress_test_indexing(count: int = 1000):
     """Stress test the indexing of spectral data."""
     um = get_unified_memory()
     logger.info(f"🚀 INITIATING HYPER-BENCHMARK: Indexing {count} spectral blocks...")
-    
+
     start_time = time.perf_counter()
-    
+
     for i in range(count):
         payload = generate_spectral_payload(random.randint(1, 4))
         um.store(
@@ -30,34 +31,34 @@ async def stress_test_indexing(count: int = 1000):
         )
         if i % 100 == 0:
             logger.info(f"Progress: {i}/{count}")
-            
+
     end_time = time.perf_counter()
     total_time = end_time - start_time
     avg_per_mem = (total_time / count) * 1000
     avg_nanosec = (total_time / count) * 1_000_000_000
-    
+
     logger.info("📊 BENCHMARK RESULTS (Indexing):")
     logger.info(f"   Total Time: {total_time:.4f}s")
     logger.info(f"   Average per memory: {avg_per_mem:.4f}ms")
     logger.info(f"   Average per memory: {avg_nanosec:,.0f}ns")
-    
+
     return total_time
 
 async def test_recall_performance(count: int = 100):
     """Test recall performance on indexed data."""
     um = get_unified_memory()
     logger.info(f"🔍 Testing recall performance for {count} random queries...")
-    
+
     start_time = time.perf_counter()
-    
+
     for _ in range(count):
         query = f"SpectralPulse_{random.randint(0, 999)}"
         um.search(query=query, limit=1)
-        
+
     end_time = time.perf_counter()
     total_time = end_time - start_time
     avg_nanosec = (total_time / count) * 1_000_000_000
-    
+
     logger.info("📊 BENCHMARK RESULTS (Recall):")
     logger.info(f"   Average Recall Latency: {avg_nanosec:,.0f}ns")
 
@@ -67,5 +68,5 @@ if __name__ == "__main__":
         # For a clean benchmark, we might want a fresh DB, but let's test scale on existing.
         await stress_test_indexing(1000)
         await test_recall_performance(100)
-        
+
     asyncio.run(run())

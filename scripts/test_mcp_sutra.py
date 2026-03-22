@@ -1,4 +1,5 @@
 import sys
+
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
 from whitemagic.tools.unified_api import call_tool

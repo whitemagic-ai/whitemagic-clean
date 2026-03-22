@@ -19,14 +19,14 @@ print()
 
 def main():
     rust_dir = WM2_ROOT / "polyglot" / "rust"
-    
+
     if not rust_dir.exists():
         print("⚠️  Rust directory not found")
         return
-    
+
     print("🔨 Compiling Rust modules...")
     print()
-    
+
     # Check if cargo is available
     try:
         result = subprocess.run(
@@ -46,23 +46,23 @@ def main():
         print("=" * 80)
         print("✅ Rust modules ready for compilation!")
         return
-    
+
     # Find all Rust modules
     rust_modules = []
     for cargo_toml in rust_dir.rglob("Cargo.toml"):
         if cargo_toml.parent != rust_dir:  # Skip workspace Cargo.toml
             rust_modules.append(cargo_toml.parent)
-    
+
     print(f"Found {len(rust_modules)} Rust modules")
     print()
-    
+
     compiled = 0
     failed = 0
-    
+
     for module_dir in rust_modules:
         module_name = module_dir.name
         print(f"   Compiling {module_name}...")
-        
+
         try:
             start_time = time.time()
             result = subprocess.run(
@@ -73,7 +73,7 @@ def main():
                 timeout=300  # 5 minutes
             )
             duration = time.time() - start_time
-            
+
             if result.returncode == 0:
                 print(f"      ✅ Compiled in {duration:.1f}s")
                 compiled += 1
@@ -86,9 +86,9 @@ def main():
         except Exception as e:
             print(f"      ❌ Error: {e}")
             failed += 1
-        
+
         print()
-    
+
     print("=" * 80)
     print("PHASE 6 COMPLETE")
     print("=" * 80)

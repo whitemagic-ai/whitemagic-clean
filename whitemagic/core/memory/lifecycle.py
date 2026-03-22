@@ -25,9 +25,9 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import queue
 import threading
 import time
-import queue
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any

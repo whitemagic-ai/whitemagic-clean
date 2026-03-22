@@ -4,7 +4,7 @@
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -43,10 +43,12 @@ class PolyglotSpecialists:
                                    (time.time() - start) * 1000, True)
 
     # Specialist 2: SIMD Operations (Zig)
-    def distance_matrix(self, vectors: List[List[float]]) -> SpecialistResult:
+    def distance_matrix(self, vectors: list[list[float]]) -> SpecialistResult:
         start = time.time()
         try:
-            from whitemagic.core.acceleration.simd_distance import compute_distance_matrix
+            from whitemagic.core.acceleration.simd_distance import (
+                compute_distance_matrix,
+            )
             matrix = compute_distance_matrix(vectors)
             self.stats["zig"] += 1
             return SpecialistResult("SIMDProcessor", "zig", True, matrix,
@@ -59,7 +61,7 @@ class PolyglotSpecialists:
                                    (time.time() - start) * 1000, True)
 
     # Specialist 3: Tensor Operations (Mojo)
-    def batch_encode(self, memories: List[dict], current_time: int) -> SpecialistResult:
+    def batch_encode(self, memories: list[dict], current_time: int) -> SpecialistResult:
         start = time.time()
         coords = self.router.encode_holographic_batch(memories, current_time)
         lang = "mojo" if self.router.metrics.mojo_calls > 0 else "python"
@@ -83,7 +85,7 @@ class PolyglotSpecialists:
                                    (time.time() - start) * 1000, True)
 
     # Specialist 5: Concurrency (Elixir)
-    def parallel_tasks(self, tasks: List[dict]) -> SpecialistResult:
+    def parallel_tasks(self, tasks: list[dict]) -> SpecialistResult:
         start = time.time()
         # Elixir actor model (placeholder - would use OTP)
         results = [{"task_id": t.get("id"), "status": "completed"} for t in tasks]
@@ -101,7 +103,7 @@ class PolyglotSpecialists:
                                (time.time() - start) * 1000, True)
 
     # Specialist 7: Statistics (Julia)
-    def statistical_analysis(self, data: List[float]) -> SpecialistResult:
+    def statistical_analysis(self, data: list[float]) -> SpecialistResult:
         start = time.time()
         try:
             from whitemagic.core.acceleration.julia_bridge import memory_stats

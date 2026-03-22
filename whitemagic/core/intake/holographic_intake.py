@@ -29,21 +29,21 @@ from __future__ import annotations
 import hashlib
 import logging
 import threading
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum, auto
 from pathlib import Path
 from typing import Any
 
 from whitemagic.config.paths import DATA_DIR, DB_PATH, MEMORY_DIR
 from whitemagic.utils.core import parse_datetime
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
 # Singleton
-_intake_instance: "HolographicIntake" | None = None
+_intake_instance: HolographicIntake | None = None
 _intake_lock = threading.Lock()
 
 
@@ -147,7 +147,7 @@ class HolographicIntake:
         """Save configuration."""
         data = {
             "version": "1.0",
-            "updated": datetime.now(timezone.utc).isoformat(),
+            "updated": datetime.now(UTC).isoformat(),
             "watch_dirs": self._watch_dirs,
         }
         self.config_path.write_text(_json_dumps(data, indent=2))
@@ -176,7 +176,7 @@ class HolographicIntake:
         """Save intake queue to disk."""
         data = {
             "version": "1.0",
-            "updated": datetime.now(timezone.utc).isoformat(),
+            "updated": datetime.now(UTC).isoformat(),
             "queue": [item.to_dict() for item in self._queue.values()],
         }
         self.queue_path.write_text(_json_dumps(data, indent=2))
@@ -286,7 +286,7 @@ class HolographicIntake:
             # Create intake item
             item = IntakeItem(
                 path=path_str,
-                detected_at=datetime.now(timezone.utc).isoformat(),
+                detected_at=datetime.now(UTC).isoformat(),
                 content_hash=content_hash,
                 file_type=self.SUPPORTED_TYPES.get(file_path.suffix.lower(), "unknown"),
                 size_bytes=file_path.stat().st_size,

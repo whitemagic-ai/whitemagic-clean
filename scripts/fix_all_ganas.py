@@ -40,15 +40,15 @@ class GanaRepairArmy:
     def fix_missing_imports(self):
         """Fix missing module imports in whitemagic/tools/__init__.py"""
         logger.info("Fixing missing imports in whitemagic/tools/__init__.py...")
-        
+
         tools_init = Path(__file__).parent.parent / "whitemagic" / "tools" / "__init__.py"
-        
+
         if not tools_init.exists():
             self.errors.append(f"File not found: {tools_init}")
             return
-        
+
         content = tools_init.read_text()
-        
+
         # Check if introspection is imported
         if "from whitemagic.tools import introspection" not in content and "import introspection" not in content:
             logger.info("  Adding introspection import...")
@@ -60,19 +60,19 @@ class GanaRepairArmy:
                 for i, line in enumerate(lines):
                     if line.startswith('from whitemagic.tools') or line.startswith('import '):
                         insert_idx = i + 1
-                
+
                 lines.insert(insert_idx, "from whitemagic.tools import introspection")
                 tools_init.write_text('\n'.join(lines))
                 self.fixes_applied.append("Added introspection import")
-        
+
         logger.info("  ✓ Import fixes complete")
 
     def create_missing_handlers(self):
         """Create missing handler modules."""
         logger.info("Creating missing handler modules...")
-        
+
         handlers_dir = Path(__file__).parent.parent / "whitemagic" / "tools" / "handlers"
-        
+
         # 1. cognitive_extensions.py
         cognitive_ext = handlers_dir / "cognitive_extensions.py"
         if not cognitive_ext.exists():
@@ -142,7 +142,7 @@ def handle_reconsolidation_status(**kwargs: Any) -> dict[str, Any]:
     return {"status": "success", "pending_count": len(pending), "pending": pending[:10]}
 ''')
                 self.fixes_applied.append("Created cognitive_extensions.py")
-        
+
         # 2. living_graph.py
         living_graph = handlers_dir / "living_graph.py"
         if not living_graph.exists():
@@ -210,7 +210,7 @@ def handle_community_health(**kwargs: Any) -> dict[str, Any]:
     return {"status": "success", "health": health}
 ''')
                 self.fixes_applied.append("Created living_graph.py")
-        
+
         # 3. metrics.py (for core.bridge.metrics)
         metrics_bridge = Path(__file__).parent.parent / "whitemagic" / "core" / "bridge" / "metrics.py"
         if not metrics_bridge.exists():
@@ -241,7 +241,7 @@ def get_metrics_summary() -> dict[str, Any]:
     }
 ''')
                 self.fixes_applied.append("Created core/bridge/metrics.py")
-        
+
         # 4. adaptive.py (for core.bridge.adaptive)
         adaptive_bridge = Path(__file__).parent.parent / "whitemagic" / "core" / "bridge" / "adaptive.py"
         if not adaptive_bridge.exists():
@@ -282,23 +282,23 @@ def execute_cascade(pattern: str, tools: list[str], **kwargs: Any) -> dict[str, 
     }
 ''')
                 self.fixes_applied.append("Created core/bridge/adaptive.py")
-        
+
         logger.info("  ✓ Handler creation complete")
 
     def fix_parameter_mismatches(self):
         """Fix parameter mismatches in tool handlers."""
         logger.info("Fixing parameter mismatches...")
-        
+
         # Fix serendipity_surface limit parameter
         dreaming_handler = Path(__file__).parent.parent / "whitemagic" / "tools" / "handlers" / "dreaming.py"
-        
+
         if dreaming_handler.exists():
             content = dreaming_handler.read_text()
-            
+
             # Check if serendipity_surface needs fixing
             if "def handle_serendipity_surface" in content:
                 logger.info("  Checking serendipity_surface parameter...")
-                
+
                 # Look for the function and check if it accepts limit
                 if "SerendipityEngine.surface()" in content and "limit" not in content.split("def handle_serendipity_surface")[1].split("def ")[0]:
                     logger.info("  Adding limit parameter support to serendipity_surface...")
@@ -306,24 +306,24 @@ def execute_cascade(pattern: str, tools: list[str], **kwargs: Any) -> dict[str, 
                         # This is a complex fix - we'll need to modify the handler
                         # For now, just log it
                         self.fixes_applied.append("Identified serendipity_surface limit parameter issue")
-        
+
         logger.info("  ✓ Parameter fixes complete")
 
     def update_dispatch_table(self):
         """Ensure all tools are registered in dispatch table."""
         logger.info("Updating dispatch table...")
-        
+
         dispatch_table = Path(__file__).parent.parent / "whitemagic" / "tools" / "dispatch_table.py"
-        
+
         if not dispatch_table.exists():
             self.errors.append(f"Dispatch table not found: {dispatch_table}")
             return
-        
+
         content = dispatch_table.read_text()
-        
+
         # Check for missing tool registrations
         missing_tools = []
-        
+
         tools_to_check = [
             ("working_memory.attend", "handle_working_memory_attend", "cognitive_extensions"),
             ("working_memory.context", "handle_working_memory_context", "cognitive_extensions"),
@@ -336,19 +336,19 @@ def execute_cascade(pattern: str, tools: list[str], **kwargs: Any) -> dict[str, 
             ("community.status", "handle_community_status", "living_graph"),
             ("community.health", "handle_community_health", "living_graph"),
         ]
-        
+
         for tool_name, handler_name, module_name in tools_to_check:
             if f'"{tool_name}"' not in content:
                 missing_tools.append((tool_name, handler_name, module_name))
-        
+
         if missing_tools:
             logger.info(f"  Found {len(missing_tools)} missing tool registrations")
             for tool_name, handler_name, module_name in missing_tools:
                 logger.info(f"    - {tool_name} -> {handler_name}")
-            
+
             if not self.dry_run:
                 self.fixes_applied.append(f"Identified {len(missing_tools)} missing tool registrations")
-        
+
         logger.info("  ✓ Dispatch table check complete")
 
     def run_all_fixes(self):
@@ -356,33 +356,33 @@ def execute_cascade(pattern: str, tools: list[str], **kwargs: Any) -> dict[str, 
         logger.info("\n" + "="*60)
         logger.info("Shadow Clone Gana Repair Army")
         logger.info("="*60 + "\n")
-        
+
         if self.dry_run:
             logger.info("DRY RUN MODE - No changes will be made\n")
-        
+
         try:
             self.fix_missing_imports()
             self.create_missing_handlers()
             self.fix_parameter_mismatches()
             self.update_dispatch_table()
-            
+
             logger.info("\n" + "="*60)
             logger.info("REPAIR SUMMARY")
             logger.info("="*60)
             logger.info(f"Fixes applied: {len(self.fixes_applied)}")
             for fix in self.fixes_applied:
                 logger.info(f"  ✓ {fix}")
-            
+
             if self.errors:
                 logger.error(f"\nErrors encountered: {len(self.errors)}")
                 for error in self.errors:
                     logger.error(f"  ✗ {error}")
-            
+
             if not self.dry_run:
                 logger.info("\n✓ Repair complete! Run diagnostic again to verify fixes.")
             else:
                 logger.info("\n✓ Dry run complete! Use --apply to make changes.")
-            
+
         except Exception as e:
             logger.error(f"Repair failed: {e}")
             import traceback
@@ -394,7 +394,7 @@ def main():
     parser = argparse.ArgumentParser(description="Fix all Gana MCP tools")
     parser.add_argument("--dry-run", action="store_true", help="Show what would be fixed without making changes")
     args = parser.parse_args()
-    
+
     repair = GanaRepairArmy(dry_run=args.dry_run)
     repair.run_all_fixes()
 

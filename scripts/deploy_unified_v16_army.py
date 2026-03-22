@@ -49,21 +49,21 @@ class ArmyType(Enum):
     """All army types in the v16 unified deployment"""
     # Tier 1: Reconnaissance
     SCOUT_SWARM = "scout_swarm"           # 10M units - File/function analysis
-    
+
     # Tier 2: Execution
     IMMORTAL_V3 = "immortal_v3"           # 5M units - Persistent clones
     TOKIO_PARALLEL = "tokio_parallel"      # 5M units - Rust async execution
-    
+
     # Tier 3: Specialized
     ZODIAC_GRAND = "zodiac_grand"          # 500K units - 12×12 zodiac mapping
     SHADOW_CLONE = "shadow_clone"          # 500K units - Consensus search
     THOUGHT_EDGE = "thought_edge"          # 500K units - Edge inference
-    
+
     # Tier 4: Command
     WAR_ROOM = "war_room"                  # 100K units - Strategic command
     TACTICAL_YIN_YANG = "tactical_yy"      # 100K units - 7-phase cycles
     INTELLIGENT_ARMY = "intelligent"       # 100K units - AI synthesis
-    
+
     # Tier 5: Support
     BATCH_PROCESSOR = "batch"              # 5M units - Dependency graphs
     FILE_SEARCH = "file_search"            # 5M units - Parallel search
@@ -237,12 +237,12 @@ class UnifiedV16SupremeCommander:
     - Tier 4: Command Units (300K) - Strategy
     - Tier 5: Support Armies (16M) - Logistics
     """
-    
+
     def __init__(self, verbose: bool = False) -> None:
         self.verbose = verbose
         self.state = DeploymentState(phase="initializing")
         self.units: dict[str, ArmyUnit] = {}
-        
+
         # Tier configurations
         self.tiers: list[TierDeployment] = [
             TierDeployment(
@@ -298,7 +298,7 @@ class UnifiedV16SupremeCommander:
                 coordination_method="arrow_ipc",
             ),
         ]
-        
+
     async def deploy_wave_1_scouts(self) -> dict[str, Any]:
         """
         Wave 1: Deploy 10M Scout Swarm for v16 preparation
@@ -309,31 +309,31 @@ class UnifiedV16SupremeCommander:
         logger.info("=" * 70)
         logger.info("🚀 WAVE 1: DEPLOYING 10M SCOUT SWARM")
         logger.info("=" * 70)
-        
+
         self.state.phase = "wave_1_scouts"
         tier = self.tiers[0]  # Tier 1: Scout Swarm
-        
+
         logger.info(f"Army Type: {tier.army_types[0].value}")
         logger.info(f"Unit Count: {tier.unit_count:,}")
         logger.info(f"Batch Size: {tier.batch_size:,}")
         logger.info(f"Parallelism: {tier.parallelism:,}")
         logger.info(f"Coordination: {tier.coordination_method}")
         logger.info("-" * 70)
-        
+
         # Deploy scouts in batches
         start_time = time.time()
         deployed = 0
         victories = 0
-        
+
         for batch_num in range(tier.unit_count // tier.batch_size):
             batch_id = f"scout_batch_{batch_num:06d}"
-            
+
             # Create batch of scouts
             batch_units = []
             for i in range(tier.batch_size):
                 unit_id = f"scout_{batch_num}_{i:04d}"
                 zodiac = list(ZodiacSign)[i % 12]
-                
+
                 unit = ArmyUnit(
                     unit_id=unit_id,
                     army_type=ArmyType.SCOUT_SWARM,
@@ -351,15 +351,15 @@ class UnifiedV16SupremeCommander:
                     ],
                     status="deployed",
                 )
-                
+
                 batch_units.append(unit)
                 self.units[unit_id] = unit
-            
+
             # Simulate batch execution
             batch_victories = await self._execute_scout_batch(batch_units, batch_id)
             victories += batch_victories
             deployed += len(batch_units)
-            
+
             if (batch_num + 1) % 100 == 0 or self.verbose:
                 elapsed = time.time() - start_time
                 rate = deployed / elapsed if elapsed > 0 else 0
@@ -369,9 +369,9 @@ class UnifiedV16SupremeCommander:
                     f"Rate: {rate:,.0f} units/sec | "
                     f"Victories: {victories:,}"
                 )
-        
+
         elapsed = time.time() - start_time
-        
+
         self.state.total_units_deployed += deployed
         self.state.total_victories += victories
         self.state.tier_states[1] = {
@@ -380,14 +380,14 @@ class UnifiedV16SupremeCommander:
             "elapsed_seconds": elapsed,
             "rate": deployed / elapsed if elapsed > 0 else 0,
         }
-        
+
         logger.info("-" * 70)
         logger.info(f"✅ Wave 1 Complete: {deployed:,} scouts deployed")
         logger.info(f"   Victories: {victories:,}")
         logger.info(f"   Time: {elapsed:.1f}s")
         logger.info(f"   Rate: {deployed/elapsed:,.0f} units/sec")
         logger.info("=" * 70)
-        
+
         return {
             "wave": 1,
             "units_deployed": deployed,
@@ -395,21 +395,21 @@ class UnifiedV16SupremeCommander:
             "elapsed_seconds": elapsed,
             "rate": deployed / elapsed if elapsed > 0 else 0,
         }
-    
+
     async def _execute_scout_batch(self, units: list[ArmyUnit], batch_id: str) -> int:
         """Execute a batch of scout units"""
         # Simulate scout work
         await asyncio.sleep(0.001)  # 1ms per batch
-        
+
         # Calculate victories (simulated success rate ~85%)
         victories = int(len(units) * 0.85)
-        
+
         for i, unit in enumerate(units):
             unit.status = "completed" if i < victories else "failed"
             unit.victories = 1 if i < victories else 0
-        
+
         return victories
-    
+
     async def deploy_full_unified_army(self) -> dict[str, Any]:
         """
         Deploy full 25.6M unified army across all 5 tiers
@@ -417,12 +417,12 @@ class UnifiedV16SupremeCommander:
         logger.info("\n" + "=" * 70)
         logger.info("🌟 DEPLOYING FULL UNIFIED V16 SUPREME ARMY")
         logger.info("=" * 70)
-        
+
         total_units = sum(t.unit_count for t in self.tiers)
         logger.info(f"Total Units: {total_units:,}")
         logger.info(f"Tiers: {len(self.tiers)}")
         logger.info("-" * 70)
-        
+
         # Display tier breakdown
         for tier in self.tiers:
             army_names = ", ".join(a.value for a in tier.army_types)
@@ -430,22 +430,22 @@ class UnifiedV16SupremeCommander:
                 f"Tier {tier.tier_number}: {tier.unit_count:,} units "
                 f"({army_names})"
             )
-        
+
         logger.info("=" * 70)
-        
+
         # Deploy each tier
         results = []
         for tier in self.tiers:
             tier_result = await self._deploy_tier(tier)
             results.append(tier_result)
-        
+
         # Final summary
         total_deployed = sum(r["deployed"] for r in results)
         total_victories = sum(r["victories"] for r in results)
         total_elapsed = sum(r["elapsed_seconds"] for r in results)
-        
+
         self.state.phase = "complete"
-        
+
         logger.info("\n" + "=" * 70)
         logger.info("🎖️ UNIFIED ARMY DEPLOYMENT COMPLETE")
         logger.info("=" * 70)
@@ -454,7 +454,7 @@ class UnifiedV16SupremeCommander:
         logger.info(f"Success Rate: {100*total_victories/total_deployed:.1f}%")
         logger.info(f"Total Time: {total_elapsed:.1f}s")
         logger.info("=" * 70)
-        
+
         return {
             "total_units": total_deployed,
             "total_victories": total_victories,
@@ -462,23 +462,23 @@ class UnifiedV16SupremeCommander:
             "total_time_seconds": total_elapsed,
             "tier_results": results,
         }
-    
+
     async def _deploy_tier(self, tier: TierDeployment) -> dict[str, Any]:
         """Deploy a single tier"""
         logger.info(f"\n🔹 Deploying Tier {tier.tier_number}: {tier.unit_count:,} units")
-        
+
         start_time = time.time()
         deployed = 0
         victories = 0
-        
+
         # Create units with zodiac alignment
         zodiac_cycle = list(ZodiacSign)
         army_cycle = tier.army_types
-        
+
         for i in range(tier.unit_count):
             zodiac = zodiac_cycle[i % 12]
             army = army_cycle[i % len(army_cycle)]
-            
+
             unit = ArmyUnit(
                 unit_id=f"t{tier.tier_number}_{army.value}_{i:08d}",
                 army_type=army,
@@ -486,33 +486,33 @@ class UnifiedV16SupremeCommander:
                 capabilities=self._get_capabilities(army),
                 status="deployed",
             )
-            
+
             self.units[unit.unit_id] = unit
             deployed += 1
-            
+
             # Simulate victory (different rates per army type)
             if self._simulate_victory(army):
                 victories += 1
                 unit.victories = 1
                 unit.status = "victorious"
-        
+
         elapsed = time.time() - start_time
-        
+
         self.state.total_units_deployed += deployed
         self.state.total_victories += victories
-        
+
         logger.info(
             f"   ✅ Tier {tier.tier_number} Complete: {deployed:,} units, "
             f"{victories:,} victories ({100*victories/deployed:.1f}%)"
         )
-        
+
         return {
             "tier": tier.tier_number,
             "deployed": deployed,
             "victories": victories,
             "elapsed_seconds": elapsed,
         }
-    
+
     def _get_capabilities(self, army: ArmyType) -> list[str]:
         """Get capabilities for army type"""
         capabilities = {
@@ -530,11 +530,11 @@ class UnifiedV16SupremeCommander:
             ArmyType.LIEUTENANT_CORPS: ["specialization", "domains", "expertise"],
         }
         return capabilities.get(army, ["general"])
-    
+
     def _simulate_victory(self, army: ArmyType) -> bool:
         """Simulate victory probability for army type"""
         import random
-        
+
         # Different success rates per army type
         rates = {
             ArmyType.SCOUT_SWARM: 0.85,
@@ -550,18 +550,18 @@ class UnifiedV16SupremeCommander:
             ArmyType.FILE_SEARCH: 0.88,
             ArmyType.LIEUTENANT_CORPS: 0.93,
         }
-        
+
         return random.random() < rates.get(army, 0.85)
-    
+
     def get_deployment_summary(self) -> dict[str, Any]:
         """Get summary of current deployment"""
         by_type: dict[str, int] = defaultdict(int)
         by_zodiac: dict[str, int] = defaultdict(int)
-        
+
         for unit in self.units.values():
             by_type[unit.army_type.value] += 1
             by_zodiac[unit.zodiac_sign.value] += 1
-        
+
         return {
             "total_units": len(self.units),
             "by_army_type": dict(by_type),
@@ -615,16 +615,16 @@ Examples:
         action="store_true",
         help="Print deployment summary and exit",
     )
-    
+
     args = parser.parse_args()
-    
+
     commander = UnifiedV16SupremeCommander(verbose=args.verbose)
-    
+
     if args.summary:
         summary = commander.get_deployment_summary()
         print(json.dumps(summary, indent=2))
         return
-    
+
     if args.full:
         result = await commander.deploy_full_unified_army()
         print("\n" + "=" * 70)

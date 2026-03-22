@@ -1,5 +1,5 @@
 
-with open("whitemagic/core/acceleration/hybrid_dispatcher_v2.py", "r") as f:
+with open("whitemagic/core/acceleration/hybrid_dispatcher_v2.py") as f:
     content = f.read()
 
 # Replace PythonFastPath methods to use Rust
@@ -52,7 +52,7 @@ content = content.replace(
             return cls.GANA_ORDER[(idx + 1) % 28]"""
 )
 
-# Replace HybridDispatcherV2 methods 
+# Replace HybridDispatcherV2 methods
 # Fix prat_route instance method
 content = content.replace(
     """    def prat_route(self, tool: str) -> str:

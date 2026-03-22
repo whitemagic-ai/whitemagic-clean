@@ -21,9 +21,8 @@ def prat() -> None:
 @click.option("--json", "as_json", is_flag=True, help="Output as JSON")
 def context(as_json: bool) -> None:
     """Show current unified consciousness context"""
-    from whitemagic.utils.fast_json import dumps_str as _json_dumps
-
     from whitemagic.cascade.context_synthesizer import get_context_synthesizer
+    from whitemagic.utils.fast_json import dumps_str as _json_dumps
 
     synth = get_context_synthesizer()
 

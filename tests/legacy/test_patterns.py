@@ -1,5 +1,6 @@
 
 import whitemagic_rs
+
 print("Testing direct pattern extraction...")
 sample = [
     "Solution: Use a hammer to fix the nail.",

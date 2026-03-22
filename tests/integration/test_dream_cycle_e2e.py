@@ -9,16 +9,14 @@ Also verifies galactic promotion of strategy memories after consolidation.
 """
 import time
 from dataclasses import dataclass, field
-from typing import Any, List, Optional, Set
+from typing import Any
 from unittest.mock import MagicMock, patch
-
 
 from whitemagic.core.dreaming.dream_cycle import (
     DreamCycle,
     DreamPhase,
     DreamReport,
 )
-
 
 # ---------------------------------------------------------------------------
 # Synthetic memory objects for consolidation / association tests
@@ -29,7 +27,7 @@ class FakeMemory:
     id: str
     title: str = ""
     content: str = ""
-    tags: Set[str] = field(default_factory=set)
+    tags: set[str] = field(default_factory=set)
     importance: float = 0.5
     access_count: int = 0
     emotional_valence: float = 0.0
@@ -37,10 +35,10 @@ class FakeMemory:
     retention_score: float = 0.5
     last_accessed: Any = None
     created_at: Any = None
-    galactic_distance: Optional[float] = None
+    galactic_distance: float | None = None
 
 
-def _make_memories(n: int = 20) -> List[FakeMemory]:
+def _make_memories(n: int = 20) -> list[FakeMemory]:
     """Generate a cluster-friendly set of synthetic memories."""
     mems = []
     # Cluster 1: Python/ML theme (7 mems, high importance, frequently accessed)
@@ -218,7 +216,7 @@ class TestDreamCycleE2E:
         """Run all 5 phases and verify each produces a valid DreamReport."""
         dc = DreamCycle(idle_threshold_seconds=0.01, cycle_interval_seconds=0.01)
 
-        reports: List[DreamReport] = []
+        reports: list[DreamReport] = []
         for i in range(8):
             dc._run_phase()
             reports.append(dc._history[-1])

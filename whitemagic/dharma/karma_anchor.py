@@ -29,11 +29,12 @@ import hashlib
 import json
 import logging
 from dataclasses import asdict, dataclass
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -130,7 +131,7 @@ def _persist_anchor(snapshot: AnchorSnapshot, result: AnchorResult) -> None:
         record = {
             "snapshot": asdict(snapshot),
             "result": asdict(result),
-            "recorded_at": datetime.now(timezone.utc).isoformat(),
+            "recorded_at": datetime.now(UTC).isoformat(),
         }
         with open(history_file, "a", encoding="utf-8") as f:
             f.write(_json_dumps(record) + "\n")
@@ -185,7 +186,7 @@ def compute_anchor() -> dict[str, Any]:
             total_entries=report.get("total_calls_tracked", 0),
             chain_valid=chain_status.get("valid", False),
             version=ANCHOR_VERSION,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         return {
@@ -246,7 +247,7 @@ def submit_anchor(
             total_entries=0,
             chain_valid=True,
             version=ANCHOR_VERSION,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
     # Resolve wallet seed

@@ -304,7 +304,9 @@ class InsightPipeline:
     def _run_predictive(self) -> list[BriefingItem]:
         """Run PredictiveEngine and normalize output."""
         try:
-            from whitemagic.core.intelligence.synthesis.predictive_engine import get_predictive_engine
+            from whitemagic.core.intelligence.synthesis.predictive_engine import (
+                get_predictive_engine,
+            )
             engine = get_predictive_engine()
             report = engine.predict()
 
@@ -336,7 +338,9 @@ class InsightPipeline:
     def _run_kaizen(self) -> list[BriefingItem]:
         """Run KaizenEngine and normalize output."""
         try:
-            from whitemagic.core.intelligence.synthesis.kaizen_engine import get_kaizen_engine
+            from whitemagic.core.intelligence.synthesis.kaizen_engine import (
+                get_kaizen_engine,
+            )
             engine = get_kaizen_engine()
             report = engine.analyze()
 
@@ -365,7 +369,9 @@ class InsightPipeline:
     def _run_serendipity(self, count: int = 5) -> list[BriefingItem]:
         """Run SerendipityEngine and normalize output."""
         try:
-            from whitemagic.core.intelligence.synthesis.serendipity_engine import get_serendipity_engine
+            from whitemagic.core.intelligence.synthesis.serendipity_engine import (
+                get_serendipity_engine,
+            )
             engine = get_serendipity_engine()
             surfaced = engine.surface(count=count, mode="balanced")
 
@@ -393,7 +399,9 @@ class InsightPipeline:
     def _run_emergence(self) -> list[BriefingItem]:
         """Run EmergenceEngine proactive scan and normalize output."""
         try:
-            from whitemagic.core.intelligence.agentic.emergence_engine import get_emergence_engine
+            from whitemagic.core.intelligence.agentic.emergence_engine import (
+                get_emergence_engine,
+            )
             engine = get_emergence_engine()
 
             # Run proactive scan

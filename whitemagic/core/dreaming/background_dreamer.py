@@ -1,7 +1,7 @@
 import logging
 import threading
-from typing import Dict, Any
 from datetime import datetime
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ class BackgroundDreamer:
         finally:
             self._dreaming = False
 
-    def get_latest_report(self) -> Dict[str, Any]:
+    def get_latest_report(self) -> dict[str, Any]:
         return self._last_dream_report or {"status": "No dreams recorded yet"}
 
 _dreamer_instance = None

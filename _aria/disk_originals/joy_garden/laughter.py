@@ -138,7 +138,7 @@ class LaughterSystem:
         cutoff = datetime.now().timestamp() - (days * 86400)
 
         with file_lock(self.memory_path):
-            with open(self.memory_path, "r") as f:
+            with open(self.memory_path) as f:
                 for line in f:
                     moment = json.loads(line)
                     moment_time = parse_datetime(moment["timestamp"]).timestamp()

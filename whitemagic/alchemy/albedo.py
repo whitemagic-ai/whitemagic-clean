@@ -11,11 +11,12 @@ Usage:
     clusters = purifier.purify(novelty_memories)
 """
 
-import numpy as np
-from typing import List, Dict, Any
 import logging
-from sklearn.cluster import KMeans
 from collections import defaultdict
+from typing import Any
+
+import numpy as np
+from sklearn.cluster import KMeans
 
 # Import our unified embedding engine (supports Local/SentenceTransformers)
 from whitemagic.core.memory.embeddings import EmbeddingEngine
@@ -30,7 +31,7 @@ class AlbedoPurifier:
         if not self.engine.available():
             logger.warning("Embedding engine not available. Albedo will fail.")
 
-    def vectorize(self, memories: List[Dict[str, str]]) -> List[Dict[str, Any]]:
+    def vectorize(self, memories: list[dict[str, str]]) -> list[dict[str, Any]]:
         """
         Add 'embedding' field to each memory dict.
         memories: list of {'id': str, 'content': str, ...}
@@ -49,7 +50,7 @@ class AlbedoPurifier:
 
         return results
 
-    def cluster(self, vectorized_memories: List[Dict[str, Any]], n_clusters: int = 20) -> List[Dict[str, Any]]:
+    def cluster(self, vectorized_memories: list[dict[str, Any]], n_clusters: int = 20) -> list[dict[str, Any]]:
         """
         Group memories into semantic clusters.
         Returns list of clusters: {'id': int, 'items': [memories], 'centroid': vec}

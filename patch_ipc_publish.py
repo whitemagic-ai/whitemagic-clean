@@ -1,6 +1,6 @@
 import re
 
-with open('whitemagic-rust/src/ipc_bridge.rs', 'r') as f:
+with open('whitemagic-rust/src/ipc_bridge.rs') as f:
     content = f.read()
 
 # Fix the return type of ipc_publish to PyResult<()> and map string errors to PyErr

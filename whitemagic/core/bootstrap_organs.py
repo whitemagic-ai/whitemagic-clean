@@ -7,7 +7,8 @@ Ensures the organism is fully connected before operation.
 """
 
 import logging
-from whitemagic.core.nervous_system import get_nervous_system, OrganType
+
+from whitemagic.core.nervous_system import OrganType, get_nervous_system
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +81,7 @@ def bootstrap_nervous_system():
 def _wire_feedback_loops(ns):
     """Wire Gan Ying events to Nervous System signals."""
     try:
-        from whitemagic.core.resonance.gan_ying_enhanced import get_bus, EventType
+        from whitemagic.core.resonance.gan_ying_enhanced import EventType, get_bus
         bus = get_bus()
 
         # Immune -> Dream (Threat -> Defense Cycle)

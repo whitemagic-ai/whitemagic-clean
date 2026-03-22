@@ -7,7 +7,11 @@ from whitemagic.tools.tool_catalog import (
     collect_authored_tool_definitions,
     synthesize_callable_tool_definitions,
 )
-from whitemagic.tools.tool_types import ToolCategory, ToolDefinition, ToolSafety  # noqa: F401
+from whitemagic.tools.tool_types import (  # noqa: F401
+    ToolCategory,
+    ToolDefinition,
+    ToolSafety,
+)
 
 
 class LazyToolRegistry(list[ToolDefinition]):

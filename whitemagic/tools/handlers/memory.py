@@ -17,7 +17,7 @@ def _load_rust() -> tuple[Any, Any]:
 
 def handle_create_memory(**kwargs: Any) -> dict[str, Any]:
     from whitemagic.core.memory.unified import remember
-    from whitemagic.tools.errors import ToolExecutionError, ErrorCode
+    from whitemagic.tools.errors import ErrorCode, ToolExecutionError
 
     content = kwargs.get("content")
     title = kwargs.get("title")

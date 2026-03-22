@@ -12,8 +12,6 @@ import hashlib
 import json
 import threading
 import time
-
-from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -21,6 +19,8 @@ from pathlib import Path
 from typing import Any
 
 from whitemagic.config.paths import DATA_DIR
+from whitemagic.utils.fast_json import dumps_str as _json_dumps
+from whitemagic.utils.fast_json import loads as _json_loads
 
 
 @dataclass
@@ -61,21 +61,21 @@ class HolographicIntake:
             try:
                 data = _json_loads(self.config_path.read_text())
                 self._watch_dirs = data.get("watch_dirs", [])
-            except (json.JSONDecodeError, IOError) as e:
+            except (OSError, json.JSONDecodeError) as e:
                 self.stats.errors.append(f"Config load error: {e}")
                 pass
 
         if self.hashes_path.exists():
             try:
                 self._known_hashes = set(_json_loads(self.hashes_path.read_text()))
-            except (json.JSONDecodeError, IOError) as e:
+            except (OSError, json.JSONDecodeError) as e:
                 self.stats.errors.append(f"Hashes load error: {e}")
                 pass
 
         if self.queue_path.exists():
             try:
                 self._queue = _json_loads(self.queue_path.read_text())
-            except (json.JSONDecodeError, IOError) as e:
+            except (OSError, json.JSONDecodeError) as e:
                 self.stats.errors.append(f"Queue load error: {e}")
                 pass
 
@@ -115,7 +115,7 @@ class HolographicIntake:
         """Generate content hash for deduplication."""
         try:
             return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
-        except (IOError, PermissionError):
+        except (OSError, PermissionError):
             return hashlib.sha256(str(path).encode()).hexdigest()[:16]
 
     def scan(self, path: str | None = None) -> list[dict[str, Any]]:

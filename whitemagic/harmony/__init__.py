@@ -16,15 +16,15 @@ into a multi-dimensional health metric: balance, throughput, latency,
 error_rate, dharma, karma_debt, and energy — all normalized to [0,1].
 """
 
+from whitemagic.harmony.compat import (
+    BalanceMonitor,
+    get_balance_monitor,
+)
 from whitemagic.harmony.vector import (
     Guna,
     HarmonySnapshot,
     HarmonyVector,
     get_harmony_vector,
-)
-from whitemagic.harmony.compat import (
-    BalanceMonitor,
-    get_balance_monitor,
 )
 from whitemagic.harmony.yin_yang_tracker import (
     ActivityType,

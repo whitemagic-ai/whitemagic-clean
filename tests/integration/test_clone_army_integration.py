@@ -2,6 +2,7 @@
 
 import pytest
 
+
 def test_rust_bridge_available():
     import whitemagic_rust
     assert whitemagic_rust is not None

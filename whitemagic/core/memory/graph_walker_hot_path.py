@@ -3,8 +3,8 @@ Backend priority: Zig SIMD > Rust > NumPy > Python
 Target: 10-50x speedup for multi-hop graph traversal semantic scoring
 """
 import logging
-from typing import Any, List, Dict, Set
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 
@@ -52,7 +52,10 @@ def _init_backends():
         pass
     # Julia — RRF fusion + PageRank (subprocess, used for multi-list merges)
     try:
-        from whitemagic.core.acceleration.julia_bridge import julia_rrf_fuse, julia_pagerank
+        from whitemagic.core.acceleration.julia_bridge import (
+            julia_pagerank,
+            julia_rrf_fuse,
+        )
         _JULIA_RRF = julia_rrf_fuse
         _JULIA_PAGERANK = julia_pagerank
         logger.info("graph_walker_hot_path: Julia RRF + PageRank available")
@@ -60,7 +63,10 @@ def _init_backends():
         pass
     # Title-boosted vector search for LoCoMo 100%
     try:
-        from whitemagic.core.search.title_boosted_vector import search_title_boosted, hybrid_search_with_dedup
+        from whitemagic.core.search.title_boosted_vector import (
+            hybrid_search_with_dedup,
+            search_title_boosted,
+        )
         _TITLE_BOOSTED_SEARCH = {
             "search_title_boosted": search_title_boosted,
             "hybrid_search_with_dedup": hybrid_search_with_dedup
@@ -72,7 +78,8 @@ def _init_backends():
     # Zig SIMD graph transitions for batch probability computation
     try:
         from whitemagic.core.acceleration.graph_transitions import (
-            transition_batch, graph_transitions_status
+            graph_transitions_status,
+            transition_batch,
         )
         if graph_transitions_status()["has_zig_simd"]:
             _ZIG_GRAPH_TRANSITIONS = transition_batch
@@ -88,20 +95,20 @@ _init_backends()
 @dataclass
 class WalkPath:
     """Optimized WalkPath for hot path operations."""
-    nodes: List[str]
-    edge_weights: List[float]
-    relation_types: List[str]
+    nodes: list[str]
+    edge_weights: list[float]
+    relation_types: list[str]
     total_score: float = 0.0
     depth: int = 0
 
 @dataclass
 class WalkResult:
     """Optimized WalkResult for hot path operations."""
-    seed_ids: List[str]
+    seed_ids: list[str]
     hops: int
     paths_explored: int = 0
     unique_nodes_visited: int = 0
-    paths: List[WalkPath] = None
+    paths: list[WalkPath] = None
     duration_ms: float = 0.0
 
     def __post_init__(self):
@@ -114,7 +121,7 @@ def compute_transition_probability(
     galactic_gravity: float,
     recency: float,
     staleness: float,
-    weights: Dict[str, float] = None
+    weights: dict[str, float] = None
 ) -> float:
     """
     Compute edge transition probability from 4 signals.
@@ -135,9 +142,9 @@ def compute_transition_probability(
 
 # Hot path: Batch transition probability computation
 def batch_compute_probabilities(
-    edges: List[Dict[str, float]],
-    weights: Dict[str, float] = None
-) -> List[float]:
+    edges: list[dict[str, float]],
+    weights: dict[str, float] = None
+) -> list[float]:
     """
     Compute probabilities for batch of edges.
     Hot path: Zig SIMD for semantic channel when vectors available,
@@ -199,7 +206,7 @@ def batch_compute_probabilities(
 
 # Hot path: Parallel BFS traversal
 def parallel_bfs_walk(
-    seed_ids: List[str],
+    seed_ids: list[str],
     neighbors_fn,
     hops: int = 2,
     top_k: int = 5,
@@ -215,8 +222,8 @@ def parallel_bfs_walk(
     start_time = time.time()
 
     result = WalkResult(seed_ids=seed_ids, hops=hops)
-    all_paths: List[WalkPath] = []
-    visited: Set[str] = set(seed_ids)
+    all_paths: list[WalkPath] = []
+    visited: set[str] = set(seed_ids)
 
     # Small seed set: sequential
     if len(seed_ids) < max_parallel:
@@ -253,9 +260,9 @@ def _walk_from_seed(
     neighbors_fn,
     hops: int,
     top_k: int,
-    visited: Set[str],
-    weights: Dict[str, float] = None
-) -> List[WalkPath]:
+    visited: set[str],
+    weights: dict[str, float] = None
+) -> list[WalkPath]:
     """Walk from a single seed node with SIMD-accelerated batch transitions."""
     paths = []
     w = weights or {"semantic": 0.4, "gravity": 0.3, "recency": 0.2, "staleness": 0.1}
@@ -315,7 +322,7 @@ def _walk_from_seed(
 
     return paths
 
-def hot_path_status() -> Dict[str, Any]:
+def hot_path_status() -> dict[str, Any]:
     """Return current acceleration backend status."""
     return {
         "backend": _BACKEND,

@@ -7,19 +7,20 @@ Uses Python source analysis + geneseed patterns to generate real Rust code
 import ast
 import re
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any
+
 
 class PythonSourceAnalyzer:
     """Analyze Python source to extract implementation details"""
-    
+
     def __init__(self, source_path: Path):
         self.source_path = source_path
         self.source = source_path.read_text()
         self.tree = ast.parse(self.source)
-    
-    def extract_function_logic(self, function_name: str) -> Dict[str, Any]:
+
+    def extract_function_logic(self, function_name: str) -> dict[str, Any]:
         """Extract detailed logic from a Python function"""
-        
+
         for node in ast.walk(self.tree):
             if isinstance(node, ast.FunctionDef) and node.name == function_name:
                 return {
@@ -34,16 +35,16 @@ class PythonSourceAnalyzer:
                     'conditionals': self._count_conditionals(node),
                     'complexity': self._estimate_complexity(node)
                 }
-        
+
         return {}
-    
-    def _extract_return_type(self, node: ast.FunctionDef) -> Optional[str]:
+
+    def _extract_return_type(self, node: ast.FunctionDef) -> str | None:
         """Extract return type annotation"""
         if node.returns:
             return ast.unparse(node.returns)
         return None
-    
-    def _extract_function_calls(self, node: ast.FunctionDef) -> List[str]:
+
+    def _extract_function_calls(self, node: ast.FunctionDef) -> list[str]:
         """Extract all function calls in the function"""
         calls = []
         for child in ast.walk(node):
@@ -53,12 +54,12 @@ class PythonSourceAnalyzer:
                 elif isinstance(child.func, ast.Attribute):
                     calls.append(child.func.attr)
         return list(set(calls))
-    
-    def _extract_sql_queries(self, node: ast.FunctionDef) -> List[str]:
+
+    def _extract_sql_queries(self, node: ast.FunctionDef) -> list[str]:
         """Extract SQL queries from the function"""
         queries = []
         source = ast.unparse(node)
-        
+
         # Find SQL queries in strings
         sql_patterns = [
             r'SELECT\s+.*?FROM',
@@ -67,13 +68,13 @@ class PythonSourceAnalyzer:
             r'DELETE\s+FROM',
             r'CREATE\s+TABLE'
         ]
-        
+
         for pattern in sql_patterns:
             matches = re.findall(pattern, source, re.IGNORECASE | re.DOTALL)
             queries.extend(matches)
-        
+
         return queries
-    
+
     def _count_loops(self, node: ast.FunctionDef) -> int:
         """Count loops in function"""
         count = 0
@@ -81,7 +82,7 @@ class PythonSourceAnalyzer:
             if isinstance(child, (ast.For, ast.While)):
                 count += 1
         return count
-    
+
     def _count_conditionals(self, node: ast.FunctionDef) -> int:
         """Count if statements"""
         count = 0
@@ -89,15 +90,15 @@ class PythonSourceAnalyzer:
             if isinstance(child, ast.If):
                 count += 1
         return count
-    
+
     def _estimate_complexity(self, node: ast.FunctionDef) -> str:
         """Estimate function complexity"""
         lines = len(node.body)
         loops = self._count_loops(node)
         conditionals = self._count_conditionals(node)
-        
+
         score = lines + (loops * 5) + (conditionals * 2)
-        
+
         if score < 20:
             return "simple"
         elif score < 50:
@@ -107,13 +108,13 @@ class PythonSourceAnalyzer:
 
 class RustCodeGenerator:
     """Generate real Rust code from Python analysis"""
-    
-    def __init__(self, patterns: List[Dict]):
+
+    def __init__(self, patterns: list[dict]):
         self.patterns = patterns
-    
-    def generate_search_function(self, python_logic: Dict) -> str:
+
+    def generate_search_function(self, python_logic: dict) -> str:
         """Generate real search function in Rust"""
-        
+
         code = """//! Full-text search with BM25 ranking
 //! Migrated from Python with performance optimizations
 
@@ -283,12 +284,12 @@ impl Search {
     }
 }
 """
-        
+
         return code
-    
-    def generate_graph_walker(self, python_logic: Dict) -> str:
+
+    def generate_graph_walker(self, python_logic: dict) -> str:
         """Generate graph walker implementation"""
-        
+
         code = """//! Graph traversal with semantic projection
 //! High-performance graph walking algorithms
 
@@ -410,28 +411,28 @@ impl GraphWalker {
     }
 }
 """
-        
+
         return code
 
 def main():
     """Generate real implementations"""
     base_path = Path(__file__).parent.parent
-    
+
     print("\n" + "="*70)
     print("🔧 ADVANCED CODE GENERATOR")
     print("="*70)
-    
+
     # Analyze Python source
     print("\n📖 Analyzing Python source...")
-    
+
     sqlite_backend = base_path / "whitemagic" / "core" / "memory" / "sqlite_backend.py"
-    
+
     if sqlite_backend.exists():
         analyzer = PythonSourceAnalyzer(sqlite_backend)
-        
+
         # Extract search function logic
         search_logic = analyzer.extract_function_logic("search")
-        
+
         if search_logic:
             print(f"\n  Function: {search_logic['name']}")
             print(f"  Args: {', '.join(search_logic['args'])}")
@@ -439,25 +440,25 @@ def main():
             print(f"  Complexity: {search_logic['complexity']}")
             print(f"  SQL queries: {len(search_logic['sql_queries'])}")
             print(f"  Function calls: {len(search_logic['calls'])}")
-    
+
     # Generate Rust code
     print("\n🔨 Generating Rust implementations...")
-    
+
     generator = RustCodeGenerator([])
-    
+
     # Generate search.rs
     search_code = generator.generate_search_function({})
     search_path = base_path / "whitemagic-rust" / "src" / "psr" / "psr-002" / "search_v2.rs"
     search_path.write_text(search_code)
     print(f"  ✅ Generated: search_v2.rs ({len(search_code.split(chr(10)))} lines)")
-    
+
     # Generate graph_walker.rs
     graph_code = generator.generate_graph_walker({})
     graph_path = base_path / "whitemagic-rust" / "src" / "psr" / "psr-003" / "graph_walker_v2.rs"
     graph_path.parent.mkdir(parents=True, exist_ok=True)
     graph_path.write_text(graph_code)
     print(f"  ✅ Generated: graph_walker_v2.rs ({len(graph_code.split(chr(10)))} lines)")
-    
+
     print("\n" + "="*70)
     print("✅ GENERATION COMPLETE")
     print("="*70)

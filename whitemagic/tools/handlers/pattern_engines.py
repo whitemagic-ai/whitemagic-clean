@@ -117,7 +117,9 @@ def handle_emergence_status(**kwargs: Any) -> dict[str, Any]:
 def handle_association_mine(**kwargs: Any) -> dict[str, Any]:
     """Mine associations from memory content."""
     try:
-        from whitemagic.core.intelligence.synthesis.association_miner import AssociationMiner
+        from whitemagic.core.intelligence.synthesis.association_miner import (
+            AssociationMiner,
+        )
         miner = AssociationMiner()
 
         memory_ids = kwargs.get("memory_ids", [])
@@ -144,7 +146,9 @@ def handle_association_mine(**kwargs: Any) -> dict[str, Any]:
 def handle_association_mine_semantic(**kwargs: Any) -> dict[str, Any]:
     """Mine semantic associations using embeddings."""
     try:
-        from whitemagic.core.intelligence.synthesis.association_miner import SemanticAssociationMiner
+        from whitemagic.core.intelligence.synthesis.association_miner import (
+            SemanticAssociationMiner,
+        )
         miner = SemanticAssociationMiner()
 
         query = kwargs.get("query", "")
@@ -175,7 +179,9 @@ def handle_association_mine_semantic(**kwargs: Any) -> dict[str, Any]:
 def handle_constellation_detect(**kwargs: Any) -> dict[str, Any]:
     """Detect constellations (memory clusters) in the graph."""
     try:
-        from whitemagic.core.intelligence.synthesis.constellation import ConstellationDetector
+        from whitemagic.core.intelligence.synthesis.constellation import (
+            ConstellationDetector,
+        )
         detector = ConstellationDetector()
 
         algorithm = kwargs.get("algorithm", "hdbscan")
@@ -205,7 +211,9 @@ def handle_constellation_detect(**kwargs: Any) -> dict[str, Any]:
 def handle_constellation_stats(**kwargs: Any) -> dict[str, Any]:
     """Get constellation statistics."""
     try:
-        from whitemagic.core.intelligence.synthesis.constellation import ConstellationDetector
+        from whitemagic.core.intelligence.synthesis.constellation import (
+            ConstellationDetector,
+        )
         detector = ConstellationDetector()
         return {
             "status": "success",
@@ -308,7 +316,9 @@ def handle_novelty_stats(**kwargs: Any) -> dict[str, Any]:
 def handle_reasoning_multispectral(**kwargs: Any) -> dict[str, Any]:
     """Perform multispectral reasoning on a topic."""
     try:
-        from whitemagic.core.intelligence.synthesis.multispectral import MultispectralReasoner
+        from whitemagic.core.intelligence.synthesis.multispectral import (
+            MultispectralReasoner,
+        )
         reasoner = MultispectralReasoner()
 
         topic = kwargs.get("topic", "")
@@ -363,7 +373,9 @@ def handle_satkona_fuse(**kwargs: Any) -> dict[str, Any]:
 def handle_bridge_synthesize(**kwargs: Any) -> dict[str, Any]:
     """Synthesize bridges between disconnected graph regions."""
     try:
-        from whitemagic.core.intelligence.synthesis.bridge_builder import BridgeSynthesizer
+        from whitemagic.core.intelligence.synthesis.bridge_builder import (
+            BridgeSynthesizer,
+        )
         synthesizer = BridgeSynthesizer()
 
         max_bridges = kwargs.get("max_bridges", 10)
@@ -505,7 +517,9 @@ def handle_elemental_optimize(**kwargs: Any) -> dict[str, Any]:
 def handle_pattern_consciousness_status(**kwargs: Any) -> dict[str, Any]:
     """Get pattern consciousness system status."""
     try:
-        from whitemagic.core.intelligence.pattern_consciousness import PatternConsciousness
+        from whitemagic.core.intelligence.pattern_consciousness import (
+            PatternConsciousness,
+        )
         pc = PatternConsciousness()
         return {
             "status": "success",

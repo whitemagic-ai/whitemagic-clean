@@ -2,8 +2,8 @@
 Tests for polyglot bridge coverage — Rust accelerators, Haskell bridge, Elixir bridge.
 """
 import json
-import pytest
 
+import pytest
 
 # =========================================================================
 # 1. Rust Accelerator Bridge
@@ -18,7 +18,9 @@ class TestRustAcceleratorBridge:
         assert isinstance(rust_available(), bool)
 
     def test_galactic_batch_score_python_fallback(self):
-        from whitemagic.optimization.rust_accelerators import _galactic_batch_score_python
+        from whitemagic.optimization.rust_accelerators import (
+            _galactic_batch_score_python,
+        )
         memories = [
             {"id": "m1", "importance": 0.9, "neuro_score": 0.8, "emotional_valence": 0.5,
              "recall_count": 15, "is_protected": False},
@@ -35,7 +37,9 @@ class TestRustAcceleratorBridge:
         assert results[0]["galactic_distance"] < results[1]["galactic_distance"]
 
     def test_galactic_batch_score_full(self):
-        from whitemagic.optimization.rust_accelerators import _galactic_batch_score_python
+        from whitemagic.optimization.rust_accelerators import (
+            _galactic_batch_score_python,
+        )
         memories = [
             {"id": "m1", "memory_type_weight": 0.8, "richness": 0.6, "activity": 0.3,
              "recency": 0.9, "importance": 0.7, "emotion": 0.2, "protection": 0.0},
@@ -237,6 +241,7 @@ class TestDreamCycle:
 
     def test_dream_cycle_touch(self):
         import time
+
         from whitemagic.core.dreaming.dream_cycle import DreamCycle
         dc = DreamCycle()
         old_activity = dc._last_activity
@@ -269,7 +274,7 @@ class TestDreamCycle:
         assert DreamPhase.HARMONIZE in phases
 
     def test_dream_report_to_dict(self):
-        from whitemagic.core.dreaming.dream_cycle import DreamReport, DreamPhase
+        from whitemagic.core.dreaming.dream_cycle import DreamPhase, DreamReport
         report = DreamReport(
             phase=DreamPhase.KAIZEN,
             started_at="2026-02-08T12:00:00",

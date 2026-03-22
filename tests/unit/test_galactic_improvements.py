@@ -7,11 +7,11 @@ Tests for Galactic Map v2 improvements:
   - Lifecycle manager galactic rotation integration
 """
 
-import pytest
 import tempfile
 from datetime import datetime
 from pathlib import Path
 
+import pytest
 
 # ---------------------------------------------------------------------------
 # V Dimension — Holographic Encoder
@@ -154,8 +154,8 @@ class TestMemoryRePromotion:
     """Tests that recalling a memory spirals it inward."""
 
     def test_recall_reduces_galactic_distance(self):
-        from whitemagic.core.memory.unified_types import Memory, MemoryType
         from whitemagic.core.memory.sqlite_backend import SQLiteBackend
+        from whitemagic.core.memory.unified_types import Memory, MemoryType
 
         with tempfile.TemporaryDirectory() as tmpdir:
             db_path = Path(tmpdir) / "test.db"
@@ -186,8 +186,8 @@ class TestMemoryRePromotion:
             assert after.galactic_distance == pytest.approx(0.76, abs=0.01)
 
     def test_core_memory_stays_at_core(self):
-        from whitemagic.core.memory.unified_types import Memory, MemoryType
         from whitemagic.core.memory.sqlite_backend import SQLiteBackend
+        from whitemagic.core.memory.unified_types import Memory, MemoryType
 
         with tempfile.TemporaryDirectory() as tmpdir:
             db_path = Path(tmpdir) / "test.db"
