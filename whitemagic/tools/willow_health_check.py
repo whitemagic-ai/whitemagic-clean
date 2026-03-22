@@ -147,7 +147,7 @@ class WillowHealthChecker:
 
             return result.get("status") == "success"
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning("🌿 Grimoire handler timeout")
             return False
         except Exception as e:
@@ -275,7 +275,7 @@ async def koka_timeout_wrapper(operation, timeout_seconds: float = 5.0):
     try:
         result = await asyncio.wait_for(operation, timeout=timeout_seconds)
         return {"status": "success", "result": result}
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.warning(f"🌿 Koka operation timed out after {timeout_seconds}s")
         return {"status": "error", "error": "timeout"}
     except Exception as e:

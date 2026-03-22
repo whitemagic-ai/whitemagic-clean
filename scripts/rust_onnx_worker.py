@@ -5,9 +5,9 @@ import sys
 
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
+import os
 import signal
 import time
-import os
 
 
 class RustONNXWorker:

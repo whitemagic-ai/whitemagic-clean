@@ -19,14 +19,13 @@ from __future__ import annotations
 
 import ctypes
 import logging
+import math
 import os
+import threading
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Any
 
 import numpy as np
-import math
-import threading
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +36,6 @@ _HAS_ZIG = False
 
 def _find_zig_lib() -> str | None:
     """Locate the compiled Zig shared library."""
-    import os
     base = Path(__file__).resolve().parent.parent.parent.parent / "whitemagic-zig"
     candidates = [
         os.environ.get("WM_ZIG_LIB", ""),

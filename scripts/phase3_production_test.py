@@ -8,8 +8,8 @@ Enables adaptive system with careful monitoring and incremental testing.
 
 import sys
 import time
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -24,15 +24,16 @@ from whitemagic.core.evolution.adaptive_system import get_adaptive_system
 from whitemagic.core.evolution.optimizers import (
     MemoryWorkflowOptimizer,
     PatternLearningOptimizer,
-    get_all_optimization_metrics
+    get_all_optimization_metrics,
 )
+
 print("✓ Systems imported\n")
 
 # Step 2: Initialize adaptive system
 print("[2/6] Initializing adaptive system...")
 adaptive = get_adaptive_system()
 initial_status = adaptive.get_status()
-print(f"✓ Adaptive system initialized")
+print("✓ Adaptive system initialized")
 print(f"  Status: {'ENABLED' if initial_status['enabled'] else 'DISABLED'}")
 print(f"  Require approval: {initial_status['require_approval']}\n")
 
@@ -45,7 +46,7 @@ print("✓ Optimizers ready\n")
 # Step 4: Baseline metrics
 print("[4/6] Collecting baseline metrics...")
 baseline_metrics = get_all_optimization_metrics()
-print(f"✓ Baseline collected")
+print("✓ Baseline collected")
 print(f"  Memory workflow: {baseline_metrics['memory_workflow']['calls_optimized']} calls optimized")
 print(f"  Pattern learning: {baseline_metrics['pattern_learning']['calls_optimized']} calls optimized")
 print(f"  Memory latency saved: {baseline_metrics['memory_workflow']['total_latency_saved_ms']:.2f}ms")
@@ -55,9 +56,9 @@ print(f"  Pattern latency saved: {baseline_metrics['pattern_learning']['total_la
 print("[5/6] Enabling Phase 3 (with manual approval)...")
 adaptive.enable(require_approval=True)
 enabled_status = adaptive.get_status()
-print(f"✓ Phase 3 ENABLED")
-print(f"  Mode: Manual approval required (safe)")
-print(f"  Rules:")
+print("✓ Phase 3 ENABLED")
+print("  Mode: Manual approval required (safe)")
+print("  Rules:")
 print(f"    - Min confidence: {enabled_status['rules']['min_confidence']}")
 print(f"    - Min frequency: {enabled_status['rules']['min_frequency']}")
 print(f"    - Max impact: {enabled_status['rules']['max_impact_score']}\n")
@@ -69,13 +70,13 @@ print("[6/6] Simulating operations with optimizers...")
 print("\n  Memory Workflow Test:")
 for i in range(5):
     memory_id = f"test_mem_{i}"
-    
+
     # Pre-compute semantic links (optimizer in action)
     links = memory_opt.pre_compute_semantic_links(memory_id, {"content": "test memory"})
-    
+
     # Pre-warm consolidation data (high importance to trigger caching)
     consolidation = memory_opt.pre_warm_consolidation(memory_id, {"content": "test memory", "importance": 0.8})
-    
+
     print(f"    Operation {i+1}: Memory {memory_id} processed")
     time.sleep(0.05)
 
@@ -83,15 +84,15 @@ for i in range(5):
 print("\n  Pattern Learning Test:")
 for i in range(3):
     pattern_id = f"pattern_{i}"
-    
+
     # Pre-warm UI
     pattern_opt.pre_warm_confirmation_ui(pattern_id, {"type": "test_pattern"})
-    
+
     # Queue for batch processing
     patterns = [f"pattern_{i}_{j}" for j in range(5)]
     for p in patterns:
         pattern_opt.add_to_batch(p, {"type": "test"})
-    
+
     print(f"    Operation {i+1}: Pattern batch processed")
     time.sleep(0.05)
 
@@ -139,7 +140,7 @@ adaptive.update_metrics(coherence=0.78, performance=0.87)
 adaptive.update_metrics(coherence=0.80, performance=0.90)
 
 final_status = adaptive.get_status()
-print(f"✓ Metrics updated")
+print("✓ Metrics updated")
 print(f"  Current coherence: {final_status['current_coherence']:.3f}")
 print(f"  Current performance: {final_status['current_performance']:.3f}")
 
@@ -179,7 +180,7 @@ print("PHASE 3 TEST COMPLETE")
 print("="*80)
 print(f"\nCompleted: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 print("\nSummary:")
-print(f"  ✓ Adaptive system: ENABLED (manual approval mode)")
+print("  ✓ Adaptive system: ENABLED (manual approval mode)")
 print(f"  ✓ Optimizers: ACTIVE ({len(final_status['pending_approvals'])} pending approvals)")
 print(f"  ✓ Latency saved: {mem_latency + pat_latency:.2f}ms")
 print(f"  ✓ System coherence: {final_status['current_coherence']:.3f}")
