@@ -1,9 +1,0 @@
-
-> whitemagic-mcp@5.0.0-alpha start
-> . ../.venv/bin/activate && node dist/index.js
-
-🌟 WhiteMagic MCP Server v1.0.0 starting...
-✅ Server ready
-📊 Tools available: Loading catalog...
-📊 Tools available: 31
-📂 Categories: memory, session, zodiac, garden, reasoning, council, iching, wu_xing, resonance, patterns, archaeology, voice, system, collaboration, edge, performance, health, prat
