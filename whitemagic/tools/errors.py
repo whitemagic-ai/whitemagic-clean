@@ -5,6 +5,8 @@ Keep these codes stable across versions; add new codes instead of renaming.
 
 from __future__ import annotations
 
+from typing import Any
+
 
 class ErrorCode:
     TOOL_NOT_FOUND = "tool_not_found"
