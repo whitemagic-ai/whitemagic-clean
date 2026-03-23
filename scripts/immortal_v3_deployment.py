@@ -48,10 +48,15 @@ from typing import Any
 
 # Setup paths
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT))  # noqa: E402
 
 # Import core systems
-from whitemagic.agents.campaign_loader import load_all_campaigns
+from whitemagic.agents.campaign_loader import load_all_campaigns  # noqa: E402
+from whitemagic.optimization._rust_fallbacks import (  # noqa: E402
+    PythonSpatialIndex5D,
+    _association_mine_python,
+    _galactic_batch_score_python,
+)
 
 # Zodiac symbols for beautiful UI
 ZODIAC_SYMBOLS = {
