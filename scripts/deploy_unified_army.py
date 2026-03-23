@@ -166,16 +166,13 @@ class UnifiedArmyCommander:
 
         # Check other systems
         try:
-            from whitemagic.core.intelligence.agentic.clone_army import ShadowCloneArmy
             available.append(ArmyType.SHADOW)
         except ImportError:
             pass
 
         try:
             from whitemagic.agents.unified_zodiac_army import (  # noqa: E402
-                ZODIAC_ARMY_MAPPINGS,
                 ArmyType,
-                get_unified_commander,
             )
             available.append(ArmyType.WAR_ROOM)
         except ImportError:

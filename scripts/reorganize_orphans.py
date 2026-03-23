@@ -196,7 +196,7 @@ def reorganize_orphans(db_path: Path, dry_run: bool = True):
                         json.dumps({"orphan_type": "association_source"}),
                     ))
                     assocs_rescued += 1
-                except:
+                except Exception:
                     pass
 
         for tgt_id in by_target.keys():
@@ -222,7 +222,7 @@ def reorganize_orphans(db_path: Path, dry_run: bool = True):
                         json.dumps({"orphan_type": "association_target"}),
                     ))
                     assocs_rescued += 1
-                except:
+                except Exception:
                     pass
 
         conn.commit()

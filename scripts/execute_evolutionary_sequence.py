@@ -133,7 +133,7 @@ class EvolutionaryExecutor:
                 for f in files:
                     try:
                         polyglot_status[lang]["lines"] += len(f.read_text().split("\n"))
-                    except:
+                    except Exception:
                         pass
 
         print("\n📊 Polyglot Status:")
@@ -257,7 +257,7 @@ class EvolutionaryExecutor:
                     integration_points["organ_registrations"] += 1
                 if "dispatch_signal" in content:
                     integration_points["feedback_loops"] += 1
-            except:
+            except Exception:
                 pass
 
         # Check cross-language bridges

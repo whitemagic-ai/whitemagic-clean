@@ -65,7 +65,7 @@ def score_file(filepath: Path, content: str) -> dict:
         if len(classes) > 3:
             score -= 2
             reasons.append("Many classes (harder migration)")
-    except:
+    except Exception:
         pass
 
     return {

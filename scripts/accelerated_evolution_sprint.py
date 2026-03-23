@@ -204,7 +204,7 @@ if __name__ == "__main__":
         # Check for coherence (holographic coordinates - may not exist)
         try:
             holo_count = conn.execute("SELECT COUNT(*) FROM holographic_coordinates").fetchone()[0]
-        except:
+        except Exception:
             holo_count = 0
 
         print("\n✅ Quantum Coherence Verified:")

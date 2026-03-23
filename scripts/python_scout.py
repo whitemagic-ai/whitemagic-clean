@@ -75,7 +75,7 @@ def analyze_file(filepath: Path) -> FileAnalysis:
                 # Check for if __name__ == '__main__'
                 if isinstance(node.test.left, ast.Name) and node.test.left.id == '__name__':
                     analysis.has_main = True
-    except:
+    except Exception:
         pass
 
     # File type detection

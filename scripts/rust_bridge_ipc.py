@@ -68,7 +68,7 @@ def json_serialize(obj: dict) -> str:
     if ACCEL_AVAILABLE:
         try:
             return fast_dumps(obj)
-        except:
+        except Exception:
             pass
     return json.dumps(obj)
 

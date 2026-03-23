@@ -107,7 +107,7 @@ def execute_phase2_archival():
             if lines > 200:
                 skipped.append((candidate, f"Too large ({lines} LOC)"))
                 continue
-        except:
+        except Exception:
             skipped.append((candidate, "Cannot read"))
             continue
 

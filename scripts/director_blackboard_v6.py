@@ -32,7 +32,7 @@ def parse_koka_output(proc):
                 if isinstance(payload, str):
                     try:
                         payload = json.loads(payload)
-                    except:
+                    except Exception:
                         pass
 
                 if isinstance(payload, dict) and payload.get("type") == "file_scout":
@@ -118,7 +118,7 @@ def main():
     print("\\n\\nDirector Subagent: Swarm execution finished. Terminating processes...")
     try:
         elixir_proc.terminate()
-    except:
+    except Exception:
         pass
     koka_proc.terminate()
 

@@ -46,7 +46,7 @@ def score_memory(importance: float, access_count: int, created_at: str) -> float
         created_dt = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
         days_old = (datetime.now().astimezone() - created_dt).days
         recency_factor = 1.0 / (1.0 + days_old / 365.0)  # Decay over years
-    except:
+    except Exception:
         recency_factor = 0.5
 
     return importance * access_count * recency_factor

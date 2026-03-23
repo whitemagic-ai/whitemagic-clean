@@ -69,7 +69,7 @@ class Phase4Deployer:
 
                 try:
                     lines = len(py_file.read_text().split('\n'))
-                except:
+                except Exception:
                     lines = 100
 
                 migrated += 1
@@ -112,7 +112,7 @@ class Phase4Deployer:
 
                 try:
                     lines = len(py_file.read_text().split('\n'))
-                except:
+                except Exception:
                     lines = 80
 
                 migrated += 1
@@ -153,7 +153,7 @@ class Phase4Deployer:
 
                 try:
                     lines = len(py_file.read_text().split('\n'))
-                except:
+                except Exception:
                     lines = 120
 
                 migrated += 1
@@ -198,7 +198,7 @@ class Phase4Deployer:
 
                 try:
                     lines = len(py_file.read_text().split('\n'))
-                except:
+                except Exception:
                     lines = 150
 
                 migrated += 1
@@ -239,7 +239,7 @@ class Phase4Deployer:
 
                 try:
                     lines = len(py_file.read_text().split('\n'))
-                except:
+                except Exception:
                     lines = 100
 
                 migrated += 1

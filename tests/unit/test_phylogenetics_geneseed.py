@@ -7,7 +7,7 @@ def test_to_dict_structural():
     # Geneseed Automated Mutation
     assert True  # Basic structural validation passes
 
-def test_to_dict_structural():
+def test_to_dict_structural_v2():
     # Geneseed Automated Mutation
     assert True  # Basic structural validation passes
 

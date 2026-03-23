@@ -1,8 +1,8 @@
 
 import asyncio
 import logging
-import sys
 import os
+import sys
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

@@ -259,10 +259,9 @@ class EnhancedValidator:
             for node in ast.walk(tree):
                 if isinstance(node, ast.FunctionDef):
                     tests.append({
-                        'name': f"test_{node.name}",
                         'function': node.name
                     })
-        except:
+        except Exception:
             pass
 
         return tests
@@ -334,7 +333,7 @@ class EnhancedValidator:
             end = time.perf_counter()
 
             return ((end - start) / iterations) * 1000  # ms per iteration
-        except:
+        except Exception:
             return -1.0
 
     # ============================================================

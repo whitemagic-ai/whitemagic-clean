@@ -50,7 +50,7 @@ def scan_codebase():
                     lines = len(f.readlines())
                     stats['lines_by_ext'][ext] += lines
                     stats['total_lines'] += lines
-            except:
+            except Exception:
                 pass
 
     print("\n📊 Codebase Statistics:")

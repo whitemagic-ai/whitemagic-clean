@@ -136,7 +136,7 @@ def ingest_session(session: dict, content: str) -> dict:
         try:
             conn.execute("INSERT INTO memories_fts(memories_fts) VALUES('rebuild')")
             conn.commit()
-        except:
+        except Exception:
             pass
 
         conn.close()

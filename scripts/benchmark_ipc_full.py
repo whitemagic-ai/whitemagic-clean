@@ -75,7 +75,7 @@ class IPCBenchmark:
                 try:
                     r = core.hybrid_recall(f'test query {i}', k=5)
                     results.append(len(r))
-                except:
+                except Exception:
                     results.append(-1)
             return results
 

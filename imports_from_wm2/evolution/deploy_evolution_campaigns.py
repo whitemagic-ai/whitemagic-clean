@@ -18,7 +18,7 @@ class CampaignDeployer:
     def __init__(self, campaign_dir: Path):
         self.campaign_dir = campaign_dir
         self.campaigns = self.load_campaigns()
-        self.results = {}
+        self.results: dict[str, dict] = {}
 
     def load_campaigns(self) -> list[dict]:
         """Load all campaign markdown files"""
@@ -38,7 +38,7 @@ class CampaignDeployer:
                         metadata['file'] = campaign_file
                         metadata['content'] = parts[2]
                         campaigns.append(metadata)
-                    except:
+                    except Exception:
                         # Fallback to manual parsing
                         metadata = self.parse_frontmatter(parts[1])
                         metadata['file'] = campaign_file

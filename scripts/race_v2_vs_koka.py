@@ -225,7 +225,7 @@ def run_koka_clone(binary_path: Path, clone_id: int, max_iterations: int) -> dic
         if "Iterations:" in result.stdout:
             try:
                 iterations = int(result.stdout.split("Iterations:")[1].split()[0])
-            except:
+            except Exception:
                 pass
 
         return {

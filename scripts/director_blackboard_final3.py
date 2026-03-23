@@ -33,7 +33,7 @@ def parse_koka_output(proc):
                 if isinstance(payload, str):
                     try:
                         payload = json.loads(payload)
-                    except:
+                    except Exception:
                         pass
 
                 if isinstance(payload, dict) and payload.get("type") == "file_scout":
