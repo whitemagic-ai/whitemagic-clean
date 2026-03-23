@@ -16,23 +16,23 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import argparse
-import json
-import os
-import time
-from collections.abc import Callable
-from statistics import mean
-from typing import Any
+import argparse  # noqa: E402
+import json  # noqa: E402
+import os  # noqa: E402
+import time  # noqa: E402
+from collections.abc import Callable  # noqa: E402
+from statistics import mean  # noqa: E402
+from typing import Any  # noqa: E402
 
-from whitemagic.run_mcp import _register_prat_tools, get_registered_tool_definitions
-from whitemagic.runtime_status import get_runtime_status
-from whitemagic.security.mcp_integrity import McpIntegrity
-from whitemagic.security.security_breaker import get_security_monitor
-from whitemagic.tools.dispatch_table import dispatch
-from whitemagic.tools.prat_router import route_prat_call, validate_mapping
-from whitemagic.tools.registry import TOOL_REGISTRY
-from whitemagic.tools.tool_surface import get_surface_counts
-from whitemagic.tools.unified_api import call_tool
+from whitemagic.run_mcp import _register_prat_tools, get_registered_tool_definitions  # noqa: E402
+from whitemagic.runtime_status import get_runtime_status  # noqa: E402
+from whitemagic.security.mcp_integrity import McpIntegrity  # noqa: E402
+from whitemagic.security.security_breaker import get_security_monitor  # noqa: E402
+from whitemagic.tools.dispatch_table import dispatch  # noqa: E402
+from whitemagic.tools.prat_router import route_prat_call, validate_mapping  # noqa: E402
+from whitemagic.tools.registry import TOOL_REGISTRY  # noqa: E402
+from whitemagic.tools.tool_surface import get_surface_counts  # noqa: E402
+from whitemagic.tools.unified_api import call_tool  # noqa: E402
 
 REPORTS_DIR = ROOT / "reports" / "benchmarks"
 

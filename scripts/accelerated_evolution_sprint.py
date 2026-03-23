@@ -12,12 +12,12 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-import os
-import sqlite3
-from datetime import datetime
-from typing import Any
+import os  # noqa: E402
+import sqlite3  # noqa: E402
+from datetime import datetime  # noqa: E402
+from typing import Any  # noqa: E402
 
-from whitemagic.core.system.hardware_monitor import (
+from whitemagic.core.system.hardware_monitor import (  # noqa: E402
     check_resource_headroom,
     detect_hardware,
 )

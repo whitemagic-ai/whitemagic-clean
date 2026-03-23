@@ -16,8 +16,8 @@ os.chdir('/home/lucas/Desktop/whitemagicdev')
 # Import WhiteMagic
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
-from whitemagic.tools.dispatch_table import DISPATCH_TABLE
-from whitemagic.tools.prat_router import TOOL_TO_GANA
+from whitemagic.tools.dispatch_table import DISPATCH_TABLE  # noqa: E402
+from whitemagic.tools.prat_router import TOOL_TO_GANA  # noqa: E402
 
 # Stats
 results = {
