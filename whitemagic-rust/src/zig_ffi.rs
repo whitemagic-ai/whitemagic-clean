@@ -2,6 +2,8 @@
 //!
 //! Note: When Zig library (libwhitemagic-zig.a) is not available,
 //! this module provides stub implementations that return sensible defaults.
+#![allow(dead_code)]
+#![allow(unused_imports)]
 
 use pyo3::prelude::*;
 
