@@ -23,16 +23,16 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from whitemagic.cascade.advanced_parallel import (
+from whitemagic.cascade.advanced_parallel import (  # noqa: E402
     AdaptiveParallelExecutor,
     ParallelTask,
     ParallelTier,
 )
-from whitemagic.utils.fileio import atomic_write
+from whitemagic.utils.fileio import atomic_write  # noqa: E402
 
 # Try to import Rust bridge
 try:
-    from whitemagic.optimization.rust_accelerators import tokio_deploy_clones
+    from whitemagic.optimization.rust_accelerators import tokio_deploy_clones  # noqa: E402
     RUST_OK = True
 except ImportError:
     RUST_OK = False

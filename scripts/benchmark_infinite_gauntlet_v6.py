@@ -21,7 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import whitemagic_rust as rs
+import whitemagic_rust as rs  # noqa: E402
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("infinite_gauntlet")

@@ -17,7 +17,9 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from whitemagic.agents.mcp_lieutenants import LieutenantDomain, get_mcp_lieutenant_corps
+from whitemagic.core.nervous_system import get_nervous_system  # noqa: E402
+from whitemagic.core.resonance.gan_ying import get_bus  # noqa: E402
+from whitemagic.agents.mcp_lieutenants import LieutenantDomain, get_mcp_lieutenant_corps  # noqa: E402
 
 # Campaign completion targets
 CAMPAIGNS_TO_COMPLETE = [

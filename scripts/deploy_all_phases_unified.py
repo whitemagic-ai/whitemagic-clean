@@ -19,9 +19,10 @@ from typing import Any
 
 # Add project root
 project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
+sys.path.insert(0, str(project_root))  # noqa: E402
 
-from whitemagic.agents.grand_unified_cycle import get_grand_cycle
+from whitemagic.agents.grand_unified_cycle import get_grand_cycle  # noqa: E402
+from whitemagic.agents.immortal_clone import immortal_clone_deploy  # noqa: E402
 
 
 @dataclass

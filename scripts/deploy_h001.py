@@ -14,7 +14,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from whitemagic.agents.immortal_clone import immortal_clone_deploy
+from whitemagic.agents.immortal_clone import immortal_clone_deploy  # noqa: E402
 
 logging.basicConfig(
     level=logging.INFO,

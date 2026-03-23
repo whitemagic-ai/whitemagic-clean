@@ -1,14 +1,19 @@
 import logging
 import sys
 import time
+from pathlib import Path
 
-sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))  # noqa: E402
+
+import whitemagic_rust as rs  # noqa: E402
+
 logging.getLogger("whitemagic").setLevel(logging.WARNING)
 
-import os
+import os  # noqa: E402
 
-from whitemagic.core.memory.db_manager import get_db_pool
-from whitemagic.core.memory.graph_walker import get_graph_walker
+from whitemagic.core.memory.db_manager import get_db_pool  # noqa: E402
+from whitemagic.core.memory.graph_walker import get_graph_walker  # noqa: E402
 
 
 def main():
