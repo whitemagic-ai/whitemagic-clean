@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import whitemagic_rs
+import whitemagic_rs  # noqa: E402
 
 print("="*80)
 print("STRESS TEST: Rust Accelerators at Scale")

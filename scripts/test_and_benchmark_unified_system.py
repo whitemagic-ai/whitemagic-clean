@@ -15,8 +15,8 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from whitemagic.core.nervous_system import OrganType, get_nervous_system
-from whitemagic.core.resonance.gan_ying import (
+from whitemagic.core.nervous_system import OrganType, get_nervous_system  # noqa: E402
+from whitemagic.core.resonance.gan_ying import (  # noqa: E402
     EventType,
     ResonanceEvent,
     emit_event,

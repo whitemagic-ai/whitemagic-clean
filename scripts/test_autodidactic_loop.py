@@ -16,7 +16,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from whitemagic.core.evolution.autodidactic_loop import (
+from whitemagic.core.evolution.galaxy_miner import get_galaxy_miner  # noqa: E402
+from whitemagic.core.evolution.autodidactic_loop import (  # noqa: E402
     AutodidacticLoop,
     PatternApplication,
     PatternOutcome,

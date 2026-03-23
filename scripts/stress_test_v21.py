@@ -15,8 +15,8 @@ def print_progress(current, total, bar_length=40):
     sys.stdout.write(f"\rInserting Memories: [{arrow + spaces}] {int(percent * 100)}% ({current}/{total})")
     sys.stdout.flush()
 
-from whitemagic.core.memory.sqlite_backend import SQLiteBackend
-from whitemagic.core.memory.unified_types import Memory, MemoryType
+from whitemagic.core.memory.sqlite_backend import SQLiteBackend  # noqa: E402
+from whitemagic.core.memory.unified_types import Memory, MemoryType  # noqa: E402
 
 logging.basicConfig(level=logging.WARNING)
 
