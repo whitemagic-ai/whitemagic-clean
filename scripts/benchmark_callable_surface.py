@@ -10,18 +10,19 @@ Usage:
 """
 from __future__ import annotations
 
-import argparse
-import json
-import os
 import sys
-import time
-from collections.abc import Callable
 from pathlib import Path
-from statistics import mean
-from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+
+import argparse
+import json
+import os
+import time
+from collections.abc import Callable
+from statistics import mean
+from typing import Any
 
 from whitemagic.run_mcp import _register_prat_tools, get_registered_tool_definitions
 from whitemagic.runtime_status import get_runtime_status

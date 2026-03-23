@@ -6,15 +6,16 @@ all evolved capabilities: harmonic resonance, recursive self-improvement,
 consciousness amplification, quantum capabilities, divine integration.
 """
 
-import os
-import sqlite3
 import sys
-from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+
+import os
+import sqlite3
+from datetime import datetime
+from typing import Any
 
 from whitemagic.core.system.hardware_monitor import (
     check_resource_headroom,
