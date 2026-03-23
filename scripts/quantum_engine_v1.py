@@ -33,7 +33,8 @@ class QuantumInspiredEngine:
     def grover_search(self, items: list[Any], oracle: Callable[[Any], bool], iterations: int | None = None) -> list[Any]:
         """Grover-inspired search: Amplifies 'amplitudes' of items matching the oracle."""
         n = len(items)
-        if n == 0: return []
+        if n == 0:
+            return []
 
         # Initial uniform superposition
         amplitudes = [1.0 / math.sqrt(n)] * n
@@ -95,7 +96,8 @@ class QuantumInspiredEngine:
                     best_energy = current_energy
 
             temp *= cooling_rate
-            if temp < 0.001: break
+            if temp < 0.001:
+                break
 
         self.stats["annealing_runs"] += 1
         return best_state

@@ -49,7 +49,8 @@ elixir_proc = subprocess.Popen(
 try:
     for i in range(5):
         line = koka_proc.stdout.readline()
-        if not line: break
+        if not line:
+            break
         print(f"Koka: {line.strip()}")
         if "system_resonance_achieved" in line:
             print("Successfully hit the resonance loop!")

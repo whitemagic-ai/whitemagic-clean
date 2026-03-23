@@ -60,7 +60,8 @@ koka_proc = subprocess.Popen(
 try:
     for i in range(5):
         line = koka_proc.stdout.readline()
-        if not line: break
+        if not line:
+            break
         print(f"Koka: {line.strip()}")
         if "event_received" in line and "Find fast lane" in line:
             break

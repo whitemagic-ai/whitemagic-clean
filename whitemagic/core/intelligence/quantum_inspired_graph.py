@@ -37,7 +37,8 @@ class QuantumGraphEngine:
     ) -> list[QuantumNode]:
         """Apply Grover-inspired amplitude amplification to a set of nodes."""
         n = len(nodes)
-        if n == 0: return []
+        if n == 0:
+            return []
 
         # Initial state: extract amplitudes
         amplitudes = np.array([node.amplitude for node in nodes])
@@ -117,12 +118,14 @@ class QuantumGraphEngine:
 
             for node in current_state:
                 neighbors = get_neighbors_func(node.id)
-                if not neighbors: continue
+                if not neighbors:
+                    continue
 
                 # Distribute amplitude among neighbors
                 # Amplitude is shared proportionally to edge strength (sqrt of probability)
                 total_strength = sum(n.get("strength", 0.1) for n in neighbors)
-                if total_strength == 0: continue
+                if total_strength == 0:
+                    continue
 
                 for n in neighbors:
                     target_id = n["target_id"]

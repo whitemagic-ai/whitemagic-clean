@@ -61,7 +61,8 @@ def execute_v19_dedup(dry_run=True):
     all_duplicate_groups = [dup['ids'].split(',') for dup in exact_duplicates] + [dup['ids'].split(',') for dup in near_duplicates]
 
     for ids in all_duplicate_groups:
-        if len(ids) < 2: continue
+        if len(ids) < 2:
+            continue
 
         # Keep the one with highest importance/access count
         placeholders = ','.join('?' * len(ids))
@@ -72,7 +73,8 @@ def execute_v19_dedup(dry_run=True):
         """, ids)
 
         sorted_ids = [row['id'] for row in cursor.fetchall()]
-        if not sorted_ids: continue
+        if not sorted_ids:
+            continue
 
         sorted_ids[0]
         to_archive = sorted_ids[1:]

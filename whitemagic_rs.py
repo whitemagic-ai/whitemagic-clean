@@ -101,7 +101,8 @@ class MemoryLifecycle:
         self.transitions = {}
     def set_stage(self, mid: str, stage: str):
         if mid in self.stages:
-            if mid not in self.transitions: self.transitions[mid] = []
+            if mid not in self.transitions:
+                self.transitions[mid] = []
             self.transitions[mid].append((self.stages[mid], stage))
         self.stages[mid] = stage
     def get_transitions(self, mid: str) -> list[tuple[str, str]]:

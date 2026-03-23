@@ -118,7 +118,8 @@ class OmegaPulse:
 
         # Test Grover search on recent memories
         recent = um.list_recent(limit=20)
-        if not recent: return "No memories for quantum test"
+        if not recent:
+            return "No memories for quantum test"
 
         # Oracle: items containing 'architecture'
         results = engine.grover_search(recent, lambda m: "architecture" in str(m.content).lower())
@@ -148,7 +149,8 @@ class OmegaPulse:
         sa = get_salience_arbiter()
         um = get_unified_memory()
         memories = um.list_recent(limit=5)
-        if not memories: return "No data"
+        if not memories:
+            return "No data"
 
         scored = []
         for m in memories:

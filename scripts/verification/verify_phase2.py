@@ -105,9 +105,12 @@ def test_soft_delete_filtering():
 if __name__ == "__main__":
     success = True
     try:
-        if not test_json_serialization(): success = False
-        if not test_ssrf_protection(): success = False
-        if not test_soft_delete_filtering(): success = False
+        if not test_json_serialization():
+            success = False
+        if not test_ssrf_protection():
+            success = False
+        if not test_soft_delete_filtering():
+            success = False
     except Exception as e:
         print(f"Tests failed with error: {e}")
         import traceback
