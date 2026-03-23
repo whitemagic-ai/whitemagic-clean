@@ -32,7 +32,9 @@ from whitemagic.utils.fileio import atomic_write  # noqa: E402
 
 # Try to import Rust bridge
 try:
-    from whitemagic.optimization.rust_accelerators import tokio_deploy_clones  # noqa: E402
+    from whitemagic.optimization.rust_accelerators import (
+        tokio_deploy_clones,  # noqa: E402
+    )
     RUST_OK = True
 except ImportError:
     RUST_OK = False

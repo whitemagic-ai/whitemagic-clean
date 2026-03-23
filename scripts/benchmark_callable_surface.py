@@ -24,7 +24,10 @@ from collections.abc import Callable  # noqa: E402
 from statistics import mean  # noqa: E402
 from typing import Any  # noqa: E402
 
-from whitemagic.run_mcp import _register_prat_tools, get_registered_tool_definitions  # noqa: E402
+from whitemagic.run_mcp import (  # noqa: E402
+    _register_prat_tools,
+    get_registered_tool_definitions,
+)
 from whitemagic.runtime_status import get_runtime_status  # noqa: E402
 from whitemagic.security.mcp_integrity import McpIntegrity  # noqa: E402
 from whitemagic.security.security_breaker import get_security_monitor  # noqa: E402

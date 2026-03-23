@@ -38,7 +38,10 @@ sys.path.insert(0, str(project_root))
 
 # Import all army systems
 from whitemagic.agents.immortal_clone_v2 import immortal_clone_deploy  # noqa: E402
-from whitemagic.agents.lieutenants import LieutenantCorps, LieutenantDomain  # noqa: E402
+from whitemagic.agents.lieutenants import (  # noqa: E402
+    LieutenantCorps,
+    LieutenantDomain,
+)
 from whitemagic.agents.mcp_lieutenants import LIEUTENANT_MCP_TOOLS  # noqa: E402
 
 logging.basicConfig(

@@ -6,7 +6,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))  # noqa: E402
 
-import whitemagic_rust as rs  # noqa: E402
 
 logging.getLogger("whitemagic").setLevel(logging.WARNING)
 

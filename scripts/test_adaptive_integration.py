@@ -16,7 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from whitemagic.core.evolution.adaptive_integration import (
+from whitemagic.core.evolution.adaptive_integration import (  # noqa: E402
     AdaptiveIntegration,
     simulate_pattern_application,
 )
