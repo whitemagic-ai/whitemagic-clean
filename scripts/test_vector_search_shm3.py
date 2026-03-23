@@ -6,7 +6,7 @@ sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 
 logging.basicConfig(level=logging.INFO)
 
-from whitemagic.core.memory.vector_search import get_vector_search
+from whitemagic.core.memory.vector_search import get_vector_search  # noqa: E402
 
 
 def main():

@@ -29,7 +29,7 @@ if "whitemagic.config.paths" in sys.modules:
 # Ensure all subdirectories (memory/, data/, cache/, etc.) exist on disk.
 # Without this, SQLite cannot create the DB file in CI where ~/.whitemagic
 # doesn't pre-exist.
-from whitemagic.config.paths import ensure_paths
+from whitemagic.config.paths import ensure_paths  # noqa: E402
 
 ensure_paths()
 

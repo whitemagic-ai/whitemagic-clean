@@ -8,8 +8,8 @@ import sys
 
 sys.path.append(os.getcwd())
 
-from newmagic.core.oracle.quantum_iching import QuantumIChing
-from newmagic.core.symbolic import ConceptType, SymbolicReasoning
+from newmagic.core.oracle.quantum_iching import QuantumIChing  # noqa: E402
+from newmagic.core.symbolic import ConceptType, SymbolicReasoning  # noqa: E402
 
 
 def verify_iching():
@@ -46,7 +46,9 @@ def verify_symbolic():
 
     print("✅ SymbolicReasoning OK")
 
-from newmagic.core.gardens.synthesis_enhanced import EnhancedGardenSynthesis
+from newmagic.core.gardens.synthesis_enhanced import (
+    EnhancedGardenSynthesis,  # noqa: E402
+)
 
 
 def verify_synthesis():
@@ -70,10 +72,10 @@ def verify_synthesis():
 
     print("✅ EnhancedGardenSynthesis OK")
 
-import threading
-import time
+import threading  # noqa: E402
+import time  # noqa: E402
 
-from newmagic.core.lib.io.locking import atomic_write, file_lock
+from newmagic.core.lib.io.locking import atomic_write, file_lock  # noqa: E402
 
 
 def verify_locking():
@@ -104,7 +106,7 @@ def verify_locking():
     if os.path.exists(test_file):
         os.remove(test_file)
 
-from newmagic.core.lib.logging import get_logger, setup_logging
+from newmagic.core.lib.logging import get_logger, setup_logging  # noqa: E402
 
 
 def verify_logging_sys():
@@ -116,8 +118,8 @@ def verify_logging_sys():
     assert logger.level == 0  # Level is delegated, root sets effective level
     print("   ✅ Logger Initialization OK")
 
-from newmagic.core.core.ganas.base import GanaCall
-from newmagic.core.core.ganas.eastern_quadrant import RootGana
+from newmagic.core.core.ganas.base import GanaCall  # noqa: E402
+from newmagic.core.core.ganas.eastern_quadrant import RootGana  # noqa: E402
 
 
 async def verify_transmutation():
@@ -145,7 +147,7 @@ async def verify_transmutation():
 
     print("✅ RootGana Transmutation OK")
 
-from whitemagic.core.ganas.western_quadrant import NetGana
+from whitemagic.core.ganas.western_quadrant import NetGana  # noqa: E402
 
 
 async def verify_net_transmutation():
@@ -174,7 +176,7 @@ async def verify_net_transmutation():
 
     print("✅ NetGana Transmutation OK")
 
-import asyncio
+import asyncio  # noqa: E402
 
 if __name__ == "__main__":
     print("🚀 Starting Unified Verification...")

@@ -10,6 +10,7 @@ Provides shared memory channels between WhiteMagic processes:
 import atexit
 import json
 import logging
+import os
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -88,7 +89,5 @@ def shutdown_ipc():
     _ipc_initialized = False
 
 # Auto-initialize on first use if WM_AUTO_IPC is set
-import os
-
 if os.environ.get("WM_AUTO_IPC", "0") == "1":
     init_ipc()

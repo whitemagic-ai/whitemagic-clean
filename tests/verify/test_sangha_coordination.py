@@ -7,11 +7,11 @@ import pytest
 
 rich = pytest.importorskip("rich")
 
-import time
+import time  # noqa: E402
 
-from rich.console import Console
+from rich.console import Console  # noqa: E402
 
-from whitemagic.gardens.sangha.resources import get_resources
+from whitemagic.gardens.sangha.resources import get_resources  # noqa: E402
 
 console = Console()
 

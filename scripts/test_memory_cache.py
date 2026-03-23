@@ -12,8 +12,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from whitemagic.core.memory.unified import get_unified_memory
-from whitemagic.core.memory.unified_types import MemoryType
+from whitemagic.core.memory.unified import get_unified_memory  # noqa: E402
+from whitemagic.core.memory.unified_types import MemoryType  # noqa: E402
 
 print("="*80)
 print("MEMORY CACHE TEST - Phase 3 Recursive Evolution")

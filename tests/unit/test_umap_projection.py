@@ -6,7 +6,7 @@ import pytest
 
 np = __import__("pytest").importorskip("numpy")
 
-from whitemagic.core.memory.umap_projection import (
+from whitemagic.core.memory.umap_projection import (  # noqa: E402
     ProjectionPoint,
     ProjectionResult,
     UMAPProjector,

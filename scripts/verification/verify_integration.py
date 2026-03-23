@@ -7,12 +7,12 @@ import sys
 logging.basicConfig(level=logging.INFO)
 
 # Make sure we can import whitemagic
-import os; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) # Auto-fixed path
+import os; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) # noqa: E402
 
 try:
-    from whitemagic.core.ganas.base import GanaCall
-    from whitemagic.core.ganas.southern_quadrant import ExtendedNetGana
-    from whitemagic.core.ganas.western_quadrant import NetGana
+    from whitemagic.core.ganas.base import GanaCall  # noqa: E402
+    from whitemagic.core.ganas.southern_quadrant import ExtendedNetGana  # noqa: E402
+    from whitemagic.core.ganas.western_quadrant import NetGana  # noqa: E402
 except ImportError as e:
     print(f"ImportError: {e}")
     sys.exit(1)

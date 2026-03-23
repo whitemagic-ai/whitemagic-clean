@@ -5,6 +5,8 @@ for 10-100x speedup on specific operations.
 """
 
 import logging
+import math
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -124,7 +126,4 @@ class QuantumGraphAdapter:
                 "use_superposition": self._config.use_superposition,
             }
         }
-
-import math
-import time
 

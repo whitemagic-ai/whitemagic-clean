@@ -965,8 +965,8 @@ def tools(ctx, json_output: bool) -> None:
     click.echo("  whitemagic <command> --help")
 
 # === RESONANCE / HEALTH COMMANDS === (PSR-028: extracted to cli/commands/health_commands.py)
-from whitemagic.cli.commands.health_commands import (
-    register_health_commands,  # noqa: E402
+from whitemagic.cli.commands.health_commands import (  # noqa: E402
+    register_health_commands,
 )
 
 register_health_commands(main)
@@ -1144,8 +1144,8 @@ main.add_command(army)
 
 
 # === CONDUCTOR COMMANDS === (PSR-028: extracted to cli/commands/conductor_commands.py)
-from whitemagic.cli.commands.conductor_commands import (
-    register_conductor_commands,  # noqa: E402
+from whitemagic.cli.commands.conductor_commands import (  # noqa: E402
+    register_conductor_commands,
 )
 
 register_conductor_commands(main)

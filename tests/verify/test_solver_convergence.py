@@ -7,11 +7,11 @@ import pytest
 
 rich = pytest.importorskip("rich")
 
-import time
+import time  # noqa: E402
 
-from rich.console import Console
+from rich.console import Console  # noqa: E402
 
-from whitemagic.tools.unified_api import call_tool
+from whitemagic.tools.unified_api import call_tool  # noqa: E402
 
 console = Console()
 

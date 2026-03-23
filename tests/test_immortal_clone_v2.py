@@ -12,7 +12,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from whitemagic.agents.immortal_clone_v2 import (
+from whitemagic.agents.immortal_clone_v2 import (  # noqa: E402
     CampaignDashboard,
     CampaignVictoryTracker,
     immortal_clone_deploy,

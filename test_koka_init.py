@@ -3,7 +3,9 @@ import sys
 
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
-from whitemagic.core.acceleration.koka_native_bridge import KokaNativeBridge
+from whitemagic.core.acceleration.koka_native_bridge import (
+    KokaNativeBridge,  # noqa: E402
+)
 
 bridge = KokaNativeBridge()
 print("Available:", bridge._available)

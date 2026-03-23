@@ -22,7 +22,7 @@ print(f"Hash signature: {entry.hash_signature}")
 print(f"Chain valid: {ledger.verify_chain()}")
 
 # Check DB persistence
-import sqlite3
+import sqlite3  # noqa: E402
 
 conn = sqlite3.connect("/home/lucas/.whitemagic/memory/whitemagic.db")
 row = conn.execute("SELECT * FROM zodiac_ledger WHERE entry_id = ?", (entry.entry_id,)).fetchone()

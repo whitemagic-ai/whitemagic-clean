@@ -20,9 +20,12 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from whitemagic.agents.grand_unified_cycle import advance, run_round
-from whitemagic.agents.grand_unified_cycle import status as cycle_status
-from whitemagic.agents.mcp_lieutenants import LieutenantDomain, get_mcp_lieutenant_corps
+from whitemagic.agents.grand_unified_cycle import advance, run_round  # noqa: E402
+from whitemagic.agents.grand_unified_cycle import status as cycle_status  # noqa: E402
+from whitemagic.agents.mcp_lieutenants import (  # noqa: E402
+    LieutenantDomain,
+    get_mcp_lieutenant_corps,
+)
 
 
 def get_db():

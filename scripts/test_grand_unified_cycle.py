@@ -17,7 +17,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from whitemagic.agents.grand_unified_cycle import (
+from whitemagic.agents.grand_unified_cycle import (  # noqa: E402
     PipelinePhase,
     WuXingElement,
     ZodiacSign,

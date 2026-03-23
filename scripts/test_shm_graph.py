@@ -5,11 +5,11 @@ import time
 sys.path.insert(0, '/home/lucas/Desktop/whitemagicdev')
 logging.basicConfig(level=logging.INFO)
 
-import os
+import os  # noqa: E402
 
-from whitemagic.core.memory.db_manager import get_db_pool
-from whitemagic.core.memory.shm_graph import get_shm_graph
-from whitemagic.core.memory.shm_manager import get_shm_manager
+from whitemagic.core.memory.db_manager import get_db_pool  # noqa: E402
+from whitemagic.core.memory.shm_graph import get_shm_graph  # noqa: E402
+from whitemagic.core.memory.shm_manager import get_shm_manager  # noqa: E402
 
 
 def main():

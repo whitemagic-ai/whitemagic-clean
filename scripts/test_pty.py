@@ -2,7 +2,7 @@ import os
 import pty
 
 master, slave = pty.openpty()
-import subprocess
+import subprocess  # noqa: E402
 
 proc = subprocess.Popen(
     ['/home/lucas/Desktop/whitemagicdev/whitemagic-koka/batch_ipc'],
