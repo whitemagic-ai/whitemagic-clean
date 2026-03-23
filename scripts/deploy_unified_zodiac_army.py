@@ -33,7 +33,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from whitemagic.agents.unified_zodiac_army import (
+from whitemagic.agents.unified_zodiac_army import (  # noqa: E402
     ZODIAC_ARMY_MAPPINGS,
     ArmyType,
     get_unified_commander,

@@ -18,7 +18,7 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from whitemagic.core.system.hardware_monitor import (
+from whitemagic.core.system.hardware_monitor import (  # noqa: E402
     detect_hardware,
     get_safe_batch_config,
 )

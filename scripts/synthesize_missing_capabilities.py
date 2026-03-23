@@ -268,5 +268,11 @@ print(f"Report: {report_path}")
 print()
 print("✅ All missing capabilities synthesized to WM2!")
 
+
+def main():
+    """Main entry point - all work done at module load."""
+    pass
+
+
 if __name__ == "__main__":
     main()

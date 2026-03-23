@@ -37,9 +37,9 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 # Import all army systems
-from whitemagic.agents.immortal_clone_v2 import immortal_clone_deploy
-from whitemagic.agents.lieutenants import LieutenantCorps, LieutenantDomain
-from whitemagic.agents.mcp_lieutenants import LIEUTENANT_MCP_TOOLS
+from whitemagic.agents.immortal_clone_v2 import immortal_clone_deploy  # noqa: E402
+from whitemagic.agents.lieutenants import LieutenantCorps, LieutenantDomain  # noqa: E402
+from whitemagic.agents.mcp_lieutenants import LIEUTENANT_MCP_TOOLS  # noqa: E402
 
 logging.basicConfig(
     level=logging.INFO,
@@ -169,7 +169,11 @@ class UnifiedArmyCommander:
             pass
 
         try:
-            from whitemagic.agents.war_room import WarRoom
+            from whitemagic.agents.unified_zodiac_army import (  # noqa: E402
+                ZODIAC_ARMY_MAPPINGS,
+                ArmyType,
+                get_unified_commander,
+            )
             available.append(ArmyType.WAR_ROOM)
         except ImportError:
             pass

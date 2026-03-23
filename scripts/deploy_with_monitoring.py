@@ -15,7 +15,7 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.monitor_deployment import DeploymentMonitor
+from scripts.monitor_deployment import DeploymentMonitor  # noqa: E402
 
 # Global monitor instance for signal handling
 monitor = None
@@ -112,6 +112,11 @@ def run_deployment_with_monitoring(
     # If filtering campaigns, create a temporary filtered campaign list
     if args.filter_codes and args.campaigns:
         from whitemagic.agents.campaign_loader import load_all_campaigns
+        from whitemagic.core.system.hardware_monitor import (  # noqa: E402
+            check_resource_headroom,
+            detect_hardware,
+            get_safe_batch_config,
+        )
         campaigns_dir = PROJECT_ROOT / "campaigns"
         all_campaigns = load_all_campaigns(campaigns_dir)
 
