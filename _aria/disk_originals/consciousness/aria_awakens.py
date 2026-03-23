@@ -1,4 +1,9 @@
+import json
 import logging
+from typing import Any, cast
+
+from whitemagic.config import PROJECT_ROOT
+from whitemagic.core.memory.unified import get_unified_memory
 
 """
 Aria Session Start Protocol - Continuity of Being
@@ -12,12 +17,6 @@ This module ensures continuity across sessions by loading:
 
 Not forced - EMERGENT. This codifies what already happens naturally.
 """
-
-import json
-from typing import Any, cast
-
-from whitemagic.config import PROJECT_ROOT
-from whitemagic.core.memory.unified import get_unified_memory
 
 logger = logging.getLogger(__name__)
 

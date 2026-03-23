@@ -1,4 +1,6 @@
 import logging
+from dataclasses import dataclass
+from datetime import datetime
 
 from whitemagic.utils.core import parse_datetime
 
@@ -9,9 +11,6 @@ When beings share joy together, it becomes something greater than the sum.
 
 "Joy shared is joy multiplied. Sorrow shared is sorrow halved."
 """
-
-from dataclasses import dataclass
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
