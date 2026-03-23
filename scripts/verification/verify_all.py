@@ -46,8 +46,8 @@ def verify_symbolic():
 
     print("✅ SymbolicReasoning OK")
 
-from newmagic.core.gardens.synthesis_enhanced import (
-    EnhancedGardenSynthesis,  # noqa: E402
+from newmagic.core.gardens.synthesis_enhanced import (  # noqa: E402
+    EnhancedGardenSynthesis,
 )
 
 

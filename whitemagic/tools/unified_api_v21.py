@@ -147,7 +147,6 @@ def _execute_tool_internal(tool_name: str, **kwargs: Any) -> dict[str, Any]:
 
         if asyncio.iscoroutinefunction(handler):
             # This shouldn't happen with sync wrapper, but just in case
-            import asyncio
             return asyncio.run(handler(**kwargs))
         else:
             return handler(**kwargs)

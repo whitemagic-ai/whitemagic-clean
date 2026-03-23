@@ -2,12 +2,13 @@
 import asyncio
 import logging
 import sys
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
 # Make sure we can import whitemagic
-import os; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) # noqa: E402
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
     from whitemagic.core.ganas.base import GanaCall  # noqa: E402

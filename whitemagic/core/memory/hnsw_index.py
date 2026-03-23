@@ -107,7 +107,7 @@ class HNSWIndex:
         self.nodes[memory_id] = {
             'vector': vector,
             'level': level,
-            'neighbors': {l: [] for l in range(level + 1)}
+            'neighbors': {lvl: [] for lvl in range(level + 1)}
         }
 
         if self.entry_point is None:
@@ -119,12 +119,12 @@ class HNSWIndex:
         curr_node = self.entry_point
         curr_dist = self._distance(vector, self.nodes[curr_node]['vector'])
 
-        for l in range(self.max_level, -1, -1):
+        for lvl in range(self.max_level, -1, -1):
             # Greedy search at this level
             changed = True
             while changed:
                 changed = False
-                for neighbor_id in self.nodes[curr_node]['neighbors'].get(l, []):
+                for neighbor_id in self.nodes[curr_node]['neighbors'].get(lvl, []):
                     if neighbor_id not in self.nodes:
                         continue
                     dist = self._distance(vector, self.nodes[neighbor_id]['vector'])
@@ -134,13 +134,13 @@ class HNSWIndex:
                         changed = True
 
             # Connect to M nearest neighbors at this level
-            if l <= level:
-                neighbors = self._search_layer(vector, curr_node, l, self.m)
-                self.nodes[memory_id]['neighbors'][l] = neighbors
+            if lvl <= level:
+                neighbors = self._search_layer(vector, curr_node, lvl, self.m)
+                self.nodes[memory_id]['neighbors'][lvl] = neighbors
                 # Bidirectional connections
                 for n in neighbors:
-                    if n in self.nodes and l in self.nodes[n]['neighbors']:
-                        self.nodes[n]['neighbors'][l].append(memory_id)
+                    if n in self.nodes and lvl in self.nodes[n]['neighbors']:
+                        self.nodes[n]['neighbors'][lvl].append(memory_id)
 
         if level > self.max_level:
             self.max_level = level
