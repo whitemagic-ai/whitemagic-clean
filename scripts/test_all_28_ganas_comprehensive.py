@@ -428,8 +428,8 @@ class GanaAnalyzer:
                 "fast_tools_count": len(self.patterns["fast_tools"]),
                 "slow_tools_count": len(self.patterns["slow_tools"]),
                 "very_slow_tools": [
-                    {"gana": g, "tool": t, "latency_ms": l}
-                    for g, t, l in self.patterns["very_slow_tools"]
+                    {"gana": g, "tool": t, "latency_ms": lvl}
+                    for g, t, lvl in self.patterns["very_slow_tools"]
                 ],
                 "token_heavy_count": len(self.patterns["token_heavy"]),
                 "error_patterns": {

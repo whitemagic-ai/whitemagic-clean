@@ -94,7 +94,7 @@ class ScoutArmy:
             return 'critical'
         elif any(h in context_lower for h in high):
             return 'high'
-        elif any(l in context_lower for l in low):
+        elif any(lvl in context_lower for lvl in low):
             return 'low'
         return 'medium'
 

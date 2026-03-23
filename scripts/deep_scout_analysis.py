@@ -245,7 +245,7 @@ class MigrationScout:
 
             f.write(f"- **Total Migration Targets**: {total_files} files\n")
             f.write(f"- **Total LOC**: {total_loc:,}\n")
-            f.write(f"- **Languages**: {len([l for l in self.targets if self.targets[l]])}\n\n")
+            f.write(f"- **Languages**: {len([lang for lang in self.targets if self.targets[lang]])}\n\n")
 
             f.write("## By Language\n\n")
             f.write("| Language | Files | LOC | Clones | Batch Size |\n")

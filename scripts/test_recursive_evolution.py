@@ -25,7 +25,11 @@ from whitemagic.core.evolution import (
 )
 
 try:
-    from whitemagic.core.resonance.gan_ying import EventType, emit_event, get_bus
+    from whitemagic.core.resonance.gan_ying import (  # noqa: F401
+        EventType,
+        emit_event,
+        get_bus,
+    )
     GAN_YING_AVAILABLE = True
 except ImportError:
     GAN_YING_AVAILABLE = False

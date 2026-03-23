@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional  # noqa: F401, UP035
 
 from whitemagic.config.paths import WM_ROOT
 from whitemagic.utils.fast_json import dumps_str as _json_dumps

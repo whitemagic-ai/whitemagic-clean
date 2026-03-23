@@ -93,7 +93,9 @@ class WillowHealthChecker:
 
         # 3. Test grimoire handler availability
         try:
-            from whitemagic.tools.handlers.grimoire import handle_grimoire_list
+            from whitemagic.tools.handlers.grimoire import (
+                handle_grimoire_list,  # noqa: F401
+            )
 
             # Quick non-blocking test
             test_result = await self._test_grimoire_handler()

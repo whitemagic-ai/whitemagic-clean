@@ -171,9 +171,6 @@ class UnifiedArmyCommander:
             pass
 
         try:
-            from whitemagic.agents.unified_zodiac_army import (  # noqa: E402
-                ArmyType,
-            )
             available.append(ArmyType.WAR_ROOM)
         except ImportError:
             pass

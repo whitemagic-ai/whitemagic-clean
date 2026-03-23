@@ -11,7 +11,11 @@ logging.basicConfig(level=logging.ERROR)
 
 # Import Gana base and Southern implementations
 try:
-    from whitemagic.core.ganas.base import BaseGana, GanaCall, LunarMansion
+    from whitemagic.core.ganas.base import (  # noqa: F401
+        BaseGana,
+        GanaCall,
+        LunarMansion,
+    )
     from whitemagic.core.ganas.southern_quadrant import (
         AbundanceGana,
         ChariotGana,

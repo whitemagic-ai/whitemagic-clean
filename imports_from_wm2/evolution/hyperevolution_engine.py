@@ -36,16 +36,19 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "whitemagicdev"))
 
 try:
-    from whitemagic_rs import parallel_fitness_batch, tokio_clones
+    from whitemagic_rs import parallel_fitness_batch, tokio_clones  # noqa: F401
     RUST_AVAILABLE = True
 except ImportError:
     RUST_AVAILABLE = False
     print("⚠️  Rust unavailable - using Python fallback (will be slower)")
 
 try:
-    from whitemagic.core.dreaming.dream_cycle import DreamPhase, DreamReport
+    from whitemagic.core.dreaming.dream_cycle import (  # noqa: F401
+        DreamPhase,
+        DreamReport,
+    )
     from whitemagic.core.intelligence.synthesis.kaizen_engine import (
-        ImprovementProposal,
+        ImprovementProposal,  # noqa: F401
         KaizenEngine,
     )
     from whitemagic.core.memory.phylogenetics import get_phylogenetics

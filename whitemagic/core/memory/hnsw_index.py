@@ -187,12 +187,12 @@ class HNSWIndex:
 
         # Search from top layer to layer 0
         curr_node = self.entry_point
-        for l in range(self.max_level, 0, -1):
+        for lvl in range(self.max_level, 0, -1):
             changed = True
             curr_dist = self._distance(query, self.nodes[curr_node]['vector'])
             while changed:
                 changed = False
-                for neighbor_id in self.nodes[curr_node]['neighbors'].get(l, []):
+                for neighbor_id in self.nodes[curr_node]['neighbors'].get(lvl, []):
                     if neighbor_id not in self.nodes:
                         continue
                     dist = self._distance(query, self.nodes[neighbor_id]['vector'])

@@ -189,7 +189,7 @@ def bench_rust_holographic():
         from whitemagic.optimization.rust_accelerators import (
             holographic_encode_batch,
             holographic_encode_single,
-            rust_available,
+            rust_available,  # noqa: F401
             rust_v131_available,
         )
         has_rust = rust_v131_available()

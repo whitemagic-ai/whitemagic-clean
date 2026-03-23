@@ -117,11 +117,11 @@ class Serializable:
             return expected_type(value)
 
         # Handle lists
-        if hasattr(expected_type, '__origin__') and expected_type.__origin__ == list:
+        if hasattr(expected_type, '__origin__') and expected_type.__origin__ is list:
             return [value] if not isinstance(value, list) else value
 
         # Handle dicts
-        if hasattr(expected_type, '__origin__') and expected_type.__origin__ == dict:
+        if hasattr(expected_type, '__origin__') and expected_type.__origin__ is dict:
             return value if isinstance(value, dict) else {}
 
         return value

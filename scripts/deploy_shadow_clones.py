@@ -41,9 +41,9 @@ REPORTS_DIR.mkdir(exist_ok=True)
 try:
     import whitemagic_rs as rs
     from whitemagic.optimization.rust_accelerators import (
-        keyword_extract,
-        keyword_extract_batch,
-        minhash_find_duplicates,
+        keyword_extract,  # noqa: F401
+        keyword_extract_batch,  # noqa: F401
+        minhash_find_duplicates,  # noqa: F401
         tokio_clone_bench,
         tokio_clone_stats,
         tokio_deploy_clones,

@@ -288,7 +288,8 @@ def step_dream_cycle(quick=False):
         return results_phases
     except Exception as e:
         print(f"  ❌ Dream cycle error: {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 
@@ -365,7 +366,8 @@ def step_graph_walker():
         return {"seed": seed_id, "nodes_visited": result.unique_nodes_visited, "paths": result.paths_explored, "duration_ms": result.duration_ms}
     except Exception as e:
         print(f"  ❌ {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 
@@ -393,7 +395,8 @@ def step_causal_mining():
         return d
     except Exception as e:
         print(f"  ❌ {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 
@@ -421,7 +424,8 @@ def step_emergence_scan():
         return {"insights_found": len(insights), "insights": [i.to_dict() if hasattr(i, 'to_dict') else str(i) for i in insights[:20]]}
     except Exception as e:
         print(f"  ❌ {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 
@@ -457,7 +461,8 @@ def step_satkona_fusion():
         return result
     except Exception as e:
         print(f"  ❌ {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 
@@ -491,7 +496,8 @@ def step_multispectral_reasoning():
         return {"questions_asked": len(results), "results": results}
     except Exception as e:
         print(f"  ❌ {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 
@@ -525,7 +531,8 @@ def step_novelty_detection():
         return {"detections": results, "stats": stats}
     except Exception as e:
         print(f"  ❌ {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 
@@ -565,7 +572,8 @@ def step_bridge_synthesis():
             return {"insights": 0, "message": "No bridge nodes found"}
     except Exception as e:
         print(f"  ❌ {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 
@@ -622,7 +630,8 @@ def step_pattern_consciousness():
         return status
     except Exception as e:
         print(f"  ❌ {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 
@@ -791,7 +800,8 @@ def main():
             results[key] = func()
         except Exception as e:
             print(f"  ❌ Error: {e}")
-            import traceback; traceback.print_exc()
+            import traceback
+            traceback.print_exc()
             results[key] = {"error": str(e)}
     else:
         for step_name, (key, func) in step_map.items():
@@ -799,7 +809,8 @@ def main():
                 results[key] = func()
             except Exception as e:
                 print(f"\n  ❌ Step '{step_name}' failed: {e}")
-                import traceback; traceback.print_exc()
+                import traceback
+                traceback.print_exc()
                 results[key] = {"error": str(e)}
 
     total_elapsed = time.perf_counter() - total_start

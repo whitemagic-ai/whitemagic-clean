@@ -221,9 +221,11 @@ def get_registered_tool_definitions(*, lite_mode: bool = False) -> list[Any]:
 def register_tools() -> None:
     """Register all tools from the canonical registry.py with dynamic signatures."""
     try:
-        from whitemagic.tools.registry import TOOL_REGISTRY
+        from whitemagic.tools.registry import TOOL_REGISTRY  # noqa: F401
         from whitemagic.tools.schema_adapter import adapt_schema
-        from whitemagic.tools.tool_surface import get_callable_tool_definitions
+        from whitemagic.tools.tool_surface import (
+            get_callable_tool_definitions,  # noqa: F401
+        )
         from whitemagic.tools.unified_api import call_tool
     except ImportError as e:
         logger.error(f"Failed to import registry or unified_api: {e}")

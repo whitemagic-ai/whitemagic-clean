@@ -84,7 +84,7 @@ def polyglot_worker(args: tuple[list[str], int, int, bool]) -> dict:
         rust_available = False
         if use_rust:
             try:
-                import whitemagic_rs
+                import whitemagic_rs  # noqa: F401
                 rust_available = True
             except ImportError:
                 pass

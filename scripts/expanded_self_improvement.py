@@ -60,7 +60,7 @@ class ExpandedSelfImprovement:
                 findings["issues"].append("Mojo/Julia acceleration candidate")
 
             # Line length issues
-            long_lines = [i for i, l in enumerate(lines, 1) if len(l) > 120]
+            long_lines = [i for i, lvl in enumerate(lines, 1) if len(lvl) > 120]
             if long_lines:
                 findings["issues"].append(f"{len(long_lines)} lines exceed 120 chars")
 

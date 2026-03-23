@@ -20,7 +20,7 @@ REPORTS_DIR.mkdir(exist_ok=True)
 # Try Rust bridge
 RUST_OK = False
 try:
-    import whitemagic_rs as rs
+    import whitemagic_rs as rs  # noqa: F401
     from whitemagic.optimization.rust_accelerators import tokio_deploy_clones
     RUST_OK = True
     print("✅ Rust bridge available")

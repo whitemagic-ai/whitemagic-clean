@@ -144,7 +144,7 @@ class PolyglotRouter:
                 elif str(lib_path) not in os.environ["LD_LIBRARY_PATH"]:
                     os.environ["LD_LIBRARY_PATH"] += f":{lib_path}"
 
-                import whitemagic_rs
+                import whitemagic_rs  # noqa: F401
                 return True
             except ImportError:
                 return False

@@ -38,8 +38,13 @@ logger = logging.getLogger(__name__)
 try:
     from rich.console import Console
     from rich.live import Live
-    from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
-    from rich.progress import TimeRemainingColumn as _TimeRemainingColumn
+    from rich.progress import (  # noqa: F401
+        BarColumn,
+        Progress,
+        SpinnerColumn,
+        TextColumn,
+    )
+    from rich.progress import TimeRemainingColumn as _TimeRemainingColumn  # noqa: F401
     from rich.table import Table
     RICH_AVAILABLE = True
 except ImportError:

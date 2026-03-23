@@ -3,7 +3,7 @@ import logging
 import threading
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional  # noqa: F401, UP035
 
 from whitemagic.config import PROJECT_ROOT
 

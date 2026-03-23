@@ -60,7 +60,7 @@ def get_stats():
 def check_rust_availability():
     """Check if Rust bridge is available."""
     try:
-        import whitemagic_rs
+        import whitemagic_rs  # noqa: F401
         return True
     except ImportError:
         return False

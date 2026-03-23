@@ -2,10 +2,19 @@
 
 import uuid
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional  # noqa: F401, UP035
 
 from app.database import Base
-from sqlalchemy import JSON, Column, DateTime, Float, ForeignKey, Index, String, Text
+from sqlalchemy import (  # noqa: F401
+    JSON,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    String,
+    Text,
+)
 from sqlalchemy.dialects.postgresql import ARRAY, FLOAT, UUID
 
 

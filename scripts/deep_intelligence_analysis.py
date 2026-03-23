@@ -167,7 +167,7 @@ class DeepIntelligenceScout:
             try:
                 with open(py_file, encoding='utf-8', errors='ignore') as f:
                     lines = f.readlines()
-                    total_lines += len([l for l in lines if l.strip()])
+                    total_lines += len([line for line in lines if line.strip()])
 
                     # Check for module docstring
                     content = ''.join(lines)

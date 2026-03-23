@@ -90,7 +90,7 @@ class V181ComprehensiveTestSuite:
                 print(f"   {size:>5} vectors: HNSW={hnsw_time:.2f}ms, Linear≈{linear_time:.2f}ms, Speedup={speedup:.1f}x")
 
             # Calculate average speedup
-            avg_speedup = sum(l / h for (_, h), (_, l) in zip(hnsw_times, linear_times)) / len(hnsw_times)
+            avg_speedup = sum(lvl / h for (_, h), (_, lvl) in zip(hnsw_times, linear_times)) / len(hnsw_times)
 
             # Test against projection (1000x for 100K+ vectors)
             # At 5000 vectors we're seeing ~50x, project to 100K

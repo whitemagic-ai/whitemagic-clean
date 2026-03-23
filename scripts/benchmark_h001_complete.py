@@ -121,7 +121,7 @@ def main():
 
     # Check Rust availability
     try:
-        import whitemagic_rs
+        import whitemagic_rs  # noqa: F401
         print("\n✅ Rust bridge available")
     except ImportError:
         print("\n❌ Rust bridge not available - cannot benchmark")

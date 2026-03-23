@@ -19,7 +19,7 @@ To re-enable the archived local-model stack:
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, cast
+from typing import Any, Dict, cast  # noqa: F401, UP035
 
 
 def _enabled() -> bool:

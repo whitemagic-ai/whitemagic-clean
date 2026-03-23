@@ -297,7 +297,7 @@ class EvolutionaryDreamEngine:
     def evolve_generation(self, parent_lineages: list[Lineage]) -> list[Lineage]:
         """Evolve to next generation through selection and mutation"""
         # Sort by fitness
-        parent_lineages.sort(key=lambda l: l.fitness_score, reverse=True)
+        parent_lineages.sort(key=lambda lvl: lvl.fitness_score, reverse=True)
 
         # Select top 20% as parents
         num_survivors = max(1, len(parent_lineages) // 5)
@@ -392,7 +392,7 @@ class EvolutionaryDreamEngine:
 
         # Simulate all lineages
         with ThreadPoolExecutor(max_workers=32) as executor:
-            futures = [executor.submit(self.simulate_lineage, l) for l in lineages]
+            futures = [executor.submit(self.simulate_lineage, lvl) for lvl in lineages]
             lineages = [f.result() for f in as_completed(futures)]
 
         self.pool.lineages = lineages
@@ -406,13 +406,13 @@ class EvolutionaryDreamEngine:
 
             # Simulate new generation
             with ThreadPoolExecutor(max_workers=32) as executor:
-                futures = [executor.submit(self.simulate_lineage, l) for l in lineages]
+                futures = [executor.submit(self.simulate_lineage, lvl) for lvl in lineages]
                 lineages = [f.result() for f in as_completed(futures)]
 
             self.pool.lineages = lineages
 
             # Track best
-            best = max(lineages, key=lambda l: l.fitness_score)
+            best = max(lineages, key=lambda lvl: lvl.fitness_score)
             if best.fitness_score > self.pool.best_fitness:
                 self.pool.best_fitness = best.fitness_score
                 self.pool.best_lineage_id = best.lineage_id
@@ -420,7 +420,7 @@ class EvolutionaryDreamEngine:
         duration = time.time() - start_time
 
         # Final analysis
-        lineages.sort(key=lambda l: l.fitness_score, reverse=True)
+        lineages.sort(key=lambda lvl: lvl.fitness_score, reverse=True)
         top_10 = lineages[:10]
 
         print(f"\n✅ Evolution complete in {duration:.1f}s")
@@ -438,7 +438,7 @@ class EvolutionaryDreamEngine:
             "total_lineages_simulated": self.num_lineages * (self.num_generations + 1),
             "best_fitness": self.pool.best_fitness,
             "best_lineage": asdict(top_10[0]),
-            "top_10": [asdict(l) for l in top_10],
+            "top_10": [asdict(lvl) for lvl in top_10],
         }
 
     def synthesize_ultimate_wm2(self, top_lineages: list[Lineage]) -> set[Mutation]:

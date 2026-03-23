@@ -168,7 +168,7 @@ class V21ValidationDeployment:
             try:
                 import whitemagic_rust as whitemagic_rs
             except ImportError:
-                import whitemagic_rs
+                import whitemagic_rs  # noqa: F401
             findings.append({"test": "rust_bridge", "status": "pass", "version": "v20.0.0"})
             logger.info("✅ Rust bridge available")
         except ImportError:

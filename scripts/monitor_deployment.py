@@ -13,15 +13,15 @@ from typing import Any
 
 try:
     from rich.console import Console
-    from rich.layout import Layout
-    from rich.live import Live
+    from rich.layout import Layout  # noqa: F401
+    from rich.live import Live  # noqa: F401
     from rich.panel import Panel
     from rich.progress import (
-        BarColumn,
-        Progress,
-        SpinnerColumn,
-        TextColumn,
-        TimeElapsedColumn,
+        BarColumn,  # noqa: F401
+        Progress,  # noqa: F401
+        SpinnerColumn,  # noqa: F401
+        TextColumn,  # noqa: F401
+        TimeElapsedColumn,  # noqa: F401
     )
     from rich.table import Table
     RICH_AVAILABLE = True

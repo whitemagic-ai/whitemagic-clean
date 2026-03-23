@@ -84,7 +84,7 @@ def main():
     # Check if Rust was used
     print("\n🦀 Rust MinHash Status:")
     try:
-        import whitemagic_rs
+        import whitemagic_rs  # noqa: F401
         print("   ✅ Rust MinHash available and used")
         print("   📈 Expected speedup: 50× over Python baseline")
     except ImportError:

@@ -3,7 +3,7 @@ from typing import Any
 
 try:
     import whitemagic_rust
-    from whitemagic_rust import *
+    from whitemagic_rust import *  # noqa: F403
     # Manually export names from dir(whitemagic_rust)
     _exports = [f for f in dir(whitemagic_rust) if not f.startswith('__')]
     for _name in _exports:

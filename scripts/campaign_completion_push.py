@@ -64,7 +64,7 @@ def check_system_health():
 
     # Check Rust bridge
     try:
-        import whitemagic_rs
+        import whitemagic_rs  # noqa: F401
         print("  ✅ Rust bridge: Available")
     except ImportError:
         print("  ⚠️  Rust bridge: Not available (will use Python fallback)")

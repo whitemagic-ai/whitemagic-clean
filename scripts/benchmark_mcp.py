@@ -373,7 +373,7 @@ def main():
     print(f"  Failed:  {FAILED} \u274c")
 
     # Latency summary for serial calls
-    serial_results = [(l, t) for l, ok, t, _ in RESULTS if ok and "SERIAL" not in l and t > 10]
+    serial_results = [(label, t) for label, ok, t, _ in RESULTS if ok and "SERIAL" not in label and t > 10]
     if serial_results:
         avg = sum(t for _, t in serial_results) / len(serial_results)
         print(f"  Avg tool call: {avg:.0f}ms")
