@@ -12,10 +12,10 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-import sqlite3
+import sqlite3  # noqa: E402
 
-from whitemagic.config.paths import DB_PATH
-from whitemagic.core.ganas.base import LunarMansion
+from whitemagic.config.paths import DB_PATH  # noqa: E402
+from whitemagic.core.ganas.base import LunarMansion  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

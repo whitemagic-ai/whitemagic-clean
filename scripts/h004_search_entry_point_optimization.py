@@ -14,9 +14,9 @@ import time
 from pathlib import Path
 
 project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
+sys.path.insert(0, str(project_root))  # noqa: E402
 
-from whitemagic.agents.unified_zodiac_army import get_unified_commander
+from whitemagic.agents.unified_zodiac_army import get_unified_commander  # noqa: E402
 
 
 async def execute_campaign():

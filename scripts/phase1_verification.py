@@ -11,9 +11,9 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from whitemagic.agents.shadow_clones import deploy_clones
+from whitemagic.agents.shadow_clones import deploy_clones  # noqa: E402
 
-from whitemagic.agents.campaign_metrics import CampaignTracker
+from whitemagic.agents.campaign_metrics import CampaignTracker  # noqa: E402
 
 
 def verify_campaign(campaign_id: str, tracker: CampaignTracker) -> dict:
