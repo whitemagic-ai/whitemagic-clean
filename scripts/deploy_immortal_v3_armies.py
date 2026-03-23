@@ -29,20 +29,23 @@ def run(cmd, timeout=30):
 
 def psr011_decompose_sqlite():
     p = ROOT / "whitemagic/core/memory/sqlite_queries.py"
-    if p.exists(): return "EXISTS: sqlite_queries.py"
+    if p.exists():
+        return "EXISTS: sqlite_queries.py"
     p.write_text('"""SQL query constants extracted from sqlite_backend.py (PSR-011)."""\n\nFTS_SEARCH_QUERY = """\n    SELECT m.id, m.title, m.content, m.importance,\n           bm25(memories_fts, 10.0, 1.0, 5.0) as rank\n    FROM memories_fts JOIN memories m ON memories_fts.rowid = m.rowid\n    WHERE memories_fts MATCH ? ORDER BY rank LIMIT ?\n"""\n\nSTORE_MEMORY_QUERY = """\n    INSERT OR REPLACE INTO memories\n    (id, title, content, importance, memory_type, tags, created_at, updated_at)\n    VALUES (?, ?, ?, ?, ?, ?, ?, ?)\n"""\n\nGET_ASSOCIATIONS_QUERY = """\n    SELECT a.target_id, a.association_type, a.strength, m.title\n    FROM associations a JOIN memories m ON a.target_id = m.id\n    WHERE a.source_id = ? ORDER BY a.strength DESC LIMIT ?\n"""\n\nVECTOR_SEARCH_QUERY = """\n    SELECT memory_id, embedding FROM embeddings\n    WHERE memory_id IN (SELECT id FROM memories WHERE memory_type != \'quarantined\')\n"""\n')
     return "CREATED: sqlite_queries.py"
 
 def psr011_decompose_dream():
     p = ROOT / "whitemagic/core/intelligence/dream/dream_phases.py"
     p.parent.mkdir(parents=True, exist_ok=True)
-    if p.exists(): return "EXISTS: dream_phases.py"
+    if p.exists():
+        return "EXISTS: dream_phases.py"
     p.write_text('"""Dream cycle phase definitions (PSR-011)."""\nfrom enum import Enum\n\nclass DreamPhase(Enum):\n    TRIAGE = "triage"\n    CONSOLIDATION = "consolidation"\n    SERENDIPITY = "serendipity"\n    GOVERNANCE = "governance"\n    NARRATIVE = "narrative"\n    KAIZEN = "kaizen"\n    ORACLE = "oracle"\n    DECAY = "decay"\n\nPHASE_ORDER = list(DreamPhase)\n\nPHASE_DESCRIPTIONS = {\n    DreamPhase.TRIAGE: "Auto-tag and drift-correct memories",\n    DreamPhase.CONSOLIDATION: "Detect constellations via HDBSCAN",\n    DreamPhase.SERENDIPITY: "Bridge synthesis and insight creation",\n    DreamPhase.GOVERNANCE: "Community health and echo chamber detection",\n    DreamPhase.NARRATIVE: "Cluster and compress narrative threads",\n    DreamPhase.KAIZEN: "Emergence insights and persisting learnings",\n    DreamPhase.ORACLE: "Predictive suggestions for next session",\n    DreamPhase.DECAY: "Mindful forgetting sweep",\n}\n')
     return "CREATED: dream_phases.py"
 
 def psr011_decompose_consolidation():
     p = ROOT / "whitemagic/core/memory/consolidation_strategies.py"
-    if p.exists(): return "EXISTS: consolidation_strategies.py"
+    if p.exists():
+        return "EXISTS: consolidation_strategies.py"
     p.write_text('"""Consolidation strategy definitions extracted from consolidation.py (PSR-011)."""\nfrom enum import Enum\n\nclass ConsolidationStrategy(Enum):\n    SIMILARITY = "similarity"\n    TEMPORAL = "temporal"\n    IMPORTANCE = "importance"\n    CONSTELLATION = "constellation"\n    NARRATIVE = "narrative"\n\nSTRATEGY_THRESHOLDS = {\n    ConsolidationStrategy.SIMILARITY: 0.85,\n    ConsolidationStrategy.TEMPORAL: 3600,\n    ConsolidationStrategy.IMPORTANCE: 0.7,\n    ConsolidationStrategy.CONSTELLATION: 0.6,\n    ConsolidationStrategy.NARRATIVE: 0.75,\n}\n')
     return "CREATED: consolidation_strategies.py"
 
@@ -67,7 +70,8 @@ def psr012_fix_todos():
 
 def psr013_create_async_batch():
     p = ROOT / "whitemagic/utils/async_batch.py"
-    if p.exists(): return "EXISTS: async_batch.py"
+    if p.exists():
+        return "EXISTS: async_batch.py"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text('"""Async batch processing utilities (PSR-013)."""\nimport asyncio\nfrom typing import Any, Callable, Iterable\n\nasync def async_batch_process(items, processor, batch_size=100, concurrency=10):\n    """Process items in async batches with concurrency control."""\n    items_list = list(items)\n    results = []\n    sem = asyncio.Semaphore(concurrency)\n    async def bounded(item):\n        async with sem:\n            return await processor(item)\n    batches = [items_list[i:i+batch_size] for i in range(0, len(items_list), batch_size)]\n    for batch in batches:\n        batch_results = await asyncio.gather(*[bounded(i) for i in batch], return_exceptions=True)\n        results.extend(batch_results)\n    return results\n\nasync def async_map(items: Iterable[Any], fn: Callable, max_concurrent: int = 50) -> list:\n    """Async map with concurrency limit."""\n    sem = asyncio.Semaphore(max_concurrent)\n    async def bounded(item):\n        async with sem:\n            return await fn(item)\n    return await asyncio.gather(*[bounded(i) for i in items], return_exceptions=True)\n')
     return "CREATED: async_batch.py"
@@ -79,28 +83,32 @@ def psr013_measure_async_ratio():
 
 def psr014_create_integration_tests():
     p = ROOT / "tests/integration/test_clone_army_integration.py"
-    if p.exists(): return "EXISTS: test_clone_army_integration.py"
+    if p.exists():
+        return "EXISTS: test_clone_army_integration.py"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text('"""Integration tests for PSR-005 Clone Army (PSR-014)."""\nimport pytest, time\n\ndef test_rust_bridge_available():\n    import whitemagic_rs\n    assert whitemagic_rs is not None\n\ndef test_clone_army_deploy_collect():\n    import whitemagic_rs\n    army = whitemagic_rs.CloneArmy("test-integration", 500)\n    ids = army.deploy([f"task_{i}" for i in range(10)])\n    assert len(ids) == 10\n    for cid in ids:\n        army.complete_clone(cid, f"result_{cid}")\n    results = army.collect_results()\n    assert sum(1 for _, s in results if "result" in s) == 10\n\ndef test_scheduler_throughput():\n    import whitemagic_rs\n    sched = whitemagic_rs.AdvancedScheduler(4)\n    sched.submit_batch([(f"c{i}", 5, f"p{i}") for i in range(1000)])\n    t0 = time.time()\n    n = sched.execute_parallel()\n    assert n == 1000\n    assert n / (time.time() - t0) > 100_000\n')
     return "CREATED: test_clone_army_integration.py"
 
 def psr014_create_unit_tests():
     p = ROOT / "tests/unit/test_psr_modules.py"
-    if p.exists(): return "EXISTS: test_psr_modules.py"
+    if p.exists():
+        return "EXISTS: test_psr_modules.py"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text('"""Unit tests for PSR decomposed modules (PSR-014)."""\nimport pytest\n\ndef test_sqlite_queries_importable():\n    from whitemagic.core.memory.sqlite_queries import FTS_SEARCH_QUERY, STORE_MEMORY_QUERY\n    assert "bm25" in FTS_SEARCH_QUERY\n    assert "INSERT" in STORE_MEMORY_QUERY\n\ndef test_dream_phases_importable():\n    from whitemagic.core.intelligence.dream.dream_phases import DreamPhase, PHASE_ORDER\n    assert len(PHASE_ORDER) == 8\n    assert DreamPhase.TRIAGE in PHASE_ORDER\n\ndef test_consolidation_strategies_importable():\n    from whitemagic.core.memory.consolidation_strategies import ConsolidationStrategy, STRATEGY_THRESHOLDS\n    assert ConsolidationStrategy.SIMILARITY in STRATEGY_THRESHOLDS\n    assert STRATEGY_THRESHOLDS[ConsolidationStrategy.SIMILARITY] > 0\n\ndef test_async_batch_importable():\n    from whitemagic.utils.async_batch import async_batch_process, async_map\n    assert callable(async_batch_process)\n    assert callable(async_map)\n\ndef test_simhash_fast_importable():\n    from whitemagic.utils.simhash_fast import compute_simhash, find_near_duplicates\n    h = compute_simhash("hello world")\n    assert isinstance(h, int)\n    pairs = find_near_duplicates(["hello world", "hello world!", "completely different"])\n    assert len(pairs) >= 1\n')
     return "CREATED: test_psr_modules.py"
 
 def psr015_create_simhash_fast():
     p = ROOT / "whitemagic/utils/simhash_fast.py"
-    if p.exists(): return "EXISTS: simhash_fast.py"
+    if p.exists():
+        return "EXISTS: simhash_fast.py"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text('"""Fast SimHash with Rust backend (PSR-015)."""\nimport hashlib, logging\nlogger = logging.getLogger(__name__)\ntry:\n    from whitemagic_rs import SimhashLSH as _RustLSH\n    _RUST = True\nexcept ImportError:\n    _RUST = False\n\ndef _py_simhash(text: str, bits: int = 64) -> int:\n    words = text.lower().split()\n    v = [0] * bits\n    for w in words:\n        h = int(hashlib.md5(w.encode()).hexdigest(), 16)\n        for i in range(bits):\n            v[i] += 1 if h & (1 << i) else -1\n    return sum(1 << i for i in range(bits) if v[i] > 0)\n\ndef compute_simhash(text: str, bits: int = 64) -> int:\n    """Compute SimHash fingerprint. Uses Rust when available."""\n    if _RUST:\n        try:\n            lsh = _RustLSH(bits)\n            return lsh.hash_text(text)\n        except Exception:\n            pass\n    return _py_simhash(text, bits)\n\ndef find_near_duplicates(texts: list[str], threshold: int = 3) -> list[tuple[int, int]]:\n    """Find near-duplicate pairs within Hamming distance threshold."""\n    hashes = [compute_simhash(t) for t in texts]\n    return [(i, j) for i in range(len(hashes)) for j in range(i+1, len(hashes))\n            if bin(hashes[i] ^ hashes[j]).count("1") <= threshold]\n')
     return "CREATED: simhash_fast.py"
 
 def f001_create_embed_script():
     p = ROOT / "scripts/gpu_batch_embed.py"
-    if p.exists(): return "EXISTS: gpu_batch_embed.py"
+    if p.exists():
+        return "EXISTS: gpu_batch_embed.py"
     p.write_text('#!/usr/bin/env python3\n"""F001: GPU Batch Embedding - embed all active memories.\nRun on GPU machine: python scripts/gpu_batch_embed.py\n"""\nimport argparse, sys, time\nfrom pathlib import Path\nROOT = Path(__file__).parent.parent\nsys.path.insert(0, str(ROOT))\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument("--batch-size", type=int, default=100)\n    parser.add_argument("--model", default="all-MiniLM-L6-v2")\n    parser.add_argument("--dry-run", action="store_true")\n    args = parser.parse_args()\n    print(f"F001 Batch Embedding | model={args.model} | batch={args.batch_size}")\n    try:\n        from sentence_transformers import SentenceTransformer\n    except ImportError:\n        print("pip install sentence-transformers"); sys.exit(1)\n    try:\n        from whitemagic.core.memory.db_manager import DatabaseManager\n    except ImportError:\n        print("Run from project root"); sys.exit(1)\n    model = SentenceTransformer(args.model)\n    dm = DatabaseManager()\n    with dm.get_connection() as conn:\n        rows = conn.execute("""\n            SELECT m.id, m.content FROM memories m\n            LEFT JOIN embeddings e ON m.id = e.memory_id\n            WHERE m.memory_type != \'quarantined\' AND e.memory_id IS NULL\n        """).fetchall()\n    print(f"Found {len(rows):,} memories needing embeddings")\n    if args.dry_run: return\n    start = time.time()\n    batches = [rows[i:i+args.batch_size] for i in range(0, len(rows), args.batch_size)]\n    embedded = 0\n    with dm.get_connection() as conn:\n        for bn, batch in enumerate(batches):\n            ids = [r[0] for r in batch]\n            embs = model.encode([r[1][:512] for r in batch], show_progress_bar=False)\n            conn.executemany(\n                "INSERT OR REPLACE INTO embeddings (memory_id, embedding, model_name) VALUES (?,?,?)",\n                [(mid, e.tobytes(), args.model) for mid, e in zip(ids, embs)]\n            )\n            conn.commit()\n            embedded += len(batch)\n            rate = embedded / (time.time() - start)\n            print(f"  Batch {bn+1}/{len(batches)}: {embedded:,}/{len(rows):,} ({rate:.0f}/sec)")\n    print(f"Done: {embedded:,} in {time.time()-start:.1f}s")\n\nif __name__ == "__main__":\n    main()\n')
     return "CREATED: gpu_batch_embed.py"
 

@@ -44,9 +44,12 @@ class InfiniteGauntletV7:
         }
 
     def _fmt_ns(self, ns):
-        if ns < 1: return f"{ns*1000:.2f}ps"
-        if ns < 1000: return f"{ns:.2f}ns"
-        if ns < 1_000_000: return f"{ns/1000:.2f}µs"
+        if ns < 1:
+            return f"{ns*1000:.2f}ps"
+        if ns < 1000:
+            return f"{ns:.2f}ns"
+        if ns < 1_000_000:
+            return f"{ns/1000:.2f}µs"
         return f"{ns/1_000_000:.2f}ms"
 
     def profile_nanoseconds(self, label, fn, iterations=10000):
@@ -62,7 +65,8 @@ class InfiniteGauntletV7:
                 break
             times.append(time.perf_counter_ns() - start)
 
-        if not times: return
+        if not times:
+            return
 
         median = statistics.median(times)
         p99 = sorted(times)[int(len(times) * 0.99)]

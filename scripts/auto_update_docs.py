@@ -69,7 +69,8 @@ def update_file_version_and_stats(filepath, version, stats=None):
     print(f"Updated {filepath}")
 
 def update_agent_json(version):
-    if not AGENT_JSON.exists(): return
+    if not AGENT_JSON.exists():
+        return
     data = json.loads(AGENT_JSON.read_text())
     data["version"] = version
     AGENT_JSON.write_text(json.dumps(data, indent=2))
