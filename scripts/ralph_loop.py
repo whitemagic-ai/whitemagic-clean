@@ -13,9 +13,10 @@ from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT))  # noqa: E402
 
-from whitemagic.core.evolution.continuous_evolution import (
+from whitemagic.core.memory.deduplication import is_noise  # noqa: E402
+from whitemagic.core.evolution.continuous_evolution import (  # noqa: E402
     ContinuousEvolutionEngine,
     SelfDirectedEvolution,
 )

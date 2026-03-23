@@ -20,8 +20,8 @@ print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
 
 # Step 1: Import systems
 print("[1/6] Importing systems...")
-from whitemagic.core.evolution.adaptive_system import get_adaptive_system
-from whitemagic.core.evolution.optimizers import (
+from whitemagic.core.evolution.adaptive_system import get_adaptive_system  # noqa: E402
+from whitemagic.core.evolution.optimizers import (  # noqa: E402
     MemoryWorkflowOptimizer,
     PatternLearningOptimizer,
     get_all_optimization_metrics,
