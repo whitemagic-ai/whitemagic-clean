@@ -12,8 +12,10 @@ def test_imports():
     return res == 0
 
 def main():
-    if not REDUNDANCY_FILE.exists(): return
-    with open(REDUNDANCY_FILE) as f: pairs = json.load(f)
+    if not REDUNDANCY_FILE.exists():
+        return
+    with open(REDUNDANCY_FILE) as f:
+        pairs = json.load(f)
 
     # Let's target files that are clearly test/legacy artifacts, but only if they have high similarity
     # We will look for pairs where one is a test file and the other is a legacy test file, etc.
@@ -52,7 +54,8 @@ def main():
 
     for target in archivable:
         path_t = ROOT / target
-        if not path_t.exists(): continue
+        if not path_t.exists():
+            continue
 
         rel_target = path_t.relative_to(ROOT)
         dest = ARCHIVE_DIR / rel_target

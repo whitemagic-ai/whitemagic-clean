@@ -13,7 +13,8 @@ def test_imports():
     return res == 0
 
 def get_file_hash(path: Path) -> str:
-    if not path.exists(): return ""
+    if not path.exists():
+        return ""
     return hashlib.md5(path.read_bytes()).hexdigest()
 
 def main():

@@ -26,11 +26,13 @@ def get_census_stats():
     if census_md.exists():
         content = census_md.read_text()
         py_match = re.search(r'\|\s*\*\*Python\*\*\s*\|\s*\*\*(\d+)\*\*\s*\|\s*\*\*([0-9,]+)\*\*', content)
-        if py_match: stats["Python"] = py_match.group(2)
+        if py_match:
+            stats["Python"] = py_match.group(2)
 
         for lang in ["Rust", "Zig", "Go", "Haskell", "Elixir", "TypeScript", "Mojo", "Julia", "Koka"]:
             match = re.search(r'\|\s*' + lang + r'\s*\|\s*\d+\s*\|\s*([0-9,]+)\s*\|', content)
-            if match: stats[lang] = match.group(1)
+            if match:
+                stats[lang] = match.group(1)
 
         gt_match = re.search(r'\|\s*\*\*Grand total\*\*\s*\|\s*\*\*([\d,]+) files, ([0-9,]+) LOC\*\*', content)
         if gt_match:
