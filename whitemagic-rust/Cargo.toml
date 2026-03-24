@@ -11,9 +11,9 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = ["python", "arrow", "iceoryx2"]
 iceoryx2 = ["dep:iceoryx2"]
-python = ["pyo3", "numpy", "pyo3-build-config", "tokio"]
-arrow = ["dep:arrow"]
+python = ["pyo3", "numpy", "pyo3-build-config", "tokio", "rusqlite"]
 wasm = ["wasm-bindgen", "js-sys", "web-sys", "console_error_panic_hook"]
+arrow = ["dep:arrow"]
 
 [dependencies]
 iceoryx2 = { version = "0.8.1", optional = true }
@@ -36,7 +36,7 @@ serde_json = "1.0"
 rand = "0.8"
 getrandom = { version = "0.2", features = ["js"] }
 
-rusqlite = { version = "0.31", features = ["bundled"] }
+rusqlite = { version = "0.31", features = ["bundled"], optional = true }
 tokio = { version = "1.35", features = ["full"], optional = true }
 tracing = { version = "0.1", optional = true }
 metrics = { version = "0.22", optional = true }
