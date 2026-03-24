@@ -3,6 +3,9 @@ use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList, PyTuple};
 use std::collections::HashMap;
 
+// Only compile with python feature
+#![cfg(feature = "python")]
+
 /// Infer DAG dependencies from 4D holographic coordinates
 /// Fast-path for causal_net.py::infer_dependencies()
 #[pyfunction]

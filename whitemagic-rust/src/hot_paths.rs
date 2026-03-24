@@ -2,6 +2,8 @@
 // ============================================================================
 // Phase A: 25 functions translated to Rust
 
+#![cfg(feature = "python")]
+
 use pyo3::prelude::*;
 use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};

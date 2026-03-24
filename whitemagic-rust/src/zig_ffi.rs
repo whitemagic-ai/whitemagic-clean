@@ -4,6 +4,7 @@
 //! this module provides stub implementations that return sensible defaults.
 #![allow(dead_code)]
 #![allow(unused_imports)]
+#![cfg(feature = "python")]
 
 use pyo3::prelude::*;
 
