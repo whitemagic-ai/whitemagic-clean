@@ -44,7 +44,7 @@ lazy_static = "1.4"
 sha2 = "0.10.9"
 
 [build-dependencies]
-pyo3-build-config = { version = "0.21", optional = true }
+pyo3-build-config = { version = "0.28", optional = true }
 
 [profile.release]
 opt-level = 3
