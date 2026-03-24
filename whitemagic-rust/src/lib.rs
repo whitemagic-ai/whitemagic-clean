@@ -3,6 +3,7 @@
 use pyo3::prelude::*;
 
 #[cfg(feature = "wasm")]
+#[allow(unused_imports)]
 use wasm_bindgen::prelude::*;
 
 // Conductor module (ResonanceConductor - unified orchestration)
@@ -10,7 +11,10 @@ use wasm_bindgen::prelude::*;
 pub mod conductor;
 
 // Python modules (only compiled for Python target)
+#[cfg(feature = "python")]
 pub mod arrow_bridge;
+#[cfg(feature = "python")]
+pub mod hot_paths;
 #[cfg(feature = "python")]
 mod association_miner;
 #[cfg(feature = "python")]
@@ -188,11 +192,15 @@ fn whitemagic_rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(search::search_stats, m)?)?;
 
     // Add hot_paths functions directly to main module
+    #[cfg(feature = "python")]
     hot_paths::hot_paths(_py, m)?;
 
     // Add synthesis_engine sub-module
+    #[cfg(feature = "python")]
     let synthesis_module = PyModule::new_bound(_py, "synthesis_engine")?;
+    #[cfg(feature = "python")]
     synthesis_engine::synthesis_engine(_py, &synthesis_module)?;
+    #[cfg(feature = "python")]
     m.add_submodule(&synthesis_module)?;
 
     // Add sqlite_backend sub-module
@@ -201,6 +209,7 @@ fn whitemagic_rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_submodule(&sqlite_module)?;
 
     // Add zig_ffi functions directly to main module for Zig bridge support
+    #[cfg(feature = "python")]
     zig_ffi::register_zig_ffi(m)?;
 
     Ok(())
@@ -210,10 +219,13 @@ fn whitemagic_rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
 #[cfg(feature = "wasm")]
 pub use wasm::*;
 
+#[cfg(feature = "python")]
 pub mod monte_carlo;
 
 // Synthesis engine module (Phase B - v20)
+#[cfg(feature = "python")]
 mod synthesis_engine;
 
 // Zig FFI module for polyglot bridge support
+#[cfg(feature = "python")]
 mod zig_ffi;
