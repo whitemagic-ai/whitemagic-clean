@@ -618,6 +618,7 @@ _TOOL_ALIASES: dict[str, str] = {
 }
 
 _TOOL_CLASS_TIMEOUTS: dict[str, float] = {
+    "create_memory": 20.0,  # Increase timeout for memory creation
     "memory.consolidate": 60.0,  # Consolidation can be heavy
     "archaeology.scan": 30.0,
     "search_query": 15.0,

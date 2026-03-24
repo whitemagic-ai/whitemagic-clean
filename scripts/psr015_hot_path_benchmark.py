@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))  # noqa: E402
 
 # Python fallbacks
-from whitemagic.optimization._rust_fallbacks import (  # noqa: E402
+from whitemagic.optimization.rust_fallbacks import (  # type: ignore[import-not-found]  # noqa: E402
     PythonSpatialIndex5D,
     _association_mine_python,
     _galactic_batch_score_python,

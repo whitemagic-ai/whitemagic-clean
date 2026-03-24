@@ -13,6 +13,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import urlparse
 
 
 def _enabled() -> bool:
@@ -31,6 +32,13 @@ def _disabled_error() -> RuntimeError:
     )
 
 
+def is_url_safe(url: str) -> bool:
+    """Check whether a URL is safe for local-model access."""
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").lower()
+    return parsed.scheme in {"http", "https"} and host in {"localhost", "127.0.0.1", "::1"}
+
+
 if _enabled():  # pragma: no cover - legacy opt-in path
     from whitemagic._archived.local_models.edge.local_llm import *  # type: ignore
 else:
@@ -44,7 +52,13 @@ else:
         tokens_saved: int = 0
 
     class LocalLLM:  # pragma: no cover - legacy shim
-        def __init__(self, *_: Any, **__: Any) -> None:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            candidate = kwargs.get("url") or kwargs.get("base_url")
+            if candidate is None and args and isinstance(args[0], str):
+                candidate = args[0]
+
+            if candidate is not None and not is_url_safe(str(candidate)):
+                raise ValueError(f"Unsafe local LLM URL blocked: {candidate}")
             raise _disabled_error()
 
     class CascadingInference:  # pragma: no cover - legacy shim

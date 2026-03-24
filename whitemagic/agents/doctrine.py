@@ -780,7 +780,7 @@ class ImperialDoctrine:
         scored: list[tuple[int, Stratagem]] = []
 
         for s in self.stratagems:
-            score = sum(1 for kw in s.keywords if kw in sit_lower)
+            score: float = sum(1 for kw in s.keywords if kw in sit_lower)
             # Boost from application text match
             score += sum(1 for word in sit_lower.split() if word in s.application.lower()) * 0.5
             scored.append((int(score * 10), s))

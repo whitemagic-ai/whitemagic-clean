@@ -8,7 +8,7 @@ import sys
 logging.basicConfig(level=logging.INFO)
 
 # Make sure we can import whitemagic
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 try:
     from whitemagic.core.ganas.base import GanaCall  # noqa: E402

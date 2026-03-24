@@ -22,7 +22,7 @@ def _py_cosine(a: list[float], b: list[float]) -> float:
 
 class VectorSearch:
     def __init__(self, db_path: str | None = None):
-        self._vectors = {}
+        self._vectors: dict[str, list[float]] = {}
     def add_vector(self, vid: str, vec: list[float]):
         self._vectors[vid] = vec
     def cosine_similarity(self, v1: list[float], v2: list[float]) -> float:
@@ -71,7 +71,7 @@ class CommunityDetection:
     def add_node(self, node: str, community_id: int):
         self._nodes[node] = community_id
     def get_communities(self) -> dict[int, list[str]]:
-        comms = {}
+        comms: dict[int, list[str]] = {}
         for node, cid in self._nodes.items():
             if cid not in comms:
                 comms[cid] = []
@@ -81,7 +81,7 @@ class CommunityDetection:
 class MemoryConsolidation:
     def __init__(self, threshold: float = 0.7):
         self.threshold = threshold
-        self.candidates = []
+        self.candidates: list[dict[str, Any]] = []
     def add_candidate(self, mid: str, score: float, accesses: int, age: float):
         self.candidates.append({"id": mid, "score": score, "accesses": accesses, "age": age})
     def consolidate(self) -> list[str]:
@@ -91,14 +91,14 @@ class MemoryDecay:
     def __init__(self, half_life: float = 168.0):
         self.half_life = half_life
     def calculate_decay(self, age: float, importance: float) -> float:
-        return importance * (0.5 ** (age / self.half_life))
+        return float(importance * (0.5 ** (age / self.half_life)))
     def should_forget(self, age: float, importance: float) -> bool:
         return self.calculate_decay(age, importance) < 0.1
 
 class MemoryLifecycle:
     def __init__(self):
-        self.stages = {}
-        self.transitions = {}
+        self.stages: dict[str, str] = {}
+        self.transitions: dict[str, list[tuple[str, str]]] = {}
     def set_stage(self, mid: str, stage: str):
         if mid in self.stages:
             if mid not in self.transitions:
@@ -106,7 +106,7 @@ class MemoryLifecycle:
             self.transitions[mid].append((self.stages[mid], stage))
         self.stages[mid] = stage
     def get_transitions(self, mid: str) -> list[tuple[str, str]]:
-        return self.transitions.get(mid, [])
+        return list(self.transitions.get(mid, []))
 
 class HolographicIndex:
     """Shim for the legacy 4D Holographic Index."""

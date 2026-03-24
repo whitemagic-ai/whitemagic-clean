@@ -8,6 +8,7 @@
 # ============================================================================
 
 import sys
+from typing import Any
 
 from whitemagic.core.bridge.adaptive import *
 from whitemagic.core.bridge.agent import *
@@ -41,6 +42,52 @@ from whitemagic.core.bridge.wisdom import *
 from whitemagic.core.bridge.zodiac import *
 from whitemagic.utils.fast_json import dumps_str as _json_dumps
 from whitemagic.utils.fast_json import loads as _json_loads
+
+
+def _make_gana_alias(default_tool: str):
+    async def _alias(**kwargs: Any) -> dict[str, Any]:
+        call_kwargs = dict(kwargs)
+        tool_name = call_kwargs.pop("task", default_tool)
+        return execute_mcp_tool(tool_name, **call_kwargs)
+
+    return _alias
+
+
+for _alias_name, _default_tool in {
+    # Eastern quadrant
+    "gana_horn": "session_init",
+    "gana_neck": "memory_create",
+    "gana_root": "check_system_health",
+    "gana_room": "manage_resource_locks",
+    "gana_heart": "session_get_context",
+    "gana_tail": "check_acceleration",
+    "gana_winnowing_basket": "extract_wisdom",
+    # Northern quadrant
+    "gana_dipper": "search_memories",
+    "gana_ox": "get_system_time",
+    "gana_girl": "learn",
+    "gana_void": "kaizen",
+    "gana_roof": "manage_zodiac",
+    "gana_encampment": "check_structure",
+    "gana_wall": "check_boundary",
+    # Southern quadrant
+    "gana_ghost": "track_metric",
+    "gana_willow": "adapt_ui",
+    "gana_star": "prat_get_context",
+    "gana_extended_net": "manage_resonance",
+    "gana_wings": "check_status",
+    "gana_chariot": "manage_archaeology",
+    "gana_abundance": "check_surplus",
+    # Western quadrant
+    "gana_straddling_legs": "check_balance",
+    "gana_mound": "check_storage",
+    "gana_stomach": "check_energy",
+    "gana_hairy_head": "validate_integrations",
+    "gana_net": "detect_patterns",
+    "gana_turtle_beak": "validate_command",
+    "gana_three_stars": "consult_wisdom_council",
+}.items():
+    globals()[_alias_name] = _make_gana_alias(_default_tool)
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

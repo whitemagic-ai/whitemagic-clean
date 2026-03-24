@@ -120,7 +120,7 @@ class ResonanceOrchestrator:
 
         for result in results:
             # Emit a SYMPATHETIC_RESONANCE event for each neighbor
-            self._bus.emit(ResonanceEvent(  # type: ignore[attr-defined]
+            self.bus.emit(ResonanceEvent(
                 source="resonance_orchestrator",
                 event_type=EventType.SYMPATHETIC_RESONANCE,
                 data={

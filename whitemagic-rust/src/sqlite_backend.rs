@@ -2,7 +2,7 @@
 //! Target: 20-50× speedup over Python sqlite3
 
 use pyo3::prelude::*;
-use rusqlite::{Connection, params};
+use rusqlite::params;
 use std::sync::{Arc, Mutex};
 
 #[pyclass]

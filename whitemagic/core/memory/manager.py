@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from whitemagic.core.memory.unified import get_unified_memory
-from whitemagic.core.memory.unified_types import MemoryType
+from whitemagic.core.memory.unified_types import Memory, MemoryType
 from whitemagic.core.resonance.gan_ying_enhanced import EventType
 
 
@@ -34,6 +34,13 @@ class MemoryManager:
 
         # Internal index emulation for legacy tests
         self._index_cache: dict[str, dict[str, Any]] = {}
+
+    def _memory_to_dict(self, memory: Memory) -> dict[str, Any]:
+        """Convert a Memory object to the legacy dictionary structure."""
+        data = memory.to_dict()
+        # Preserve the legacy flat tags list and ensure a predictable ordering.
+        data["tags"] = sorted(data.get("tags", []))
+        return data
 
     @property
     def _index(self) -> dict[str, dict[str, Any]]:

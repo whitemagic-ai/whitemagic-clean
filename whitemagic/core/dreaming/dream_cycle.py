@@ -792,15 +792,19 @@ class DreamCycle:
             detector = get_constellation_detector()
 
             # Detect current constellations
-            constellations = detector.detect(sample_limit=5000)
+            report = detector.detect(sample_limit=5000)
+            constellations = report.constellations
             result["inspected"] = len(constellations)
 
             # Look for merge candidates (simplified logic)
             merge_count = 0
             for i, c1 in enumerate(constellations):
+                # constellations is list[Constellation], access members attribute
+                members1 = getattr(c1, "members", [])
                 for c2 in constellations[i+1:]:
-                    overlap = len(set(c1.members) & set(c2.members))
-                    if overlap > len(c1.members) * 0.5:  # 50% overlap threshold
+                    members2 = getattr(c2, "members", [])
+                    overlap = len(set(members1) & set(members2))
+                    if len(members1) > 0 and overlap > len(members1) * 0.5:  # 50% overlap threshold
                         merge_count += 1
 
             result["merges"] = merge_count

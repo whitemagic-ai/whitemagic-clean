@@ -2,14 +2,14 @@
 Provides zero-latency access to Julia graph algorithms via ZMQ.
 """
 
-import atexit
-import logging
+import zmq
+import numpy as np
 import subprocess
 import time
+import atexit
 from pathlib import Path
-
-import numpy as np
-import zmq
+from typing import List, Dict, Optional
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +22,9 @@ class JuliaPersistentClient:
 
     def __init__(self, bind_addr: str = "tcp://127.0.0.1:5555"):
         self.bind_addr = bind_addr
-        self.context: zmq.Context | None = None
-        self.socket: zmq.Socket | None = None
-        self.server_process: subprocess.Popen | None = None
+        self.context: Optional[zmq.Context] = None
+        self.socket: Optional[zmq.Socket] = None
+        self.server_process: Optional[subprocess.Popen] = None
         self._connected = False
 
     def start_server(self) -> bool:
@@ -91,13 +91,13 @@ class JuliaPersistentClient:
         except Exception:
             return False
 
-    def _send_request(self, request: dict) -> dict:
+    def _send_request(self, request: Dict) -> Dict:
         """Send request to Julia server."""
         self._connect()
         self.socket.send_json(request)
         return self.socket.recv_json()
 
-    def rrf_fuse(self, lists: list[list[str]], weights: list[float] | None = None, k: float = 60.0) -> list[str]:
+    def rrf_fuse(self, lists: List[List[str]], weights: Optional[List[float]] = None, k: float = 60.0) -> List[str]:
         """Reciprocal Rank Fusion for merging multiple result lists.
 
         Args:
@@ -119,7 +119,7 @@ class JuliaPersistentClient:
         response = self._send_request(request)
         return response.get("fused", [])
 
-    def pagerank(self, node_ids: list[str], edges: list[tuple], damping: float = 0.85) -> dict[str, float]:
+    def pagerank(self, node_ids: List[str], edges: List[tuple], damping: float = 0.85) -> Dict[str, float]:
         """Calculate PageRank scores for a graph.
 
         Args:
@@ -140,7 +140,7 @@ class JuliaPersistentClient:
         response = self._send_request(request)
         return response.get("pagerank", {})
 
-    def score_walk_paths(self, paths: list[list[str]], weights: dict[str, float]) -> list[float]:
+    def score_walk_paths(self, paths: List[List[str]], weights: Dict[str, float]) -> List[float]:
         """Score graph walk paths based on edge weights.
 
         Args:
@@ -159,8 +159,8 @@ class JuliaPersistentClient:
         response = self._send_request(request)
         return response.get("scored_paths", [])
 
-    def community_gravity(self, vector: np.ndarray, centroids: list[np.ndarray],
-                          community_ids: list[str]) -> dict[str, float]:
+    def community_gravity(self, vector: np.ndarray, centroids: List[np.ndarray],
+                          community_ids: List[str]) -> Dict[str, float]:
         """Calculate community gravity scores for a vector.
 
         Args:
@@ -200,7 +200,7 @@ class JuliaPersistentClient:
 
 
 # Singleton instance
-_julia_client: JuliaPersistentClient | None = None
+_julia_client: Optional[JuliaPersistentClient] = None
 
 def get_julia_client() -> JuliaPersistentClient:
     """Get or create the global Julia client."""

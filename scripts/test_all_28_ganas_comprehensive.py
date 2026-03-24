@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from whitemagic.tools.unified_api import call_tool
 
 # Comprehensive test cases for all 28 Ganas (3-5 tools per Gana)
-GANA_TEST_SUITE = {
+GANA_TEST_SUITE: dict[str, list[tuple[str, dict[str, Any]]]] = {
     "gana_horn": [
         ("session_status", {}),
         ("focus_session", {}),

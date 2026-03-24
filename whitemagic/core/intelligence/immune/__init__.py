@@ -1,1 +1,1 @@
-from .dna import DNA_Memory  # noqa: F401
+from .dna import DNAPrinciple as DNA_Memory  # noqa: F401

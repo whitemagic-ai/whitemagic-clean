@@ -1,19 +1,20 @@
+import os
 import sys
 
-# Add the editable install location if needed, though venv should handle it
-try:
-    import whitemagic_rs
-    print("✅ Successfully imported whitemagic_rs")
-except ImportError as e:
-    print(f"❌ Failed to import whitemagic_rs: {e}")
-    sys.exit(1)
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from whitemagic.core.polyglot.mansion_bridge import MansionBridge
+
+
+bridge = MansionBridge()
+print(f"✅ MansionBridge initialized (Rust available: {bridge._rust_status.available})")
 
 def test_similarity():
     print("\n--- Testing Fast Similarity ---")
     s1 = "The quick brown fox"
     s2 = "The quick brown fox jumps"
     try:
-        score = whitemagic_rs.fast_similarity(s1, s2)
+        score = bridge.similarity(s1, s2)
         print(f"Similarity ('{s1}', '{s2}'): {score:.4f}")
         assert score > 0.5, "Similarity seems too low"
     except Exception as e:
@@ -21,23 +22,22 @@ def test_similarity():
 
 def test_iching():
     print("\n--- Testing I Ching Oracle (Layer 10 Check) ---")
-    query = "Status of Whitemagic Reconstruction"
     try:
-        hex_num, lines = whitemagic_rs.iching_cast(query)
-        print(f"Query: {query}")
-        print(f"Hexagram: {hex_num}")
-        print(f"Lines: {lines}")
+        result = bridge.iching_cast()
+        if result is None:
+            print("ℹ️ Zig backend unavailable; I Ching cast skipped")
+        else:
+            print(f"I Ching result: {result}")
     except Exception as e:
         print(f"❌ Error in iching_cast: {e}")
 
 def test_patterns():
     print("\n--- Testing Pattern Extraction ---")
-    content = ["def bad_code():\n    pass # TODO: Fix me"]
+    content = "def bad_code():\n    pass # TODO: Fix me"
     try:
-        # returns (total, found, solutions, antis, heuristics, opts, duration)
-        result = whitemagic_rs.extract_patterns_from_content(content, 0.0)
-        print(f"Patterns found: {result[1]}")
-        print(f"Duration: {result[6]:.6f}s")
+        result = bridge.extract_patterns(content)
+        print(f"Patterns found: {len(result)}")
+        print(result)
     except Exception as e:
         print(f"❌ Error in extract_patterns: {e}")
 

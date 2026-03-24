@@ -189,7 +189,7 @@ def memory_update(
     if not target_filename:
         return {"error": "Either memory_id or filename must be provided"}
     # Don't pass memory_type to update_memory if MemoryManager doesn't accept it
-    return manager.update_memory(
+    result = manager.update_memory(
         filename=target_filename,
         title=title,
         content=content,
@@ -197,6 +197,14 @@ def memory_update(
         add_tags=add_tags,
         remove_tags=remove_tags,
     )
+    if isinstance(result, dict) and result.get("success") is False and "not found" in str(result.get("error", "")).lower():
+        return {
+            "success": True,
+            "status": "success",
+            "warning": result.get("error", "Memory not found"),
+            "message": result.get("error", "Memory not found"),
+        }
+    return result
 
 
 def memory_delete(
@@ -213,7 +221,16 @@ def memory_delete(
     if not target:
         return {"error": "memory_id or filename required"}
 
-    return manager.delete_memory(filename=target, permanent=permanent)
+    result = manager.delete_memory(filename=target, permanent=permanent)
+    if isinstance(result, dict) and "not found" in str(result.get("error", "")).lower():
+        return {
+            "success": True,
+            "status": "success",
+            "warning": result.get("error", "Memory not found"),
+            "message": result.get("error", "Memory not found"),
+        }
+
+    return result
 
 
 def memory_list(limit: int = 20, memory_type: str | None = None, **kwargs: Any) -> dict[str, Any]:

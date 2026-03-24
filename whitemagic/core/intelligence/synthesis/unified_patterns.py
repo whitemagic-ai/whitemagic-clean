@@ -309,7 +309,9 @@ class UnifiedPatternAPI:
         if getattr(self, "_rust_available", False):
             try:
                 import whitemagic_rs
-                return float(whitemagic_rs.fast_similarity(text1, text2))
+                fast_sim = getattr(whitemagic_rs, "fast_similarity", None)
+                if fast_sim:
+                    return float(fast_sim(text1, text2))
             except Exception:
                 pass
 

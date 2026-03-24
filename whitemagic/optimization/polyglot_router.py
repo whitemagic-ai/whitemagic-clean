@@ -438,7 +438,10 @@ class PolyglotRouter:
         """Tier 3: Pattern Similarity (Rust Optimized)"""
         def rust_impl() -> float:
             import whitemagic_rs
-            return float(whitemagic_rs.rust_similarity(text1, text2))
+            rust_sim = getattr(whitemagic_rs, "rust_similarity", None)
+            if rust_sim:
+                return float(rust_sim(text1, text2))
+            return 0.0
 
         def python_impl() -> float:
             from difflib import SequenceMatcher
@@ -451,9 +454,13 @@ class PolyglotRouter:
         def rust_impl() -> list[tuple[str, float]]:
             import whitemagic_rs
             # Support both names (legacy match vs search_memories)
-            if hasattr(whitemagic_rs, "rust_search_memories"):
-                return cast(list[tuple[str, float]], whitemagic_rs.rust_search_memories(query, memories, threshold, limit))
-            return cast(list[tuple[str, float]], whitemagic_rs.fast_search(query, memories, threshold, limit))
+            rust_search = getattr(whitemagic_rs, "rust_search_memories", None)
+            if rust_search:
+                return cast(list[tuple[str, float]], rust_search(query, memories, threshold, limit))
+            fast_search = getattr(whitemagic_rs, "fast_search", None)
+            if fast_search:
+                return cast(list[tuple[str, float]], fast_search(query, memories, threshold, limit))
+            return []
 
         def python_impl() -> list[tuple[str, float]]:
             from difflib import SequenceMatcher

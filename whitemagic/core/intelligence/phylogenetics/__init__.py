@@ -1,1 +1,1 @@
-from .GenomeTracker import GenomeTracker  # noqa: F401
+from .GenomeTracker import PhylogeneticTracker as GenomeTracker  # noqa: F401

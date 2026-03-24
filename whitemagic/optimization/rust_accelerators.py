@@ -25,7 +25,7 @@ Usage:
 import logging
 from typing import Any, cast
 
-from whitemagic.optimization._rust_fallbacks import (
+from whitemagic.optimization.rust_fallbacks import (
     PythonSpatialIndex5D,
     _association_mine_python,
     _galactic_batch_score_python,

@@ -23,6 +23,19 @@ from .executor import (
     ProgressAssessor,
 )
 
+# Alias run_autonomous_cycle from zodiac for bridge compatibility
+def run_autonomous_cycle(*args, **kwargs):
+    from whitemagic.zodiac.zodiac_round_cycle import get_zodiacal_round
+    import asyncio
+    
+    loop = asyncio.get_event_loop()
+    if loop.is_running():
+        # This is a bit tricky if we are already in an async loop
+        # For now, providing a shim that bridge tools can use
+        return get_zodiacal_round().run_autonomous_cycle(*args, **kwargs)
+    else:
+        return asyncio.run(get_zodiacal_round().run_autonomous_cycle(*args, **kwargs))
+
 try:
     from .maintenance import (
         AutonomousMaintenance,

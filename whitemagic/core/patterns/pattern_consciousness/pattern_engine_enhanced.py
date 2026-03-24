@@ -72,7 +72,7 @@ class EnhancedPatternEngine:
         patterns: list[dict[str, Any]] = []
 
         # Try Rust backend first (Fastest)
-        if self._rust_available:
+        if self._rust_available and self.rust_engine:
             patterns.extend(self._rust_extract_patterns(content))
         # Fallback to Python ML if available and Rust didn't produce specific deep logic (or as complement)
         elif self._scipy_available:
@@ -86,9 +86,11 @@ class EnhancedPatternEngine:
     def _rust_extract_patterns(self, content: str) -> list[dict[str, Any]]:
         """Pattern extraction using whitemagic-rs."""
         patterns: list[dict[str, Any]] = []
+        if not self.rust_engine:
+            return patterns
         try:
             # Rust returns a dict with metrics
-            metrics = self.rust_engine.analyze_text(content)
+            metrics = getattr(self.rust_engine, "analyze_text", lambda x: {})(content)
 
             if not metrics:
                 return patterns

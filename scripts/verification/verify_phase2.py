@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 # Add the staging path to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) # Auto-fixed path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))) # Auto-fixed path
 
 from whitemagic.inference.model_pool import is_ollama_url_safe
 

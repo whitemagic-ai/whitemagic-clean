@@ -49,8 +49,8 @@ logger = logging.getLogger(__name__)
 # Rust acceleration (S026 VC6)
 try:
     import whitemagic_rust as _wr
-    _rust_holographic = _wr.holographic_encoder_5d
-    RUST_HOLOGRAPHIC_AVAILABLE = True
+    _rust_holographic = getattr(_wr, "holographic_encoder_5d", None)
+    RUST_HOLOGRAPHIC_AVAILABLE = _rust_holographic is not None
 except ImportError:
     _rust_holographic = None
     RUST_HOLOGRAPHIC_AVAILABLE = False

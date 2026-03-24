@@ -54,11 +54,12 @@ pub fn zig_memory_free(_id: u64) {
 }
 
 /// Compact the heap. Stub returns false.
+#[allow(dead_code)]
 pub fn zig_memory_rearrange() -> bool {
     false // Stub: Zig library not available
 }
 
-/// Number of live blocks. Stub returns 0.
+#[allow(dead_code)]
 pub fn zig_memory_block_count() -> usize {
     0 // Stub: Zig library not available
 }
@@ -70,21 +71,22 @@ pub fn zig_memory_resolve(_id: u64) -> Option<*mut u8> {
 }
 
 /// Dump a JSON stats file. Stub returns false.
+#[allow(dead_code)]
 pub fn zig_memory_dump_stats(_path: &str) -> bool {
     false // Stub: Zig library not available
 }
 
-/// Project a vector into 4-D holographic space. Stub returns None.
+#[allow(dead_code)]
 pub fn zig_holographic_project(_input: &[f32], _result_id: u64) -> Option<WmCoordinate> {
     None // Stub: Zig library not available
 }
 
-/// One-step metabolic flux simulation. Stub returns 0.0.
+#[allow(dead_code)]
 pub fn zig_genomics_flux(_rate: f32, _concentration: f32) -> f32 {
     0.0 // Stub: Zig library not available
 }
 
-/// Entropy-seeded hexagram cast. Stub returns all zeros.
+#[allow(dead_code)]
 pub fn zig_iching_cast() -> [u8; 6] {
     [0u8; 6] // Stub: Zig library not available
 }

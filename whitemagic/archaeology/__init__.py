@@ -92,7 +92,7 @@ def process_wisdom_archives(limit_files: int = 1000, memory_type: str = "long_te
                     content=content,
                     title=f"Recovered: {path.name}",
                     memory_type=memory_type,
-                    tags=tags,
+                    tags=set(tags),
                     metadata={
                         "original_path": str(path),
                         "archaeology_matches": finding.get("matches", []),
@@ -108,9 +108,10 @@ def process_wisdom_archives(limit_files: int = 1000, memory_type: str = "long_te
 def create_daily_wisdom_digest() -> str:
     """Generate a summary of recently recovered wisdom."""
     from whitemagic.core.memory.unified import get_unified_memory
+    from whitemagic.core.memory.unified_types import MemoryType
     unified = get_unified_memory()
 
-    recent = unified.search(query="recovered", limit=5, memory_type="long_term")
+    recent = unified.search(query="recovered", limit=5, memory_type=MemoryType.LONG_TERM)
     if not recent:
         return "No new wisdom recovered today."
 
