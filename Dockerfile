@@ -17,8 +17,8 @@ COPY README.md .
 COPY LICENSE .
 COPY VERSION .
 
-# Install the package with all core dependencies
-RUN pip install --no-cache-dir -e . && \
+# Install the package with all core dependencies + MCP extras
+RUN pip install --no-cache-dir -e .[mcp] && \
     pip install --no-cache-dir maturin
 
 # Copy application code
