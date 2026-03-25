@@ -1,0 +1,249 @@
+module interface src/effect_runtime
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/vector = std/core/vector pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/core = std/core = "";
+import std/os/readline = std/os/readline = "";
+import std/num/float64 = std/num/float64 = "";
+import gan_ying = gan_ying = "";
+import hot_paths = hot_paths = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+// The `:io` effect is used for functions that perform arbitrary I/O operations.
+local alias std/core/io[78,1,78,29] :: E = <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,((std/core/io-noexn :: E) == 3 <(std/core/types/div :: X),((std/core/io-total :: E) == 2 <(std/core/types/ndet :: X),(std/core/console/console :: X),(std/core/net :: X),(std/core/fsys :: X),(std/core/ui :: X),((std/core/types/st :: H -> E)<(std/core/types/global :: H)> == 1 <(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/types/write :: H -> X)<(std/core/types/global :: H)>,(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>>)>)>)> = 4;
+ 
+//------------------------------
+//#kki: type declarations
+ 
+type runtime-state[30,1,33,16] {
+  con Runtime-state[30,8,30,20](events: (std/core/types/list :: V -> V)<gan_ying/resonance-event>, profiles: (std/core/types/list :: V -> V)<hot_paths/path-profile>, total-ops: std/core/types/int){0,3,8} : (events : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, profiles : (std/core/types/list :: V -> V)<hot_paths/path-profile>, total-ops : std/core/types/int) -> runtime-state = 1;
+};
+ 
+//------------------------------
+//#kki: declarations
+ 
+// Emit an event, returning new state
+fun emit-effect[15,5,15,15] : (source : std/core/types/string, et : gan_ying/event-type, state : (std/core/types/list :: V -> V)<gan_ying/resonance-event>) -> (std/core/types/list :: V -> V)<gan_ying/resonance-event>;
+// Profile an operation, returning new state
+fun profile-effect[20,5,20,18] : (name : std/core/types/string, duration : std/core/types/float64, state : (std/core/types/list :: V -> V)<hot_paths/path-profile>) -> (std/core/types/list :: V -> V)<hot_paths/path-profile>;
+// Trace an operation (side-effect only, returns unit)
+fun trace-effect[25,5,25,16] : (op : std/core/types/string, details : std/core/types/string) -> <(std/core/io :: E)> ();
+// Automatically generated. Retrieves the `events` constructor field of the `:runtime-state` type.
+fun runtime-state/events[31,3,31,8] : (^ @this : runtime-state) -> (std/core/types/list :: V -> V)<gan_ying/resonance-event>;
+// Automatically generated. Retrieves the `profiles` constructor field of the `:runtime-state` type.
+fun runtime-state/profiles[32,3,32,10] : (^ @this : runtime-state) -> (std/core/types/list :: V -> V)<hot_paths/path-profile>;
+// Automatically generated. Retrieves the `total-ops` constructor field of the `:runtime-state` type.
+fun runtime-state/total-ops[33,3,33,11] : (^ @this : runtime-state) -> std/core/types/int;
+fun runtime-state/@copy[30,8,30,20] : (@this : runtime-state, events : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<gan_ying/resonance-event>>, profiles : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<hot_paths/path-profile>>, total-ops : (std/core/types/@optional :: V -> V)<std/core/types/int>) -> runtime-state;
+// Emit with automatic profiling
+fun emit-profiled[36,5,36,17] : (source : std/core/types/string, et : gan_ying/event-type, state : runtime-state) -> runtime-state;
+// Cascade check with profiling
+fun cascade-profiled[42,5,42,20] : (et : gan_ying/event-type, state : runtime-state) -> (std/core/types/int, runtime-state);
+fun extract-op[54,5,54,14] : (line : std/core/types/string) -> std/core/types/string;
+fun extract-event-type[62,5,62,22] : (line : std/core/types/string) -> gan_ying/event-type;
+fun json-state[69,5,69,14] : (s : runtime-state) -> std/core/types/string;
+// monadic lift
+fun @mlift-server-loop@10201[1,0,1,0] : (line : std/core/types/string, op : std/core/types/string, state : runtime-state, @c-x10155 : std/core/types/string) -> ();
+// monadic lift
+fun @mlift-server-loop@10202[1,0,1,0] : (state : runtime-state, line : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>> ();
+fun server-loop[74,5,74,15] : (state : runtime-state) -> <(std/core/io :: E)> ();
+fun main[114,5,114,8] : () -> <(std/core/io :: E)> ();
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+fun emit-effect // inline size: 2
+  = fn(source: std/core/types/string, et: gan_ying/event-type, state: (std/core/types/list :: V -> V)<gan_ying/resonance-event>){
+    std/core/types/Cons<gan_ying/resonance-event>((gan_ying/Resonance-event(source, et, "", 0, 1.0)), state);
+  };
+fun profile-effect // inline size: 2
+  = fn(name: std/core/types/string, duration: std/core/types/float64, state: (std/core/types/list :: V -> V)<hot_paths/path-profile>){
+    std/core/types/Cons<hot_paths/path-profile>((hot_paths/Path-profile(name, 1, duration, duration, hot_paths/Low, hot_paths/Compute)), state);
+  };
+fun trace-effect // inline size: 8
+  = fn<(std/core/io :: E)>(op: std/core/types/string, details: std/core/types/string){
+    std/core/types/@open<<(std/core/console/console :: X)>,<(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>,(s : std/core/types/string) -> <(std/core/console/console :: X)> (),(s : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> ()>(std/core/console/printsln)((std/core/types/@open<(std/core/types/total :: E),<(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>,(x : std/core/types/string, y : std/core/types/string) -> std/core/types/string,(x : std/core/types/string, y : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> std/core/types/string>(std/core/types/(++))("[TRACE] ", (std/core/types/@open<(std/core/types/total :: E),<(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>,(x : std/core/types/string, y : std/core/types/string) -> std/core/types/string,(x : std/core/types/string, y : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> std/core/types/string>(std/core/types/(++))(op, (std/core/types/@open<(std/core/types/total :: E),<(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>,(x : std/core/types/string, y : std/core/types/string) -> std/core/types/string,(x : std/core/types/string, y : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> std/core/types/string>(std/core/types/(++))(": ", details)))))));
+  };
+inline borrow "^" fun runtime-state/events // inline size: 0
+  = fn(@this: runtime-state){
+    match (@this) {
+      ((@skip src/effect_runtime/Runtime-state((@x: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@pat@0: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@pat@1: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat: runtime-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun runtime-state/profiles // inline size: 0
+  = fn(@this: runtime-state){
+    match (@this) {
+      ((@skip src/effect_runtime/Runtime-state((@pat@0: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@x: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@pat@1: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat: runtime-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun runtime-state/total-ops // inline size: 0
+  = fn(@this: runtime-state){
+    match (@this) {
+      ((@skip src/effect_runtime/Runtime-state((@pat@0: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@pat@1: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@x: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat: runtime-state)
+         -> @x;
+    };
+  };
+fun runtime-state/@copy // inline size: 4
+  = fn(@this: runtime-state, events: (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<gan_ying/resonance-event>>, profiles: (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<hot_paths/path-profile>>, total-ops: (std/core/types/@optional :: V -> V)<std/core/types/int>){
+    src/effect_runtime/Runtime-state((match (events) {
+        ((std/core/types/@Optional((@uniq-events@178: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<gan_ying/resonance-event>> ) as @pat: ((std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<gan_ying/resonance-event>>))
+           -> @uniq-events@178;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<gan_ying/resonance-event>> ) as @pat@0: ((std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<gan_ying/resonance-event>>))
+           -> (match (@this) {
+            ((@skip src/effect_runtime/Runtime-state((@x: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@pat@0@0: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@pat@1@0: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat@1: runtime-state)
+               -> @x;
+          });
+      }), (match (profiles) {
+        ((std/core/types/@Optional((@uniq-profiles@186: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<hot_paths/path-profile>> ) as @pat@1@1: ((std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<hot_paths/path-profile>>))
+           -> @uniq-profiles@186;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<hot_paths/path-profile>> ) as @pat@2: ((std/core/types/@optional :: V -> V)<(std/core/types/list :: V -> V)<hot_paths/path-profile>>))
+           -> (match (@this) {
+            ((@skip src/effect_runtime/Runtime-state((@pat@0@1: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@x@0: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@pat@1@2: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat@3: runtime-state)
+               -> @x@0;
+          });
+      }), (match (total-ops) {
+        ((std/core/types/@Optional((@uniq-total-ops@194: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@3@0: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-total-ops@194;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@4: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/effect_runtime/Runtime-state((@pat@0@2: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@pat@1@3: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@x@1: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat@5: runtime-state)
+               -> @x@1;
+          });
+      }));
+  };
+fun emit-profiled // inline size: 8
+  = fn(source: std/core/types/string, et: gan_ying/event-type, state: runtime-state){
+    val name@10003[1,0,1,0] : std/core/types/string
+          = std/core/types/(++)("emit_", (gan_ying/event-type-to-string(et)));
+    src/effect_runtime/Runtime-state((std/core/types/Cons<gan_ying/resonance-event>((gan_ying/Resonance-event(source, et, "", 0, 1.0)), (match (state) {
+          ((@skip src/effect_runtime/Runtime-state((@x: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@pat@0: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@pat@1: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat: runtime-state)
+             -> @x;
+        }))), (std/core/types/Cons<hot_paths/path-profile>((hot_paths/Path-profile(name@10003, 1, 1.0e-3, 1.0e-3, hot_paths/Low, hot_paths/Compute)), (match (state) {
+          ((@skip src/effect_runtime/Runtime-state((@pat@0@0: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@x@0: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@pat@1@0: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat@2: runtime-state)
+             -> @x@0;
+        }))), (std/core/int/int-add((match (state) {
+          ((@skip src/effect_runtime/Runtime-state((@pat@0@1: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@pat@1@1: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@x@1: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat@3: runtime-state)
+             -> @x@1;
+        }), 1)));
+  };
+fun cascade-profiled // inline size: 9
+  = fn(et: gan_ying/event-type, state: runtime-state){
+    std/core/types/Tuple2<std/core/types/int,runtime-state>((match (et) {
+        ((gan_ying/MemoryCreated() : gan_ying/event-type ) as @pat@2: gan_ying/event-type)
+           -> 3;
+        ((gan_ying/MemoryUpdated() : gan_ying/event-type ) as @pat@0@0: gan_ying/event-type)
+           -> 2;
+        ((gan_ying/ThreatDetected() : gan_ying/event-type ) as @pat@1@0: gan_ying/event-type)
+           -> 5;
+        ((gan_ying/FlowStateEntered() : gan_ying/event-type ) as @pat@2@0: gan_ying/event-type)
+           -> 2;
+        (@pat@3: gan_ying/event-type)
+           -> 1;
+      }), (src/effect_runtime/Runtime-state((match (state) {
+          ((@skip src/effect_runtime/Runtime-state((@x@0: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@pat@0@1: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@pat@1@1: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat@4: runtime-state)
+             -> @x@0;
+        }), (std/core/types/Cons<hot_paths/path-profile>((hot_paths/Path-profile("cascade_check", 1, 5.0e-4, 5.0e-4, hot_paths/Low, hot_paths/Compute)), (match (state) {
+            ((@skip src/effect_runtime/Runtime-state((@pat@0: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@x: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@pat@1: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat: runtime-state)
+               -> @x;
+          }))), (std/core/int/int-add((match (state) {
+            ((@skip src/effect_runtime/Runtime-state((@pat@0@2: (std/core/types/list :: V -> V)<gan_ying/resonance-event>) : (std/core/types/list :: V -> V)<gan_ying/resonance-event>, (@pat@1@2: (std/core/types/list :: V -> V)<hot_paths/path-profile>) : (std/core/types/list :: V -> V)<hot_paths/path-profile>, (@x@1: std/core/types/int) : std/core/types/int) : runtime-state ) as @pat@5: runtime-state)
+               -> @x@1;
+          }), 1)))));
+  };
+fun extract-op // inline size: 10
+  = fn(line: std/core/types/string){
+    match ((std/core/string/contains(line, "\x22emit\x22"))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> "emit";
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+         -> (match ((std/core/string/contains(line, "\x22cascade\x22"))) {
+          ((std/core/types/True() : std/core/types/bool ) as @pat@1: std/core/types/bool)
+             -> "cascade";
+          ((@skip std/core/types/False() : std/core/types/bool ) as @pat@2: std/core/types/bool)
+             -> (match ((std/core/string/contains(line, "\x22status\x22"))) {
+              ((std/core/types/True() : std/core/types/bool ) as @pat@3: std/core/types/bool)
+                 -> "status";
+              ((@skip std/core/types/False() : std/core/types/bool ) as @pat@4: std/core/types/bool)
+                 -> (match ((std/core/string/contains(line, "\x22profile\x22"))) {
+                  ((std/core/types/True() : std/core/types/bool ) as @pat@5: std/core/types/bool)
+                     -> "profile";
+                  ((@skip std/core/types/False() : std/core/types/bool ) as @pat@6: std/core/types/bool)
+                     -> (match ((std/core/string/contains(line, "\x22quit\x22"))) {
+                      ((std/core/types/True() : std/core/types/bool ) as @pat@7: std/core/types/bool)
+                         -> "quit";
+                      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@8: std/core/types/bool)
+                         -> "unknown";
+                    });
+                });
+            });
+        });
+    };
+  };
+fun extract-event-type // inline size: 8
+  = fn(line: std/core/types/string){
+    match ((std/core/string/contains(line, "memory_created"))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat: std/core/types/bool)
+         -> gan_ying/MemoryCreated;
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0: std/core/types/bool)
+         -> (match ((std/core/string/contains(line, "memory_updated"))) {
+          ((std/core/types/True() : std/core/types/bool ) as @pat@1: std/core/types/bool)
+             -> gan_ying/MemoryUpdated;
+          ((@skip std/core/types/False() : std/core/types/bool ) as @pat@2: std/core/types/bool)
+             -> (match ((std/core/string/contains(line, "threat_detected"))) {
+              ((std/core/types/True() : std/core/types/bool ) as @pat@3: std/core/types/bool)
+                 -> gan_ying/ThreatDetected;
+              ((@skip std/core/types/False() : std/core/types/bool ) as @pat@4: std/core/types/bool)
+                 -> (match ((std/core/string/contains(line, "flow_state"))) {
+                  ((std/core/types/True() : std/core/types/bool ) as @pat@5: std/core/types/bool)
+                     -> gan_ying/FlowStateEntered;
+                  ((@skip std/core/types/False() : std/core/types/bool ) as @pat@6: std/core/types/bool)
+                     -> gan_ying/SystemStarted;
+                });
+            });
+        });
+    };
+  };
+fun main // inline size: 4
+  = fn<(std/core/io :: E)>(){
+    val _[115,3,115,145] : ()
+          = std/core/types/@open<<(std/core/console/console :: X)>,<(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>,(s : std/core/types/string) -> <(std/core/console/console :: X)> (),(s : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> ()>(std/core/console/printsln)("{\x22status\x22:\x22started\x22,\x22effect_runtime\x22:true,\x22version\x22:\x224.0\x22,\x22features\x22:[\x22state_effects\x22,\x22emit\x22,\x22profile\x22,\x22trace\x22]}");
+    src/effect_runtime/server-loop((src/effect_runtime/Runtime-state((std/core/types/Nil<gan_ying/resonance-event>), (std/core/types/Nil<hot_paths/path-profile>), 0)));
+  };

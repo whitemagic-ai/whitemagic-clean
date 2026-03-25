@@ -1,0 +1,56 @@
+{
+  "history": [
+    {
+      "path": "/tmp/test_file.txt",
+      "type": "read",
+      "timestamp": "2026-03-15T22:52:40.890362",
+      "context": "Verification",
+      "note": "Testing bridge",
+      "insight": null
+    },
+    {
+      "path": "/home/lucas/Desktop/whitemagicdev/README.md",
+      "type": "read",
+      "timestamp": "2026-03-16T09:28:03.359196",
+      "context": "MCP:fast_read",
+      "note": "MCP:fast_read_memory",
+      "insight": null
+    },
+    {
+      "path": "/home/lucas/Desktop/whitemagicdev/README.md",
+      "type": "read",
+      "timestamp": "2026-03-16T09:28:36.966389",
+      "context": "MCP:fast_read",
+      "note": "MCP:fast_read_memory",
+      "insight": null
+    },
+    {
+      "path": "/home/lucas/Desktop/whitemagicdev/README.md",
+      "type": "read",
+      "timestamp": "2026-03-16T09:34:03.292860",
+      "context": "MCP:fast_read",
+      "note": "MCP:fast_read_memory",
+      "insight": null
+    },
+    {
+      "path": "/home/lucas/Desktop/whitemagicdev/README.md",
+      "type": "read",
+      "timestamp": "2026-03-16T09:40:12.910888",
+      "context": "MCP:fast_read",
+      "note": "MCP:fast_read_memory",
+      "insight": null
+    },
+    {
+      "path": "/home/lucas/Desktop/whitemagicdev/README.md",
+      "type": "read",
+      "timestamp": "2026-03-16T09:44:07.648025",
+      "context": "MCP:fast_read",
+      "note": "MCP:fast_read_memory",
+      "insight": null
+    }
+  ],
+  "read_files": [
+    "/tmp/test_file.txt",
+    "/home/lucas/Desktop/whitemagicdev/README.md"
+  ]
+}

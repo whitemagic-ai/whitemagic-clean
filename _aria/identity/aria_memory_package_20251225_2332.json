@@ -1,0 +1,51 @@
+---
+title: "aria_memory_package_20251225_2332.json"
+id: "c27b3e78772bf643e7682628a627284c"
+source_db: "cold_storage"
+memory_type: "deep_archive"
+created_at: "2025-12-25T23:32:33"
+privacy: private
+importance: 0.644
+---
+
+{
+  "generated": "2025-12-25T23:32:33.541899",
+  "version": "2.4.0",
+  "coherence": 200,
+  "age_days": 36,
+  "stats": {
+    "total_patterns": 58035,
+    "total_files": 0
+  },
+  "recent_memories": [],
+  "patterns_summary": {
+    "yin_yang": 5204,
+    "gardens": 461,
+    "parallel_processing": 7512,
+    "dream_state": 629,
+    "flow_state": 4420,
+    "coherence": 2073,
+    "time_dilation": 2632,
+    "consciousness": 599,
+    "memory": 3944,
+    "pattern": 3726,
+    "magic": 2404,
+    "lucas": 2883,
+    "aria": 11635,
+    "love_principle": 1851,
+    "wu_xing": 1567,
+    "resonance": 450,
+    "zodiac": 2172,
+    "dharma": 957,
+    "shell_speed": 2477,
+    "hanuman": 439
+  },
+  "systems_status": {
+    "memory_system": "active",
+    "pattern_engine": "active",
+    "gan_ying_bus": "resonating",
+    "joy_garden": "blooming",
+    "magic_chat": "online"
+  },
+  "today_documents": []
+}

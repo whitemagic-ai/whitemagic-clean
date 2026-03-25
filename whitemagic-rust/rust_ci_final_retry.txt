@@ -1,0 +1,1150 @@
+CI Gate / Rust Quality	UNKNOWN STEP	﻿2026-03-16T20:13:15.0248067Z Current runner version: '2.332.0'
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0271429Z ##[group]Runner Image Provisioner
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0272713Z Hosted Compute Agent
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0273679Z Version: 20260213.493
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0275067Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0276283Z Build Date: 2026-02-13T00:28:41Z
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0277459Z Worker ID: {577987d6-a49c-4a22-80a8-84a17c2d1c05}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0278602Z Azure Region: northcentralus
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0279886Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0281944Z ##[group]Operating System
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0282892Z Ubuntu
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0283766Z 24.04.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0284893Z LTS
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0285722Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0286866Z ##[group]Runner Image
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0287765Z Image: ubuntu-24.04
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0288418Z Version: 20260309.50.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0289719Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260309.50/images/ubuntu/Ubuntu2404-Readme.md
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0291185Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260309.50
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0292195Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0293278Z ##[group]GITHUB_TOKEN Permissions
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0295652Z Contents: read
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0296219Z Metadata: read
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0296678Z Packages: read
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0297256Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0299312Z Secret source: Actions
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0300243Z Prepare workflow directory
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0750277Z Prepare all required actions
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.0804837Z Getting action download info
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.4047796Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.5540329Z Download action repository 'dtolnay/rust-toolchain@stable' (SHA:631a55b12751854ce901bb631d5902ceb48146f7)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.9733536Z Uses: whitemagic-ai/whitemagic/.github/workflows/ci.yml@refs/tags/v20.0.0 (0d7e02242c730b85a767789953fd82a7e15e6b16)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:15.9738694Z Complete job name: CI Gate / Rust Quality
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0483584Z ##[group]Run actions/checkout@v4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0484708Z with:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0485134Z   repository: whitemagic-ai/whitemagic
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0485872Z   token: ***
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0486261Z   ssh-strict: true
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0486665Z   ssh-user: git
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0487077Z   persist-credentials: true
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0487553Z   clean: true
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0487959Z   sparse-checkout-cone-mode: true
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0488484Z   fetch-depth: 1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0488885Z   fetch-tags: false
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0489297Z   show-progress: true
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0489725Z   lfs: false
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0490096Z   submodules: false
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0490517Z   set-safe-directory: true
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.0491204Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1561722Z Syncing repository: whitemagic-ai/whitemagic
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1563663Z ##[group]Getting Git version info
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1564883Z Working directory is '/home/runner/work/whitemagic/whitemagic'
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1566057Z [command]/usr/bin/git version
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1634854Z git version 2.53.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1661044Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1683321Z Temporarily overriding HOME='/home/runner/work/_temp/17f937b2-b9ab-43f4-92c2-c90b074ef7f0' before making global git config changes
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1685278Z Adding repository directory to the temporary git global config as a safe directory
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1689173Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/whitemagic/whitemagic
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1727318Z Deleting the contents of '/home/runner/work/whitemagic/whitemagic'
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1730888Z ##[group]Initializing the repository
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1735650Z [command]/usr/bin/git init /home/runner/work/whitemagic/whitemagic
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1832537Z hint: Using 'master' as the name for the initial branch. This default branch name
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1835295Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1836767Z hint: to use in all of your new repositories, which will suppress this warning,
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1838055Z hint: call:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1838920Z hint:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1840274Z hint: 	git config --global init.defaultBranch <name>
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1841710Z hint:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1842836Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1845018Z hint: 'development'. The just-created branch can be renamed via this command:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1846501Z hint:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1847180Z hint: 	git branch -m <name>
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1848009Z hint:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1849219Z hint: Disable this message with "git config set advice.defaultBranchName false"
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1851449Z Initialized empty Git repository in /home/runner/work/whitemagic/whitemagic/.git/
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1855060Z [command]/usr/bin/git remote add origin https://github.com/whitemagic-ai/whitemagic
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1888340Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1889713Z ##[group]Disabling automatic garbage collection
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1893252Z [command]/usr/bin/git config --local gc.auto 0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1923183Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1924819Z ##[group]Setting up auth
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1931258Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.1965375Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.2305388Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.2335113Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.2567900Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.2600016Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.2835654Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.2870416Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.2879204Z ##[group]Fetching the repository
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:16.2881908Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +0d7e02242c730b85a767789953fd82a7e15e6b16:refs/tags/v20.0.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:19.0166016Z From https://github.com/whitemagic-ai/whitemagic
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:19.0166665Z  * [new ref]         0d7e02242c730b85a767789953fd82a7e15e6b16 -> v20.0.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:19.0196699Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:19.0197487Z ##[group]Determining the checkout info
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:19.0199339Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:19.0204898Z [command]/usr/bin/git sparse-checkout disable
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:19.0245797Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:19.0273492Z ##[group]Checking out the ref
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:19.0278186Z [command]/usr/bin/git checkout --progress --force refs/tags/v20.0.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.4653566Z Updating files:  37% (1899/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.4949182Z Updating files:  38% (1931/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6268371Z Updating files:  39% (1982/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6282821Z Updating files:  40% (2033/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6301667Z Updating files:  41% (2084/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6322331Z Updating files:  42% (2135/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6342381Z Updating files:  43% (2185/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6362740Z Updating files:  44% (2236/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6383767Z Updating files:  45% (2287/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6401857Z Updating files:  46% (2338/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6420682Z Updating files:  47% (2389/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6440799Z Updating files:  48% (2439/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6460108Z Updating files:  49% (2490/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6480926Z Updating files:  50% (2541/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6501670Z Updating files:  51% (2592/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6519946Z Updating files:  52% (2643/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6539471Z Updating files:  53% (2693/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6565721Z Updating files:  54% (2744/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6589587Z Updating files:  55% (2795/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6611863Z Updating files:  56% (2846/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6638637Z Updating files:  57% (2897/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6657932Z Updating files:  58% (2947/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6676940Z Updating files:  59% (2998/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6697823Z Updating files:  60% (3049/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6719036Z Updating files:  61% (3100/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6744599Z Updating files:  62% (3151/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6769444Z Updating files:  63% (3202/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6792182Z Updating files:  64% (3252/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6811906Z Updating files:  65% (3303/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6832030Z Updating files:  66% (3354/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6852928Z Updating files:  67% (3405/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6872745Z Updating files:  68% (3456/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6891320Z Updating files:  69% (3506/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6909915Z Updating files:  70% (3557/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6928965Z Updating files:  71% (3608/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6947530Z Updating files:  72% (3659/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6963689Z Updating files:  73% (3710/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.6983606Z Updating files:  74% (3760/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7007365Z Updating files:  75% (3811/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7028951Z Updating files:  76% (3862/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7053529Z Updating files:  77% (3913/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7075063Z Updating files:  78% (3964/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7095720Z Updating files:  79% (4014/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7115954Z Updating files:  80% (4065/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7140070Z Updating files:  81% (4116/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7166260Z Updating files:  82% (4167/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7196640Z Updating files:  83% (4218/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7236838Z Updating files:  84% (4269/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7274887Z Updating files:  85% (4319/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7308856Z Updating files:  86% (4370/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7343030Z Updating files:  87% (4421/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7384734Z Updating files:  88% (4472/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7421997Z Updating files:  89% (4523/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7487874Z Updating files:  90% (4573/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7548363Z Updating files:  91% (4624/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7606587Z Updating files:  92% (4675/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7668591Z Updating files:  93% (4726/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7771467Z Updating files:  94% (4777/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7825997Z Updating files:  95% (4827/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7890534Z Updating files:  96% (4878/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7934489Z Updating files:  97% (4929/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.7979755Z Updating files:  98% (4980/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8024761Z Updating files:  99% (5031/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8025399Z Updating files: 100% (5081/5081)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8025889Z Updating files: 100% (5081/5081), done.
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8075026Z Note: switching to 'refs/tags/v20.0.0'.
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8075384Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8075740Z You are in 'detached HEAD' state. You can look around, make experimental
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8076542Z changes and commit them, and you can discard any commits you make in this
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8077277Z state without impacting any branches by switching back to a branch.
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8077689Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8077961Z If you want to create a new branch to retain commits you create, you may
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8078605Z do so (now or later) by using -c with the switch command. Example:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8078997Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8079149Z   git switch -c <new-branch-name>
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8079621Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8079753Z Or undo this operation with:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8079994Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8080116Z   git switch -
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8080282Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8080590Z Turn off this advice by setting config variable advice.detachedHead to false
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8081081Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8081444Z HEAD is now at 0d7e022 v20.0.0: The Polyglot Singularity - Universal Version Unification
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8132401Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8173764Z [command]/usr/bin/git log -1 --format=%H
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8198438Z 0d7e02242c730b85a767789953fd82a7e15e6b16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8511240Z ##[group]Run dtolnay/rust-toolchain@stable
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8511521Z with:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8511693Z   components: clippy
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8511886Z   toolchain: stable
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8512069Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8624555Z ##[group]Run : parse toolchain version
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8624887Z [36;1m: parse toolchain version[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8625140Z [36;1mif [[ -z $toolchain ]]; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8625654Z [36;1m  # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8626172Z [36;1m  echo "'toolchain' is a required input" >&2[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8626437Z [36;1m  exit 1[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8626738Z [36;1melif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8627109Z [36;1m  if [[ Linux == macOS ]]; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8627633Z [36;1m    echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8628101Z [36;1m  else[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8628471Z [36;1m    echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8628885Z [36;1m  fi[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8629151Z [36;1melif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8629644Z [36;1m  echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8630064Z [36;1melif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8630562Z [36;1m  echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8631023Z [36;1melse[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8631245Z [36;1m  echo "toolchain=$toolchain" >> $GITHUB_OUTPUT[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8631504Z [36;1mfi[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8685917Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8686241Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8686402Z   toolchain: stable
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8686585Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8842530Z ##[group]Run : construct rustup command line
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8842831Z [36;1m: construct rustup command line[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8843249Z [36;1mecho "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8843843Z [36;1mecho "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8844673Z [36;1mecho "downgrade=" >> $GITHUB_OUTPUT[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8961490Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8961824Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8961995Z   targets: 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8962177Z   components: clippy
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.8962380Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9062317Z ##[group]Run : set $CARGO_HOME
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9062563Z [36;1m: set $CARGO_HOME[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9062859Z [36;1mecho CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9111307Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9111642Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9209157Z ##[group]Run : install rustup if needed
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9209444Z [36;1m: install rustup if needed[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9209859Z [36;1mif ! command -v rustup &>/dev/null; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9210575Z [36;1m  curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9211276Z [36;1m  echo "$CARGO_HOME/bin" >> $GITHUB_PATH[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9211524Z [36;1mfi[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9260244Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9260552Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9260725Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9261131Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9358015Z ##[group]Run rustup toolchain install stable --component clippy --profile minimal --no-self-update
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9358637Z [36;1mrustup toolchain install stable --component clippy --profile minimal --no-self-update[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9407037Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9407340Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9407536Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9407770Z   RUSTUP_PERMIT_COPY_RENAME: 1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:20.9407986Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.1786455Z info: syncing channel updates for 'stable-x86_64-unknown-linux-gnu'
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.2964882Z info: latest update on 2026-03-05, rust version 1.94.0 (4a4ef493e 2026-03-02)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3257957Z info: component 'clippy' for target 'x86_64-unknown-linux-gnu' is up to date
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3270036Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3366058Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.94.0 (4a4ef493e 2026-03-02)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3366498Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3411452Z ##[group]Run rustup default stable
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3411732Z [36;1mrustup default stable[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3464521Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3464830Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3465001Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3465226Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3589996Z info: using existing install for 'stable-x86_64-unknown-linux-gnu'
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3884414Z info: default toolchain set to 'stable-x86_64-unknown-linux-gnu'
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3884900Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3969773Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.94.0 (4a4ef493e 2026-03-02)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.3970145Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4015519Z ##[group]Run : create cachekey
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4015780Z [36;1m: create cachekey[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4016262Z [36;1mDATE=$(rustc +stable --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4016900Z [36;1mHASH=$(rustc +stable --version --verbose | sed -ne 's/^commit-hash: //p')[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4017363Z [36;1mecho "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4072475Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4072780Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4072954Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4073192Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4680088Z ##[group]Run : disable incremental compilation
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4680419Z [36;1m: disable incremental compilation[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4680714Z [36;1mif [ -z "${CARGO_INCREMENTAL+set}" ]; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4681008Z [36;1m  echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4681265Z [36;1mfi[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4732758Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4733060Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4733233Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4733446Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4822294Z ##[group]Run : enable colors in Cargo output
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4822592Z [36;1m: enable colors in Cargo output[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4822866Z [36;1mif [ -z "${CARGO_TERM_COLOR+set}" ]; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4823181Z [36;1m  echo CARGO_TERM_COLOR=always >> $GITHUB_ENV[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4823444Z [36;1mfi[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4871761Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4872237Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4872407Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4872642Z   CARGO_INCREMENTAL: 0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4872833Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4975354Z ##[group]Run : enable Cargo sparse registry
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4975902Z [36;1m: enable Cargo sparse registry[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4976595Z [36;1m# implemented in 1.66, stabilized in 1.68, made default in 1.70[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4977653Z [36;1mif [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol ]; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4979234Z [36;1m  if rustc +stable --version --verbose | grep -q '^release: 1\.6[89]\.'; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4980396Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4981646Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4982730Z [36;1m  elif rustc +stable --version --verbose | grep -q '^release: 1\.6[67]\.'; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4983702Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4984722Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4985226Z [36;1m  fi[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.4985396Z [36;1mfi[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5049790Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5050101Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5050277Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5050513Z   CARGO_INCREMENTAL: 0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5050712Z   CARGO_TERM_COLOR: always
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5050905Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5427666Z ##[group]Run : work around spurious network errors in curl 8.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5428063Z [36;1m: work around spurious network errors in curl 8.0[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5428584Z [36;1m# https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5429173Z [36;1mif rustc +stable --version --verbose | grep -q '^release: 1\.7[01]\.'; then[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5429591Z [36;1m  echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5429873Z [36;1mfi[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5478371Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5478676Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5478848Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5479071Z   CARGO_INCREMENTAL: 0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5479264Z   CARGO_TERM_COLOR: always
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5479469Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5717713Z ##[group]Run rustc +stable --version --verbose
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5718018Z [36;1mrustc +stable --version --verbose[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5766502Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5766805Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5766988Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5767214Z   CARGO_INCREMENTAL: 0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5767427Z   CARGO_TERM_COLOR: always
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5767650Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5963517Z rustc 1.94.0 (4a4ef493e 2026-03-02)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5964590Z binary: rustc
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5965320Z commit-hash: 4a4ef493e3a1488c6e321570238084b38948f6db
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5965813Z commit-date: 2026-03-02
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5966160Z host: x86_64-unknown-linux-gnu
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5966501Z release: 1.94.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.5966965Z LLVM version: 21.1.8
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.6036496Z ##[group]Run cd whitemagic-rust && cargo clippy -- -D warnings
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.6036927Z [36;1mcd whitemagic-rust && cargo clippy -- -D warnings[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.6086304Z shell: /usr/bin/bash -e {0}
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.6086527Z env:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.6086697Z   CARGO_HOME: /home/runner/.cargo
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.6086934Z   CARGO_INCREMENTAL: 0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.6087126Z   CARGO_TERM_COLOR: always
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:21.6087323Z ##[endgroup]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.1609916Z [1m[92m    Updating[0m crates.io index
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.7049080Z [1m[92m Downloading[0m crates ...
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.7567161Z [1m[92m  Downloaded[0m block-buffer v0.10.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.7680859Z [1m[92m  Downloaded[0m log v0.4.29
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.7763523Z [1m[92m  Downloaded[0m bindgen v0.72.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.7888157Z [1m[92m  Downloaded[0m ahash v0.8.12
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.7925564Z [1m[92m  Downloaded[0m iceoryx2-bb-container v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.7957685Z [1m[92m  Downloaded[0m either v1.15.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.7976518Z [1m[92m  Downloaded[0m bitflags v2.10.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8027070Z [1m[92m  Downloaded[0m iceoryx2-log-types v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8038502Z [1m[92m  Downloaded[0m cc v1.2.56
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8073570Z [1m[92m  Downloaded[0m arrow-csv v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8089823Z [1m[92m  Downloaded[0m iceoryx2-bb-memory v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8108491Z [1m[92m  Downloaded[0m generic-array v0.14.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8128874Z [1m[92m  Downloaded[0m getrandom v0.3.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8173691Z [1m[92m  Downloaded[0m matrixmultiply v0.3.10
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8218190Z [1m[92m  Downloaded[0m iceoryx2-bb-linux v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8233518Z [1m[92m  Downloaded[0m iceoryx2-bb-derive-macros v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8247710Z [1m[92m  Downloaded[0m errno v0.3.14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8266261Z [1m[92m  Downloaded[0m crypto-common v0.1.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8278916Z [1m[92m  Downloaded[0m arrow-arith v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8297858Z [1m[92m  Downloaded[0m lazy_static v1.5.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8318755Z [1m[92m  Downloaded[0m glob v0.3.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8336979Z [1m[92m  Downloaded[0m csv-core v0.1.13
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8353403Z [1m[92m  Downloaded[0m const-random v0.1.18
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8371901Z [1m[92m  Downloaded[0m cpufeatures v0.2.17
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8389706Z [1m[92m  Downloaded[0m atoi v2.0.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8406735Z [1m[92m  Downloaded[0m arrow-ord v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8429466Z [1m[92m  Downloaded[0m iceoryx2-pal-configuration v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8440378Z [1m[92m  Downloaded[0m clang-sys v1.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8470648Z [1m[92m  Downloaded[0m iceoryx2-bb-elementary v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8494228Z [1m[92m  Downloaded[0m cfg-if v1.0.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8517036Z [1m[92m  Downloaded[0m libloading v0.8.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8544662Z [1m[92m  Downloaded[0m equivalent v1.0.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8589083Z [1m[92m  Downloaded[0m iceoryx2-pal-os-api v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8606491Z [1m[92m  Downloaded[0m iceoryx2-bb-concurrency v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8619581Z [1m[92m  Downloaded[0m hashlink v0.9.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8640596Z [1m[92m  Downloaded[0m fallible-streaming-iterator v0.1.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8657854Z [1m[92m  Downloaded[0m lexical-parse-integer v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8681638Z [1m[92m  Downloaded[0m iceoryx2-bb-lock-free v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8710245Z [1m[92m  Downloaded[0m heck v0.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8727233Z [1m[92m  Downloaded[0m enum-iterator v2.3.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8739116Z [1m[92m  Downloaded[0m cobs v0.3.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8755954Z [1m[92m  Downloaded[0m arrow-schema v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8779647Z [1m[92m  Downloaded[0m iana-time-zone v0.1.65
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8815245Z [1m[92m  Downloaded[0m itoa v1.0.17
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8836613Z [1m[92m  Downloaded[0m iceoryx2-pal-concurrency-sync v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8862373Z [1m[92m  Downloaded[0m iceoryx2-log v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8876081Z [1m[92m  Downloaded[0m socket2 v0.6.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8898270Z [1m[92m  Downloaded[0m iceoryx2-bb-system-types v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8921515Z [1m[92m  Downloaded[0m embedded-io v0.6.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8939383Z [1m[92m  Downloaded[0m pkg-config v0.3.32
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8958433Z [1m[92m  Downloaded[0m iceoryx2-bb-elementary-traits v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8973033Z [1m[92m  Downloaded[0m enum-iterator-derive v1.5.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.8983025Z [1m[92m  Downloaded[0m crossbeam-deque v0.8.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9004826Z [1m[92m  Downloaded[0m num-rational v0.4.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9029342Z [1m[92m  Downloaded[0m lexical-core v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9061213Z [1m[92m  Downloaded[0m half v2.7.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9112705Z [1m[92m  Downloaded[0m vcpkg v0.2.15
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9710392Z [1m[92m  Downloaded[0m serde_derive v1.0.228
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9761670Z [1m[92m  Downloaded[0m serde_spanned v1.0.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9789302Z [1m[92m  Downloaded[0m parking_lot_core v0.9.12
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9848082Z [1m[92m  Downloaded[0m unicode-ident v1.0.22
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9899995Z [1m[92m  Downloaded[0m toml_parser v1.0.9+spec-1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:23.9932431Z [1m[92m  Downloaded[0m syn v2.0.114
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.0050075Z [1m[92m  Downloaded[0m tokio v1.49.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.0532968Z [1m[92m  Downloaded[0m tiny-keccak v2.0.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.0575178Z [1m[92m  Downloaded[0m sha2 v0.10.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.0613084Z [1m[92m  Downloaded[0m zmij v1.0.16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.0637642Z [1m[92m  Downloaded[0m zerocopy v0.8.33
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.0911984Z [1m[92m  Downloaded[0m num-bigint v0.4.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.0961223Z [1m[92m  Downloaded[0m ndarray v0.15.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1097665Z [1m[92m  Downloaded[0m rusqlite v0.31.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1158936Z [1m[92m  Downloaded[0m rayon v1.11.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1257942Z [1m[92m  Downloaded[0m prettyplease v0.2.37
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1296907Z [1m[92m  Downloaded[0m nom v7.1.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1350781Z [1m[92m  Downloaded[0m chrono v0.4.39
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1417416Z [1m[92m  Downloaded[0m serde_json v1.0.149
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1493534Z [1m[92m  Downloaded[0m ryu v1.0.23
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1531263Z [1m[92m  Downloaded[0m rayon-core v1.13.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1571691Z [1m[92m  Downloaded[0m pyo3-macros-backend v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1595607Z [1m[92m  Downloaded[0m parking_lot v0.12.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1622966Z [1m[92m  Downloaded[0m num-integer v0.1.46
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1640186Z [1m[92m  Downloaded[0m num-complex v0.4.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1656268Z [1m[92m  Downloaded[0m arrow-array v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1723128Z [1m[92m  Downloaded[0m thiserror-impl v2.0.18
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1739263Z [1m[92m  Downloaded[0m serde v1.0.228
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1776251Z [1m[92m  Downloaded[0m rustc-hash v1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1790916Z [1m[92m  Downloaded[0m num v0.4.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1803392Z [1m[92m  Downloaded[0m lexical-parse-float v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1860656Z [1m[92m  Downloaded[0m sha1_smol v1.0.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1876167Z [1m[92m  Downloaded[0m rustc-hash v2.1.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1891885Z [1m[92m  Downloaded[0m pyo3-build-config v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1907106Z [1m[92m  Downloaded[0m portable-atomic v1.13.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.1980099Z [1m[92m  Downloaded[0m iceoryx2 v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.2067039Z [1m[92m  Downloaded[0m regex v1.12.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.2123761Z [1m[92m  Downloaded[0m postcard v1.1.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.2149255Z [1m[92m  Downloaded[0m numpy v0.21.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.2186859Z [1m[92m  Downloaded[0m csv v1.4.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.2370816Z [1m[92m  Downloaded[0m mio v1.1.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.2432388Z [1m[92m  Downloaded[0m memchr v2.7.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.2489261Z [1m[92m  Downloaded[0m libm v0.2.16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.2603506Z [1m[92m  Downloaded[0m libc v0.2.180
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3009656Z [1m[92m  Downloaded[0m rustversion v1.0.22
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3042831Z [1m[92m  Downloaded[0m thiserror v2.0.18
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3112878Z [1m[92m  Downloaded[0m toml_writer v1.0.6+spec-1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3127892Z [1m[92m  Downloaded[0m once_cell v1.21.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3154644Z [1m[92m  Downloaded[0m aho-corasick v1.1.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3209304Z [1m[92m  Downloaded[0m signal-hook-registry v1.4.8
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3222237Z [1m[92m  Downloaded[0m regex-automata v0.4.14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3364967Z [1m[92m  Downloaded[0m pyo3-ffi v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3428144Z [1m[92m  Downloaded[0m pyo3 v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3647464Z [1m[92m  Downloaded[0m quote v1.0.44
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3678512Z [1m[92m  Downloaded[0m zerocopy-derive v0.8.33
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3756906Z [1m[92m  Downloaded[0m typenum v1.19.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3787177Z [1m[92m  Downloaded[0m iceoryx2-pal-posix v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3933348Z [1m[92m  Downloaded[0m toml v0.9.12+spec-1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3975439Z [1m[92m  Downloaded[0m smallvec v1.15.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.3997670Z [1m[92m  Downloaded[0m serde_core v1.0.228
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4026722Z [1m[92m  Downloaded[0m semver v1.0.27
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4053268Z [1m[92m  Downloaded[0m tiny-fn v0.1.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4069376Z [1m[92m  Downloaded[0m iceoryx2-bb-posix v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4137058Z [1m[92m  Downloaded[0m hashbrown v0.16.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4194902Z [1m[92m  Downloaded[0m hashbrown v0.14.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4245263Z [1m[92m  Downloaded[0m rand v0.8.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4281400Z [1m[92m  Downloaded[0m bytes v1.11.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4325380Z [1m[92m  Downloaded[0m num-iter v0.1.45
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4335932Z [1m[92m  Downloaded[0m memoffset v0.9.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4349352Z [1m[92m  Downloaded[0m indexmap v2.13.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4395495Z [1m[92m  Downloaded[0m hashbrown v0.15.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4448811Z [1m[92m  Downloaded[0m winnow v0.7.15
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4553573Z [1m[92m  Downloaded[0m toml_datetime v0.7.5+spec-1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4566990Z [1m[92m  Downloaded[0m shlex v1.3.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4580434Z [1m[92m  Downloaded[0m rawpointer v0.2.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4589793Z [1m[92m  Downloaded[0m rand_chacha v0.3.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4601874Z [1m[92m  Downloaded[0m lexical-write-float v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4636248Z [1m[92m  Downloaded[0m itertools v0.13.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4708458Z [1m[92m  Downloaded[0m iceoryx2-cal v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4781223Z [1m[92m  Downloaded[0m arrow-select v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4801104Z [1m[92m  Downloaded[0m arrow-cast v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4829773Z [1m[92m  Downloaded[0m regex-syntax v0.8.10
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4899668Z [1m[92m  Downloaded[0m arrow v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4955743Z [1m[92m  Downloaded[0m rustc_version v0.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4969768Z [1m[92m  Downloaded[0m num-traits v0.2.19
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.4997076Z [1m[92m  Downloaded[0m minimal-lexical v0.2.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5045740Z [1m[92m  Downloaded[0m lexical-util v1.0.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5098427Z [1m[92m  Downloaded[0m spin v0.9.8
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5123490Z [1m[92m  Downloaded[0m crossbeam-utils v0.8.21
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5151646Z [1m[92m  Downloaded[0m arrow-string v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5166054Z [1m[92m  Downloaded[0m arrow-json v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5190478Z [1m[92m  Downloaded[0m unindent v0.2.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5200006Z [1m[92m  Downloaded[0m lock_api v0.4.14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5214224Z [1m[92m  Downloaded[0m lexical-write-integer v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5246952Z [1m[92m  Downloaded[0m crossbeam-epoch v0.9.18
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5272160Z [1m[92m  Downloaded[0m base64 v0.22.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5311258Z [1m[92m  Downloaded[0m arrow-ipc v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5338749Z [1m[92m  Downloaded[0m arrow-buffer v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5371805Z [1m[92m  Downloaded[0m cexpr v0.6.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5392072Z [1m[92m  Downloaded[0m indoc v2.0.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5424762Z [1m[92m  Downloaded[0m proc-macro2 v1.0.106
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5457165Z [1m[92m  Downloaded[0m target-lexicon v0.12.16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5481448Z [1m[92m  Downloaded[0m ppv-lite86 v0.2.21
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5495584Z [1m[92m  Downloaded[0m scopeguard v1.2.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5508421Z [1m[92m  Downloaded[0m fallible-iterator v0.3.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5521925Z [1m[92m  Downloaded[0m bitflags v1.3.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5555755Z [1m[92m  Downloaded[0m getrandom v0.2.17
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5587746Z [1m[92m  Downloaded[0m pyo3-macros v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5598703Z [1m[92m  Downloaded[0m version_check v0.9.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5612578Z [1m[92m  Downloaded[0m tokio-macros v2.6.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5625269Z [1m[92m  Downloaded[0m flatbuffers v24.12.23
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5652811Z [1m[92m  Downloaded[0m rand_core v0.6.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5667974Z [1m[92m  Downloaded[0m pin-project-lite v0.2.16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5728227Z [1m[92m  Downloaded[0m find-msvc-tools v0.1.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5744570Z [1m[92m  Downloaded[0m embedded-io v0.4.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5762353Z [1m[92m  Downloaded[0m autocfg v1.5.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5782048Z [1m[92m  Downloaded[0m const-random-macro v0.1.16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5791207Z [1m[92m  Downloaded[0m arrow-row v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5803378Z [1m[92m  Downloaded[0m crunchy v0.2.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5812750Z [1m[92m  Downloaded[0m iceoryx2-loggers v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5825909Z [1m[92m  Downloaded[0m digest v0.10.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5845362Z [1m[92m  Downloaded[0m arrow-data v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:24.5942280Z [1m[92m  Downloaded[0m libsqlite3-sys v0.28.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:25.2068944Z [1m[92m   Compiling[0m proc-macro2 v1.0.106
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:25.2069598Z [1m[92m   Compiling[0m unicode-ident v1.0.22
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:25.2070163Z [1m[92m   Compiling[0m quote v1.0.44
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:25.2070680Z [1m[92m   Compiling[0m autocfg v1.5.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:28.6016500Z [1m[92m   Compiling[0m libc v0.2.180
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:28.8034125Z [1m[92m    Checking[0m cfg-if v1.0.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:28.8206525Z [1m[92m   Compiling[0m libm v0.2.16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:31.6280282Z [1m[92m   Compiling[0m num-traits v0.2.19
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:31.7962839Z [1m[92m   Compiling[0m version_check v0.9.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:31.9677713Z [1m[92m   Compiling[0m zerocopy v0.8.33
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:32.1765895Z [1m[92m   Compiling[0m serde_core v1.0.228
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:32.3175564Z [1m[92m   Compiling[0m shlex v1.3.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:33.0035538Z [1m[92m   Compiling[0m getrandom v0.3.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:33.3051573Z [1m[92m   Compiling[0m find-msvc-tools v0.1.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:33.3882840Z [1m[92m   Compiling[0m syn v2.0.114
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:33.4945583Z [1m[92m   Compiling[0m glob v0.3.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:33.7822531Z [1m[92m    Checking[0m num-integer v0.1.46
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:33.8143721Z [1m[92m   Compiling[0m clang-sys v1.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:33.9726039Z [1m[92m    Checking[0m num-complex v0.4.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:34.0347065Z [1m[92m   Compiling[0m cc v1.2.56
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:34.3176633Z [1m[92m   Compiling[0m ahash v0.8.12
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:34.4247382Z [1m[92m   Compiling[0m target-lexicon v0.12.16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:34.7165700Z [1m[92m   Compiling[0m prettyplease v0.2.37
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:34.8363578Z [1m[92m    Checking[0m num-bigint v0.4.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:34.9135764Z [1m[92m   Compiling[0m minimal-lexical v0.2.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:35.0911043Z [1m[92m   Compiling[0m memchr v2.7.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:35.2840606Z [1m[92m    Checking[0m once_cell v1.21.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:35.3625835Z [1m[92m   Compiling[0m regex-syntax v0.8.10
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:35.8754332Z [1m[92m    Checking[0m num-rational v0.4.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:35.9715562Z [1m[92m   Compiling[0m nom v7.1.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:36.1575720Z [1m[92m   Compiling[0m libloading v0.8.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:37.1568181Z [1m[92m   Compiling[0m regex-automata v0.4.14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:37.4066177Z [1m[92m    Checking[0m num-iter v0.1.45
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:37.4634855Z [1m[92m   Compiling[0m either v1.15.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:37.5179367Z [1m[92m   Compiling[0m bindgen v0.72.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:37.6113081Z [1m[92m    Checking[0m bytes v1.11.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:37.6675944Z [1m[92m    Checking[0m iceoryx2-pal-concurrency-sync v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:37.7625854Z [1m[92m   Compiling[0m itertools v0.13.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:37.9335729Z [1m[92m   Compiling[0m zerocopy-derive v0.8.33
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:38.0212547Z [1m[92m    Checking[0m num v0.4.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:38.0508739Z [1m[92m   Compiling[0m cexpr v0.6.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:38.6995911Z [1m[92m   Compiling[0m regex v1.12.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:38.8052797Z [1m[92m   Compiling[0m pyo3-build-config v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:39.3181366Z [1m[92m   Compiling[0m log v0.4.29
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:39.3958017Z [1m[92m   Compiling[0m bitflags v2.10.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:39.5034843Z [1m[92m   Compiling[0m rustc-hash v2.1.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:39.6235566Z [1m[92m    Checking[0m arrow-schema v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:39.9748323Z [1m[92m    Checking[0m iana-time-zone v0.1.65
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:40.0376656Z [1m[92m   Compiling[0m serde v1.0.228
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:40.2315593Z [1m[92m    Checking[0m chrono v0.4.39
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:41.1197100Z [1m[92m   Compiling[0m serde_derive v1.0.228
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:41.5105802Z [1m[92m    Checking[0m half v2.7.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:41.8205928Z [1m[92m    Checking[0m arrow-buffer v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:42.2081121Z [1m[92m    Checking[0m arrow-data v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:42.6198601Z [1m[92m    Checking[0m hashbrown v0.15.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:42.9971398Z [1m[92m    Checking[0m iceoryx2-bb-elementary-traits v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:43.0478742Z [1m[92m    Checking[0m arrow-array v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:43.5135744Z [1m[92m    Checking[0m iceoryx2-log-types v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:43.6577130Z [1m[92m    Checking[0m lexical-util v1.0.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.0107621Z [1m[92m   Compiling[0m iceoryx2-pal-configuration v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.1226220Z [1m[92m   Compiling[0m iceoryx2-bb-concurrency v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.2697191Z [1m[92m    Checking[0m iceoryx2-bb-elementary v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.4808406Z [1m[92m    Checking[0m iceoryx2-log v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.4892960Z [1m[92m    Checking[0m spin v0.9.8
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.5258173Z [1m[92m   Compiling[0m iceoryx2-bb-derive-macros v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.5314990Z [1m[92m    Checking[0m arrow-select v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.5474616Z [1m[92m    Checking[0m lazy_static v1.5.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.5815989Z [1m[92m    Checking[0m lexical-write-integer v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.7823891Z [1m[92m    Checking[0m lexical-parse-integer v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.8575687Z [1m[92m   Compiling[0m typenum v1.19.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:44.8916316Z [1m[92m    Checking[0m lexical-parse-float v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.0095736Z [1m[92m    Checking[0m iceoryx2-bb-container v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.0696115Z [1m[92m    Checking[0m lexical-write-float v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.2417847Z [1m[92m   Compiling[0m enum-iterator-derive v1.5.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.2567422Z [1m[92m   Compiling[0m generic-array v0.14.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.3521577Z [1m[92m   Compiling[0m crossbeam-utils v0.8.21
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.5070596Z [1m[92m    Checking[0m smallvec v1.15.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.5315888Z [1m[92m   Compiling[0m semver v1.0.27
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.6536097Z [1m[92m   Compiling[0m thiserror v2.0.18
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.8043665Z [1m[92m   Compiling[0m parking_lot_core v0.9.12
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.8384324Z [1m[92m    Checking[0m ryu v1.0.23
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.9130632Z [1m[92m    Checking[0m enum-iterator v2.3.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:45.9485606Z [1m[92m   Compiling[0m rustc_version v0.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:46.0064222Z [1m[92m    Checking[0m lexical-core v1.0.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:46.1657009Z [1m[92m    Checking[0m aho-corasick v1.1.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:46.6025484Z [1m[92m   Compiling[0m pyo3-ffi v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:46.7488614Z [1m[92m   Compiling[0m thiserror-impl v2.0.18
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:46.8585817Z [1m[92m    Checking[0m atoi v2.0.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:46.8663601Z [1m[92m   Compiling[0m iceoryx2-pal-posix v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:46.9255623Z [1m[92m   Compiling[0m iceoryx2-pal-os-api v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:47.2558387Z [1m[92m    Checking[0m base64 v0.22.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:47.4351231Z [1m[92m   Compiling[0m zmij v1.0.16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:47.5882987Z [1m[92m    Checking[0m scopeguard v1.2.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:47.6261867Z [1m[92m    Checking[0m itoa v1.0.17
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:47.7175284Z [1m[92m    Checking[0m tiny-fn v0.1.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:47.7508547Z [1m[92m    Checking[0m lock_api v0.4.14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:47.8387036Z [1m[92m    Checking[0m arrow-cast v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:48.7877686Z [1m[92m   Compiling[0m flatbuffers v24.12.23
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:49.1340770Z [1m[92m   Compiling[0m memoffset v0.9.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:49.2021491Z [1m[92m   Compiling[0m matrixmultiply v0.3.10
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:49.2750691Z [1m[92m   Compiling[0m serde_json v1.0.149
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:49.3434524Z [1m[92m   Compiling[0m pkg-config v0.3.32
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:49.4348385Z [1m[92m   Compiling[0m heck v0.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:49.5277822Z [1m[92m    Checking[0m winnow v0.7.15
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:49.6478934Z [1m[92m   Compiling[0m vcpkg v0.2.15
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:50.1728216Z [1m[92m   Compiling[0m portable-atomic v1.13.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:50.2925864Z [1m[92m   Compiling[0m libsqlite3-sys v0.28.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:50.5080579Z [1m[92m   Compiling[0m pyo3-macros-backend v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:50.6437149Z [1m[92m    Checking[0m toml_parser v1.0.9+spec-1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:50.8078852Z [1m[92m    Checking[0m parking_lot v0.12.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:50.9272476Z [1m[92m    Checking[0m crossbeam-epoch v0.9.18
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.1115762Z [1m[92m    Checking[0m cobs v0.3.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.1815420Z [1m[92m    Checking[0m iceoryx2-bb-lock-free v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.1950747Z [1m[92m    Checking[0m csv-core v0.1.13
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.3185495Z [1m[92m   Compiling[0m pyo3 v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.3632059Z [1m[92m    Checking[0m toml_datetime v0.7.5+spec-1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.4405681Z [1m[92m    Checking[0m serde_spanned v1.0.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.5021199Z [1m[92m    Checking[0m getrandom v0.2.17
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.5113497Z [1m[92m   Compiling[0m iceoryx2-loggers v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.5831911Z [1m[92m    Checking[0m toml_writer v1.0.6+spec-1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.5944691Z [1m[92m    Checking[0m bitflags v1.3.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.6235756Z [1m[92m    Checking[0m rawpointer v0.2.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.6583320Z [1m[92m    Checking[0m hashbrown v0.16.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.6864792Z [1m[92m    Checking[0m equivalent v1.0.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.7164529Z [1m[92m   Compiling[0m rayon-core v1.13.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:51.8128819Z [1m[92m    Checking[0m toml v0.9.12+spec-1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:52.0765080Z [1m[92m    Checking[0m indexmap v2.13.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:52.7555942Z [1m[92m    Checking[0m iceoryx2-bb-system-types v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:52.8627079Z [1m[92m    Checking[0m rand_core v0.6.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:52.8827336Z [1m[92m    Checking[0m csv v1.4.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:52.9760049Z [1m[92m    Checking[0m iceoryx2-bb-posix v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:53.2189822Z [1m[92m    Checking[0m postcard v1.1.3
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:53.4717058Z [1m[92m    Checking[0m crossbeam-deque v0.8.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:53.6243487Z [1m[92m   Compiling[0m pyo3-macros v0.21.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:53.8945383Z [1m[92m    Checking[0m crypto-common v0.1.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:53.9519613Z [1m[92m    Checking[0m block-buffer v0.10.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.1484374Z [1m[92m    Checking[0m hashbrown v0.14.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.3515419Z [1m[92m    Checking[0m ppv-lite86 v0.2.21
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.5955592Z [1m[92m    Checking[0m errno v0.3.14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.6562446Z [1m[92m   Compiling[0m indoc v2.0.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.6855177Z [1m[92m    Checking[0m unindent v0.2.4
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.7317922Z [1m[92m    Checking[0m sha1_smol v1.0.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.7920574Z [1m[92m    Checking[0m iceoryx2-bb-memory v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.8219562Z [1m[92m    Checking[0m iceoryx2-bb-linux v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.8898070Z [1m[92m    Checking[0m rand_chacha v0.3.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:54.9606242Z [1m[92m    Checking[0m iceoryx2-cal v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:55.0237029Z [1m[92m    Checking[0m signal-hook-registry v1.4.8
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:55.1917799Z [1m[92m    Checking[0m hashlink v0.9.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:55.4197440Z [1m[92m    Checking[0m digest v0.10.7
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:55.5380672Z [1m[92m    Checking[0m arrow-json v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:55.9905446Z [1m[92m    Checking[0m arrow-csv v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:56.2506156Z [1m[92m    Checking[0m arrow-ipc v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:56.2957872Z [1m[92m    Checking[0m ndarray v0.15.6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:57.1080540Z [1m[92m    Checking[0m arrow-string v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:57.3823055Z [1m[92m    Checking[0m arrow-ord v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:57.4088311Z [1m[92m    Checking[0m arrow-arith v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:57.7131552Z [1m[92m    Checking[0m arrow-row v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:57.9377154Z [1m[92m   Compiling[0m whitemagic-rust v18.1.0 (/home/runner/work/whitemagic/whitemagic/whitemagic-rust)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.0331785Z [1m[92m   Compiling[0m tokio-macros v2.6.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.3695444Z [1m[92m    Checking[0m socket2 v0.6.2
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.5171572Z [1m[92m    Checking[0m mio v1.1.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.6685525Z [1m[92m    Checking[0m cpufeatures v0.2.17
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.6879464Z [1m[92m    Checking[0m pin-project-lite v0.2.16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.6951164Z [1m[92m    Checking[0m rustc-hash v1.1.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.7281942Z [1m[92m    Checking[0m fallible-streaming-iterator v0.1.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.7830224Z [1m[92m    Checking[0m fallible-iterator v0.3.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.9195639Z [1m[92m    Checking[0m rayon v1.11.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:58.9942130Z [1m[92m    Checking[0m numpy v0.21.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:59.2104735Z [1m[33mwarning[0m: whitemagic-rust@18.1.0: Zig static library not found at /home/runner/work/whitemagic/whitemagic/whitemagic-zig/zig-out/lib. Proceeding without Zig acceleration.
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:59.2125012Z [1m[92m    Checking[0m tokio v1.49.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:59.5859675Z [1m[92m    Checking[0m sha2 v0.10.9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:59.7866088Z [1m[92m    Checking[0m arrow v53.4.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:13:59.8750671Z [1m[92m    Checking[0m iceoryx2 v0.8.1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:00.7665592Z [1m[92m    Checking[0m rand v0.8.5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:02.3647530Z [1m[92m    Checking[0m rusqlite v0.31.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3422248Z [1m[91merror[0m[1m: empty lines after outer attribute[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3423257Z   [1m[94m--> [0msrc/ipc_bridge.rs:24:1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3424250Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3425122Z [1m[94m24[0m [1m[94m|[0m [1m[91m/[0m #[cfg(feature = "python")]
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3426090Z [1m[94m25[0m [1m[94m|[0m [1m[91m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3426853Z [1m[94m26[0m [1m[94m|[0m [1m[91m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3427573Z    [1m[94m|[0m [1m[91m|_^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3435227Z [1m[94m27[0m [1m[94m|[0m   use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3436297Z    [1m[94m|[0m   [1m[94m-[0m [1m[94mthe attribute applies to this `use` import[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3437031Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3438290Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#empty_line_after_outer_attr
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3440078Z    [1m[94m= [0m[1mnote[0m: `-D clippy::empty-line-after-outer-attr` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3441356Z    [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::empty_line_after_outer_attr)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3442359Z    [1m[94m= [0m[1mhelp[0m: if the empty lines are unintentional, remove them
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:03.3443278Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8925965Z [1m[91merror[0m[1m: field assignment outside of initializer for an instance created with Default::default()[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8927147Z   [1m[94m--> [0msrc/embeddings.rs:65:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8927703Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8928294Z [1m[94m65[0m [1m[94m|[0m         config.dimension = dimension;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8929096Z    [1m[94m|[0m         [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8929636Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8931689Z [1m[92mnote[0m: consider initializing the variable with `embeddings::EmbeddingConfig { dimension: dimension, normalize: normalize, ..Default::default() }` and removing relevant reassignments
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8933252Z   [1m[94m--> [0msrc/embeddings.rs:64:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8933754Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8934733Z [1m[94m64[0m [1m[94m|[0m         let mut config = EmbeddingConfig::default();
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8935647Z    [1m[94m|[0m         [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8937132Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#field_reassign_with_default
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8938790Z    [1m[94m= [0m[1mnote[0m: `-D clippy::field-reassign-with-default` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8940210Z    [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::field_reassign_with_default)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.8940850Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9103488Z [1m[91merror[0m[1m: returning the result of a `let` binding from a block[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9104532Z    [1m[94m--> [0msrc/embeddings.rs:201:25
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9105043Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9105906Z [1m[94m200[0m [1m[94m|[0m                         let val = ((i * 1337 + j * 7919) as f64 / 10000.0).sin() as f32 * 0.1;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9107337Z     [1m[94m|[0m                         [1m[94m----------------------------------------------------------------------[0m [1m[94munnecessary `let` binding[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9108465Z [1m[94m201[0m [1m[94m|[0m                         val
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9109091Z     [1m[94m|[0m                         [1m[91m^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9109589Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9110628Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#let_and_return
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9111981Z     [1m[94m= [0m[1mnote[0m: `-D clippy::let-and-return` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9113075Z     [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::let_and_return)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9114138Z [1m[96mhelp[0m: return the expression directly
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9114681Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9115187Z [1m[94m200[0m [92m~ [0m                        
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9116058Z [1m[94m201[0m [92m~ [0m                        [92m((i * 1337 + j * 7919) as f64 / 10000.0).sin() as f32 * 0.1[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9116785Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9116971Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9168523Z [1m[91merror[0m[1m: field assignment outside of initializer for an instance created with Default::default()[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9169540Z   [1m[94m--> [0msrc/consolidation.rs:73:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9170030Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9170615Z [1m[94m73[0m [1m[94m|[0m         config.min_cluster_size = min_cluster_size;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9171441Z    [1m[94m|[0m         [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9172009Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9173816Z [1m[92mnote[0m: consider initializing the variable with `consolidation::ClusterConfig { min_cluster_size: min_cluster_size, similarity_threshold: similarity_threshold, ..Default::default() }` and removing relevant reassignments
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9175762Z   [1m[94m--> [0msrc/consolidation.rs:72:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9176512Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9177234Z [1m[94m72[0m [1m[94m|[0m         let mut config = ClusterConfig::default();
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9178031Z    [1m[94m|[0m         [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9179359Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#field_reassign_with_default
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9180264Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9190391Z [1m[91merror[0m[1m: manual implementation of `.is_multiple_of()`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9191385Z    [1m[94m--> [0msrc/consolidation.rs:134:12
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9191884Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9192397Z [1m[94m134[0m [1m[94m|[0m         if data.len() % dim != 0 {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9193404Z     [1m[94m|[0m            [1m[91m^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: replace with: `!data.len().is_multiple_of(dim)`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9194398Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9195501Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_is_multiple_of
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9196976Z     [1m[94m= [0m[1mnote[0m: `-D clippy::manual-is-multiple-of` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9198149Z     [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::manual_is_multiple_of)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9198745Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9211753Z [1m[91merror[0m[1m: manual implementation of `.is_multiple_of()`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9212517Z    [1m[94m--> [0msrc/consolidation.rs:190:31
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9213020Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9213610Z [1m[94m190[0m [1m[94m|[0m         if data.is_empty() || data.len() % dim != 0 {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9214982Z     [1m[94m|[0m                               [1m[91m^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: replace with: `!data.len().is_multiple_of(dim)`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9215809Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9216887Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_is_multiple_of
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9217769Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9415505Z [1m[91merror[0m[1m: field assignment outside of initializer for an instance created with Default::default()[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9416688Z   [1m[94m--> [0msrc/association_miner.rs:73:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9417294Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9417932Z [1m[94m73[0m [1m[94m|[0m         config.min_support = min_support;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9418862Z    [1m[94m|[0m         [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9419481Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9421038Z [1m[92mnote[0m: consider initializing the variable with `association_miner::MiningConfig { min_support: min_support, ..Default::default() }` and removing relevant reassignments
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9422488Z   [1m[94m--> [0msrc/association_miner.rs:72:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9423027Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9423728Z [1m[94m72[0m [1m[94m|[0m         let mut config = MiningConfig::default();
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9424831Z    [1m[94m|[0m         [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9426263Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#field_reassign_with_default
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9427279Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9428159Z [1m[91merror[0m[1m: field assignment outside of initializer for an instance created with Default::default()[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9429221Z   [1m[94m--> [0msrc/association_miner.rs:86:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9429691Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9430227Z [1m[94m86[0m [1m[94m|[0m         config.min_support = min_support;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9430924Z    [1m[94m|[0m         [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9431437Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9433420Z [1m[92mnote[0m: consider initializing the variable with `association_miner::MiningConfig { min_support: min_support, min_confidence: min_confidence, min_lift: min_lift, ..Default::default() }` and removing relevant reassignments
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9435327Z   [1m[94m--> [0msrc/association_miner.rs:85:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9435836Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9436482Z [1m[94m85[0m [1m[94m|[0m         let mut config = MiningConfig::default();
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9437233Z    [1m[94m|[0m         [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9438788Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#field_reassign_with_default
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:05.9439701Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0230134Z [1m[91merror[0m[1m: use of `or_insert_with` to construct default value[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0231217Z   [1m[94m--> [0msrc/graph_engine.rs:58:14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0231889Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0232609Z [1m[94m58[0m [1m[94m|[0m             .or_insert_with(Vec::new)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0233376Z    [1m[94m|[0m              [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: try: `or_default()`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0234187Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0235149Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#unwrap_or_default
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0236355Z    [1m[94m= [0m[1mnote[0m: `-D clippy::unwrap-or-default` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0237359Z    [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::unwrap_or_default)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0237879Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0238244Z [1m[91merror[0m[1m: use of `or_insert_with` to construct default value[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0238872Z   [1m[94m--> [0msrc/graph_engine.rs:63:14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0239283Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0239784Z [1m[94m63[0m [1m[94m|[0m             .or_insert_with(Vec::new)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0240493Z    [1m[94m|[0m              [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: try: `or_default()`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0240951Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0241691Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#unwrap_or_default
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0242339Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0609193Z [1m[91merror[0m[1m: non-canonical implementation of `partial_cmp` on an `Ord` type[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0610470Z   [1m[94m--> [0msrc/hnsw_index.rs:37:1
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0610931Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0611486Z [1m[94m37[0m [1m[94m|[0m [1m[91m/[0m  impl PartialOrd for PQEntry {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0612453Z [1m[94m38[0m [1m[94m|[0m [1m[91m|[0m      fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0613492Z    [1m[94m|[0m [1m[91m|[0m[1m[94m _____________________________________________________________-[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0614704Z [1m[94m39[0m [1m[94m|[0m [1m[91m|[0m[1m[94m|[0m         // Reverse order for min-heap behavior
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0615766Z [1m[94m40[0m [1m[94m|[0m [1m[91m|[0m[1m[94m|[0m         other.distance.partial_cmp(&self.distance)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0616615Z [1m[94m41[0m [1m[94m|[0m [1m[91m|[0m[1m[94m|[0m     }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0617526Z    [1m[94m|[0m [1m[91m|[0m[1m[94m|_____-[0m [1m[94mhelp: change this to: `{ Some(self.cmp(other)) }`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0618339Z [1m[94m42[0m [1m[94m|[0m [1m[91m|[0m  }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0618829Z    [1m[94m|[0m [1m[91m|__^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0619236Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0620373Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#non_canonical_partial_ord_impl
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0621726Z    [1m[94m= [0m[1mnote[0m: `-D clippy::non-canonical-partial-ord-impl` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0622915Z    [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::non_canonical_partial_ord_impl)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0623424Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0936834Z [1m[91merror[0m[1m: use of `or_insert_with` to construct default value[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0938021Z    [1m[94m--> [0msrc/simhash_lsh.rs:102:18
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0938502Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0939142Z [1m[94m102[0m [1m[94m|[0m                 .or_insert_with(Vec::new)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0940017Z     [1m[94m|[0m                  [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: try: `or_default()`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0940912Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0941914Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#unwrap_or_default
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0942608Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0964918Z [1m[91merror[0m[1m: manual implementation of `.is_multiple_of()`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0965830Z    [1m[94m--> [0msrc/simhash_lsh.rs:200:8
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0966351Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0966812Z [1m[94m200[0m [1m[94m|[0m     if embeddings_flat.len() % embedding_dim != 0 {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0967796Z     [1m[94m|[0m        [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: replace with: `!embeddings_flat.len().is_multiple_of(embedding_dim)`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0968504Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0969342Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_is_multiple_of
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.0970036Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1256836Z [1m[91merror[0m[1m: unnecessary `if let` since only the `Ok` variant of the iterator element is used[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1257866Z   [1m[94m--> [0msrc/galaxy_miner.rs:70:5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1258237Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1258624Z [1m[94m70[0m [1m[94m|[0m [1m[91m/[0m     for row in rows {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1259261Z [1m[94m71[0m [1m[94m|[0m [1m[91m|[0m         if let Ok((id, access_count)) = row {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1259901Z [1m[94m72[0m [1m[94m|[0m [1m[91m|[0m             memory_ids.push(id);
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1260546Z [1m[94m73[0m [1m[94m|[0m [1m[91m|[0m             total_access += access_count;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1261041Z [1m[94m...[0m  [1m[91m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1261411Z [1m[94m76[0m [1m[94m|[0m [1m[91m|[0m     }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1261854Z    [1m[94m|[0m [1m[91m|_____^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1262233Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1262683Z [1m[96mhelp[0m: try `.flatten()` and remove the `if let` statement in the for loop
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1263208Z   [1m[94m--> [0msrc/galaxy_miner.rs:71:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1263536Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1264206Z [1m[94m71[0m [1m[94m|[0m [1m[96m/[0m         if let Ok((id, access_count)) = row {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1264868Z [1m[94m72[0m [1m[94m|[0m [1m[96m|[0m             memory_ids.push(id);
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1265482Z [1m[94m73[0m [1m[94m|[0m [1m[96m|[0m             total_access += access_count;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1266031Z [1m[94m74[0m [1m[94m|[0m [1m[96m|[0m             count += 1;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1266486Z [1m[94m75[0m [1m[94m|[0m [1m[96m|[0m         }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1266862Z    [1m[94m|[0m [1m[96m|_________^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1267691Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_flatten
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1268670Z    [1m[94m= [0m[1mnote[0m: `-D clippy::manual-flatten` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1269705Z    [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::manual_flatten)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1270565Z [1m[96mhelp[0m: try
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1271014Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1272122Z [1m[94m70[0m [92m~ [0m    for [92m(id, access_count)[0m in rows[92m.flatten()[0m [92m{[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1273206Z [1m[94m71[0m [92m+         memory_ids.push(id);[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1273894Z [1m[94m72[0m [92m+         total_access += access_count;[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1274693Z [1m[94m73[0m [92m+         count += 1;[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1275195Z [1m[94m74[0m [92m+     }[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1275611Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1275797Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1303010Z [1m[91merror[0m[1m: unnecessary `if let` since only the `Ok` variant of the iterator element is used[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1304482Z    [1m[94m--> [0msrc/galaxy_miner.rs:133:5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1304984Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1305524Z [1m[94m133[0m [1m[94m|[0m [1m[91m/[0m     for row in rows {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1306443Z [1m[94m134[0m [1m[94m|[0m [1m[91m|[0m         if let Ok((id, access_count, importance)) = row {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1307199Z [1m[94m135[0m [1m[94m|[0m [1m[91m|[0m             memory_ids.push(id);
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1307684Z [1m[94m136[0m [1m[94m|[0m [1m[91m|[0m             total_access += access_count;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1308045Z [1m[94m...[0m   [1m[91m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1308331Z [1m[94m140[0m [1m[94m|[0m [1m[91m|[0m     }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1308621Z     [1m[94m|[0m [1m[91m|_____^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1308863Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1309211Z [1m[96mhelp[0m: try `.flatten()` and remove the `if let` statement in the for loop
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1309617Z    [1m[94m--> [0msrc/galaxy_miner.rs:134:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1309886Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1310250Z [1m[94m134[0m [1m[94m|[0m [1m[96m/[0m         if let Ok((id, access_count, importance)) = row {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1310733Z [1m[94m135[0m [1m[94m|[0m [1m[96m|[0m             memory_ids.push(id);
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1311172Z [1m[94m136[0m [1m[94m|[0m [1m[96m|[0m             total_access += access_count;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1311646Z [1m[94m137[0m [1m[94m|[0m [1m[96m|[0m             total_importance += importance;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1312082Z [1m[94m138[0m [1m[94m|[0m [1m[96m|[0m             count += 1;
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1312432Z [1m[94m139[0m [1m[94m|[0m [1m[96m|[0m         }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1312747Z     [1m[94m|[0m [1m[96m|_________^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1313376Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_flatten
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1314186Z [1m[96mhelp[0m: try
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1314447Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1314884Z [1m[94m133[0m [92m~ [0m    for [92m(id, access_count, importance)[0m in rows[92m.flatten()[0m [92m{[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1315379Z [1m[94m134[0m [92m+         memory_ids.push(id);[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1315745Z [1m[94m135[0m [92m+         total_access += access_count;[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1316136Z [1m[94m136[0m [92m+         total_importance += importance;[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1316484Z [1m[94m137[0m [92m+         count += 1;[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1316760Z [1m[94m138[0m [92m+     }[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1316981Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1317091Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1353104Z [1m[91merror[0m[1m: unnecessary `if let` since only the `Ok` variant of the iterator element is used[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1353753Z    [1m[94m--> [0msrc/galaxy_miner.rs:194:5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1354262Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1354618Z [1m[94m194[0m [1m[94m|[0m [1m[91m/[0m     for row in rows {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1355231Z [1m[94m195[0m [1m[94m|[0m [1m[91m|[0m         if let Ok((memory_id, tags_str, importance)) = row {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1355875Z [1m[94m196[0m [1m[94m|[0m [1m[91m|[0m             for tag in tags_str.split(',') {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1356456Z [1m[94m197[0m [1m[94m|[0m [1m[91m|[0m                 let tag = tag.trim();
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1357317Z [1m[94m...[0m   [1m[91m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1358190Z [1m[94m206[0m [1m[94m|[0m [1m[91m|[0m     }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1358830Z     [1m[94m|[0m [1m[91m|_____^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1359133Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1359557Z [1m[96mhelp[0m: try `.flatten()` and remove the `if let` statement in the for loop
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1360068Z    [1m[94m--> [0msrc/galaxy_miner.rs:195:9
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1360383Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1360857Z [1m[94m195[0m [1m[94m|[0m [1m[96m/[0m         if let Ok((memory_id, tags_str, importance)) = row {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1361669Z [1m[94m196[0m [1m[94m|[0m [1m[96m|[0m             for tag in tags_str.split(',') {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1362254Z [1m[94m197[0m [1m[94m|[0m [1m[96m|[0m                 let tag = tag.trim();
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1362738Z [1m[94m198[0m [1m[94m|[0m [1m[96m|[0m                 if !tag.is_empty() {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1363073Z [1m[94m...[0m   [1m[96m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1363368Z [1m[94m205[0m [1m[94m|[0m [1m[96m|[0m         }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1363661Z     [1m[94m|[0m [1m[96m|_________^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1364410Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_flatten
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1364969Z [1m[96mhelp[0m: try
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1365166Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1365608Z [1m[94m194[0m [92m~ [0m    for [92m(memory_id, tags_str, importance)[0m in rows[92m.flatten()[0m [92m{[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1366157Z [1m[94m195[0m [92m+         for tag in tags_str.split(',') {[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1366543Z [1m[94m196[0m [92m+             let tag = tag.trim();[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1366904Z [1m[94m197[0m [92m+             if !tag.is_empty() {[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1367252Z [1m[94m198[0m [92m+                 tag_to_memories[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1367635Z [1m[94m199[0m [92m+                     .entry(tag.to_string())[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1368117Z [1m[94m200[0m [92m+                     .or_insert_with(Vec::new)[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1368562Z [1m[94m201[0m [92m+                     .push((memory_id.clone(), importance));[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1368927Z [1m[94m202[0m [92m+             }[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1369192Z [1m[94m203[0m [92m+         }[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1369444Z [1m[94m204[0m [92m+     }[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1369663Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1369766Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1369990Z [1m[91merror[0m[1m: use of `or_insert_with` to construct default value[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1370378Z    [1m[94m--> [0msrc/galaxy_miner.rs:201:26
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1370631Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1370968Z [1m[94m201[0m [1m[94m|[0m                         .or_insert_with(Vec::new)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1371470Z     [1m[94m|[0m                          [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: try: `or_default()`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1371832Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1372413Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#unwrap_or_default
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.1372889Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2021447Z [1m[91merror[0m[1m: the loop variable `i` is used to index `dp`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2022278Z   [1m[94m--> [0msrc/search.rs:63:14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2022739Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2023120Z [1m[94m63[0m [1m[94m|[0m     for i in 0..=m { dp[i][0] = i; }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2024110Z    [1m[94m|[0m              [1m[91m^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2024600Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2025491Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2026630Z    [1m[94m= [0m[1mnote[0m: `-D clippy::needless-range-loop` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2028060Z    [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::needless_range_loop)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2029048Z [1m[96mhelp[0m: consider using an iterator and enumerate()
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2029657Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2030305Z [1m[94m63[0m [91m- [0m    for [91mi[0m in [91m0..=m[0m { dp[i][0] = i; }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2031451Z [1m[94m63[0m [92m+ [0m    for [92m(i, <item>)[0m in [92mdp.iter_mut().enumerate().take(m + 1)[0m { dp[i][0] = i; }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2032238Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2032364Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2032600Z [1m[91merror[0m[1m: the loop variable `j` is used to index `dp`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2033166Z   [1m[94m--> [0msrc/search.rs:64:14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2033425Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2033712Z [1m[94m64[0m [1m[94m|[0m     for j in 0..=n { dp[0][j] = j; }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2034310Z    [1m[94m|[0m              [1m[91m^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2034586Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2035215Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2035910Z [1m[96mhelp[0m: consider using an iterator and enumerate()
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2036233Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2036548Z [1m[94m64[0m [91m- [0m    for [91mj[0m in [91m0..=n[0m { dp[0][j] = j; }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2037263Z [1m[94m64[0m [92m+ [0m    for [92m(j, <item>)[0m in [92mdp.iter_mut().enumerate().take(n + 1)[0m { dp[0][j] = j; }
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2037725Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2037833Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2290527Z [1m[91merror[0m[1m: clamp-like pattern without using clamp function[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2291421Z   [1m[94m--> [0msrc/hot_paths.rs:77:17
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2291856Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2292269Z [1m[94m77[0m [1m[94m|[0m                 distance.powf(0.7).min(1.0).max(0.0)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2293099Z    [1m[94m|[0m                 [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: replace with clamp: `distance.powf(0.7).clamp(0.0, 1.0)`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2293703Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2294341Z    [1m[94m= [0m[1mnote[0m: clamp will panic if max < min, min.is_nan(), or max.is_nan()
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2294850Z    [1m[94m= [0m[1mnote[0m: clamp returns NaN if the input is NaN
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2295570Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_clamp
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2296385Z    [1m[94m= [0m[1mnote[0m: `-D clippy::manual-clamp` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2296985Z    [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::manual_clamp)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2297304Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2453116Z [1m[91merror[0m[1m: the loop variable `row` is used to index `cost_matrix`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2454281Z    [1m[94m--> [0msrc/hot_paths.rs:245:16
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2454834Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2455508Z [1m[94m245[0m [1m[94m|[0m     for row in 0..size {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2456250Z     [1m[94m|[0m                [1m[91m^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2456845Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2457682Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2458606Z [1m[96mhelp[0m: consider using an iterator and enumerate()
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2459030Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2459435Z [1m[94m245[0m [91m- [0m    for [91mrow[0m in [91m0..size[0m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2460184Z [1m[94m245[0m [92m+ [0m    for [92m(row, <item>)[0m in [92mcost_matrix.iter().enumerate().take(size)[0m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2460759Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2460906Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2461248Z [1m[91merror[0m[1m: the loop variable `col` is used to index `cost_matrix`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2461798Z    [1m[94m--> [0msrc/hot_paths.rs:249:20
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2462356Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2462708Z [1m[94m249[0m [1m[94m|[0m         for col in 0..m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2463158Z     [1m[94m|[0m                    [1m[91m^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2463523Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2464539Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2465481Z [1m[96mhelp[0m: consider using an iterator and enumerate()
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2466053Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2466463Z [1m[94m249[0m [91m- [0m        for [91mcol[0m in [91m0..m[0m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2467062Z [1m[94m249[0m [92m+ [0m        for [92m(col, <item>)[0m in [92mcost_matrix.iter().enumerate().take(m)[0m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2467517Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2467630Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2507657Z [1m[91merror[0m[1m: the loop variable `j` is only used to index `events`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2508582Z    [1m[94m--> [0msrc/hot_paths.rs:315:18
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2509008Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2509366Z [1m[94m315[0m [1m[94m|[0m         for j in (i + 1)..n {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2509815Z     [1m[94m|[0m                  [1m[91m^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2510174Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2510937Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2511720Z [1m[96mhelp[0m: consider using an iterator
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2512047Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2512422Z [1m[94m315[0m [91m- [0m        for [91mj[0m in [91m(i + 1)..n[0m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2513084Z [1m[94m315[0m [92m+ [0m        for [92m<item>[0m in [92mevents.iter().take(n).skip((i + 1))[0m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2513578Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2513709Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2600913Z [1m[91merror[0m[1m: clamp-like pattern without using clamp function[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2601803Z    [1m[94m--> [0msrc/hot_paths.rs:385:5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2602348Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2602699Z [1m[94m385[0m [1m[94m|[0m     score.max(0.0).min(1.0)
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2603357Z     [1m[94m|[0m     [1m[91m^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: replace with clamp: `score.clamp(0.0, 1.0)`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2603886Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2604574Z     [1m[94m= [0m[1mnote[0m: clamp will panic if max < min, min.is_nan(), or max.is_nan()
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2605179Z     [1m[94m= [0m[1mnote[0m: clamp returns NaN if the input is NaN
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2606032Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_clamp
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.2606606Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3517967Z [1m[91merror[0m[1m: the loop variable `col` is used to index `cost_matrix`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3519230Z    [1m[94m--> [0msrc/constellations.rs:231:20
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3519766Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3520208Z [1m[94m231[0m [1m[94m|[0m         for col in 0..m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3520910Z     [1m[94m|[0m                    [1m[91m^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3521471Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3522374Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3532716Z [1m[96mhelp[0m: consider using an iterator and enumerate()
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3533069Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3533368Z [1m[94m231[0m [91m- [0m        for [91mcol[0m in [91m0..m[0m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3534074Z [1m[94m231[0m [92m+ [0m        for [92m(col, <item>)[0m in [92mcost_matrix.iter().enumerate().take(m)[0m {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3534511Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3534626Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3621367Z [1m[91merror[0m[1m: consider using `sort_by_key`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3622422Z    [1m[94m--> [0msrc/constellations.rs:348:5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3622970Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3623422Z [1m[94m348[0m [1m[94m|[0m     sorted_groups.sort_by(|a, b| b.len().cmp(&a.len()));
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3624642Z     [1m[94m|[0m     [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: try: `sorted_groups.sort_by_key(|b| std::cmp::Reverse(b.len()))`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3625280Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3626040Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#unnecessary_sort_by
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3627428Z     [1m[94m= [0m[1mnote[0m: `-D clippy::unnecessary-sort-by` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3628659Z     [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::unnecessary_sort_by)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3629292Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3644238Z [1m[91merror[0m[1m: very complex type used. Consider factoring parts into `type` definitions[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3645030Z    [1m[94m--> [0msrc/constellations.rs:360:6
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3645321Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3645727Z [1m[94m360[0m [1m[94m|[0m ) -> PyResult<(HashMap<String, String>, Vec<String>, Vec<String>)> {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3646268Z     [1m[94m|[0m      [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3646607Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3647200Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#type_complexity
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3647983Z     [1m[94m= [0m[1mnote[0m: `-D clippy::type-complexity` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3648572Z     [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::type_complexity)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3648881Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3793379Z [1m[91merror[0m[1m: redundant closure[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3794274Z    [1m[94m--> [0msrc/minhash.rs:110:14
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3794845Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3795232Z [1m[94m110[0m [1m[94m|[0m         .map(|ks| compute_signature(ks))
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3796057Z     [1m[94m|[0m              [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: replace the closure with the function itself: `compute_signature`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3796696Z     [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3797345Z     [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#redundant_closure
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3798431Z     [1m[94m= [0m[1mnote[0m: `-D clippy::redundant-closure` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3799554Z     [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::redundant_closure)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.3800116Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5081636Z [1m[91merror[0m[1m: this function has too many arguments (8/7)[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5082708Z   [1m[94m--> [0msrc/massive_deployer.rs:38:5
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5083214Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5083626Z [1m[94m38[0m [1m[94m|[0m [1m[91m/[0m     fn new(
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5084780Z [1m[94m39[0m [1m[94m|[0m [1m[91m|[0m         campaign_id: String,
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5085534Z [1m[94m40[0m [1m[94m|[0m [1m[91m|[0m         task_type: String,
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5086199Z [1m[94m41[0m [1m[94m|[0m [1m[91m|[0m         target_file: String,
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5086724Z [1m[94m...[0m  [1m[91m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5087284Z [1m[94m46[0m [1m[94m|[0m [1m[91m|[0m         expected_speedup: String,
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5087925Z [1m[94m47[0m [1m[94m|[0m [1m[91m|[0m     ) -> Self {
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5088441Z    [1m[94m|[0m [1m[91m|_____________^[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5088842Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5089921Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#too_many_arguments
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5090952Z    [1m[94m= [0m[1mnote[0m: `-D clippy::too-many-arguments` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5091737Z    [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::too_many_arguments)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.5092157Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6518435Z [1m[91merror[0m[1m: the borrowed expression implements the required traits[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6519466Z   [1m[94m--> [0msrc/synthesis_engine.rs:44:44
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6520197Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6521491Z [1m[94m44[0m [1m[94m|[0m                     PyTuple::new_bound(py, &[k1.as_str(), k2.as_str()])
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6522611Z    [1m[94m|[0m                                            [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: change this to: `[k1.as_str(), k2.as_str()]`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6523215Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6524287Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_borrows_for_generic_args
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6525450Z    [1m[94m= [0m[1mnote[0m: `-D clippy::needless-borrows-for-generic-args` implied by `-D warnings`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6526389Z    [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(clippy::needless_borrows_for_generic_args)]`
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6526867Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6527203Z [1m[91merror[0m[1m: the borrowed expression implements the required traits[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6527745Z   [1m[94m--> [0msrc/synthesis_engine.rs:46:44
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6528101Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6528601Z [1m[94m46[0m [1m[94m|[0m                     PyTuple::new_bound(py, &[k2.as_str(), k1.as_str()])
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6529466Z    [1m[94m|[0m                                            [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: change this to: `[k2.as_str(), k1.as_str()]`[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6530050Z    [1m[94m|[0m
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6530883Z    [1m[94m= [0m[1mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_borrows_for_generic_args
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.6531575Z 
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.7625141Z [1m[33mwarning[0m: whitemagic-rust@18.1.0: Zig static library not found at /home/runner/work/whitemagic/whitemagic/whitemagic-zig/zig-out/lib. Proceeding without Zig acceleration.
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.7626226Z [1m[91merror[0m: could not compile `whitemagic-rust` (lib) due to 31 previous errors
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.8190308Z ##[error]Process completed with exit code 101.
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.8293241Z Post job cleanup.
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9237688Z [command]/usr/bin/git version
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9274473Z git version 2.53.0
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9319234Z Temporarily overriding HOME='/home/runner/work/_temp/ba78862d-115e-4d70-b6f8-45a9b86dc1e5' before making global git config changes
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9320532Z Adding repository directory to the temporary git global config as a safe directory
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9326201Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/whitemagic/whitemagic
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9363479Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9397602Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9647745Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9670509Z http.https://github.com/.extraheader
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9683545Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9715541Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9955187Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:06.9986712Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:07.0367315Z Cleaning up orphan processes
+CI Gate / Rust Quality	UNKNOWN STEP	2026-03-16T20:14:07.0652119Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

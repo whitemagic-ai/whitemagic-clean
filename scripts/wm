@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# WhiteMagic script runner — always uses .venv Python with Rust bridge.
+# Usage: scripts/wm <script.py> [args...]
+#   e.g.: scripts/wm scripts/run_extended_activation.py
+#         scripts/wm scripts/benchmark_gauntlet_v4.py --tier 3
+#         scripts/wm -c "import whitemagic_rs; print('ok')"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+VENV_PYTHON="$PROJECT_ROOT/.venv/bin/python"
+
+if [ ! -x "$VENV_PYTHON" ]; then
+    echo "[wm] ERROR: .venv not found at $PROJECT_ROOT/.venv"
+    echo "       Run: python3 -m venv .venv && .venv/bin/pip install -e ."
+    exit 1
+fi
+
+# Ensure PYTHONPATH includes project root
+export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
+export WM_STATE_ROOT="${WM_STATE_ROOT:-$HOME/.whitemagic}"
+
+exec "$VENV_PYTHON" "$@"

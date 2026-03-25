@@ -1,0 +1,104 @@
+module interface src/batch_ipc
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/vector = std/core/vector pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/core = std/core = "";
+import std/os/readline = std/os/readline = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+// The `:io` effect is used for functions that perform arbitrary I/O operations.
+local alias std/core/io[78,1,78,29] :: E = <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,((std/core/io-noexn :: E) == 3 <(std/core/types/div :: X),((std/core/io-total :: E) == 2 <(std/core/types/ndet :: X),(std/core/console/console :: X),(std/core/net :: X),(std/core/fsys :: X),(std/core/ui :: X),((std/core/types/st :: H -> E)<(std/core/types/global :: H)> == 1 <(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/types/write :: H -> X)<(std/core/types/global :: H)>,(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>>)>)>)> = 4;
+ 
+//------------------------------
+//#kki: type declarations
+ 
+ 
+//------------------------------
+//#kki: declarations
+ 
+// Execute single command and return JSON result
+fun execute-cmd[9,5,9,15] : (op : std/core/types/string) -> std/core/types/string;
+// Extract op from line using contains pattern
+fun extract-op[18,5,18,14] : (line : std/core/types/string) -> std/core/types/string;
+// Count commands in JSON
+fun count-cmds[27,5,27,14] : (line : std/core/types/string) -> std/core/types/int;
+// Is batch request?
+fun is-batch[31,5,31,12] : (line : std/core/types/string) -> std/core/types/bool;
+// Build batch response for n commands
+fun batch-response[35,5,35,18] : (n : std/core/types/int) -> std/core/types/string;
+// monadic lift
+fun @mlift-main-loop@10014[1,0,1,0] : (@c-x10001 : std/core/types/string) -> ();
+// monadic lift
+fun @mlift-main-loop@10015[1,0,1,0] : (line : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>> ();
+// Main loop - handles both single commands and batches
+fun main-loop[43,5,43,13] : () -> <(std/core/io :: E)> ();
+fun main[55,5,55,8] : () -> <(std/core/io :: E)> ();
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+fun execute-cmd // inline size: 4
+  = fn(op: std/core/types/string){
+    match (op) {
+      ("ping" as @pat: std/core/types/string)
+         -> "{\x22pong\x22:true}";
+      ("status" as @pat@0: std/core/types/string)
+         -> "{\x22status\x22:\x22ok\x22,\x22batch_ipc\x22:true}";
+      ("emit" as @pat@1: std/core/types/string)
+         -> "{\x22emitted\x22:true}";
+      ("count" as @pat@2: std/core/types/string)
+         -> "{\x22count\x22:0}";
+      (@pat@3: std/core/types/string)
+         -> "{\x22error\x22:\x22unknown\x22}";
+    };
+  };
+fun count-cmds // inline size: 1
+  = fn(line: std/core/types/string){
+    std/core/string/#stringpat/count(line, "{\x22id\x22:");
+  };
+fun is-batch // inline size: 1
+  = fn(line: std/core/types/string){
+    std/core/string/contains(line, "\x22commands\x22:");
+  };
+fun main // inline size: 3
+  = fn<(std/core/io :: E)>(){
+    val _[56,3,56,76] : ()
+          = std/core/types/@open<<(std/core/console/console :: X)>,<(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>,(s : std/core/types/string) -> <(std/core/console/console :: X)> (),(s : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> ()>(std/core/console/printsln)("{\x22status\x22:\x22started\x22,\x22batch_ipc\x22:true,\x22version\x22:\x221.0\x22}");
+    src/batch_ipc/main-loop();
+  };

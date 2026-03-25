@@ -1,0 +1,432 @@
+module interface src/ring_buffer
+ 
+//------------------------------
+//#kki: import declarations
+ 
+import std/core/types = std/core/types pub = "";
+import std/core/hnd = std/core/hnd pub = "";
+import std/core/exn = std/core/exn pub = "";
+import std/core/bool = std/core/bool pub = "";
+import std/core/order = std/core/order pub = "";
+import std/core/char = std/core/char pub = "";
+import std/core/int = std/core/int pub = "";
+import std/core/vector = std/core/vector pub = "";
+import std/core/string = std/core/string pub = "";
+import std/core/sslice = std/core/sslice pub = "";
+import std/core/list = std/core/list pub = "";
+import std/core/maybe = std/core/maybe pub = "";
+import std/core/maybe2 = std/core/maybe2 pub = "";
+import std/core/either = std/core/either pub = "";
+import std/core/tuple = std/core/tuple pub = "";
+import std/core/lazy = std/core/lazy pub = "";
+import std/core/show = std/core/show pub = "";
+import std/core/debug = std/core/debug pub = "";
+import std/core/delayed = std/core/delayed pub = "";
+import std/core/console = std/core/console pub = "";
+import std/core = std/core = "";
+import std/os/readline = std/os/readline = "";
+import std/num/float64 = std/num/float64 = "";
+import std/num/int64 = std/num/int64 = "";
+ 
+//------------------------------
+//#kki: external imports
+ 
+ 
+//------------------------------
+//#kki: fixity declarations
+ 
+ 
+//------------------------------
+//#kki: local imported aliases
+ 
+// The `:io` effect is used for functions that perform arbitrary I/O operations.
+local alias std/core/io[78,1,78,29] :: E = <(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,((std/core/io-noexn :: E) == 3 <(std/core/types/div :: X),((std/core/io-total :: E) == 2 <(std/core/types/ndet :: X),(std/core/console/console :: X),(std/core/net :: X),(std/core/fsys :: X),(std/core/ui :: X),((std/core/types/st :: H -> E)<(std/core/types/global :: H)> == 1 <(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/types/write :: H -> X)<(std/core/types/global :: H)>,(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>>)>)>)> = 4;
+ 
+//------------------------------
+//#kki: type declarations
+ 
+type buffer-config[13,1,16,18] {
+  con Buffer-config[13,8,13,20](capacity: std/core/types/int, slot-size: std/core/types/int, header-size: std/core/types/int){0,3,8} : (capacity : std/core/types/int, slot-size : std/core/types/int, header-size : std/core/types/int) -> buffer-config = 1;
+};
+type buffer-state[18,1,23,19] {
+  con Buffer-state[18,8,18,19](write-pos: std/core/types/int, read-pos: std/core/types/int, count: std/core/types/int, total-written: std/core/types/int64, total-read: std/core/types/int64){16,3,8} : (write-pos : std/core/types/int, read-pos : std/core/types/int, count : std/core/types/int, total-written : std/core/types/int64, total-read : std/core/types/int64) -> buffer-state = 1;
+};
+ 
+//------------------------------
+//#kki: declarations
+ 
+// Automatically generated. Retrieves the `capacity` constructor field of the `:buffer-config` type.
+fun buffer-config/capacity[14,3,14,10] : (^ @this : buffer-config) -> std/core/types/int;
+// Automatically generated. Retrieves the `slot-size` constructor field of the `:buffer-config` type.
+fun buffer-config/slot-size[15,3,15,11] : (^ @this : buffer-config) -> std/core/types/int;
+// Automatically generated. Retrieves the `header-size` constructor field of the `:buffer-config` type.
+fun buffer-config/header-size[16,3,16,13] : (^ @this : buffer-config) -> std/core/types/int;
+fun buffer-config/@copy[13,8,13,20] : (@this : buffer-config, capacity : (std/core/types/@optional :: V -> V)<std/core/types/int>, slot-size : (std/core/types/@optional :: V -> V)<std/core/types/int>, header-size : (std/core/types/@optional :: V -> V)<std/core/types/int>) -> buffer-config;
+// Automatically generated. Retrieves the `write-pos` constructor field of the `:buffer-state` type.
+fun buffer-state/write-pos[19,3,19,11] : (^ @this : buffer-state) -> std/core/types/int;
+// Automatically generated. Retrieves the `read-pos` constructor field of the `:buffer-state` type.
+fun buffer-state/read-pos[20,3,20,10] : (^ @this : buffer-state) -> std/core/types/int;
+// Automatically generated. Retrieves the `count` constructor field of the `:buffer-state` type.
+fun buffer-state/count[21,3,21,7] : (^ @this : buffer-state) -> std/core/types/int;
+// Automatically generated. Retrieves the `total-written` constructor field of the `:buffer-state` type.
+fun buffer-state/total-written[22,3,22,15] : (^ @this : buffer-state) -> std/core/types/int64;
+// Automatically generated. Retrieves the `total-read` constructor field of the `:buffer-state` type.
+fun buffer-state/total-read[23,3,23,12] : (^ @this : buffer-state) -> std/core/types/int64;
+fun buffer-state/@copy[18,8,18,19] : (@this : buffer-state, write-pos : (std/core/types/@optional :: V -> V)<std/core/types/int>, read-pos : (std/core/types/@optional :: V -> V)<std/core/types/int>, count : (std/core/types/@optional :: V -> V)<std/core/types/int>, total-written : (std/core/types/@optional :: V -> V)<std/core/types/int64>, total-read : (std/core/types/@optional :: V -> V)<std/core/types/int64>) -> buffer-state;
+// Calculate next position in ring
+fun next-pos[28,5,28,12] : (pos : std/core/types/int, capacity : std/core/types/int) -> std/core/types/int;
+// Check if buffer is full
+fun is-full[32,5,32,11] : (state : buffer-state, capacity : std/core/types/int) -> std/core/types/bool;
+// Check if buffer is empty
+fun is-empty[36,5,36,12] : (state : buffer-state) -> std/core/types/bool;
+// Write to buffer - returns new state or error
+fun try-write[40,5,40,13] : (state : buffer-state, config : buffer-config) -> (std/core/types/maybe :: V -> V)<buffer-state>;
+// Read from buffer - returns new state or error
+fun try-read[53,5,53,12] : (state : buffer-state, config : buffer-config) -> (std/core/types/maybe :: V -> V)<buffer-state>;
+// Get available slots for writing
+fun write-available[66,5,66,19] : (state : buffer-state, capacity : std/core/types/int) -> std/core/types/int;
+// Get available slots for reading
+fun read-available[70,5,70,18] : (state : buffer-state) -> std/core/types/int;
+// Write n items, returns actual count written
+fun write-batch[76,5,76,15] : (state : buffer-state, config : buffer-config, n : std/core/types/int) -> (std/core/types/int, buffer-state);
+// Read n items, returns actual count read
+fun read-batch[91,5,91,14] : (state : buffer-state, config : buffer-config, n : std/core/types/int) -> (std/core/types/int, buffer-state);
+fun buffer-stats[107,5,107,16] : (state : buffer-state, config : buffer-config) -> std/core/types/string;
+fun extract-op[119,5,119,14] : (line : std/core/types/string) -> std/core/types/string;
+fun extract-count[129,5,129,17] : (line : std/core/types/string) -> std/core/types/int;
+// monadic lift
+fun @mlift-server-loop@10264[1,0,1,0] : (config : buffer-config, @c-x10204 : buffer-state) -> ();
+// monadic lift
+fun @mlift-server-loop@10265[1,0,1,0] : (config : buffer-config, line : std/core/types/string, op : std/core/types/string, state : buffer-state, @c-x10203 : std/core/types/string) -> ();
+// monadic lift
+fun @mlift-server-loop@10266[1,0,1,0] : (config : buffer-config, state : buffer-state, line : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>> ();
+fun server-loop[145,5,145,15] : (state : buffer-state, config : buffer-config) -> <(std/core/io :: E)> ();
+fun main[203,5,203,8] : () -> <(std/core/io :: E)> ();
+ 
+//------------------------------
+//#kki: external declarations
+ 
+ 
+//------------------------------
+//#kki: inline definitions
+ 
+//.inline-section
+inline borrow "^" fun buffer-config/capacity // inline size: 0
+  = fn(@this: buffer-config){
+    match (@this) {
+      ((@skip src/ring_buffer/Buffer-config((@x: std/core/types/int) : std/core/types/int, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat: buffer-config)
+         -> @x;
+    };
+  };
+inline borrow "^" fun buffer-config/slot-size // inline size: 0
+  = fn(@this: buffer-config){
+    match (@this) {
+      ((@skip src/ring_buffer/Buffer-config((@pat@0: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat: buffer-config)
+         -> @x;
+    };
+  };
+inline borrow "^" fun buffer-config/header-size // inline size: 0
+  = fn(@this: buffer-config){
+    match (@this) {
+      ((@skip src/ring_buffer/Buffer-config((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat: buffer-config)
+         -> @x;
+    };
+  };
+fun buffer-config/@copy // inline size: 4
+  = fn(@this: buffer-config, capacity: (std/core/types/@optional :: V -> V)<std/core/types/int>, slot-size: (std/core/types/@optional :: V -> V)<std/core/types/int>, header-size: (std/core/types/@optional :: V -> V)<std/core/types/int>){
+    src/ring_buffer/Buffer-config((match (capacity) {
+        ((std/core/types/@Optional((@uniq-capacity@65: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-capacity@65;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@0: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/ring_buffer/Buffer-config((@x: std/core/types/int) : std/core/types/int, (@pat@0@0: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat@1: buffer-config)
+               -> @x;
+          });
+      }), (match (slot-size) {
+        ((std/core/types/@Optional((@uniq-slot-size@73: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@1@1: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-slot-size@73;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@2: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/ring_buffer/Buffer-config((@pat@0@1: std/core/types/int) : std/core/types/int, (@x@0: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat@3: buffer-config)
+               -> @x@0;
+          });
+      }), (match (header-size) {
+        ((std/core/types/@Optional((@uniq-header-size@81: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@3@0: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-header-size@81;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@4: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/ring_buffer/Buffer-config((@pat@0@2: std/core/types/int) : std/core/types/int, (@pat@1@3: std/core/types/int) : std/core/types/int, (@x@1: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat@5: buffer-config)
+               -> @x@1;
+          });
+      }));
+  };
+inline borrow "^" fun buffer-state/write-pos // inline size: 0
+  = fn(@this: buffer-state){
+    match (@this) {
+      ((@skip src/ring_buffer/Buffer-state((@x: std/core/types/int) : std/core/types/int, (@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun buffer-state/read-pos // inline size: 0
+  = fn(@this: buffer-state){
+    match (@this) {
+      ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun buffer-state/count // inline size: 0
+  = fn(@this: buffer-state){
+    match (@this) {
+      ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun buffer-state/total-written // inline size: 0
+  = fn(@this: buffer-state){
+    match (@this) {
+      ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int) : std/core/types/int, (@x: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+         -> @x;
+    };
+  };
+inline borrow "^" fun buffer-state/total-read // inline size: 0
+  = fn(@this: buffer-state){
+    match (@this) {
+      ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int) : std/core/types/int, (@pat@3: std/core/types/int64) : std/core/types/int64, (@x: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+         -> @x;
+    };
+  };
+fun buffer-state/@copy // inline size: 6
+  = fn(@this: buffer-state, write-pos: (std/core/types/@optional :: V -> V)<std/core/types/int>, read-pos: (std/core/types/@optional :: V -> V)<std/core/types/int>, count: (std/core/types/@optional :: V -> V)<std/core/types/int>, total-written: (std/core/types/@optional :: V -> V)<std/core/types/int64>, total-read: (std/core/types/@optional :: V -> V)<std/core/types/int64>){
+    src/ring_buffer/Buffer-state((match (write-pos) {
+        ((std/core/types/@Optional((@uniq-write-pos@139: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-write-pos@139;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@0: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/ring_buffer/Buffer-state((@x: std/core/types/int) : std/core/types/int, (@pat@0@0: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@1: buffer-state)
+               -> @x;
+          });
+      }), (match (read-pos) {
+        ((std/core/types/@Optional((@uniq-read-pos@147: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@1@1: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-read-pos@147;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@2@0: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/ring_buffer/Buffer-state((@pat@0@1: std/core/types/int) : std/core/types/int, (@x@0: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/int) : std/core/types/int, (@pat@2@1: std/core/types/int64) : std/core/types/int64, (@pat@3@0: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@4: buffer-state)
+               -> @x@0;
+          });
+      }), (match (count) {
+        ((std/core/types/@Optional((@uniq-count@155: std/core/types/int) : std/core/types/int) : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@3@1: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> @uniq-count@155;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int> ) as @pat@4@0: ((std/core/types/@optional :: V -> V)<std/core/types/int>))
+           -> (match (@this) {
+            ((@skip src/ring_buffer/Buffer-state((@pat@0@2: std/core/types/int) : std/core/types/int, (@pat@1@3: std/core/types/int) : std/core/types/int, (@x@1: std/core/types/int) : std/core/types/int, (@pat@2@2: std/core/types/int64) : std/core/types/int64, (@pat@3@2: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@5: buffer-state)
+               -> @x@1;
+          });
+      }), (match (total-written) {
+        ((std/core/types/@Optional((@uniq-total-written@163: std/core/types/int64) : std/core/types/int64) : (std/core/types/@optional :: V -> V)<std/core/types/int64> ) as @pat@5@0: ((std/core/types/@optional :: V -> V)<std/core/types/int64>))
+           -> @uniq-total-written@163;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int64> ) as @pat@6: ((std/core/types/@optional :: V -> V)<std/core/types/int64>))
+           -> (match (@this) {
+            ((@skip src/ring_buffer/Buffer-state((@pat@0@3: std/core/types/int) : std/core/types/int, (@pat@1@4: std/core/types/int) : std/core/types/int, (@pat@2@3: std/core/types/int) : std/core/types/int, (@x@2: std/core/types/int64) : std/core/types/int64, (@pat@3@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@7: buffer-state)
+               -> @x@2;
+          });
+      }), (match (total-read) {
+        ((std/core/types/@Optional((@uniq-total-read@171: std/core/types/int64) : std/core/types/int64) : (std/core/types/@optional :: V -> V)<std/core/types/int64> ) as @pat@7@0: ((std/core/types/@optional :: V -> V)<std/core/types/int64>))
+           -> @uniq-total-read@171;
+        ((@skip std/core/types/@None() : (std/core/types/@optional :: V -> V)<std/core/types/int64> ) as @pat@8: ((std/core/types/@optional :: V -> V)<std/core/types/int64>))
+           -> (match (@this) {
+            ((@skip src/ring_buffer/Buffer-state((@pat@0@4: std/core/types/int) : std/core/types/int, (@pat@1@5: std/core/types/int) : std/core/types/int, (@pat@2@4: std/core/types/int) : std/core/types/int, (@pat@3@4: std/core/types/int64) : std/core/types/int64, (@x@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@9: buffer-state)
+               -> @x@3;
+          });
+      }));
+  };
+fun next-pos // inline size: 2
+  = fn(pos: std/core/types/int, capacity: std/core/types/int){
+    std/core/int/(%)((std/core/int/int-add(pos, 1)), capacity);
+  };
+fun is-full // inline size: 1
+  = fn(state: buffer-state, capacity: std/core/types/int){
+    std/core/int/(>=)((match (state) {
+        ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+           -> @x;
+      }), capacity);
+  };
+fun is-empty // inline size: 1
+  = fn(state: buffer-state){
+    std/core/int/(==)((match (state) {
+        ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+           -> @x;
+      }), 0);
+  };
+fun try-write // inline size: 9
+  = fn(state: buffer-state, config: buffer-config){
+    match ((std/core/int/(>=)((match (state) {
+        ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+           -> @x;
+      }), (match (config) {
+        ((@skip src/ring_buffer/Buffer-config((@x@0: std/core/types/int) : std/core/types/int, (@pat@0@0: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat@4: buffer-config)
+           -> @x@0;
+      })))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat@5: std/core/types/bool)
+         -> std/core/types/Nothing<buffer-state>;
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0@1: std/core/types/bool)
+         -> val new-state[43,9,43,17] : buffer-state
+                  = src/ring_buffer/Buffer-state((std/core/int/(%)((std/core/int/int-add((match (state) {
+                          ((@skip src/ring_buffer/Buffer-state((@x@1: std/core/types/int) : std/core/types/int, (@pat@0@2: std/core/types/int) : std/core/types/int, (@pat@1@1: std/core/types/int) : std/core/types/int, (@pat@2@0: std/core/types/int64) : std/core/types/int64, (@pat@3@0: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@6: buffer-state)
+                             -> @x@1;
+                        }), 1)), (match (config) {
+                        ((@skip src/ring_buffer/Buffer-config((@x@2: std/core/types/int) : std/core/types/int, (@pat@0@3: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat@7: buffer-config)
+                           -> @x@2;
+                      }))), (match (state) {
+                      ((@skip src/ring_buffer/Buffer-state((@pat@0@4: std/core/types/int) : std/core/types/int, (@x@3: std/core/types/int) : std/core/types/int, (@pat@1@3: std/core/types/int) : std/core/types/int, (@pat@2@1: std/core/types/int64) : std/core/types/int64, (@pat@3@1: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@8: buffer-state)
+                         -> @x@3;
+                    }), (std/core/int/int-add((match (state) {
+                        ((@skip src/ring_buffer/Buffer-state((@pat@0@5: std/core/types/int) : std/core/types/int, (@pat@1@4: std/core/types/int) : std/core/types/int, (@x@4: std/core/types/int) : std/core/types/int, (@pat@2@2: std/core/types/int64) : std/core/types/int64, (@pat@3@2: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@9: buffer-state)
+                           -> @x@4;
+                      }), 1)), (std/num/int64/(+)((std/num/int64/int64(1)), (match (state) {
+                        ((@skip src/ring_buffer/Buffer-state((@pat@0@6: std/core/types/int) : std/core/types/int, (@pat@1@5: std/core/types/int) : std/core/types/int, (@pat@2@3: std/core/types/int) : std/core/types/int, (@x@5: std/core/types/int64) : std/core/types/int64, (@pat@3@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@10: buffer-state)
+                           -> @x@5;
+                      }))), (match (state) {
+                      ((@skip src/ring_buffer/Buffer-state((@pat@0@7: std/core/types/int) : std/core/types/int, (@pat@1@6: std/core/types/int) : std/core/types/int, (@pat@2@4: std/core/types/int) : std/core/types/int, (@pat@3@4: std/core/types/int64) : std/core/types/int64, (@x@6: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@11: buffer-state)
+                         -> @x@6;
+                    }));
+        std/core/types/Just<buffer-state>(new-state);
+    };
+  };
+fun try-read // inline size: 9
+  = fn(state: buffer-state, config: buffer-config){
+    match ((std/core/int/(==)((match (state) {
+        ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+           -> @x;
+      }), 0))) {
+      ((std/core/types/True() : std/core/types/bool ) as @pat@4: std/core/types/bool)
+         -> std/core/types/Nothing<buffer-state>;
+      ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0@0: std/core/types/bool)
+         -> val new-state[56,9,56,17] : buffer-state
+                  = src/ring_buffer/Buffer-state((match (state) {
+                      ((@skip src/ring_buffer/Buffer-state((@x@0: std/core/types/int) : std/core/types/int, (@pat@0@1: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/int) : std/core/types/int, (@pat@2@0: std/core/types/int64) : std/core/types/int64, (@pat@3@0: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@5: buffer-state)
+                         -> @x@0;
+                    }), (std/core/int/(%)((std/core/int/int-add((match (state) {
+                          ((@skip src/ring_buffer/Buffer-state((@pat@0@2: std/core/types/int) : std/core/types/int, (@x@1: std/core/types/int) : std/core/types/int, (@pat@1@1: std/core/types/int) : std/core/types/int, (@pat@2@1: std/core/types/int64) : std/core/types/int64, (@pat@3@1: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@6: buffer-state)
+                             -> @x@1;
+                        }), 1)), (match (config) {
+                        ((@skip src/ring_buffer/Buffer-config((@x@2: std/core/types/int) : std/core/types/int, (@pat@0@3: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat@7: buffer-config)
+                           -> @x@2;
+                      }))), (std/core/int/int-sub((match (state) {
+                        ((@skip src/ring_buffer/Buffer-state((@pat@0@4: std/core/types/int) : std/core/types/int, (@pat@1@3: std/core/types/int) : std/core/types/int, (@x@3: std/core/types/int) : std/core/types/int, (@pat@2@2: std/core/types/int64) : std/core/types/int64, (@pat@3@2: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@8: buffer-state)
+                           -> @x@3;
+                      }), 1)), (match (state) {
+                      ((@skip src/ring_buffer/Buffer-state((@pat@0@5: std/core/types/int) : std/core/types/int, (@pat@1@4: std/core/types/int) : std/core/types/int, (@pat@2@3: std/core/types/int) : std/core/types/int, (@x@4: std/core/types/int64) : std/core/types/int64, (@pat@3@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@9: buffer-state)
+                         -> @x@4;
+                    }), (std/num/int64/(+)((std/num/int64/int64(1)), (match (state) {
+                        ((@skip src/ring_buffer/Buffer-state((@pat@0@6: std/core/types/int) : std/core/types/int, (@pat@1@5: std/core/types/int) : std/core/types/int, (@pat@2@4: std/core/types/int) : std/core/types/int, (@pat@3@4: std/core/types/int64) : std/core/types/int64, (@x@5: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@10: buffer-state)
+                           -> @x@5;
+                      }))));
+        std/core/types/Just<buffer-state>(new-state);
+    };
+  };
+fun write-available // inline size: 1
+  = fn(state: buffer-state, capacity: std/core/types/int){
+    std/core/int/int-sub(capacity, (match (state) {
+        ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+           -> @x;
+      }));
+  };
+inline fun read-available // inline size: 0
+  = fn(state: buffer-state){
+    match (state) {
+      ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+         -> @x;
+    };
+  };
+fun write-batch // inline size: 10
+  = fn(state: buffer-state, config: buffer-config, n: std/core/types/int){
+    val available[77,7,77,15] : std/core/types/int
+      = std/core/int/int-sub((match (config) {
+          ((@skip src/ring_buffer/Buffer-config((@x@0: std/core/types/int) : std/core/types/int, (@pat@0@0: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat@4: buffer-config)
+             -> @x@0;
+        }), (match (state) {
+          ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+             -> @x;
+        }));
+    val to-write[78,7,78,14] : std/core/types/int
+      = match ((std/core/int/(>)(n, available))) {
+        ((std/core/types/True() : std/core/types/bool ) as @pat@5: std/core/types/bool)
+           -> available;
+        ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0@1: std/core/types/bool)
+           -> n;
+      };
+    val new-count[79,7,79,15] : std/core/types/int
+      = std/core/int/int-add((match (state) {
+          ((@skip src/ring_buffer/Buffer-state((@pat@0@2: std/core/types/int) : std/core/types/int, (@pat@1@1: std/core/types/int) : std/core/types/int, (@x@1: std/core/types/int) : std/core/types/int, (@pat@2@0: std/core/types/int64) : std/core/types/int64, (@pat@3@0: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@6: buffer-state)
+             -> @x@1;
+        }), to-write);
+    val new-write-pos[80,7,80,19] : std/core/types/int
+      = std/core/int/(%)((std/core/int/int-add((match (state) {
+            ((@skip src/ring_buffer/Buffer-state((@x@2: std/core/types/int) : std/core/types/int, (@pat@0@3: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/int) : std/core/types/int, (@pat@2@1: std/core/types/int64) : std/core/types/int64, (@pat@3@1: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@7: buffer-state)
+               -> @x@2;
+          }), to-write)), (match (config) {
+          ((@skip src/ring_buffer/Buffer-config((@x@3: std/core/types/int) : std/core/types/int, (@pat@0@4: std/core/types/int) : std/core/types/int, (@pat@1@3: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat@8: buffer-config)
+             -> @x@3;
+        }));
+    val new-state[81,7,81,15] : buffer-state
+      = src/ring_buffer/Buffer-state(new-write-pos, (match (state) {
+          ((@skip src/ring_buffer/Buffer-state((@pat@0@5: std/core/types/int) : std/core/types/int, (@x@4: std/core/types/int) : std/core/types/int, (@pat@1@4: std/core/types/int) : std/core/types/int, (@pat@2@2: std/core/types/int64) : std/core/types/int64, (@pat@3@2: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@9: buffer-state)
+             -> @x@4;
+        }), new-count, (std/num/int64/(+)((match (state) {
+            ((@skip src/ring_buffer/Buffer-state((@pat@0@6: std/core/types/int) : std/core/types/int, (@pat@1@5: std/core/types/int) : std/core/types/int, (@pat@2@3: std/core/types/int) : std/core/types/int, (@x@5: std/core/types/int64) : std/core/types/int64, (@pat@3@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@10: buffer-state)
+               -> @x@5;
+          }), (std/num/int64/int64(to-write)))), (match (state) {
+          ((@skip src/ring_buffer/Buffer-state((@pat@0@7: std/core/types/int) : std/core/types/int, (@pat@1@6: std/core/types/int) : std/core/types/int, (@pat@2@4: std/core/types/int) : std/core/types/int, (@pat@3@4: std/core/types/int64) : std/core/types/int64, (@x@6: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@11: buffer-state)
+             -> @x@6;
+        }));
+    std/core/types/Tuple2<std/core/types/int,buffer-state>(to-write, new-state);
+  };
+fun read-batch // inline size: 9
+  = fn(state: buffer-state, config: buffer-config, n: std/core/types/int){
+    val to-read[93,7,93,13] : std/core/types/int
+      = match ((std/core/int/(>)(n, (match (state) {
+          ((@skip src/ring_buffer/Buffer-state((@pat@0: std/core/types/int) : std/core/types/int, (@pat@1: std/core/types/int) : std/core/types/int, (@x: std/core/types/int) : std/core/types/int, (@pat@2: std/core/types/int64) : std/core/types/int64, (@pat@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat: buffer-state)
+             -> @x;
+        })))) {
+        ((std/core/types/True() : std/core/types/bool ) as @pat@4: std/core/types/bool)
+           -> (match (state) {
+            ((@skip src/ring_buffer/Buffer-state((@pat@0@0: std/core/types/int) : std/core/types/int, (@pat@1@0: std/core/types/int) : std/core/types/int, (@x@0: std/core/types/int) : std/core/types/int, (@pat@2@0: std/core/types/int64) : std/core/types/int64, (@pat@3@0: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@5: buffer-state)
+               -> @x@0;
+          });
+        ((@skip std/core/types/False() : std/core/types/bool ) as @pat@0@0@0: std/core/types/bool)
+           -> n;
+      };
+    val new-count[94,7,94,15] : std/core/types/int
+      = std/core/int/int-sub((match (state) {
+          ((@skip src/ring_buffer/Buffer-state((@pat@0@1: std/core/types/int) : std/core/types/int, (@pat@1@0@0: std/core/types/int) : std/core/types/int, (@x@0@0: std/core/types/int) : std/core/types/int, (@pat@2@0@0: std/core/types/int64) : std/core/types/int64, (@pat@3@0@0: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@5@0: buffer-state)
+             -> @x@0@0;
+        }), to-read);
+    val new-read-pos[95,7,95,18] : std/core/types/int
+      = std/core/int/(%)((std/core/int/int-add((match (state) {
+            ((@skip src/ring_buffer/Buffer-state((@pat@0@2: std/core/types/int) : std/core/types/int, (@x@1: std/core/types/int) : std/core/types/int, (@pat@1@1: std/core/types/int) : std/core/types/int, (@pat@2@1: std/core/types/int64) : std/core/types/int64, (@pat@3@1: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@6: buffer-state)
+               -> @x@1;
+          }), to-read)), (match (config) {
+          ((@skip src/ring_buffer/Buffer-config((@x@2: std/core/types/int) : std/core/types/int, (@pat@0@3: std/core/types/int) : std/core/types/int, (@pat@1@2: std/core/types/int) : std/core/types/int) : buffer-config ) as @pat@7: buffer-config)
+             -> @x@2;
+        }));
+    val new-state[96,7,96,15] : buffer-state
+      = src/ring_buffer/Buffer-state((match (state) {
+          ((@skip src/ring_buffer/Buffer-state((@x@3: std/core/types/int) : std/core/types/int, (@pat@0@4: std/core/types/int) : std/core/types/int, (@pat@1@3: std/core/types/int) : std/core/types/int, (@pat@2@2: std/core/types/int64) : std/core/types/int64, (@pat@3@2: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@8: buffer-state)
+             -> @x@3;
+        }), new-read-pos, new-count, (match (state) {
+          ((@skip src/ring_buffer/Buffer-state((@pat@0@5: std/core/types/int) : std/core/types/int, (@pat@1@4: std/core/types/int) : std/core/types/int, (@pat@2@3: std/core/types/int) : std/core/types/int, (@x@4: std/core/types/int64) : std/core/types/int64, (@pat@3@3: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@9: buffer-state)
+             -> @x@4;
+        }), (std/num/int64/(+)((match (state) {
+            ((@skip src/ring_buffer/Buffer-state((@pat@0@6: std/core/types/int) : std/core/types/int, (@pat@1@5: std/core/types/int) : std/core/types/int, (@pat@2@4: std/core/types/int) : std/core/types/int, (@pat@3@4: std/core/types/int64) : std/core/types/int64, (@x@5: std/core/types/int64) : std/core/types/int64) : buffer-state ) as @pat@10: buffer-state)
+               -> @x@5;
+          }), (std/num/int64/int64(to-read)))));
+    std/core/types/Tuple2<std/core/types/int,buffer-state>(to-read, new-state);
+  };
+fun main // inline size: 9
+  = fn<(std/core/io :: E)>(){
+    val _[204,3,204,159] : ()
+      = std/core/types/@open<<(std/core/console/console :: X)>,<(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>,(s : std/core/types/string) -> <(std/core/console/console :: X)> (),(s : std/core/types/string) -> <(std/core/console/console :: X),(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> ()>(std/core/console/printsln)("{\x22status\x22:\x22started\x22,\x22ring_buffer\x22:true,\x22version\x22:\x225.0\x22,\x22features\x22:[\x22lock_free\x22,\x22multi_producer\x22,\x22multi_consumer\x22,\x22batch_ops\x22]}");
+    val initial-state[206,7,206,19] : buffer-state
+      = src/ring_buffer/Buffer-state(0, 0, 0, (std/core/types/@open<(std/core/types/total :: E),<(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>,(i : std/core/types/int) -> std/core/types/int64,(i : std/core/types/int) -> <(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> std/core/types/int64>(std/num/int64/int64)(0)), (std/core/types/@open<(std/core/types/total :: E),<(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>>,(i : std/core/types/int) -> std/core/types/int64,(i : std/core/types/int) -> <(std/core/types/alloc :: H -> X)<(std/core/types/global :: H)>,(std/core/console/console :: X),(std/core/types/div :: X),(std/core/types/handled :: ((E, V) -> V) -> X)<(std/core/exn/exn :: (E, V) -> V)>,(std/core/fsys :: X),(std/core/types/ndet :: X),(std/core/net :: X),(std/core/types/read :: H -> X)<(std/core/types/global :: H)>,(std/core/ui :: X),(std/core/types/write :: H -> X)<(std/core/types/global :: H)>> std/core/types/int64>(std/num/int64/int64)(0)));
+    src/ring_buffer/server-loop(initial-state, (src/ring_buffer/Buffer-config(1000, 1544, 64)));
+  };

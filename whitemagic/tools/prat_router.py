@@ -1,0 +1,1033 @@
+"""PRAT Router — Polymorphic Resonant Adaptive Tools.
+====================================================
+Collapses 175+ MCP tools into 28 Gana meta-tools.
+
+Each Gana accepts a `tool` parameter naming the specific sub-tool,
+plus `args` dict that passes through to the underlying dispatch pipeline.
+
+When WM_MCP_PRAT=1, only the 28 Gana tools are registered with MCP.
+AI clients call e.g.:
+    gana_ghost(tool="gnosis", args={"compact": true})
+instead of:
+    gnosis(compact=true)
+
+The Gana handler routes through the existing call_tool() pipeline,
+preserving all middleware (circuit breaker, rate limiter, RBAC, etc.).
+"""
+
+import logging
+import os
+from typing import Any
+from uuid import uuid4
+
+from whitemagic.tools.gana_native_contract import (
+    build_native_gana_details,
+    normalize_native_gana_result,
+)
+
+logger = logging.getLogger(__name__)
+
+
+def _is_quiet_internal_benchmark(kwargs: dict[str, Any] | None = None, args: dict[str, Any] | None = None) -> bool:
+    if os.getenv("WM_BENCHMARK_QUIET", "").strip().lower() not in ("1", "true", "yes"):
+        return False
+    kwargs = kwargs or {}
+    args = args or {}
+    return bool(kwargs.get("_internal_benchmark") or args.get("_internal_benchmark"))
+
+
+def _normalize_gana_native_result(gana_name: str, raw: dict[str, Any]) -> dict[str, Any]:
+    details = build_native_gana_details(
+        gana_name,
+        operation=raw.get("operation"),
+        mode=raw.get("mode"),
+        note=raw.get("note"),
+        available_tools=raw.get("available_tools"),
+        output=raw.get("output"),
+        garden=raw.get("garden"),
+        garden_status=raw.get("garden_status"),
+        mansion=raw.get("mansion"),
+        successor_hint=raw.get("successor_hint"),
+        execution_ms=raw.get("execution_ms"),
+        karma_trace=raw.get("karma_trace"),
+        predecessor_context=raw.get("predecessor_context") or raw.get("predecessor"),
+        lunar_amplification=raw.get("lunar_amplification"),
+        resonance=raw.get("_resonance"),
+        koka_latency_ms=raw.get("_koka_latency_ms"),
+        koka_path=raw.get("_koka_path"),
+        extra={
+            key: value
+            for key, value in raw.items()
+            if key not in {
+                "status", "gana", "operation", "mode", "note", "available_tools",
+                "output", "garden", "garden_status", "mansion", "successor_hint",
+                "execution_ms", "karma_trace", "predecessor_context", "predecessor",
+                "lunar_amplification", "_resonance", "_koka_latency_ms", "_koka_path",
+            }
+        },
+    )
+    return normalize_native_gana_result(
+        gana_name,
+        request_id=str(uuid4()),
+        details=details,
+    )
+
+# ──────────────────────────────────────────────────────────
+# Tool → Gana mapping by domain affinity
+# ──────────────────────────────────────────────────────────
+
+TOOL_TO_GANA: dict[str, str] = {
+    # ═══ HORN — Session Initialization & Setup ═══
+    "session_bootstrap":       "gana_horn",
+    "create_session":          "gana_horn",
+    "resume_session":          "gana_horn",
+    "checkpoint_session":      "gana_horn",
+
+    # ═══ NECK — Core Memory Creation & Stability ═══
+    "create_memory":           "gana_neck",
+    "update_memory":           "gana_neck",
+    "import_memories":         "gana_neck",
+    "delete_memory":           "gana_neck",
+
+    # ═══ ROOT — System Health & Foundations ═══
+    "health_report":           "gana_root",
+    "rust_status":             "gana_root",
+    "rust_similarity":         "gana_root",
+    "ship.check":              "gana_root",
+    "state.paths":             "gana_root",
+    "state.summary":           "gana_root",
+
+    # ═══ ROOM — Resource Locks & Privacy ═══
+    "sangha_lock":             "gana_room",
+    "sandbox.set_limits":      "gana_room",
+    "sandbox.status":          "gana_room",
+    "sandbox.violations":      "gana_room",
+
+    # ═══ HEART — Session Context & Pulse ═══
+    "scratchpad":              "gana_heart",
+    "session.handoff":         "gana_heart",
+    "session_handoff":         "gana_heart",
+    "session_handoff_summary": "gana_heart",
+    "context.pack":            "gana_heart",
+    "context.status":          "gana_heart",
+    "working_memory.attend":   "gana_heart",
+    "working_memory.context":  "gana_heart",
+    "working_memory.status":   "gana_heart",
+
+    # ═══ TAIL — Performance & Acceleration ═══
+    "simd.cosine":             "gana_tail",
+    "simd.batch":              "gana_tail",
+    "simd.status":             "gana_tail",
+    "execute_cascade":         "gana_tail",
+    "list_cascade_patterns":   "gana_tail",
+
+    # ═══ WINNOWING BASKET — Wisdom & Tag Filtering ═══
+    "search_memories":         "gana_winnowing_basket",
+    "search_query":            "gana_winnowing_basket",
+    "vector.search":           "gana_winnowing_basket",
+    "vector.index":            "gana_winnowing_basket",
+    "vector.status":           "gana_winnowing_basket",
+    "fast_read_memory":        "gana_winnowing_basket",
+    "batch_read_memories":     "gana_winnowing_basket",
+    "read_memory":             "gana_winnowing_basket",
+    "list_memories":           "gana_winnowing_basket",
+    "hybrid_recall":           "gana_winnowing_basket",
+    "graph_walk":              "gana_winnowing_basket",
+
+    # ═══ GHOST — Introspection & Metric Tracking ═══
+    "gnosis":                  "gana_ghost",
+    "capabilities":            "gana_ghost",
+    "manifest":                "gana_ghost",
+    "get_telemetry_summary":   "gana_ghost",
+    "repo.summary":            "gana_ghost",
+    "explain_this":            "gana_ghost",
+    "drive.snapshot":          "gana_ghost",
+    "drive.event":             "gana_ghost",
+    "selfmodel.forecast":      "gana_ghost",
+    "selfmodel.alerts":        "gana_ghost",
+    "capability.matrix":       "gana_ghost",
+    "capability.status":       "gana_ghost",
+    "capability.suggest":      "gana_ghost",
+    "graph_topology":          "gana_ghost",
+    "surprise_stats":          "gana_ghost",
+
+    # ═══ WILLOW — Resilience & Flexibility ═══
+    "rate_limiter.stats":      "gana_willow",
+    "grimoire_suggest":        "gana_willow",
+    "grimoire_cast":           "gana_willow",
+    "grimoire_recommend":      "gana_willow",
+    "grimoire_auto_status":    "gana_willow",
+    "grimoire_walkthrough":    "gana_willow",
+
+    # ═══ STAR — Governance & PRAT Invocation ═══
+    "governor_validate":       "gana_star",
+    "governor_set_goal":       "gana_star",
+    "governor_check_drift":    "gana_star",
+    "dharma.reload":           "gana_star",
+    "set_dharma_profile":      "gana_star",
+
+    # ═══ EXTENDED NET — Pattern Connectivity ═══
+    "pattern_search":          "gana_extended_net",
+    "cluster_stats":           "gana_extended_net",
+    "tool.graph":              "gana_extended_net",
+    "learning.patterns":       "gana_extended_net",
+    "learning.suggest":        "gana_extended_net",
+    "learning.status":         "gana_extended_net",
+
+    # ═══ WINGS — Deployment & Export ═══
+    "export_memories":         "gana_wings",
+    "audit.export":            "gana_wings",
+    "mesh.broadcast":          "gana_wings",
+    "mesh.status":             "gana_wings",
+
+    # ═══ CHARIOT — Mobility & Archaeology ═══
+    "archaeology":             "gana_chariot",
+    "kg.extract":              "gana_chariot",
+    "kg.query":                "gana_chariot",
+    "kg.top":                  "gana_chariot",
+    "kg.status":               "gana_chariot",
+    "kg2.extract":             "gana_chariot",
+    "kg2.batch":               "gana_chariot",
+    "kg2.entity":              "gana_chariot",
+    "kg2.stats":               "gana_chariot",
+    "embedding.daemon_start":  "gana_chariot",
+    "embedding.daemon_stop":   "gana_chariot",
+    "embedding.daemon_status": "gana_chariot",
+    "embedding.daemon_process": "gana_chariot",
+
+    # ═══ ABUNDANCE — Regeneration & Dream Cycle ═══
+    "dream":                   "gana_abundance",
+    "memory.lifecycle":        "gana_abundance",
+    "memory.retention_sweep":  "gana_abundance",
+    "serendipity_surface":     "gana_abundance",
+    "serendipity_mark_accessed": "gana_abundance",
+    "entity_resolve":          "gana_abundance",
+    "whitemagic.tip":          "gana_abundance",
+    "gratitude.stats":         "gana_abundance",
+    "gratitude.benefits":      "gana_abundance",
+    "pulse.status":            "gana_abundance",
+    "bounty.create":           "gana_abundance",
+    "bounty.list":             "gana_abundance",
+    "memory.rent":             "gana_abundance",
+
+    # ═══ STRADDLING LEGS — Balance & Equilibrium ═══
+    "evaluate_ethics":         "gana_straddling_legs",
+    "check_boundaries":        "gana_straddling_legs",
+    "verify_consent":          "gana_straddling_legs",
+    "get_ethical_score":        "gana_straddling_legs",
+    "get_dharma_guidance":     "gana_straddling_legs",
+    "harmony_vector":          "gana_straddling_legs",
+
+    # ═══ MOUND — Accumulation & Caching ═══
+    "view_hologram":           "gana_mound",
+    "track_metric":            "gana_mound",
+    "get_metrics_summary":     "gana_mound",
+    "record_yin_yang_activity": "gana_mound",
+    "get_yin_yang_balance":    "gana_mound",
+
+    # ═══ STOMACH — Digestion & Resource Management ═══
+    "pipeline":                "gana_stomach",
+    "task.distribute":         "gana_stomach",
+    "task.status":             "gana_stomach",
+    "task.list":               "gana_stomach",
+    "task.complete":           "gana_stomach",
+    "task.route_smart":        "gana_stomach",
+
+    # ═══ HAIRY HEAD — Detail & Debug ═══
+    "salience.spotlight":      "gana_hairy_head",
+    "anomaly":                 "gana_hairy_head",
+    "otel":                    "gana_hairy_head",
+    "karma_report":            "gana_hairy_head",
+    "karmic_trace":            "gana_hairy_head",
+    "dharma_rules":            "gana_hairy_head",
+
+    # ═══ NET — Capture & Filtering ═══
+    "prompt.render":           "gana_net",
+    "prompt.list":             "gana_net",
+    "prompt.reload":           "gana_net",
+    "karma.verify_chain":      "gana_net",
+    "karma.anchor":            "gana_hairy_head",
+    "karma.verify_anchor":     "gana_hairy_head",
+    "karma.anchor_status":     "gana_hairy_head",
+
+    # ═══ TURTLE BEAK — Precision & Protection ═══
+    "edge_infer":              "gana_turtle_beak",
+    "edge_batch_infer":        "gana_turtle_beak",
+    "edge_stats":              "gana_turtle_beak",
+    "bitnet_infer":            "gana_turtle_beak",
+    "bitnet_status":           "gana_turtle_beak",
+
+    # ═══ THREE STARS — Judgment & Synthesis ═══
+    "reasoning.bicameral":     "gana_three_stars",
+    "ensemble":                "gana_three_stars",
+    "solve_optimization":      "gana_three_stars",
+    "kaizen_analyze":          "gana_three_stars",
+    "kaizen_apply_fixes":      "gana_three_stars",
+    "art_of_war.wisdom":       "gana_three_stars",
+    "art_of_war.terrain":      "gana_three_stars",
+    "art_of_war.campaign":     "gana_three_stars",
+    "art_of_war.chapter":      "gana_three_stars",
+    "art_of_war.assess":       "gana_three_stars",
+    "art_of_war.plan":         "gana_three_stars",
+
+    # ═══ DIPPER — Governance & Strategy ═══
+    "homeostasis":             "gana_dipper",
+    "maturity.assess":         "gana_dipper",
+    "starter_packs":           "gana_dipper",
+
+    # ═══ OX — Endurance & Watchdog ═══
+    "swarm.decompose":         "gana_ox",
+    "swarm.route":             "gana_ox",
+    "swarm.complete":          "gana_ox",
+    "swarm.vote":              "gana_ox",
+    "swarm.resolve":           "gana_ox",
+    "swarm.plan":              "gana_ox",
+    "swarm.status":            "gana_ox",
+    "worker.status":           "gana_ox",
+
+    # ═══ GIRL — Nurture & User Profile ═══
+    "agent.register":          "gana_girl",
+    "agent.heartbeat":         "gana_girl",
+    "agent.list":              "gana_girl",
+    "agent.capabilities":      "gana_girl",
+    "agent.deregister":        "gana_girl",
+    "agent.trust":             "gana_girl",
+
+    # ═══ VOID — Emptiness & Defrag ═══
+    "galactic.dashboard":      "gana_void",
+    "garden_activate":         "gana_void",
+    "garden_status":           "gana_void",
+    "garden_health":           "gana_void",
+    "garden_synergy":          "gana_void",
+    # S025: Garden Directory Tools
+    "garden_list_files":       "gana_void",
+    "garden_list_functions":   "gana_void",
+    "garden_search":           "gana_void",
+    "garden_resonance":        "gana_void",
+    "garden_map_system":       "gana_void",
+    "garden_stats":            "gana_void",
+    # S025 Phase 6: Virtual Filesystem
+    "garden_browse":           "gana_void",
+    "garden_resolve":          "gana_void",
+    "galaxy.create":           "gana_void",
+    "galaxy.switch":           "gana_void",
+    "galaxy.list":             "gana_void",
+    "galaxy.status":           "gana_void",
+    "galaxy.ingest":           "gana_void",
+    "galaxy.delete":           "gana_void",
+    "galaxy.backup":           "gana_void",
+    "galaxy.restore":          "gana_void",
+    "galaxy.transfer":         "gana_void",
+    "galaxy.merge":            "gana_void",
+    "galaxy.sync":             "gana_void",
+    "galaxy.lineage":          "gana_void",
+    "galaxy.taxonomy":         "gana_void",
+    "galaxy.lineage_stats":    "gana_void",
+
+    # ═══ SIMPLIFIED ALIASES ═══
+    "remember":                "gana_neck",
+    "recall":                  "gana_winnowing_basket",
+    "think":                   "gana_three_stars",
+    "check":                   "gana_root",
+
+    # ═══ ROOF — Shelter & Zodiac Cores ═══
+    "ollama.models":           "gana_roof",
+    "ollama.generate":         "gana_roof",
+    "ollama.chat":             "gana_roof",
+    "ollama.agent":            "gana_roof",
+
+    # ═══ ENCAMPMENT — Transition & Handoff ═══
+    "sangha_chat_send":        "gana_encampment",
+    "sangha_chat_read":        "gana_encampment",
+    "broker.publish":          "gana_encampment",
+    "broker.history":          "gana_encampment",
+    "broker.status":           "gana_encampment",
+
+    # ═══ WALL — Boundaries & Notifications ═══
+    "vote.create":             "gana_wall",
+    "vote.cast":               "gana_wall",
+    "vote.analyze":            "gana_wall",
+    "vote.list":               "gana_wall",
+    "vote.record_outcome":     "gana_wall",
+    "engagement.issue":        "gana_wall",
+    "engagement.validate":     "gana_wall",
+    "engagement.revoke":       "gana_wall",
+    "engagement.list":         "gana_wall",
+    "engagement.status":       "gana_wall",
+
+    # ═══ ROOM — Edgerunner Violet: MCP Integrity & Security Monitor ═══
+    "mcp_integrity.snapshot":  "gana_room",
+    "mcp_integrity.verify":    "gana_room",
+    "mcp_integrity.status":    "gana_room",
+    "security.alerts":         "gana_room",
+    "security.monitor_status": "gana_room",
+
+    # ═══ ROOF — Edgerunner Violet: Model Signing ═══
+    "model.register":          "gana_roof",
+    "model.verify":            "gana_roof",
+    "model.list":              "gana_roof",
+    "model.hash":              "gana_roof",
+    "model.signing_status":    "gana_roof",
+
+    # ═══ THREE STARS — Gana Sabha (Council Protocol — 12.108.25) ═══
+    "sabha.convene":           "gana_three_stars",
+    "sabha.status":            "gana_three_stars",
+
+    # ═══ STAR — Gana Forge (Declarative Extension — 12.108.17) ═══
+    "forge.status":            "gana_star",
+    "forge.reload":            "gana_star",
+    "forge.validate":          "gana_star",
+
+    # ═══════════════════════════════════════════════════════════
+    # ORPHAN RESOLUTION — 94 dispatch tools mapped to Ganas
+    # Ensures full coherence between dispatch_table and PRAT.
+    # ═══════════════════════════════════════════════════════════
+
+    # ── HORN — Additional session tools ──
+    "session_status":              "gana_horn",
+    "session.handoff_transfer":    "gana_horn",
+    "session.accept_handoff":      "gana_horn",
+    "session.list_handoffs":       "gana_horn",
+    "focus_session":               "gana_horn",
+
+    # ── NECK — Memory mutation ──
+    "thought_clone":               "gana_neck",
+
+    # ── ROOT — Rust acceleration status ──
+    "rust_audit":                  "gana_root",
+    "rust_compress":               "gana_root",
+
+    # ── ROOM — Security & locking sub-tools ──
+    "sangha_lock_acquire":         "gana_room",
+    "sangha_lock_release":         "gana_room",
+    "sangha_lock_list":            "gana_room",
+    "anti_loop_check":             "gana_room",
+    "immune_scan":                 "gana_room",
+    "immune_heal":                 "gana_room",
+
+    # ── HEART — Scratchpad sub-tools ──
+    "scratchpad_create":           "gana_heart",
+    "scratchpad_update":           "gana_heart",
+    "scratchpad_finalize":         "gana_heart",
+    "analyze_scratchpad":          "gana_heart",
+
+    # ── TAIL — Acceleration sub-tools ──
+    "token_report":                "gana_tail",
+
+    # ── GHOST — Introspection sub-tools + watchers ──
+    "capability_harness":          "gana_ghost",
+    "get_agent_capabilities":      "gana_ghost",
+    "watcher_add":                 "gana_ghost",
+    "watcher_remove":              "gana_ghost",
+    "watcher_start":               "gana_ghost",
+    "watcher_stop":                "gana_ghost",
+    "watcher_list":                "gana_ghost",
+    "watcher_status":              "gana_ghost",
+    "watcher_stats":               "gana_ghost",
+    "watcher_recent_events":       "gana_ghost",
+
+    # ── WILLOW — Grimoire sub-tools ──
+    "grimoire_list":               "gana_willow",
+    "grimoire_read":               "gana_willow",
+    "cast_oracle":                 "gana_willow",
+
+    # ── STAR — Governor sub-tools ──
+    "governor_check_budget":       "gana_star",
+    "governor_check_dharma":       "gana_star",
+    "governor_stats":              "gana_star",
+    "governor_validate_path":      "gana_star",
+
+    # ── EXTENDED NET — Pattern & graph sub-tools ──
+    "tool.graph_full":             "gana_extended_net",
+    "coherence_boost":             "gana_extended_net",
+    "resonance_trace":             "gana_extended_net",
+
+    # ── CHARIOT — Archaeology sub-tools + Windsurf ──
+    "archaeology_scan_directory":  "gana_chariot",
+    "archaeology_search":          "gana_chariot",
+    "archaeology_stats":           "gana_chariot",
+    "archaeology_report":          "gana_chariot",
+    "archaeology_daily_digest":    "gana_chariot",
+    "archaeology_process_wisdom":  "gana_chariot",
+    "archaeology_mark_read":       "gana_chariot",
+    "archaeology_mark_written":    "gana_chariot",
+    "archaeology_have_read":       "gana_chariot",
+    "archaeology_find_unread":     "gana_chariot",
+    "archaeology_find_changed":    "gana_chariot",
+    "archaeology_recent_reads":    "gana_chariot",
+    "windsurf_list_conversations": "gana_chariot",
+    "windsurf_read_conversation":  "gana_chariot",
+    "windsurf_search_conversations": "gana_chariot",
+    "windsurf_export_conversation": "gana_chariot",
+    "windsurf_stats":              "gana_chariot",
+
+    # ── ABUNDANCE — Dream cycle + lifecycle sub-tools ──
+    "dream_start":                 "gana_abundance",
+    "dream_stop":                  "gana_abundance",
+    "dream_status":                "gana_abundance",
+    "dream_now":                   "gana_abundance",
+    "memory.lifecycle_sweep":      "gana_abundance",
+    "memory.lifecycle_stats":      "gana_abundance",
+    "memory.consolidate":          "gana_abundance",
+    "memory.consolidation_stats":  "gana_abundance",
+
+    # ── STRADDLING LEGS — Wu Xing balance ──
+    "wu_xing_balance":             "gana_straddling_legs",
+
+    # ── STOMACH — Pipeline sub-tools ──
+    "pipeline.create":             "gana_stomach",
+    "pipeline.list":               "gana_stomach",
+    "pipeline.status":             "gana_stomach",
+
+    # ── HAIRY HEAD — Anomaly & OTel sub-tools ──
+    "anomaly.check":               "gana_hairy_head",
+    "anomaly.history":             "gana_hairy_head",
+    "anomaly.status":              "gana_hairy_head",
+    "otel.metrics":                "gana_hairy_head",
+    "otel.spans":                  "gana_hairy_head",
+    "otel.status":                 "gana_hairy_head",
+
+    # ── TURTLE BEAK — Edge inference sub-tools ──
+    "edge_add_rule":               "gana_turtle_beak",
+
+    # ── THREE STARS — Ensemble sub-tools ──
+    "ensemble.query":              "gana_three_stars",
+    "ensemble.history":            "gana_three_stars",
+    "ensemble.status":             "gana_three_stars",
+
+    # ── DIPPER — Homeostasis + starter packs sub-tools ──
+    "homeostasis.check":           "gana_dipper",
+    "homeostasis.status":          "gana_dipper",
+    "starter_packs.get":           "gana_dipper",
+    "starter_packs.list":          "gana_dipper",
+    "starter_packs.suggest":       "gana_dipper",
+
+    # ── ENCAMPMENT — Gan Ying sub-tools ──
+    "ganying_emit":                "gana_encampment",
+    "ganying_history":             "gana_encampment",
+    "ganying_listeners":           "gana_encampment",
+
+    # ── v14.2: JIT Memory Researcher (Winnowing Basket — Wisdom & Search) ──
+    "jit_research":                "gana_winnowing_basket",
+    "jit_research.stats":          "gana_winnowing_basket",
+
+    # ── v14.2: Narrative Compression (Abundance — Dream Cycle) ──
+    "narrative.compress":          "gana_abundance",
+    "narrative.stats":             "gana_abundance",
+
+    # ── v14.2: Hermit Crab Mode (Room — Resource Locks & Privacy) ──
+    "hermit.status":               "gana_room",
+    "hermit.assess":               "gana_room",
+    "hermit.withdraw":             "gana_room",
+    "hermit.mediate":              "gana_room",
+    "hermit.resolve":              "gana_room",
+    "hermit.verify_ledger":        "gana_room",
+    "hermit.check_access":         "gana_room",
+
+    # ── v14.2: Green Score Telemetry (Mound — Metrics & Caching) ──
+    "green.report":                "gana_mound",
+    "green.record":                "gana_mound",
+
+    # ── v14.2: Cognitive Modes (Dipper — Strategy) ──
+    "cognitive.mode":              "gana_dipper",
+    "cognitive.set":               "gana_dipper",
+    "cognitive.hints":             "gana_dipper",
+    "cognitive.stats":             "gana_dipper",
+
+    # ── v14.6: Physical Truth Verification (Straddling Legs — Ethics & Balance) ──
+    "verification.request":        "gana_straddling_legs",
+    "verification.attest":         "gana_straddling_legs",
+    "verification.status":         "gana_straddling_legs",
+
+    # ── v15.2: Sovereign Sandbox (Roof — Shelter & Protection) ──
+    "shelter.create":              "gana_roof",
+    "shelter.execute":             "gana_roof",
+    "shelter.inspect":             "gana_roof",
+    "shelter.destroy":             "gana_roof",
+    "shelter.status":              "gana_roof",
+    "shelter.policy":              "gana_roof",
+
+    # ── v15.2: Optimized Memory States (Void — Export/Import) ──
+    "oms.export":                  "gana_void",
+    "oms.import":                  "gana_void",
+    "oms.inspect":                 "gana_void",
+    "oms.verify":                  "gana_void",
+    "oms.price":                   "gana_void",
+    "oms.list":                    "gana_void",
+    "oms.status":                  "gana_void",
+
+    # ── v15.2: ILP Streaming Payments (Abundance — Regeneration) ──
+    "ilp.configure":               "gana_abundance",
+    "ilp.send":                    "gana_abundance",
+    "ilp.receipt":                 "gana_abundance",
+    "ilp.history":                 "gana_abundance",
+    "ilp.balance":                 "gana_abundance",
+    "ilp.status":                  "gana_abundance",
+
+    # ── v15.2: Marketplace Bridge (Chariot — Mobility & Exchange) ──
+    "marketplace.publish":         "gana_chariot",
+    "marketplace.discover":        "gana_chariot",
+    "marketplace.negotiate":       "gana_chariot",
+    "marketplace.complete":        "gana_chariot",
+    "marketplace.my_listings":     "gana_chariot",
+    "marketplace.remove":          "gana_chariot",
+    "marketplace.status":          "gana_chariot",
+
+    # ── v15.6: Cognitive Extensions ──
+    # Reranking → Winnowing Basket (search/recall)
+    "rerank":                      "gana_winnowing_basket",
+    "rerank.status":               "gana_winnowing_basket",
+    # Working Memory → Heart (session context)
+    # Reconsolidation → Abundance (regeneration/lifecycle)
+    "reconsolidation.mark":        "gana_abundance",
+    "reconsolidation.update":      "gana_abundance",
+    "reconsolidation.status":      "gana_abundance",
+    # Community Maintenance → Extended Net (pattern connectivity)
+    "community.propagate":         "gana_extended_net",
+    "community.status":            "gana_extended_net",
+    "community.health":            "gana_extended_net",
+
+    # ── Cross-cutting: Browser & Web Research (route to Ghost) ──
+    "browser_navigate":            "gana_ghost",
+    "browser_screenshot":          "gana_ghost",
+    "browser_click":               "gana_ghost",
+    "browser_type":                "gana_ghost",
+    "browser_extract_dom":         "gana_ghost",
+    "browser_get_interactables":   "gana_ghost",
+    "web_fetch":                   "gana_ghost",
+    "web_search":                  "gana_ghost",
+    "web_search_and_read":         "gana_ghost",
+    "research_topic":              "gana_ghost",
+    "browser_session_status":      "gana_ghost",
+
+    # ── v15.9: War Room & Shadow Clone Army (Ox — Endurance & Swarm) ──
+    "war_room.status":             "gana_ox",
+    "war_room.plan":               "gana_ox",
+    "war_room.execute":            "gana_ox",
+    "war_room.hierarchy":          "gana_ox",
+    "war_room.campaigns":          "gana_ox",
+    "war_room.phase":              "gana_ox",
+
+    # ── v15.9: Imperial Doctrine (Dipper — Strategy) ──
+    "doctrine.summary":            "gana_dipper",
+    "doctrine.stratagems":         "gana_dipper",
+    "doctrine.force":              "gana_dipper",
+
+    # ── v15.9: Art of War Engine (Three Stars — Judgment & Synthesis) ──
+
+    # ── v15.9: Fool's Guard / Ralph Wiggum (Willow — Resilience) ──
+    "fool_guard.status":           "gana_willow",
+    "fool_guard.dare_to_die":      "gana_willow",
+    "fool_guard.ralph":            "gana_willow",
+
+    # ── v15.8: Pattern Analysis Engines (previously hidden) ──
+    # Mining engines → Extended Net (pattern connectivity)
+    "causal.mine":                 "gana_extended_net",
+    "causal.stats":                "gana_extended_net",
+    "association.mine":            "gana_extended_net",
+    "association.mine_semantic":   "gana_extended_net",
+    "constellation.detect":        "gana_extended_net",
+    "constellation.stats":         "gana_extended_net",
+    "constellation.merge":         "gana_extended_net",
+    "novelty.detect":              "gana_extended_net",
+    "novelty.stats":               "gana_extended_net",
+    "pattern_consciousness.status": "gana_extended_net",
+    # Emergence → Extended Net
+    "emergence.scan":              "gana_extended_net",
+    "emergence.status":            "gana_extended_net",
+    # Synthesis → Three Stars (judgment & synthesis)
+    "satkona.fuse":                "gana_three_stars",
+    "reasoning.multispectral":     "gana_three_stars",
+    "elemental.optimize":          "gana_three_stars",
+    # Bridge + Galactic → Abundance (regeneration)
+    "bridge.synthesize":           "gana_abundance",
+    "galactic.sweep":              "gana_abundance",
+    "galactic.stats":              "gana_abundance",
+    # Guideline Evolution → Star (governance)
+    "guideline.evolve":            "gana_star",
+}
+
+# Reverse: Gana → list of nested tools
+GANA_TO_TOOLS: dict[str, list[str]] = {}
+for _tool, _gana in TOOL_TO_GANA.items():
+    GANA_TO_TOOLS.setdefault(_gana, []).append(_tool)
+
+
+def get_gana_for_tool(tool_name: str) -> str | None:
+    """Look up which Gana a tool belongs to."""
+    return TOOL_TO_GANA.get(tool_name)
+
+
+def get_tools_for_gana(gana_name: str) -> list[str]:
+    """Get all tools nested under a Gana."""
+    return GANA_TO_TOOLS.get(gana_name, [])
+
+
+# ── Koka Hot Path Handler Mapping (S023 VC #8) ──
+# Maps Gana → (koka_module, supported_operations)
+_KOKA_GANA_HANDLERS: dict[str, tuple[str, set[str]]] = {
+    "gana_ghost": ("gnosis", {"gnosis", "capabilities", "manifest", "telemetry"}),
+    "gana_winnowing_basket": ("prat", {"search", "read", "list", "vector"}),
+    "gana_willow": ("circuit", {"check", "reset", "status", "grimoire"}),
+}
+
+
+def _try_koka_handler(gana_name: str, tool: str | None, args: dict | None) -> dict | None:
+    """Attempt to route a Gana call through Koka native handler.
+
+    Returns None if Koka unavailable or operation not supported.
+    Used for hot-path acceleration of 3+ Ganas (S023 VC #8).
+    """
+    handler_info = _KOKA_GANA_HANDLERS.get(gana_name)
+    if not handler_info:
+        return None  # This Gana doesn't have Koka handler
+
+    koka_module, supported_ops = handler_info
+
+    # Check if the operation is supported
+    op = tool or "native"
+    if op not in supported_ops and tool is not None:
+        # Check if tool name contains a supported operation
+        op_match = any(s in op for s in supported_ops)
+        if not op_match:
+            return None  # Operation not supported in Koka
+
+    try:
+        from whitemagic.core.acceleration.koka_native_bridge import koka_dispatch
+        result = koka_dispatch(
+            koka_module,
+            f"handle_{op.replace('.', '_')}",
+            args or {},
+            timeout=2.0
+        )
+        if result:
+            # If Koka explicitly returned an error (either status='error' or 'error' key exists),
+            # we should fall back to Python
+            if result.get("status") == "error" or "error" in result:
+                return None
+            return result
+    except Exception as e:
+        logger.debug(f"Koka handler fallback for {gana_name}: {e}")
+
+    return None  # Fallback to Python
+
+
+def build_prat_description(gana_name: str, base_desc: str) -> str:
+    """Build a rich description for a PRAT Gana tool listing its nested tools."""
+    tools = get_tools_for_gana(gana_name)
+    if not tools:
+        return base_desc
+
+    tool_list = ", ".join(sorted(tools))
+    return f"{base_desc}\n\nNested tools ({len(tools)}): {tool_list}\n\nPass tool='<name>' and args={{...}} to invoke a specific tool."
+
+
+def build_prat_schema(gana_name: str, tool_registry: list) -> dict:
+    """Build a PRAT schema for a Gana with its nested tools enumerated."""
+    tools = get_tools_for_gana(gana_name)
+
+    # Build tool descriptions for the enum
+    tool_descs = {}
+    for td in tool_registry:
+        if td.name in tools:
+            tool_descs[td.name] = td.description
+
+    tool_enum = sorted(tools) if tools else []
+
+    # Build description lines for each nested tool
+    tool_desc_lines = []
+    for t in tool_enum:
+        desc = tool_descs.get(t, "")
+        short = desc[:80] + "..." if len(desc) > 80 else desc
+        tool_desc_lines.append(f"  - {t}: {short}")
+
+    tool_help = "\n".join(tool_desc_lines)
+
+    return {
+        "type": "object",
+        "properties": {
+            "tool": {
+                "type": "string",
+                "enum": tool_enum,
+                "description": f"Which tool to invoke within this Gana.\n{tool_help}",
+            },
+            "args": {
+                "type": "object",
+                "description": "Arguments to pass to the selected tool. See individual tool schemas.",
+                "default": {},
+            },
+            "operation": {
+                "type": "string",
+                "enum": ["search", "analyze", "transform", "consolidate"],
+                "description": "Polymorphic operation (used when no specific tool is specified).",
+            },
+            "context": {
+                "type": "object",
+                "description": "Optional resonance context.",
+            },
+        },
+    }
+
+
+def route_prat_call(gana_name: str, tool: str | None = None,
+                    args: dict | None = None, **kwargs: Any) -> Any:
+    """Route a PRAT call through the existing dispatch pipeline
+    **with full Gana resonance**.
+
+    Resonance protocol:
+    1. Build resonance context (predecessor output, lunar phase, harmony, guna)
+    2. Execute the tool call through call_tool()
+    3. Record resonance state for the next call
+    4. Inject _resonance metadata into the response envelope
+
+    If `tool` is specified, delegates to call_tool(tool, **args).
+    Otherwise, falls back to the Gana's native polymorphic operation.
+    """
+    from whitemagic.tools.prat_resonance import (
+        _GANA_META,
+        build_resonance_context,
+        record_resonance,
+    )
+    from whitemagic.tools.unified_api import call_tool
+
+    # ── Step 1: Build resonance context before execution ──
+    quiet_internal_benchmark = _is_quiet_internal_benchmark(kwargs, args)
+    resonance_ctx = build_resonance_context(gana_name)
+    mode_hint = resonance_ctx.get("mode_hint", "normal")
+
+    # ── Koka Hot Path: Fast dispatch for 3+ Ganas (S023 VC #8) ──
+    _koka_result = _try_koka_handler(gana_name, tool, args)
+    if _koka_result is not None:
+        # Record resonance for Koka path too
+        resonance_meta = {} if quiet_internal_benchmark else record_resonance(gana_name, tool, "koka_dispatch", _koka_result)
+        if isinstance(_koka_result, dict):
+            _koka_result["_resonance"] = resonance_meta
+            _koka_result["_koka_path"] = True
+            if tool is None:
+                return _normalize_gana_native_result(gana_name, _koka_result)
+        return _koka_result
+
+    # ── Wu Xing quadrant boost (Fusion: Wu Xing → Gana) ──
+    try:
+        from whitemagic.core.fusions import get_wuxing_quadrant_boost
+        wuxing_boost = get_wuxing_quadrant_boost(gana_name)
+        resonance_ctx["wuxing_boost"] = wuxing_boost.get("boost_factor", 1.0)
+        resonance_ctx["wuxing_boosted"] = wuxing_boost.get("boosted", False)
+    except Exception:
+        pass
+
+    # ── Garden integration: resolve the Gana's garden ──
+    _garden_instance = None
+    try:
+        meta = _GANA_META.get(gana_name)
+        if meta:
+            garden_name = meta[3].lower()  # index 3 = garden name
+            from whitemagic.gardens import get_garden
+            _garden_instance = get_garden(garden_name)
+            if _garden_instance and hasattr(_garden_instance, "get_status"):
+                resonance_ctx["garden"] = garden_name
+                resonance_ctx["garden_status"] = _garden_instance.get_status()
+    except Exception as exc:
+        logger.debug(f"Garden lookup for {gana_name}: {exc}")
+
+    if tool:
+        # Validate that this tool belongs to this Gana
+        expected_gana = TOOL_TO_GANA.get(tool)
+        if expected_gana and expected_gana != gana_name:
+            return {
+                "status": "error",
+                "error": f"Tool '{tool}' belongs to {expected_gana}, not {gana_name}.",
+                "hint": f"Call {expected_gana}(tool='{tool}', args=...) instead.",
+            }
+
+        # ── Leap 7: Zig dispatch pre-check (rate limit, circuit breaker, maturity) ──
+        try:
+            from whitemagic.core.acceleration.dispatch_bridge import get_dispatch, DispatchResult
+            dispatch = get_dispatch()
+            meta = _GANA_META.get(gana_name)
+            engine_slot = (meta[0] - 1) if meta else None  # mansion_num is 1-indexed, slots are 0-indexed
+            if engine_slot is not None and 0 <= engine_slot < 28:
+                check = dispatch.check(engine_slot)
+                if check != DispatchResult.ALLOW:
+                    return {
+                        "status": "error",
+                        "error_code": f"dispatch_{check.name.lower()}",
+                        "message": f"Tool '{tool}' blocked by Zig dispatch: {check.name}",
+                        "gana": gana_name,
+                        "retryable": check != DispatchResult.IMMATURE,
+                    }
+        except Exception:
+            pass  # Dispatch pre-check is optional
+
+        # ── Step 2: Route through existing dispatch pipeline ──
+        tool_args = args or {}
+
+        # Inject resonance context into args if the tool accepts it
+        if kwargs.get("context"):
+            tool_args.setdefault("_resonance_context", kwargs["context"])
+
+        _call_start = __import__("time").time()
+        _call_success = False
+        try:
+            result = call_tool(tool, **tool_args)
+            _call_success = not (isinstance(result, dict) and result.get("status") == "error")
+        except Exception as e:
+            _call_success = False
+            # Record vitality before returning error
+            try:
+                from whitemagic.tools.gana_vitality import get_vitality_monitor
+                get_vitality_monitor().record_call(
+                    gana_name, success=False,
+                    latency_ms=(__import__("time").time() - _call_start) * 1000,
+                )
+            except Exception:
+                pass
+            return {"status": "error", "error": str(e), "tool": tool}
+
+        # ── Step 3: Record resonance state ──
+        resonance_meta = {} if quiet_internal_benchmark else record_resonance(gana_name, tool, None, result)
+
+        # ── Fusion: Resonance → Emotion/Drive ──
+        try:
+            if not quiet_internal_benchmark:
+                from whitemagic.core.fusions import modulate_drive_from_resonance
+                modulate_drive_from_resonance(gana_name, tool)
+        except Exception:
+            pass
+
+        # ── Garden notification: record the tool call ──
+        if _garden_instance:
+            try:
+                if hasattr(_garden_instance, "record_tool_call"):
+                    _garden_instance.record_tool_call(tool, tool_args, result)
+                if hasattr(_garden_instance, "emit"):
+                    from whitemagic.core.resonance.gan_ying_enhanced import EventType
+                    _garden_instance.emit(EventType.GARDEN_ACTIVITY, {  # type: ignore[attr-defined]
+                        "action": "prat_tool_call",
+                        "gana": gana_name,
+                        "tool": tool,
+                    })
+            except Exception:
+                pass
+
+        # ── Step 4: Inject resonance into response ──
+        if isinstance(result, dict):
+            if resonance_meta:
+                result["_resonance"] = resonance_meta
+            if _garden_instance:
+                result["_garden"] = resonance_ctx.get("garden", "unknown")
+        else:
+            result = {
+                "result": result,
+            }
+            if resonance_meta:
+                result["_resonance"] = resonance_meta
+            if _garden_instance:
+                result["_garden"] = resonance_ctx.get("garden", "unknown")
+
+        # ── Gana Vitality: record call outcome (12.108.20 + 12.108.29) ──
+        try:
+            from whitemagic.tools.gana_vitality import get_vitality_monitor
+            get_vitality_monitor().record_call(
+                gana_name, success=_call_success,
+                latency_ms=(__import__("time").time() - _call_start) * 1000,
+            )
+        except Exception:
+            pass
+
+        # ── v14: Speculative prefetch — record transition, predict next ──
+        try:
+            if not quiet_internal_benchmark:
+                from whitemagic.tools.speculative_prefetch import get_prefetcher
+                get_prefetcher().on_call_complete(gana_name)
+        except Exception:
+            pass
+
+        return result
+
+    # No specific tool — use native Gana operation with resonance
+    operation = kwargs.get("operation", "search")
+
+    native_result = {
+        "status": "ok",
+        "gana": gana_name,
+        "operation": operation,
+        "mode": mode_hint,
+        "note": f"Native {gana_name} {operation} operation. Specify tool='<name>' for a specific sub-tool.",
+        "available_tools": get_tools_for_gana(gana_name),
+    }
+
+    # Add garden context to native operations
+    if _garden_instance:
+        native_result["garden"] = resonance_ctx.get("garden", "unknown")
+        if hasattr(_garden_instance, "get_status"):
+            try:
+                native_result["garden_status"] = _garden_instance.get_status()
+            except Exception:
+                pass
+
+    # Add predecessor context to native operations
+    if resonance_ctx.get("predecessor"):
+        native_result["predecessor_context"] = resonance_ctx["predecessor"]
+
+    # Lunar amplification note
+    if resonance_ctx.get("lunar_amplification"):
+        native_result["lunar_amplification"] = resonance_ctx["lunar_amplification"]
+
+    # Record resonance for native operations too
+    resonance_meta = {} if quiet_internal_benchmark else record_resonance(gana_name, None, operation, native_result)
+    if resonance_meta:
+        native_result["_resonance"] = resonance_meta
+
+    # ── Gana Vitality: record native operation ──
+    try:
+        from whitemagic.tools.gana_vitality import get_vitality_monitor
+        get_vitality_monitor().record_call(gana_name, success=True)
+    except Exception:
+        pass
+
+    # ── Fusion: Resonance → Emotion/Drive (native ops too) ──
+    try:
+        if not quiet_internal_benchmark:
+            from whitemagic.core.fusions import modulate_drive_from_resonance
+            modulate_drive_from_resonance(gana_name, None)
+    except Exception:
+        pass
+
+    return _normalize_gana_native_result(gana_name, native_result)
+
+
+def validate_mapping(tool_registry: list) -> dict[str, Any]:
+    """Check that all non-Gana tools are mapped to a Gana.
+
+    A PRAT mapping is considered valid if the tool exists in either
+    the formal registry OR the dispatch table (many sub-tools are
+    internal and accessed through Gana meta-tools without needing
+    their own registry entry).
+    """
+    from whitemagic.tools.dispatch_table import DISPATCH_TABLE
+
+    mapped = set(TOOL_TO_GANA.keys())
+    all_tools = set()
+    gana_tools = set()
+
+    for td in tool_registry:
+        all_tools.add(td.name)
+        if td.name.startswith("gana_"):
+            gana_tools.add(td.name)
+
+    # Dispatch tools are also valid (internal sub-tools)
+    known_tools = all_tools | set(DISPATCH_TABLE.keys())
+
+    non_gana = all_tools - gana_tools
+    unmapped = non_gana - mapped
+    orphaned = mapped - known_tools  # In PRAT but not in registry OR dispatch
+
+    return {
+        "total_tools": len(all_tools),
+        "gana_tools": len(gana_tools),
+        "non_gana_tools": len(non_gana),
+        "mapped": len(mapped & non_gana),
+        "unmapped": sorted(unmapped),
+        "orphaned": sorted(orphaned),
+    }

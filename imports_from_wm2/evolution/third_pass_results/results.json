@@ -1,0 +1,30 @@
+{
+  "config": {
+    "population_size": 200000,
+    "num_generations": 200,
+    "mutation_rate": 0.18,
+    "crossover_rate": 0.7,
+    "selection_pressure": 0.25,
+    "elitism_rate": 0.02
+  },
+  "metrics": {
+    "total_lineages": 40000000,
+    "generations_completed": 200,
+    "best_fitness": 0.6815689011131545,
+    "average_fitness": 0.19310876933993015,
+    "diversity": 0.90503,
+    "throughput": 125035.15912598542,
+    "duration": 321.1708974838257
+  },
+  "best_genome": {
+    "id": "child_1918119485607934630",
+    "generation": 145,
+    "fitness": 0.6815689011131545,
+    "gene_count": 20
+  },
+  "comparison_vs_first": {
+    "fitness_improvement_pct": 1.0030973789499908,
+    "diversity_change_pct": -0.7860118395088822,
+    "scale_factor": 4.0
+  }
+}

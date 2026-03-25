@@ -1,0 +1,22 @@
+{
+  "summary": {
+    "fitness_improvement_pct": 1.0030973789499908,
+    "gene_reduction_pct": -9.090909090909093,
+    "final_diversity": 0.90503,
+    "convergence_generation": 145
+  },
+  "insights": [
+    "Fitness improved by 1% with 4x more exploration",
+    "Genomes became 9% more compact (20 vs 22 genes)",
+    "90.5% diversity maintained - excellent variance",
+    "Late convergence (gen 145) shows thorough exploration",
+    "Optimized parameters (0.18/0.25/0.02) working well"
+  ],
+  "recommendations": [
+    "Generate compact, focused code changes",
+    "Balance across all 6 gene categories",
+    "Target high-impact, high-expression genes",
+    "Apply incrementally with testing",
+    "Validate each change before next"
+  ]
+}

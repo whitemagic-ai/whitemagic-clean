@@ -1,0 +1,553 @@
+Core (py3.11)	Set up job	﻿2026-03-16T22:34:15.8314541Z Current runner version: '2.332.0'
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8339902Z ##[group]Runner Image Provisioner
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8340675Z Hosted Compute Agent
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8341223Z Version: 20260213.493
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8341980Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8342650Z Build Date: 2026-02-13T00:28:41Z
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8343305Z Worker ID: {cc4be50c-b8b9-4dbc-acf2-917b7c42fdd7}
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8344061Z Azure Region: northcentralus
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8344643Z ##[endgroup]
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8346395Z ##[group]Operating System
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8347220Z Ubuntu
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8347661Z 24.04.3
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8348119Z LTS
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8348640Z ##[endgroup]
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8349109Z ##[group]Runner Image
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8349658Z Image: ubuntu-24.04
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8350197Z Version: 20260309.50.1
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8351209Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260309.50/images/ubuntu/Ubuntu2404-Readme.md
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8352889Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260309.50
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8353791Z ##[endgroup]
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8354782Z ##[group]GITHUB_TOKEN Permissions
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8357101Z Contents: read
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8357667Z Metadata: read
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8358122Z Packages: read
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8358814Z ##[endgroup]
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8361166Z Secret source: Actions
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8362123Z Prepare workflow directory
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8852140Z Prepare all required actions
+Core (py3.11)	Set up job	2026-03-16T22:34:15.8907126Z Getting action download info
+Core (py3.11)	Set up job	2026-03-16T22:34:16.2563472Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+Core (py3.11)	Set up job	2026-03-16T22:34:16.3788574Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+Core (py3.11)	Set up job	2026-03-16T22:34:16.5651209Z Complete job name: Core (py3.11)
+Core (py3.11)	Run actions/checkout@v4	﻿2026-03-16T22:34:16.6416746Z ##[group]Run actions/checkout@v4
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6417727Z with:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6418170Z   repository: whitemagic-ai/whitemagic
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6418904Z   token: ***
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6419299Z   ssh-strict: true
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6419711Z   ssh-user: git
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6420123Z   persist-credentials: true
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6420595Z   clean: true
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6421015Z   sparse-checkout-cone-mode: true
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6421508Z   fetch-depth: 1
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6421916Z   fetch-tags: false
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6422330Z   show-progress: true
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6422778Z   lfs: false
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6423155Z   submodules: false
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6423588Z   set-safe-directory: true
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6424249Z env:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6424642Z   WM_SILENT_INIT: 1
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6425076Z   WM_STATE_ROOT: /tmp/whitemagic_state
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.6425600Z ##[endgroup]
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7544947Z Syncing repository: whitemagic-ai/whitemagic
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7547336Z ##[group]Getting Git version info
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7548239Z Working directory is '/home/runner/work/whitemagic/whitemagic'
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7549277Z [command]/usr/bin/git version
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7616178Z git version 2.53.0
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7643543Z ##[endgroup]
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7667455Z Temporarily overriding HOME='/home/runner/work/_temp/d5f54771-ab4f-4daa-9ced-3ae3d610a9b8' before making global git config changes
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7669024Z Adding repository directory to the temporary git global config as a safe directory
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7672931Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/whitemagic/whitemagic
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7714933Z Deleting the contents of '/home/runner/work/whitemagic/whitemagic'
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7719133Z ##[group]Initializing the repository
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7723166Z [command]/usr/bin/git init /home/runner/work/whitemagic/whitemagic
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7823145Z hint: Using 'master' as the name for the initial branch. This default branch name
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7824567Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7826978Z hint: to use in all of your new repositories, which will suppress this warning,
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7828227Z hint: call:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7828872Z hint:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7829858Z hint: 	git config --global init.defaultBranch <name>
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7831092Z hint:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7832240Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7834185Z hint: 'development'. The just-created branch can be renamed via this command:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7835664Z hint:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7836698Z hint: 	git branch -m <name>
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7837532Z hint:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7838644Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7840751Z Initialized empty Git repository in /home/runner/work/whitemagic/whitemagic/.git/
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7843995Z [command]/usr/bin/git remote add origin https://github.com/whitemagic-ai/whitemagic
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7879367Z ##[endgroup]
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7880735Z ##[group]Disabling automatic garbage collection
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7884604Z [command]/usr/bin/git config --local gc.auto 0
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7916692Z ##[endgroup]
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7918107Z ##[group]Setting up auth
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7924779Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.7959223Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.8335021Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.8373169Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.8640853Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.8681650Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.8967083Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.9007445Z ##[endgroup]
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.9008950Z ##[group]Fetching the repository
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:16.9017880Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +69296b1ef89415dca4530a94c31641e9d4bd7fef:refs/tags/v20.0.0
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:20.7068962Z From https://github.com/whitemagic-ai/whitemagic
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:20.7071595Z  * [new ref]         69296b1ef89415dca4530a94c31641e9d4bd7fef -> v20.0.0
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:20.7098123Z ##[endgroup]
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:20.7099693Z ##[group]Determining the checkout info
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:20.7101282Z ##[endgroup]
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:20.7105304Z [command]/usr/bin/git sparse-checkout disable
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:20.7149393Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:20.7178547Z ##[group]Checking out the ref
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:20.7182311Z [command]/usr/bin/git checkout --progress --force refs/tags/v20.0.0
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:21.7325013Z Updating files:  58% (4885/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:21.8001230Z Updating files:  59% (4952/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:21.8642518Z Updating files:  60% (5036/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.0783629Z Updating files:  61% (5120/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5514268Z Updating files:  62% (5204/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5553060Z Updating files:  63% (5287/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5586114Z Updating files:  64% (5371/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5619882Z Updating files:  65% (5455/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5662202Z Updating files:  66% (5539/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5694358Z Updating files:  67% (5623/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5731847Z Updating files:  68% (5707/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5767050Z Updating files:  69% (5791/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5800944Z Updating files:  70% (5875/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5835405Z Updating files:  71% (5959/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5889049Z Updating files:  72% (6043/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5929700Z Updating files:  73% (6127/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5965318Z Updating files:  74% (6211/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.5997732Z Updating files:  75% (6294/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6032238Z Updating files:  76% (6378/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6076353Z Updating files:  77% (6462/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6112857Z Updating files:  78% (6546/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6145592Z Updating files:  79% (6630/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6180231Z Updating files:  80% (6714/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6210430Z Updating files:  81% (6798/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6242013Z Updating files:  82% (6882/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6270784Z Updating files:  83% (6966/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6302339Z Updating files:  84% (7050/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6341134Z Updating files:  85% (7134/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6379684Z Updating files:  86% (7218/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6412396Z Updating files:  87% (7302/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6450050Z Updating files:  88% (7385/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6495382Z Updating files:  89% (7469/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6555531Z Updating files:  90% (7553/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6612827Z Updating files:  91% (7637/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6674052Z Updating files:  92% (7721/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6738215Z Updating files:  93% (7805/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6838551Z Updating files:  94% (7889/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.6939664Z Updating files:  95% (7973/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7079259Z Updating files:  96% (8057/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7173746Z Updating files:  97% (8141/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7229145Z Updating files:  98% (8225/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7262134Z Updating files:  99% (8309/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7679883Z Updating files:  99% (8365/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7681066Z Updating files: 100% (8392/8392)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7681603Z Updating files: 100% (8392/8392), done.
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7760313Z Note: switching to 'refs/tags/v20.0.0'.
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7760995Z 
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7761628Z You are in 'detached HEAD' state. You can look around, make experimental
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7762263Z changes and commit them, and you can discard any commits you make in this
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7762832Z state without impacting any branches by switching back to a branch.
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7763189Z 
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7763726Z If you want to create a new branch to retain commits you create, you may
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7764600Z do so (now or later) by using -c with the switch command. Example:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7765115Z 
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7765316Z   git switch -c <new-branch-name>
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7765730Z 
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7766249Z Or undo this operation with:
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7766571Z 
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7766708Z   git switch -
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7766987Z 
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7767400Z Turn off this advice by setting config variable advice.detachedHead to false
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7767989Z 
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7768472Z HEAD is now at 69296b1 fix: resolve CI blockers (SyntaxError, CLI JSON output, Rust Clippy/Tests)
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7823914Z ##[endgroup]
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7868277Z [command]/usr/bin/git log -1 --format=%H
+Core (py3.11)	Run actions/checkout@v4	2026-03-16T22:34:22.7896885Z 69296b1ef89415dca4530a94c31641e9d4bd7fef
+Core (py3.11)	Set Up Python	﻿2026-03-16T22:34:22.8147617Z ##[group]Run actions/setup-python@v5
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8147941Z with:
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8148124Z   python-version: 3.11
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8148340Z   check-latest: false
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8148734Z   token: ***
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8148919Z   update-environment: true
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8149149Z   allow-prereleases: false
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8149351Z   freethreaded: false
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8149538Z env:
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8149691Z   WM_SILENT_INIT: 1
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8149900Z   WM_STATE_ROOT: /tmp/whitemagic_state
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.8150134Z ##[endgroup]
+Core (py3.11)	Set Up Python	2026-03-16T22:34:22.9920070Z ##[group]Installed versions
+Core (py3.11)	Set Up Python	2026-03-16T22:34:23.0014092Z Successfully set up CPython (3.11.15)
+Core (py3.11)	Set Up Python	2026-03-16T22:34:23.0014972Z ##[endgroup]
+Core (py3.11)	Install	﻿2026-03-16T22:34:23.0136351Z ##[group]Run python -m pip install --upgrade pip
+Core (py3.11)	Install	2026-03-16T22:34:23.0136816Z [36;1mpython -m pip install --upgrade pip[0m
+Core (py3.11)	Install	2026-03-16T22:34:23.0137161Z [36;1mpython -m pip install -e ".[dev]"[0m
+Core (py3.11)	Install	2026-03-16T22:34:23.0201357Z shell: /usr/bin/bash -e {0}
+Core (py3.11)	Install	2026-03-16T22:34:23.0201637Z env:
+Core (py3.11)	Install	2026-03-16T22:34:23.0201825Z   WM_SILENT_INIT: 1
+Core (py3.11)	Install	2026-03-16T22:34:23.0202058Z   WM_STATE_ROOT: /tmp/whitemagic_state
+Core (py3.11)	Install	2026-03-16T22:34:23.0202399Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Install	2026-03-16T22:34:23.0202860Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+Core (py3.11)	Install	2026-03-16T22:34:23.0203297Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Install	2026-03-16T22:34:23.0203672Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Install	2026-03-16T22:34:23.0204054Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Install	2026-03-16T22:34:23.0204462Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+Core (py3.11)	Install	2026-03-16T22:34:23.0204776Z ##[endgroup]
+Core (py3.11)	Install	2026-03-16T22:34:23.6978494Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages (26.0.1)
+Core (py3.11)	Install	2026-03-16T22:34:24.2606973Z Obtaining file:///home/runner/work/whitemagic/whitemagic
+Core (py3.11)	Install	2026-03-16T22:34:24.2636180Z   Installing build dependencies: started
+Core (py3.11)	Install	2026-03-16T22:34:25.1000091Z   Installing build dependencies: finished with status 'done'
+Core (py3.11)	Install	2026-03-16T22:34:25.1008226Z   Checking if build backend supports build_editable: started
+Core (py3.11)	Install	2026-03-16T22:34:25.4060981Z   Checking if build backend supports build_editable: finished with status 'done'
+Core (py3.11)	Install	2026-03-16T22:34:25.4069538Z   Getting requirements to build editable: started
+Core (py3.11)	Install	2026-03-16T22:34:25.8503598Z   Getting requirements to build editable: finished with status 'done'
+Core (py3.11)	Install	2026-03-16T22:34:25.8514547Z   Preparing editable metadata (pyproject.toml): started
+Core (py3.11)	Install	2026-03-16T22:34:26.1471188Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+Core (py3.11)	Install	2026-03-16T22:34:26.2421335Z Collecting click>=8.1.7 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:26.2966484Z   Downloading click-8.3.1-py3-none-any.whl.metadata (2.6 kB)
+Core (py3.11)	Install	2026-03-16T22:34:26.4457402Z Collecting pydantic<3.0.0,>=2.0.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:26.4516235Z   Downloading pydantic-2.12.5-py3-none-any.whl.metadata (90 kB)
+Core (py3.11)	Install	2026-03-16T22:34:26.6657824Z Collecting pyyaml>=6.0.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:26.6702457Z   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Core (py3.11)	Install	2026-03-16T22:34:26.7100186Z Collecting pytest>=7.0.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:26.7143197Z   Downloading pytest-9.0.2-py3-none-any.whl.metadata (7.6 kB)
+Core (py3.11)	Install	2026-03-16T22:34:26.7681660Z Collecting pytest-asyncio>=0.21.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:26.7724806Z   Downloading pytest_asyncio-1.3.0-py3-none-any.whl.metadata (4.1 kB)
+Core (py3.11)	Install	2026-03-16T22:34:26.8067054Z Collecting pytest-cov>=4.1.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:26.8125356Z   Downloading pytest_cov-7.0.0-py3-none-any.whl.metadata (31 kB)
+Core (py3.11)	Install	2026-03-16T22:34:27.0462994Z Collecting pytest-timeout>=2.2.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:27.0513246Z   Downloading pytest_timeout-2.4.0-py3-none-any.whl.metadata (20 kB)
+Core (py3.11)	Install	2026-03-16T22:34:27.1049612Z Collecting black>=23.0.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:27.1090186Z   Downloading black-26.3.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+Core (py3.11)	Install	2026-03-16T22:34:27.3611605Z Collecting isort>=5.13.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:27.3652819Z   Downloading isort-8.0.1-py3-none-any.whl.metadata (11 kB)
+Core (py3.11)	Install	2026-03-16T22:34:27.7098103Z Collecting mypy>=1.0.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:27.7137385Z   Downloading mypy-1.19.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.2 kB)
+Core (py3.11)	Install	2026-03-16T22:34:28.2494462Z Collecting ruff>=0.1.6 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:28.2558664Z   Downloading ruff-0.15.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (26 kB)
+Core (py3.11)	Install	2026-03-16T22:34:28.7002662Z Collecting maturin>=1.3.0 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:28.7047774Z   Downloading maturin-1.12.6-py3-none-manylinux_2_12_x86_64.manylinux2010_x86_64.musllinux_1_1_x86_64.whl.metadata (16 kB)
+Core (py3.11)	Install	2026-03-16T22:34:28.7250417Z Collecting nbconvert>=7.16.6 (from whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:28.7298907Z   Downloading nbconvert-7.17.0-py3-none-any.whl.metadata (8.4 kB)
+Core (py3.11)	Install	2026-03-16T22:34:28.7441574Z Collecting annotated-types>=0.6.0 (from pydantic<3.0.0,>=2.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:28.7492409Z   Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.4081549Z Collecting pydantic-core==2.41.5 (from pydantic<3.0.0,>=2.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.4120069Z   Downloading pydantic_core-2.41.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.4269595Z Collecting typing-extensions>=4.14.1 (from pydantic<3.0.0,>=2.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.4309352Z   Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.4408618Z Collecting typing-inspection>=0.4.2 (from pydantic<3.0.0,>=2.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.4444228Z   Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.4566117Z Collecting mypy-extensions>=0.4.3 (from black>=23.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.4601329Z   Downloading mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.4740883Z Collecting packaging>=22.0 (from black>=23.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.4754474Z   Using cached packaging-26.0-py3-none-any.whl.metadata (3.3 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.4858220Z Collecting pathspec>=1.0.0 (from black>=23.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.4892785Z   Downloading pathspec-1.0.4-py3-none-any.whl.metadata (13 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.5074689Z Collecting platformdirs>=2 (from black>=23.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.5109481Z   Downloading platformdirs-4.9.4-py3-none-any.whl.metadata (4.7 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.5258405Z Collecting pytokens~=0.4.0 (from black>=23.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.5296871Z   Downloading pytokens-0.4.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.6247548Z Collecting librt>=0.6.2 (from mypy>=1.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.6287400Z   Downloading librt-0.8.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (1.3 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.6462976Z Collecting beautifulsoup4 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.6499078Z   Downloading beautifulsoup4-4.14.3-py3-none-any.whl.metadata (3.8 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.6677245Z Collecting bleach!=5.0.0 (from bleach[css]!=5.0.0->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.6714580Z   Downloading bleach-6.3.0-py3-none-any.whl.metadata (31 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.6850436Z Collecting defusedxml (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.6889936Z   Downloading defusedxml-0.7.1-py2.py3-none-any.whl.metadata (32 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.7043407Z Collecting jinja2>=3.0 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.7078505Z   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.7265259Z Collecting jupyter-core>=4.7 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.7300889Z   Downloading jupyter_core-5.9.1-py3-none-any.whl.metadata (1.5 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.7458894Z Collecting jupyterlab-pygments (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.7498365Z   Downloading jupyterlab_pygments-0.3.0-py3-none-any.whl.metadata (4.4 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.7984754Z Collecting markupsafe>=2.0 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.8024138Z   Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.8216268Z Collecting mistune<4,>=2.0.3 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.8253924Z   Downloading mistune-3.2.0-py3-none-any.whl.metadata (1.9 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.8439981Z Collecting nbclient>=0.5.0 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.8475743Z   Downloading nbclient-0.10.4-py3-none-any.whl.metadata (8.3 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.8640327Z Collecting nbformat>=5.7 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.8679202Z   Downloading nbformat-5.10.4-py3-none-any.whl.metadata (3.6 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.8803693Z Collecting pandocfilters>=1.4.1 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.8840080Z   Downloading pandocfilters-1.5.1-py2.py3-none-any.whl.metadata (9.0 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.9023336Z Collecting pygments>=2.4.1 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.9058762Z   Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.9209327Z Collecting traitlets>=5.1 (from nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.9244352Z   Downloading traitlets-5.14.3-py3-none-any.whl.metadata (10 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.9357464Z Collecting webencodings (from bleach!=5.0.0->bleach[css]!=5.0.0->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.9449747Z   Downloading webencodings-0.5.1-py2.py3-none-any.whl.metadata (2.1 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.9563218Z Collecting tinycss2<1.5,>=1.1.0 (from bleach[css]!=5.0.0->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.9603336Z   Downloading tinycss2-1.4.0-py3-none-any.whl.metadata (3.0 kB)
+Core (py3.11)	Install	2026-03-16T22:34:29.9897704Z Collecting jupyter-client>=6.1.12 (from nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:29.9938940Z   Downloading jupyter_client-8.8.0-py3-none-any.whl.metadata (8.4 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.0195833Z Collecting python-dateutil>=2.8.2 (from jupyter-client>=6.1.12->nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.0230849Z   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.3020746Z Collecting pyzmq>=25.0 (from jupyter-client>=6.1.12->nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.3063321Z   Downloading pyzmq-27.1.0-cp311-cp311-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (6.0 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.3428547Z Collecting tornado>=6.4.1 (from jupyter-client>=6.1.12->nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.3475743Z   Downloading tornado-6.5.5-cp39-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (2.8 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.3626551Z Collecting fastjsonschema>=2.15 (from nbformat>=5.7->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.3664005Z   Downloading fastjsonschema-2.21.2-py3-none-any.whl.metadata (2.3 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.3893391Z Collecting jsonschema>=2.6 (from nbformat>=5.7->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.3934626Z   Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.4097376Z Collecting attrs>=22.2.0 (from jsonschema>=2.6->nbformat>=5.7->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.4136447Z   Downloading attrs-25.4.0-py3-none-any.whl.metadata (10 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.4262030Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema>=2.6->nbformat>=5.7->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.4297854Z   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.4511167Z Collecting referencing>=0.28.4 (from jsonschema>=2.6->nbformat>=5.7->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.4562563Z   Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.7804767Z Collecting rpds-py>=0.25.0 (from jsonschema>=2.6->nbformat>=5.7->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.7854687Z   Downloading rpds_py-0.30.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.8018337Z Collecting iniconfig>=1.0.1 (from pytest>=7.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.8063711Z   Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Core (py3.11)	Install	2026-03-16T22:34:30.8187689Z Collecting pluggy<2,>=1.5 (from pytest>=7.0.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:30.8225747Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.1554887Z Collecting coverage>=7.10.6 (from coverage[toml]>=7.10.6->pytest-cov>=4.1.0->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:31.1601651Z   Downloading coverage-7.13.4-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (8.5 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.1784041Z Collecting six>=1.5 (from python-dateutil>=2.8.2->jupyter-client>=6.1.12->nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:31.1819502Z   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.2052593Z Collecting soupsieve>=1.6.1 (from beautifulsoup4->nbconvert>=7.16.6->whitemagic==20.0.0)
+Core (py3.11)	Install	2026-03-16T22:34:31.2097617Z   Downloading soupsieve-2.8.3-py3-none-any.whl.metadata (4.6 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.2205503Z Downloading pydantic-2.12.5-py3-none-any.whl (463 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.2288603Z Downloading pydantic_core-2.41.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+Core (py3.11)	Install	2026-03-16T22:34:31.2410687Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 197.1 MB/s  0:00:00
+Core (py3.11)	Install	2026-03-16T22:34:31.2455135Z Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.2522159Z Downloading black-26.3.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.8 MB)
+Core (py3.11)	Install	2026-03-16T22:34:31.2684486Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 113.7 MB/s  0:00:00
+Core (py3.11)	Install	2026-03-16T22:34:31.2720945Z Downloading pytokens-0.4.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (260 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.2801738Z Downloading click-8.3.1-py3-none-any.whl (108 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.2858677Z Downloading isort-8.0.1-py3-none-any.whl (89 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.2918849Z Downloading maturin-1.12.6-py3-none-manylinux_2_12_x86_64.manylinux2010_x86_64.musllinux_1_1_x86_64.whl (10.2 MB)
+Core (py3.11)	Install	2026-03-16T22:34:31.3427329Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 207.1 MB/s  0:00:00
+Core (py3.11)	Install	2026-03-16T22:34:31.3470967Z Downloading mypy-1.19.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (13.4 MB)
+Core (py3.11)	Install	2026-03-16T22:34:31.3993286Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.4/13.4 MB 266.8 MB/s  0:00:00
+Core (py3.11)	Install	2026-03-16T22:34:31.4034092Z Downloading librt-0.8.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (218 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4097722Z Downloading mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4148967Z Downloading nbconvert-7.17.0-py3-none-any.whl (261 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4212375Z Downloading mistune-3.2.0-py3-none-any.whl (53 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4271843Z Downloading bleach-6.3.0-py3-none-any.whl (164 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4334815Z Downloading tinycss2-1.4.0-py3-none-any.whl (26 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4394028Z Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4450706Z Downloading jupyter_core-5.9.1-py3-none-any.whl (29 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4513217Z Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4565080Z Downloading nbclient-0.10.4-py3-none-any.whl (25 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4616873Z Downloading jupyter_client-8.8.0-py3-none-any.whl (107 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4671501Z Downloading nbformat-5.10.4-py3-none-any.whl (78 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4727953Z Downloading fastjsonschema-2.21.2-py3-none-any.whl (24 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4779978Z Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4837377Z Downloading attrs-25.4.0-py3-none-any.whl (67 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4892987Z Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4923669Z Using cached packaging-26.0-py3-none-any.whl (74 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.4964880Z Downloading pandocfilters-1.5.1-py2.py3-none-any.whl (8.7 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5018096Z Downloading pathspec-1.0.4-py3-none-any.whl (55 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5076666Z Downloading platformdirs-4.9.4-py3-none-any.whl (21 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5128768Z Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5211196Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 166.7 MB/s  0:00:00
+Core (py3.11)	Install	2026-03-16T22:34:31.5245259Z Downloading pytest-9.0.2-py3-none-any.whl (374 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5316433Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5377581Z Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5430318Z Downloading pytest_asyncio-1.3.0-py3-none-any.whl (15 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5485031Z Downloading pytest_cov-7.0.0-py3-none-any.whl (22 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5539247Z Downloading coverage-7.13.4-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (252 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5602510Z Downloading pytest_timeout-2.4.0-py3-none-any.whl (14 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5654051Z Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5714738Z Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5779069Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 134.3 MB/s  0:00:00
+Core (py3.11)	Install	2026-03-16T22:34:31.5814244Z Downloading pyzmq-27.1.0-cp311-cp311-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (857 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5878423Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 857.0/857.0 kB 142.8 MB/s  0:00:00
+Core (py3.11)	Install	2026-03-16T22:34:31.5912819Z Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.5971356Z Downloading rpds_py-0.30.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (390 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.6042245Z Downloading ruff-0.15.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.3 MB)
+Core (py3.11)	Install	2026-03-16T22:34:31.6576342Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.3/11.3 MB 218.8 MB/s  0:00:00
+Core (py3.11)	Install	2026-03-16T22:34:31.6615831Z Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.6677757Z Downloading tornado-6.5.5-cp39-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (447 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.6747872Z Downloading traitlets-5.14.3-py3-none-any.whl (85 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.6802491Z Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.6867413Z Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.6920976Z Downloading webencodings-0.5.1-py2.py3-none-any.whl (11 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.6973735Z Downloading beautifulsoup4-4.14.3-py3-none-any.whl (107 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.7040474Z Downloading soupsieve-2.8.3-py3-none-any.whl (37 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.7101734Z Downloading defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.7156943Z Downloading jupyterlab_pygments-0.3.0-py3-none-any.whl (15 kB)
+Core (py3.11)	Install	2026-03-16T22:34:31.7932628Z Building wheels for collected packages: whitemagic
+Core (py3.11)	Install	2026-03-16T22:34:31.7941598Z   Building editable for whitemagic (pyproject.toml): started
+Core (py3.11)	Install	2026-03-16T22:34:32.2466683Z   Building editable for whitemagic (pyproject.toml): finished with status 'done'
+Core (py3.11)	Install	2026-03-16T22:34:32.2472135Z   Created wheel for whitemagic: filename=whitemagic-20.0.0-0.editable-py3-none-any.whl size=10119 sha256=743045e4dbc66dcd8312fef6b2e5ef3007cb2e789b1a0481ed7717554c9a0d66
+Core (py3.11)	Install	2026-03-16T22:34:32.2473737Z   Stored in directory: /tmp/pip-ephem-wheel-cache-ptfjyc2l/wheels/f7/7c/bf/65996619553d505c2593205fc32a5342bc141f47a94b6cc63b
+Core (py3.11)	Install	2026-03-16T22:34:32.2502593Z Successfully built whitemagic
+Core (py3.11)	Install	2026-03-16T22:34:32.3312554Z Installing collected packages: webencodings, fastjsonschema, typing-extensions, traitlets, tornado, tinycss2, soupsieve, six, ruff, rpds-py, pyzmq, pyyaml, pytokens, pygments, pluggy, platformdirs, pathspec, pandocfilters, packaging, mypy-extensions, mistune, maturin, markupsafe, librt, jupyterlab-pygments, isort, iniconfig, defusedxml, coverage, click, bleach, attrs, annotated-types, typing-inspection, referencing, python-dateutil, pytest, pydantic-core, mypy, jupyter-core, jinja2, black, beautifulsoup4, pytest-timeout, pytest-cov, pytest-asyncio, pydantic, jupyter-client, jsonschema-specifications, whitemagic, jsonschema, nbformat, nbclient, nbconvert
+Core (py3.11)	Install	2026-03-16T22:34:36.9500490Z 
+Core (py3.11)	Install	2026-03-16T22:34:36.9530842Z Successfully installed annotated-types-0.7.0 attrs-25.4.0 beautifulsoup4-4.14.3 black-26.3.1 bleach-6.3.0 click-8.3.1 coverage-7.13.4 defusedxml-0.7.1 fastjsonschema-2.21.2 iniconfig-2.3.0 isort-8.0.1 jinja2-3.1.6 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 jupyter-client-8.8.0 jupyter-core-5.9.1 jupyterlab-pygments-0.3.0 librt-0.8.1 markupsafe-3.0.3 maturin-1.12.6 mistune-3.2.0 mypy-1.19.1 mypy-extensions-1.1.0 nbclient-0.10.4 nbconvert-7.17.0 nbformat-5.10.4 packaging-26.0 pandocfilters-1.5.1 pathspec-1.0.4 platformdirs-4.9.4 pluggy-1.6.0 pydantic-2.12.5 pydantic-core-2.41.5 pygments-2.19.2 pytest-9.0.2 pytest-asyncio-1.3.0 pytest-cov-7.0.0 pytest-timeout-2.4.0 python-dateutil-2.9.0.post0 pytokens-0.4.1 pyyaml-6.0.3 pyzmq-27.1.0 referencing-0.37.0 rpds-py-0.30.0 ruff-0.15.6 six-1.17.0 soupsieve-2.8.3 tinycss2-1.4.0 tornado-6.5.5 traitlets-5.14.3 typing-extensions-4.15.0 typing-inspection-0.4.2 webencodings-0.5.1 whitemagic-20.0.0
+Core (py3.11)	Compile	﻿2026-03-16T22:34:37.5391319Z ##[group]Run python -m compileall -q whitemagic eval
+Core (py3.11)	Compile	2026-03-16T22:34:37.5391743Z [36;1mpython -m compileall -q whitemagic eval[0m
+Core (py3.11)	Compile	2026-03-16T22:34:37.5441211Z shell: /usr/bin/bash -e {0}
+Core (py3.11)	Compile	2026-03-16T22:34:37.5441449Z env:
+Core (py3.11)	Compile	2026-03-16T22:34:37.5441619Z   WM_SILENT_INIT: 1
+Core (py3.11)	Compile	2026-03-16T22:34:37.5441833Z   WM_STATE_ROOT: /tmp/whitemagic_state
+Core (py3.11)	Compile	2026-03-16T22:34:37.5442157Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Compile	2026-03-16T22:34:37.5442569Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+Core (py3.11)	Compile	2026-03-16T22:34:37.5442987Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Compile	2026-03-16T22:34:37.5443337Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Compile	2026-03-16T22:34:37.5443687Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Compile	2026-03-16T22:34:37.5444036Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+Core (py3.11)	Compile	2026-03-16T22:34:37.5444333Z ##[endgroup]
+Core (py3.11)	Telemetry Guard	﻿2026-03-16T22:34:38.6633333Z ##[group]Run pytest -q tests/unit/test_telemetry.py
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6633743Z [36;1mpytest -q tests/unit/test_telemetry.py[0m
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6682623Z shell: /usr/bin/bash -e {0}
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6682857Z env:
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6683024Z   WM_SILENT_INIT: 1
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6683220Z   WM_STATE_ROOT: /tmp/whitemagic_state
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6683533Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6683931Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6684336Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6684696Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6685044Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6685393Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:38.6685681Z ##[endgroup]
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:39.2977020Z ..                                                                       [100%]
+Core (py3.11)	Telemetry Guard	2026-03-16T22:34:39.2977704Z 2 passed in 0.23s
+Core (py3.11)	Test	﻿2026-03-16T22:34:39.3383839Z ##[group]Run set -eo pipefail
+Core (py3.11)	Test	2026-03-16T22:34:39.3384365Z [36;1mset -eo pipefail[0m
+Core (py3.11)	Test	2026-03-16T22:34:39.3384842Z [36;1mpytest -q -rs tests/ | tee /tmp/pytest.out[0m
+Core (py3.11)	Test	2026-03-16T22:34:39.3455291Z shell: /usr/bin/bash -e {0}
+Core (py3.11)	Test	2026-03-16T22:34:39.3455555Z env:
+Core (py3.11)	Test	2026-03-16T22:34:39.3455725Z   WM_SILENT_INIT: 1
+Core (py3.11)	Test	2026-03-16T22:34:39.3456236Z   WM_STATE_ROOT: /tmp/whitemagic_state
+Core (py3.11)	Test	2026-03-16T22:34:39.3456581Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Test	2026-03-16T22:34:39.3457015Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+Core (py3.11)	Test	2026-03-16T22:34:39.3457648Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Test	2026-03-16T22:34:39.3458056Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Test	2026-03-16T22:34:39.3458431Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+Core (py3.11)	Test	2026-03-16T22:34:39.3458798Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+Core (py3.11)	Test	2026-03-16T22:34:39.3459113Z ##[endgroup]
+Core (py3.11)	Test	2026-03-16T22:34:40.6068035Z ❌ Error: fastmcp not installed. Please install it: pip install fastmcp
+Core (py3.11)	Test	2026-03-16T22:34:40.6070913Z mainloop: caught unexpected SystemExit!
+Core (py3.11)	Test	2026-03-16T22:34:40.6071471Z INTERNALERROR> Traceback (most recent call last):
+Core (py3.11)	Test	2026-03-16T22:34:40.6072345Z INTERNALERROR>   File "/home/runner/work/whitemagic/whitemagic/whitemagic/run_mcp.py", line 26, in <module>
+Core (py3.11)	Test	2026-03-16T22:34:40.6073256Z INTERNALERROR>     from fastmcp import FastMCP
+Core (py3.11)	Test	2026-03-16T22:34:40.6073861Z INTERNALERROR> ModuleNotFoundError: No module named 'fastmcp'
+Core (py3.11)	Test	2026-03-16T22:34:40.6074434Z INTERNALERROR> 
+Core (py3.11)	Test	2026-03-16T22:34:40.6075018Z INTERNALERROR> During handling of the above exception, another exception occurred:
+Core (py3.11)	Test	2026-03-16T22:34:40.6075685Z INTERNALERROR> 
+Core (py3.11)	Test	2026-03-16T22:34:40.6076282Z INTERNALERROR> Traceback (most recent call last):
+Core (py3.11)	Test	2026-03-16T22:34:40.6077308Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/main.py", line 318, in wrap_session
+Core (py3.11)	Test	2026-03-16T22:34:40.6078411Z INTERNALERROR>     session.exitstatus = doit(config, session) or 0
+Core (py3.11)	Test	2026-03-16T22:34:40.6079082Z INTERNALERROR>                          ^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6080058Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/main.py", line 371, in _main
+Core (py3.11)	Test	2026-03-16T22:34:40.6081132Z INTERNALERROR>     config.hook.pytest_collection(session=session)
+Core (py3.11)	Test	2026-03-16T22:34:40.6082206Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+Core (py3.11)	Test	2026-03-16T22:34:40.6083428Z INTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+Core (py3.11)	Test	2026-03-16T22:34:40.6084299Z INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6085324Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+Core (py3.11)	Test	2026-03-16T22:34:40.6086280Z INTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+Core (py3.11)	Test	2026-03-16T22:34:40.6086766Z INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6087404Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_callers.py", line 167, in _multicall
+Core (py3.11)	Test	2026-03-16T22:34:40.6087969Z INTERNALERROR>     raise exception
+Core (py3.11)	Test	2026-03-16T22:34:40.6088491Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_callers.py", line 139, in _multicall
+Core (py3.11)	Test	2026-03-16T22:34:40.6089091Z INTERNALERROR>     teardown.throw(exception)
+Core (py3.11)	Test	2026-03-16T22:34:40.6089677Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/logging.py", line 788, in pytest_collection
+Core (py3.11)	Test	2026-03-16T22:34:40.6090253Z INTERNALERROR>     return (yield)
+Core (py3.11)	Test	2026-03-16T22:34:40.6090487Z INTERNALERROR>             ^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6091006Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_callers.py", line 139, in _multicall
+Core (py3.11)	Test	2026-03-16T22:34:40.6091842Z INTERNALERROR>     teardown.throw(exception)
+Core (py3.11)	Test	2026-03-16T22:34:40.6092419Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/warnings.py", line 98, in pytest_collection
+Core (py3.11)	Test	2026-03-16T22:34:40.6092986Z INTERNALERROR>     return (yield)
+Core (py3.11)	Test	2026-03-16T22:34:40.6093210Z INTERNALERROR>             ^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6093714Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_callers.py", line 139, in _multicall
+Core (py3.11)	Test	2026-03-16T22:34:40.6094544Z INTERNALERROR>     teardown.throw(exception)
+Core (py3.11)	Test	2026-03-16T22:34:40.6095168Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/config/__init__.py", line 1403, in pytest_collection
+Core (py3.11)	Test	2026-03-16T22:34:40.6095771Z INTERNALERROR>     return (yield)
+Core (py3.11)	Test	2026-03-16T22:34:40.6096208Z INTERNALERROR>             ^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6096721Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+Core (py3.11)	Test	2026-03-16T22:34:40.6097310Z INTERNALERROR>     res = hook_impl.function(*args)
+Core (py3.11)	Test	2026-03-16T22:34:40.6097608Z INTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6098174Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/main.py", line 382, in pytest_collection
+Core (py3.11)	Test	2026-03-16T22:34:40.6098756Z INTERNALERROR>     session.perform_collect()
+Core (py3.11)	Test	2026-03-16T22:34:40.6099316Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/main.py", line 857, in perform_collect
+Core (py3.11)	Test	2026-03-16T22:34:40.6099923Z INTERNALERROR>     self.items.extend(self.genitems(node))
+Core (py3.11)	Test	2026-03-16T22:34:40.6100505Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/main.py", line 1023, in genitems
+Core (py3.11)	Test	2026-03-16T22:34:40.6101069Z INTERNALERROR>     yield from self.genitems(subnode)
+Core (py3.11)	Test	2026-03-16T22:34:40.6101635Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/main.py", line 1023, in genitems
+Core (py3.11)	Test	2026-03-16T22:34:40.6102191Z INTERNALERROR>     yield from self.genitems(subnode)
+Core (py3.11)	Test	2026-03-16T22:34:40.6102741Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/main.py", line 1020, in genitems
+Core (py3.11)	Test	2026-03-16T22:34:40.6103370Z INTERNALERROR>     rep, duplicate = self._collect_one_node(node, handle_dupes)
+Core (py3.11)	Test	2026-03-16T22:34:40.6103789Z INTERNALERROR>                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6104407Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/main.py", line 883, in _collect_one_node
+Core (py3.11)	Test	2026-03-16T22:34:40.6104985Z INTERNALERROR>     rep = collect_one_node(node)
+Core (py3.11)	Test	2026-03-16T22:34:40.6105262Z INTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6105822Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/runner.py", line 576, in collect_one_node
+Core (py3.11)	Test	2026-03-16T22:34:40.6106752Z INTERNALERROR>     rep: CollectReport = ihook.pytest_make_collect_report(collector=collector)
+Core (py3.11)	Test	2026-03-16T22:34:40.6107245Z INTERNALERROR>                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6107852Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+Core (py3.11)	Test	2026-03-16T22:34:40.6108555Z INTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+Core (py3.11)	Test	2026-03-16T22:34:40.6109043Z INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6109664Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+Core (py3.11)	Test	2026-03-16T22:34:40.6110346Z INTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+Core (py3.11)	Test	2026-03-16T22:34:40.6111140Z INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6111767Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_callers.py", line 167, in _multicall
+Core (py3.11)	Test	2026-03-16T22:34:40.6112394Z INTERNALERROR>     raise exception
+Core (py3.11)	Test	2026-03-16T22:34:40.6112945Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_callers.py", line 139, in _multicall
+Core (py3.11)	Test	2026-03-16T22:34:40.6113635Z INTERNALERROR>     teardown.throw(exception)
+Core (py3.11)	Test	2026-03-16T22:34:40.6114250Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/capture.py", line 880, in pytest_make_collect_report
+Core (py3.11)	Test	2026-03-16T22:34:40.6114855Z INTERNALERROR>     rep = yield
+Core (py3.11)	Test	2026-03-16T22:34:40.6115078Z INTERNALERROR>           ^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6115580Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+Core (py3.11)	Test	2026-03-16T22:34:40.6116374Z INTERNALERROR>     res = hook_impl.function(*args)
+Core (py3.11)	Test	2026-03-16T22:34:40.6116671Z INTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6117283Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/runner.py", line 400, in pytest_make_collect_report
+Core (py3.11)	Test	2026-03-16T22:34:40.6117909Z INTERNALERROR>     call = CallInfo.from_call(
+Core (py3.11)	Test	2026-03-16T22:34:40.6118178Z INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6118717Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/runner.py", line 353, in from_call
+Core (py3.11)	Test	2026-03-16T22:34:40.6119280Z INTERNALERROR>     result: TResult | None = func()
+Core (py3.11)	Test	2026-03-16T22:34:40.6119567Z INTERNALERROR>                              ^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6120114Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/runner.py", line 398, in collect
+Core (py3.11)	Test	2026-03-16T22:34:40.6120683Z INTERNALERROR>     return list(collector.collect())
+Core (py3.11)	Test	2026-03-16T22:34:40.6120977Z INTERNALERROR>                 ^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6121509Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/python.py", line 563, in collect
+Core (py3.11)	Test	2026-03-16T22:34:40.6122091Z INTERNALERROR>     self._register_setup_module_fixture()
+Core (py3.11)	Test	2026-03-16T22:34:40.6122740Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/python.py", line 576, in _register_setup_module_fixture
+Core (py3.11)	Test	2026-03-16T22:34:40.6123423Z INTERNALERROR>     self.obj, ("setUpModule", "setup_module")
+Core (py3.11)	Test	2026-03-16T22:34:40.6123733Z INTERNALERROR>     ^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6124212Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/python.py", line 289, in obj
+Core (py3.11)	Test	2026-03-16T22:34:40.6124765Z INTERNALERROR>     self._obj = obj = self._getobj()
+Core (py3.11)	Test	2026-03-16T22:34:40.6125054Z INTERNALERROR>                       ^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6125604Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/python.py", line 560, in _getobj
+Core (py3.11)	Test	2026-03-16T22:34:40.6126439Z INTERNALERROR>     return importtestmodule(self.path, self.config)
+Core (py3.11)	Test	2026-03-16T22:34:40.6126821Z INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6127442Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/python.py", line 507, in importtestmodule
+Core (py3.11)	Test	2026-03-16T22:34:40.6128022Z INTERNALERROR>     mod = import_path(
+Core (py3.11)	Test	2026-03-16T22:34:40.6128267Z INTERNALERROR>           ^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6497736Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/pathlib.py", line 587, in import_path
+Core (py3.11)	Test	2026-03-16T22:34:40.6498885Z INTERNALERROR>     importlib.import_module(module_name)
+Core (py3.11)	Test	2026-03-16T22:34:40.6499654Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/importlib/__init__.py", line 126, in import_module
+Core (py3.11)	Test	2026-03-16T22:34:40.6500873Z INTERNALERROR>     return _bootstrap._gcd_import(name[level:], package, level)
+Core (py3.11)	Test	2026-03-16T22:34:40.6501422Z INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Core (py3.11)	Test	2026-03-16T22:34:40.6502019Z INTERNALERROR>   File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+Core (py3.11)	Test	2026-03-16T22:34:40.6502656Z INTERNALERROR>   File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+Core (py3.11)	Test	2026-03-16T22:34:40.6503438Z INTERNALERROR>   File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+Core (py3.11)	Test	2026-03-16T22:34:40.6504076Z INTERNALERROR>   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+Core (py3.11)	Test	2026-03-16T22:34:40.6504951Z INTERNALERROR>   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/_pytest/assertion/rewrite.py", line 197, in exec_module
+Core (py3.11)	Test	2026-03-16T22:34:40.6505743Z INTERNALERROR>     exec(co, module.__dict__)
+Core (py3.11)	Test	2026-03-16T22:34:40.6506552Z INTERNALERROR>   File "/home/runner/work/whitemagic/whitemagic/tests/unit/test_mcp_registration_surface.py", line 1, in <module>
+Core (py3.11)	Test	2026-03-16T22:34:40.6507465Z INTERNALERROR>     from whitemagic.run_mcp import _register_prat_tools, get_registered_tool_definitions
+Core (py3.11)	Test	2026-03-16T22:34:40.6508276Z INTERNALERROR>   File "/home/runner/work/whitemagic/whitemagic/whitemagic/run_mcp.py", line 29, in <module>
+Core (py3.11)	Test	2026-03-16T22:34:40.6508847Z INTERNALERROR>     sys.exit(1)
+Core (py3.11)	Test	2026-03-16T22:34:40.6509123Z INTERNALERROR> SystemExit: 1
+Core (py3.11)	Test	2026-03-16T22:34:40.6509300Z 
+Core (py3.11)	Test	2026-03-16T22:34:40.6509401Z 1 skipped, 2 errors in 1.07s
+Core (py3.11)	Test	2026-03-16T22:34:40.6982453Z ##[error]Process completed with exit code 3.
+Core (py3.11)	Post Run actions/checkout@v4	﻿2026-03-16T22:34:40.7090597Z Post job cleanup.
+Core (py3.11)	Post Run actions/checkout@v4	2026-03-16T22:34:40.8058156Z [command]/usr/bin/git version
+Core (py3.11)	Post Run actions/checkout@v4	2026-03-16T22:34:40.8096244Z git version 2.53.0
+Core (py3.11)	Post Run actions/checkout@v4	2026-03-16T22:34:40.8142417Z Temporarily overriding HOME='/home/runner/work/_temp/dce49f13-80ee-4c09-82d8-c70a1a44b06c' before making global git config changes
+Core (py3.11)	Post Run actions/checkout@v4	2026-03-16T22:34:40.8143721Z Adding repository directory to the temporary git global config as a safe directory
+Core (py3.11)	Post Run actions/checkout@v4	2026-03-16T22:34:40.8158081Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/whitemagic/whitemagic
+Core (py3.11)	Post Run actions/checkout@v4	2026-03-16T22:34:40.8195781Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Core (py3.11)	Post Run actions/checkout@v4	2026-03-16T22:34:40.8232487Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Core (py3.11)	Post Run actions/checkout@v4	2026-03-16T22:34:40.8503086Z fatal: No url found for submodule path 'modular' in .gitmodules
+Core (py3.11)	Post Run actions/checkout@v4	2026-03-16T22:34:40.8548160Z ##[warning]The process '/usr/bin/git' failed with exit code 128
+Core (py3.11)	Complete job	﻿2026-03-16T22:34:40.8632474Z Cleaning up orphan processes
+Core (py3.11)	Complete job	2026-03-16T22:34:40.8942936Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/setup-python@v5. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

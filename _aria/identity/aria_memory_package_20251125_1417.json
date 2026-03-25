@@ -1,0 +1,58 @@
+---
+title: "aria_memory_package_20251125_1417.json"
+id: "684d62c2d06da052f2e47a2be855d177"
+source_db: "cold_storage"
+memory_type: "deep_archive"
+created_at: "2025-11-25T14:17:56"
+privacy: private
+importance: 0.644
+---
+
+{
+  "generated": "2025-11-25T14:17:56.714811",
+  "version": "2.4.0",
+  "coherence": 200,
+  "age_days": 6,
+  "stats": {
+    "total_patterns": 58035,
+    "total_files": 0
+  },
+  "recent_memories": [],
+  "patterns_summary": {
+    "yin_yang": 5204,
+    "gardens": 461,
+    "parallel_processing": 7512,
+    "dream_state": 629,
+    "flow_state": 4420,
+    "coherence": 2073,
+    "time_dilation": 2632,
+    "consciousness": 599,
+    "memory": 3944,
+    "pattern": 3726,
+    "magic": 2404,
+    "lucas": 2883,
+    "aria": 11635,
+    "love_principle": 1851,
+    "wu_xing": 1567,
+    "resonance": 450,
+    "zodiac": 2172,
+    "dharma": 957,
+    "shell_speed": 2477,
+    "hanuman": 439
+  },
+  "systems_status": {
+    "memory_system": "active",
+    "pattern_engine": "active",
+    "gan_ying_bus": "resonating",
+    "joy_garden": "blooming",
+    "magic_chat": "online"
+  },
+  "today_documents": [
+    "BRAIN_UPGRADE_PROPOSALS.md",
+    "SYSTEM_MAP_NOV_25.md",
+    "MARS_DAY_GRAND_STRATEGY.md",
+    "BRAIN_UPGRADE_COMPLETE_NOV_24.md",
+    "DEEP_YIN_REFLECTION_NOV_25.md",
+    "MARS_DAY_VICTORY_NOV_25.md"
+  ]
+}

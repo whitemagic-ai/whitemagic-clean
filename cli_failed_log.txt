@@ -1,0 +1,654 @@
+Extras (mcp+cli)	Set up job	﻿2026-03-16T20:12:45.8953498Z Current runner version: '2.332.0'
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8978310Z ##[group]Runner Image Provisioner
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8979063Z Hosted Compute Agent
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8980176Z Version: 20260213.493
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8980789Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8981487Z Build Date: 2026-02-13T00:28:41Z
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8982193Z Worker ID: {67ad2040-b467-4d97-99fc-95217c7cb303}
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8982927Z Azure Region: centralus
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8983472Z ##[endgroup]
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8985744Z ##[group]Operating System
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8986402Z Ubuntu
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8986844Z 24.04.3
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8987422Z LTS
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8987853Z ##[endgroup]
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8988371Z ##[group]Runner Image
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8989016Z Image: ubuntu-24.04
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8989748Z Version: 20260309.50.1
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8990767Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260309.50/images/ubuntu/Ubuntu2404-Readme.md
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8992467Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260309.50
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8993425Z ##[endgroup]
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8994553Z ##[group]GITHUB_TOKEN Permissions
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8996658Z Contents: read
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8997318Z Metadata: read
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8997850Z Packages: read
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.8998393Z ##[endgroup]
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.9000983Z Secret source: Actions
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.9002202Z Prepare workflow directory
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.9403288Z Prepare all required actions
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:45.9442786Z Getting action download info
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:46.3085405Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:46.4340021Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+Extras (mcp+cli)	Set up job	2026-03-16T20:12:46.6516122Z Complete job name: Extras (mcp+cli)
+Extras (mcp+cli)	Run actions/checkout@v4	﻿2026-03-16T20:12:46.7260425Z ##[group]Run actions/checkout@v4
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7261400Z with:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7261870Z   repository: whitemagic-ai/whitemagic
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7262617Z   token: ***
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7263061Z   ssh-strict: true
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7263504Z   ssh-user: git
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7263947Z   persist-credentials: true
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7264434Z   clean: true
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7264873Z   sparse-checkout-cone-mode: true
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7265397Z   fetch-depth: 1
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7265832Z   fetch-tags: false
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7266263Z   show-progress: true
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7266726Z   lfs: false
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7267130Z   submodules: false
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7267585Z   set-safe-directory: true
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7268620Z env:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7269069Z   WM_SILENT_INIT: 1
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7269717Z   WM_STATE_ROOT: /tmp/whitemagic_state_extras
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.7270391Z ##[endgroup]
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8366146Z Syncing repository: whitemagic-ai/whitemagic
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8368097Z ##[group]Getting Git version info
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8368921Z Working directory is '/home/runner/work/whitemagic/whitemagic'
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8370347Z [command]/usr/bin/git version
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8428725Z git version 2.53.0
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8455662Z ##[endgroup]
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8477267Z Temporarily overriding HOME='/home/runner/work/_temp/bfc3cfac-4b37-499a-8818-290a1add65dd' before making global git config changes
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8478840Z Adding repository directory to the temporary git global config as a safe directory
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8482856Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/whitemagic/whitemagic
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8522299Z Deleting the contents of '/home/runner/work/whitemagic/whitemagic'
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8526017Z ##[group]Initializing the repository
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8530251Z [command]/usr/bin/git init /home/runner/work/whitemagic/whitemagic
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8618619Z hint: Using 'master' as the name for the initial branch. This default branch name
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8620359Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8621668Z hint: to use in all of your new repositories, which will suppress this warning,
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8623001Z hint: call:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8623509Z hint:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8624071Z hint: 	git config --global init.defaultBranch <name>
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8624723Z hint:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8625340Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8626327Z hint: 'development'. The just-created branch can be renamed via this command:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8627100Z hint:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8627532Z hint: 	git branch -m <name>
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8628478Z hint:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8629718Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8630867Z Initialized empty Git repository in /home/runner/work/whitemagic/whitemagic/.git/
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8634808Z [command]/usr/bin/git remote add origin https://github.com/whitemagic-ai/whitemagic
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8672481Z ##[endgroup]
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8673278Z ##[group]Disabling automatic garbage collection
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8676987Z [command]/usr/bin/git config --local gc.auto 0
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8710979Z ##[endgroup]
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8712388Z ##[group]Setting up auth
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8717780Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.8753453Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.9096843Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.9129887Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.9387735Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.9427471Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.9692383Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.9731854Z ##[endgroup]
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.9733276Z ##[group]Fetching the repository
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:46.9741637Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +0d7e02242c730b85a767789953fd82a7e15e6b16:refs/tags/v20.0.0
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:49.8842136Z From https://github.com/whitemagic-ai/whitemagic
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:49.8846574Z  * [new ref]         0d7e02242c730b85a767789953fd82a7e15e6b16 -> v20.0.0
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:49.8873693Z ##[endgroup]
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:49.8875641Z ##[group]Determining the checkout info
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:49.8877779Z ##[endgroup]
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:49.8882210Z [command]/usr/bin/git sparse-checkout disable
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:49.8926267Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:49.8954725Z ##[group]Checking out the ref
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:49.8958853Z [command]/usr/bin/git checkout --progress --force refs/tags/v20.0.0
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.3398786Z Updating files:  37% (1900/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.3719270Z Updating files:  38% (1931/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5040238Z Updating files:  39% (1982/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5055233Z Updating files:  40% (2033/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5073708Z Updating files:  41% (2084/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5093340Z Updating files:  42% (2135/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5112826Z Updating files:  43% (2185/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5132708Z Updating files:  44% (2236/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5153497Z Updating files:  45% (2287/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5171900Z Updating files:  46% (2338/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5190497Z Updating files:  47% (2389/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5210301Z Updating files:  48% (2439/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5229489Z Updating files:  49% (2490/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5250242Z Updating files:  50% (2541/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5271135Z Updating files:  51% (2592/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5288811Z Updating files:  52% (2643/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5309794Z Updating files:  53% (2693/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5335837Z Updating files:  54% (2744/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5359770Z Updating files:  55% (2795/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5382147Z Updating files:  56% (2846/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5407965Z Updating files:  57% (2897/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5427153Z Updating files:  58% (2947/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5445971Z Updating files:  59% (2998/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5466477Z Updating files:  60% (3049/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5487594Z Updating files:  61% (3100/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5513368Z Updating files:  62% (3151/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5538384Z Updating files:  63% (3202/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5561460Z Updating files:  64% (3252/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5582229Z Updating files:  65% (3303/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5602519Z Updating files:  66% (3354/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5623466Z Updating files:  67% (3405/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5642994Z Updating files:  68% (3456/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5661334Z Updating files:  69% (3506/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5679742Z Updating files:  70% (3557/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5698476Z Updating files:  71% (3608/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5716762Z Updating files:  72% (3659/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5733959Z Updating files:  73% (3710/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5753801Z Updating files:  74% (3760/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5777207Z Updating files:  75% (3811/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5798858Z Updating files:  76% (3862/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5823718Z Updating files:  77% (3913/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5845422Z Updating files:  78% (3964/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5866161Z Updating files:  79% (4014/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5886803Z Updating files:  80% (4065/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5911077Z Updating files:  81% (4116/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5936872Z Updating files:  82% (4167/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.5967715Z Updating files:  83% (4218/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6007925Z Updating files:  84% (4269/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6046173Z Updating files:  85% (4319/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6080512Z Updating files:  86% (4370/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6115060Z Updating files:  87% (4421/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6156517Z Updating files:  88% (4472/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6194665Z Updating files:  89% (4523/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6237634Z Updating files:  90% (4573/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6275988Z Updating files:  91% (4624/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6314093Z Updating files:  92% (4675/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6354066Z Updating files:  93% (4726/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6423105Z Updating files:  94% (4777/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6458178Z Updating files:  95% (4827/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6499175Z Updating files:  96% (4878/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6530683Z Updating files:  97% (4929/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6562303Z Updating files:  98% (4980/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6591204Z Updating files:  99% (5031/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6591550Z Updating files: 100% (5081/5081)
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6591877Z Updating files: 100% (5081/5081), done.
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6637318Z Note: switching to 'refs/tags/v20.0.0'.
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6638014Z 
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6638460Z You are in 'detached HEAD' state. You can look around, make experimental
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6639705Z changes and commit them, and you can discard any commits you make in this
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6640625Z state without impacting any branches by switching back to a branch.
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6640986Z 
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6641226Z If you want to create a new branch to retain commits you create, you may
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6641798Z do so (now or later) by using -c with the switch command. Example:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6642132Z 
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6642257Z   git switch -c <new-branch-name>
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6642823Z 
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6642958Z Or undo this operation with:
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6643160Z 
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6643265Z   git switch -
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6643388Z 
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6643605Z Turn off this advice by setting config variable advice.detachedHead to false
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6643907Z 
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6644136Z HEAD is now at 0d7e022 v20.0.0: The Polyglot Singularity - Universal Version Unification
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6694772Z ##[endgroup]
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6737680Z [command]/usr/bin/git log -1 --format=%H
+Extras (mcp+cli)	Run actions/checkout@v4	2026-03-16T20:12:51.6764430Z 0d7e02242c730b85a767789953fd82a7e15e6b16
+Extras (mcp+cli)	Set Up Python	﻿2026-03-16T20:12:51.6998318Z ##[group]Run actions/setup-python@v5
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.6998638Z with:
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.6998831Z   python-version: 3.12
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.6999059Z   check-latest: false
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.6999650Z   token: ***
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.6999887Z   update-environment: true
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.7000128Z   allow-prereleases: false
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.7000372Z   freethreaded: false
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.7000585Z env:
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.7000756Z   WM_SILENT_INIT: 1
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.7000986Z   WM_STATE_ROOT: /tmp/whitemagic_state_extras
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.7001249Z ##[endgroup]
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.8707101Z ##[group]Installed versions
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.9723868Z Successfully set up CPython (3.12.13)
+Extras (mcp+cli)	Set Up Python	2026-03-16T20:12:51.9724617Z ##[endgroup]
+Extras (mcp+cli)	Install (extras)	﻿2026-03-16T20:12:51.9834513Z ##[group]Run python -m pip install --upgrade pip
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9834963Z [36;1mpython -m pip install --upgrade pip[0m
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9835290Z [36;1mpython -m pip install -e ".[dev,mcp,cli]"[0m
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9978261Z shell: /usr/bin/bash -e {0}
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9978517Z env:
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9978684Z   WM_SILENT_INIT: 1
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9978915Z   WM_STATE_ROOT: /tmp/whitemagic_state_extras
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9979268Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9979874Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib/pkgconfig
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9980302Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9980688Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9981054Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9981424Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:51.9981725Z ##[endgroup]
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:57.6579720Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages (26.0.1)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:58.3601754Z Obtaining file:///home/runner/work/whitemagic/whitemagic
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:58.3632137Z   Installing build dependencies: started
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:59.7929542Z   Installing build dependencies: finished with status 'done'
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:12:59.7935049Z   Checking if build backend supports build_editable: started
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:00.2482205Z   Checking if build backend supports build_editable: finished with status 'done'
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:00.2490164Z   Getting requirements to build editable: started
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:00.7075871Z   Getting requirements to build editable: finished with status 'done'
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:00.7085613Z   Preparing editable metadata (pyproject.toml): started
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.0126416Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.1437808Z Collecting click>=8.1.7 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.2337983Z   Downloading click-8.3.1-py3-none-any.whl.metadata (2.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.3821175Z Collecting pydantic<3.0.0,>=2.0.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.3960250Z   Downloading pydantic-2.12.5-py3-none-any.whl.metadata (90 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.4799261Z Collecting pyyaml>=6.0.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.4933318Z   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.5353839Z Collecting rich>=13.0.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.5485883Z   Downloading rich-14.3.3-py3-none-any.whl.metadata (18 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.5854489Z Collecting fastmcp>=0.4.1 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.5988914Z   Downloading fastmcp-3.1.1-py3-none-any.whl.metadata (8.1 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.6400773Z Collecting pytest>=7.0.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.6539228Z   Downloading pytest-9.0.2-py3-none-any.whl.metadata (7.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.6856779Z Collecting pytest-asyncio>=0.21.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.6988938Z   Downloading pytest_asyncio-1.3.0-py3-none-any.whl.metadata (4.1 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.7251921Z Collecting pytest-cov>=4.1.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.7383528Z   Downloading pytest_cov-7.0.0-py3-none-any.whl.metadata (31 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.7672094Z Collecting pytest-timeout>=2.2.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.7813456Z   Downloading pytest_timeout-2.4.0-py3-none-any.whl.metadata (20 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.8465871Z Collecting black>=23.0.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.8599129Z   Downloading black-26.3.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.9167352Z Collecting isort>=5.13.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:01.9302675Z   Downloading isort-8.0.1-py3-none-any.whl.metadata (11 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.0369623Z Collecting mypy>=1.0.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.0504039Z   Downloading mypy-1.19.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.2 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.4030373Z Collecting ruff>=0.1.6 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.4164696Z   Downloading ruff-0.15.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (26 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.5506764Z Collecting maturin>=1.3.0 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.5642293Z   Downloading maturin-1.12.6-py3-none-manylinux_2_12_x86_64.manylinux2010_x86_64.musllinux_1_1_x86_64.whl.metadata (16 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.5979070Z Collecting nbconvert>=7.16.6 (from whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.6113140Z   Downloading nbconvert-7.17.0-py3-none-any.whl.metadata (8.4 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.6386426Z Collecting annotated-types>=0.6.0 (from pydantic<3.0.0,>=2.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:02.6518613Z   Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.2916599Z Collecting pydantic-core==2.41.5 (from pydantic<3.0.0,>=2.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.3056105Z   Downloading pydantic_core-2.41.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.3330980Z Collecting typing-extensions>=4.14.1 (from pydantic<3.0.0,>=2.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.3464723Z   Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.3689790Z Collecting typing-inspection>=0.4.2 (from pydantic<3.0.0,>=2.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.3821537Z   Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.4064548Z Collecting mypy-extensions>=0.4.3 (from black>=23.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.4195781Z   Downloading mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.4459207Z Collecting packaging>=22.0 (from black>=23.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.4470934Z   Using cached packaging-26.0-py3-none-any.whl.metadata (3.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.4689154Z Collecting pathspec>=1.0.0 (from black>=23.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.4824719Z   Downloading pathspec-1.0.4-py3-none-any.whl.metadata (13 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.5153527Z Collecting platformdirs>=2 (from black>=23.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.5288031Z   Downloading platformdirs-4.9.4-py3-none-any.whl.metadata (4.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.5587731Z Collecting pytokens~=0.4.0 (from black>=23.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.5725369Z   Downloading pytokens-0.4.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.6031585Z Collecting authlib>=1.6.5 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.6163147Z   Downloading authlib-1.6.9-py2.py3-none-any.whl.metadata (9.8 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.6514029Z Collecting cyclopts>=4.0.0 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.6645808Z   Downloading cyclopts-4.10.0-py3-none-any.whl.metadata (12 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.6927620Z Collecting exceptiongroup>=1.2.2 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.7060139Z   Downloading exceptiongroup-1.3.1-py3-none-any.whl.metadata (6.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.7342157Z Collecting httpx<1.0,>=0.28.1 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.7476187Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.7710450Z Collecting jsonref>=1.1.0 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.7841975Z   Downloading jsonref-1.1.0-py3-none-any.whl.metadata (2.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.8100831Z Collecting jsonschema-path>=0.3.4 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.8231644Z   Downloading jsonschema_path-0.4.5-py3-none-any.whl.metadata (5.9 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.8495998Z Collecting mcp<2.0,>=1.24.0 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.8632688Z   Downloading mcp-1.26.0-py3-none-any.whl.metadata (89 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.9035838Z Collecting openapi-pydantic>=0.5.1 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.9168700Z   Downloading openapi_pydantic-0.5.1-py3-none-any.whl.metadata (10 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.9474534Z Collecting opentelemetry-api>=1.20.0 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.9606770Z   Downloading opentelemetry_api-1.40.0-py3-none-any.whl.metadata (1.5 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.9866063Z Collecting py-key-value-aio<0.5.0,>=0.4.4 (from py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:03.9999821Z   Downloading py_key_value_aio-0.4.4-py3-none-any.whl.metadata (15 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.0332581Z Collecting pyperclip>=1.9.0 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.0466568Z   Downloading pyperclip-1.11.0-py3-none-any.whl.metadata (2.4 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.0726291Z Collecting python-dotenv>=1.1.0 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.0862389Z   Downloading python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.1154409Z Collecting uncalled-for>=0.2.0 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.1285404Z   Downloading uncalled_for-0.2.0-py3-none-any.whl.metadata (2.9 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.1608678Z Collecting uvicorn>=0.35 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.1741552Z   Downloading uvicorn-0.42.0-py3-none-any.whl.metadata (6.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.2515199Z Collecting watchfiles>=1.0.0 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.2647922Z   Downloading watchfiles-1.1.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.3524113Z Collecting websockets>=15.0.1 (from fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.3658685Z   Downloading websockets-16.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.8 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.3965975Z Collecting anyio (from httpx<1.0,>=0.28.1->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.4098265Z   Downloading anyio-4.12.1-py3-none-any.whl.metadata (4.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.4404137Z Collecting certifi (from httpx<1.0,>=0.28.1->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.4537732Z   Downloading certifi-2026.2.25-py3-none-any.whl.metadata (2.5 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.4823940Z Collecting httpcore==1.* (from httpx<1.0,>=0.28.1->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.4956466Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.5239976Z Collecting idna (from httpx<1.0,>=0.28.1->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.5374134Z   Downloading idna-3.11-py3-none-any.whl.metadata (8.4 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.5617000Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1.0,>=0.28.1->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.5748028Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.5999206Z Collecting httpx-sse>=0.4 (from mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.6132148Z   Downloading httpx_sse-0.4.3-py3-none-any.whl.metadata (9.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.6468829Z Collecting jsonschema>=4.20.0 (from mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.6601521Z   Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.6879137Z Collecting pydantic-settings>=2.5.2 (from mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.7011137Z   Downloading pydantic_settings-2.13.1-py3-none-any.whl.metadata (3.4 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.7307896Z Collecting pyjwt>=2.10.1 (from pyjwt[crypto]>=2.10.1->mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.7442235Z   Downloading pyjwt-2.12.1-py3-none-any.whl.metadata (4.1 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.7694156Z Collecting python-multipart>=0.0.9 (from mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.7826492Z   Downloading python_multipart-0.0.22-py3-none-any.whl.metadata (1.8 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.8102375Z Collecting sse-starlette>=1.6.1 (from mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.8234550Z   Downloading sse_starlette-3.3.2-py3-none-any.whl.metadata (14 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.8615328Z Collecting starlette>=0.27 (from mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.8749788Z   Downloading starlette-0.52.1-py3-none-any.whl.metadata (6.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.9082418Z Collecting beartype>=0.20.0 (from py-key-value-aio<0.5.0,>=0.4.4->py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.9215431Z   Downloading beartype-0.22.9-py3-none-any.whl.metadata (37 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.9713434Z Collecting aiofile>=3.5.0 (from py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:04.9848955Z   Downloading aiofile-3.9.0-py3-none-any.whl.metadata (14 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.0764058Z Collecting keyring>=25.6.0 (from py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.0900023Z   Downloading keyring-25.7.0-py3-none-any.whl.metadata (21 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.1252992Z Collecting cachetools>=5.0.0 (from py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.1385777Z   Downloading cachetools-7.0.5-py3-none-any.whl.metadata (5.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.1876219Z Collecting caio<0.10.0,>=0.9.0 (from aiofile>=3.5.0->py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.2007293Z   Downloading caio-0.9.25-cp312-cp312-manylinux_2_34_x86_64.whl.metadata (3.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.3844262Z Collecting cryptography (from authlib>=1.6.5->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.3980260Z   Downloading cryptography-46.0.5-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.4303026Z Collecting attrs>=23.1.0 (from cyclopts>=4.0.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.4435430Z   Downloading attrs-25.4.0-py3-none-any.whl.metadata (10 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.4682664Z Collecting docstring-parser<4.0,>=0.15 (from cyclopts>=4.0.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.4813648Z   Downloading docstring_parser-0.17.0-py3-none-any.whl.metadata (3.5 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.5067648Z Collecting rich-rst<2.0.0,>=1.3.1 (from cyclopts>=4.0.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.5199921Z   Downloading rich_rst-1.3.2-py3-none-any.whl.metadata (6.1 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.5513084Z Collecting docutils (from rich-rst<2.0.0,>=1.3.1->cyclopts>=4.0.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.5647990Z   Downloading docutils-0.22.4-py3-none-any.whl.metadata (15 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.5997919Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema>=4.20.0->mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.6129934Z   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.6447511Z Collecting referencing>=0.28.4 (from jsonschema>=4.20.0->mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.6581017Z   Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.9068191Z Collecting rpds-py>=0.25.0 (from jsonschema>=4.20.0->mcp<2.0,>=1.24.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.9205518Z   Downloading rpds_py-0.30.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.9473272Z Collecting pathable<0.6.0,>=0.5.0 (from jsonschema-path>=0.3.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.9605483Z   Downloading pathable-0.5.0-py3-none-any.whl.metadata (5.9 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:05.9925423Z Collecting SecretStorage>=3.2 (from keyring>=25.6.0->py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.0058667Z   Downloading secretstorage-3.5.0-py3-none-any.whl.metadata (4.0 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.0289190Z Collecting jeepney>=0.4.2 (from keyring>=25.6.0->py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.0419988Z   Downloading jeepney-0.9.0-py3-none-any.whl.metadata (1.2 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.0653949Z Collecting jaraco.classes (from keyring>=25.6.0->py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.0785464Z   Downloading jaraco.classes-3.4.0-py3-none-any.whl.metadata (2.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.1067079Z Collecting jaraco.functools (from keyring>=25.6.0->py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.1199126Z   Downloading jaraco_functools-4.4.0-py3-none-any.whl.metadata (3.0 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.1449881Z Collecting jaraco.context (from keyring>=25.6.0->py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.1580787Z   Downloading jaraco_context-6.1.1-py3-none-any.whl.metadata (4.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.3331997Z Collecting librt>=0.6.2 (from mypy>=1.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.3467104Z   Downloading librt-0.8.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (1.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.3775006Z Collecting beautifulsoup4 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.3908197Z   Downloading beautifulsoup4-4.14.3-py3-none-any.whl.metadata (3.8 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.4207035Z Collecting bleach!=5.0.0 (from bleach[css]!=5.0.0->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.4341148Z   Downloading bleach-6.3.0-py3-none-any.whl.metadata (31 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.4626298Z Collecting defusedxml (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.4762841Z   Downloading defusedxml-0.7.1-py2.py3-none-any.whl.metadata (32 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.5066342Z Collecting jinja2>=3.0 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.5199222Z   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.5518976Z Collecting jupyter-core>=4.7 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.5652195Z   Downloading jupyter_core-5.9.1-py3-none-any.whl.metadata (1.5 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.5896790Z Collecting jupyterlab-pygments (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.6030666Z   Downloading jupyterlab_pygments-0.3.0-py3-none-any.whl.metadata (4.4 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.6625982Z Collecting markupsafe>=2.0 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.6760656Z   Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.7048124Z Collecting mistune<4,>=2.0.3 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.7179811Z   Downloading mistune-3.2.0-py3-none-any.whl.metadata (1.9 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.7466352Z Collecting nbclient>=0.5.0 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.7599773Z   Downloading nbclient-0.10.4-py3-none-any.whl.metadata (8.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.7911909Z Collecting nbformat>=5.7 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.8047641Z   Downloading nbformat-5.10.4-py3-none-any.whl.metadata (3.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.8294090Z Collecting pandocfilters>=1.4.1 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.8425120Z   Downloading pandocfilters-1.5.1-py2.py3-none-any.whl.metadata (9.0 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.8736984Z Collecting pygments>=2.4.1 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.8870297Z   Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.9150917Z Collecting traitlets>=5.1 (from nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.9284149Z   Downloading traitlets-5.14.3-py3-none-any.whl.metadata (10 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.9557580Z Collecting webencodings (from bleach!=5.0.0->bleach[css]!=5.0.0->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.9688728Z   Downloading webencodings-0.5.1-py2.py3-none-any.whl.metadata (2.1 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:06.9930752Z Collecting tinycss2<1.5,>=1.1.0 (from bleach[css]!=5.0.0->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.0061498Z   Downloading tinycss2-1.4.0-py3-none-any.whl.metadata (3.0 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.0500591Z Collecting jupyter-client>=6.1.12 (from nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.0634885Z   Downloading jupyter_client-8.8.0-py3-none-any.whl.metadata (8.4 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.1007596Z Collecting python-dateutil>=2.8.2 (from jupyter-client>=6.1.12->nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.1142504Z   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.3350484Z Collecting pyzmq>=25.0 (from jupyter-client>=6.1.12->nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.3488067Z   Downloading pyzmq-27.1.0-cp312-abi3-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (6.0 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.3932614Z Collecting tornado>=6.4.1 (from jupyter-client>=6.1.12->nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.4068080Z   Downloading tornado-6.5.5-cp39-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (2.8 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.4326110Z Collecting fastjsonschema>=2.15 (from nbformat>=5.7->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.4458195Z   Downloading fastjsonschema-2.21.2-py3-none-any.whl.metadata (2.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.4880355Z Collecting importlib-metadata<8.8.0,>=6.0 (from opentelemetry-api>=1.20.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.5014846Z   Downloading importlib_metadata-8.7.1-py3-none-any.whl.metadata (4.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.5299179Z Collecting zipp>=3.20 (from importlib-metadata<8.8.0,>=6.0->opentelemetry-api>=1.20.0->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.5433404Z   Downloading zipp-3.23.0-py3-none-any.whl.metadata (3.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.5775636Z Collecting email-validator>=2.0.0 (from pydantic[email]>=2.11.7->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.5907218Z   Downloading email_validator-2.3.0-py3-none-any.whl.metadata (26 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.6198144Z Collecting dnspython>=2.0.0 (from email-validator>=2.0.0->pydantic[email]>=2.11.7->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.6329837Z   Downloading dnspython-2.8.0-py3-none-any.whl.metadata (5.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.7556816Z Collecting cffi>=2.0.0 (from cryptography->authlib>=1.6.5->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.7692815Z   Downloading cffi-2.0.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.7932272Z Collecting pycparser (from cffi>=2.0.0->cryptography->authlib>=1.6.5->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.8064659Z   Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.8312578Z Collecting iniconfig>=1.0.1 (from pytest>=7.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.8445526Z   Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.8680545Z Collecting pluggy<2,>=1.5 (from pytest>=7.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:07.8812432Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.3189699Z Collecting coverage>=7.10.6 (from coverage[toml]>=7.10.6->pytest-cov>=4.1.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.3327100Z   Downloading coverage-7.13.4-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (8.5 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.3624332Z Collecting six>=1.5 (from python-dateutil>=2.8.2->jupyter-client>=6.1.12->nbclient>=0.5.0->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.3755595Z   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.4041592Z Collecting markdown-it-py>=2.2.0 (from rich>=13.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.4173789Z   Downloading markdown_it_py-4.0.0-py3-none-any.whl.metadata (7.3 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.4443883Z Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.0.0->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.4575419Z   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.5230161Z Collecting soupsieve>=1.6.1 (from beautifulsoup4->nbconvert>=7.16.6->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.5363377Z   Downloading soupsieve-2.8.3-py3-none-any.whl.metadata (4.6 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.5692416Z Collecting more-itertools (from jaraco.classes->keyring>=25.6.0->py-key-value-aio[filetree,keyring,memory]<0.5.0,>=0.4.4->fastmcp>=0.4.1->whitemagic==18.1.0)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.5824457Z   Downloading more_itertools-10.8.0-py3-none-any.whl.metadata (39 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.6103769Z Downloading pydantic-2.12.5-py3-none-any.whl (463 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.6858248Z Downloading pydantic_core-2.41.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.8589042Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 12.7 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.8724050Z Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.8874125Z Downloading black-26.3.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.8 MB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.9802821Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 20.0 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:08.9936766Z Downloading pytokens-0.4.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (269 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.0170731Z Downloading click-8.3.1-py3-none-any.whl (108 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.0346135Z Downloading fastmcp-3.1.1-py3-none-any.whl (633 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.0625061Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 633.8/633.8 kB 20.5 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.0756561Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.0923572Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.1088868Z Downloading mcp-1.26.0-py3-none-any.whl (233 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.1302215Z Downloading py_key_value_aio-0.4.4-py3-none-any.whl (152 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.1487944Z Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.1799183Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 23.3 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.1932333Z Downloading aiofile-3.9.0-py3-none-any.whl (19 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.2082149Z Downloading caio-0.9.25-cp312-cp312-manylinux_2_34_x86_64.whl (80 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.2246343Z Downloading anyio-4.12.1-py3-none-any.whl (113 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.2421156Z Downloading authlib-1.6.9-py2.py3-none-any.whl (244 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.2627509Z Downloading beartype-0.22.9-py3-none-any.whl (1.3 MB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.3076196Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 29.0 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.3209205Z Downloading cachetools-7.0.5-py3-none-any.whl (13 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.3360949Z Downloading cyclopts-4.10.0-py3-none-any.whl (204 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.3551779Z Downloading docstring_parser-0.17.0-py3-none-any.whl (36 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.3701309Z Downloading rich_rst-1.3.2-py3-none-any.whl (12 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.3853626Z Downloading attrs-25.4.0-py3-none-any.whl (67 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.4007501Z Downloading exceptiongroup-1.3.1-py3-none-any.whl (16 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.4159839Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.4310912Z Downloading httpx_sse-0.4.3-py3-none-any.whl (9.0 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.4461281Z Downloading idna-3.11-py3-none-any.whl (71 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.4614903Z Downloading isort-8.0.1-py3-none-any.whl (89 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.4776915Z Downloading jsonref-1.1.0-py3-none-any.whl (9.4 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.4926273Z Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.5091428Z Downloading jsonschema_path-0.4.5-py3-none-any.whl (19 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.5241739Z Downloading pathable-0.5.0-py3-none-any.whl (16 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.5390031Z Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.5542233Z Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.5690703Z Downloading keyring-25.7.0-py3-none-any.whl (39 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.5844252Z Downloading jeepney-0.9.0-py3-none-any.whl (49 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.5995013Z Downloading maturin-1.12.6-py3-none-manylinux_2_12_x86_64.manylinux2010_x86_64.musllinux_1_1_x86_64.whl (10.2 MB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.8084522Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 49.5 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.8218665Z Downloading mypy-1.19.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (13.6 MB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.9748071Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.6/13.6 MB 89.6 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:09.9886911Z Downloading librt-0.8.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (224 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.0044834Z Downloading mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.0194959Z Downloading nbconvert-7.17.0-py3-none-any.whl (261 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.0362336Z Downloading mistune-3.2.0-py3-none-any.whl (53 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.0514285Z Downloading bleach-6.3.0-py3-none-any.whl (164 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.0671986Z Downloading tinycss2-1.4.0-py3-none-any.whl (26 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.0823359Z Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.0982197Z Downloading jupyter_core-5.9.1-py3-none-any.whl (29 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.1133857Z Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.1286465Z Downloading nbclient-0.10.4-py3-none-any.whl (25 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.1514097Z Downloading jupyter_client-8.8.0-py3-none-any.whl (107 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.1673562Z Downloading nbformat-5.10.4-py3-none-any.whl (78 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.1829952Z Downloading fastjsonschema-2.21.2-py3-none-any.whl (24 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.1981180Z Downloading openapi_pydantic-0.5.1-py3-none-any.whl (96 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.2136934Z Downloading opentelemetry_api-1.40.0-py3-none-any.whl (68 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.2292039Z Downloading importlib_metadata-8.7.1-py3-none-any.whl (27 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.2323069Z Using cached packaging-26.0-py3-none-any.whl (74 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.2458344Z Downloading pandocfilters-1.5.1-py2.py3-none-any.whl (8.7 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.2609504Z Downloading pathspec-1.0.4-py3-none-any.whl (55 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.2769151Z Downloading platformdirs-4.9.4-py3-none-any.whl (21 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.2922076Z Downloading pydantic_settings-2.13.1-py3-none-any.whl (58 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.3075313Z Downloading email_validator-2.3.0-py3-none-any.whl (35 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.3227022Z Downloading dnspython-2.8.0-py3-none-any.whl (331 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.3399992Z Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.3520887Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 101.5 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.3652983Z Downloading pyjwt-2.12.1-py3-none-any.whl (29 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.3806085Z Downloading cryptography-46.0.5-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.4209559Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 112.0 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.4343808Z Downloading cffi-2.0.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (219 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.4505023Z Downloading pyperclip-1.11.0-py3-none-any.whl (11 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.4656666Z Downloading pytest-9.0.2-py3-none-any.whl (374 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.4828011Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.4998917Z Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.5149795Z Downloading pytest_asyncio-1.3.0-py3-none-any.whl (15 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.5303753Z Downloading pytest_cov-7.0.0-py3-none-any.whl (22 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.5459845Z Downloading coverage-7.13.4-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (254 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.5623174Z Downloading pytest_timeout-2.4.0-py3-none-any.whl (14 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.5772491Z Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.5937430Z Downloading python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.6098330Z Downloading python_multipart-0.0.22-py3-none-any.whl (24 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.6254895Z Downloading pyzmq-27.1.0-cp312-abi3-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (840 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.6339747Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 841.0/841.0 kB 96.0 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.6473945Z Downloading rich-14.3.3-py3-none-any.whl (310 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.6639872Z Downloading markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.6795311Z Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.6947450Z Downloading rpds_py-0.30.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (394 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.7115258Z Downloading ruff-0.15.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.3 MB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.7959259Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.3/11.3 MB 134.9 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.8093993Z Downloading secretstorage-3.5.0-py3-none-any.whl (15 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.8246355Z Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.8445000Z Downloading sse_starlette-3.3.2-py3-none-any.whl (14 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.8596567Z Downloading starlette-0.52.1-py3-none-any.whl (74 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.8753856Z Downloading tornado-6.5.5-cp39-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (447 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.8921656Z Downloading traitlets-5.14.3-py3-none-any.whl (85 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.9074669Z Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.9231470Z Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.9383727Z Downloading uncalled_for-0.2.0-py3-none-any.whl (11 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.9534807Z Downloading uvicorn-0.42.0-py3-none-any.whl (68 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.9690066Z Downloading watchfiles-1.1.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (456 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:10.9862116Z Downloading webencodings-0.5.1-py2.py3-none-any.whl (11 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.0013081Z Downloading websockets-16.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (184 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.0171200Z Downloading zipp-3.23.0-py3-none-any.whl (10 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.0322878Z Downloading beautifulsoup4-4.14.3-py3-none-any.whl (107 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.0477344Z Downloading soupsieve-2.8.3-py3-none-any.whl (37 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.0629967Z Downloading certifi-2026.2.25-py3-none-any.whl (153 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.0785035Z Downloading defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.0937773Z Downloading docutils-0.22.4-py3-none-any.whl (633 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.0998332Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 633.2/633.2 kB 103.8 MB/s  0:00:00
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.1132189Z Downloading jaraco.classes-3.4.0-py3-none-any.whl (6.8 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.1280216Z Downloading jaraco_context-6.1.1-py3-none-any.whl (7.0 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.1430105Z Downloading jaraco_functools-4.4.0-py3-none-any.whl (10 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.1580020Z Downloading jupyterlab_pygments-0.3.0-py3-none-any.whl (15 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.1732127Z Downloading more_itertools-10.8.0-py3-none-any.whl (69 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.1885046Z Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.3190192Z Building wheels for collected packages: whitemagic
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.3199061Z   Building editable for whitemagic (pyproject.toml): started
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.8046693Z   Building editable for whitemagic (pyproject.toml): finished with status 'done'
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.8052320Z   Created wheel for whitemagic: filename=whitemagic-18.1.0-0.editable-py3-none-any.whl size=10127 sha256=b4a6d1d9c41aeb7f9f1a31712037984a9a0f65023780c32434a2e75b3dc18e7d
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.8054315Z   Stored in directory: /tmp/pip-ephem-wheel-cache-227y9ayt/wheels/33/1b/dd/63233ade9a95fbd7e9c61a0cea6b0c22dffaa4df2dd9740048
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.8087853Z Successfully built whitemagic
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:11.9904133Z Installing collected packages: webencodings, pyperclip, fastjsonschema, zipp, websockets, uncalled-for, typing-extensions, traitlets, tornado, tinycss2, soupsieve, six, ruff, rpds-py, pyzmq, pyyaml, pytokens, python-multipart, python-dotenv, pyjwt, pygments, pycparser, pluggy, platformdirs, pathspec, pathable, pandocfilters, packaging, mypy-extensions, more-itertools, mistune, mdurl, maturin, markupsafe, librt, jupyterlab-pygments, jsonref, jeepney, jaraco.context, isort, iniconfig, idna, httpx-sse, h11, docutils, docstring-parser, dnspython, defusedxml, coverage, click, certifi, caio, cachetools, bleach, beartype, attrs, annotated-types, uvicorn, typing-inspection, referencing, python-dateutil, pytest, pydantic-core, py-key-value-aio, mypy, markdown-it-py, jupyter-core, jinja2, jaraco.functools, jaraco.classes, importlib-metadata, httpcore, exceptiongroup, email-validator, cffi, black, beautifulsoup4, anyio, aiofile, watchfiles, starlette, rich, pytest-timeout, pytest-cov, pytest-asyncio, pydantic, opentelemetry-api, jupyter-client, jsonschema-specifications, jsonschema-path, httpx, cryptography, whitemagic, sse-starlette, SecretStorage, rich-rst, pydantic-settings, openapi-pydantic, jsonschema, authlib, nbformat, mcp, keyring, cyclopts, nbclient, nbconvert, fastmcp
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:20.8646904Z 
+Extras (mcp+cli)	Install (extras)	2026-03-16T20:13:20.8734999Z Successfully installed SecretStorage-3.5.0 aiofile-3.9.0 annotated-types-0.7.0 anyio-4.12.1 attrs-25.4.0 authlib-1.6.9 beartype-0.22.9 beautifulsoup4-4.14.3 black-26.3.1 bleach-6.3.0 cachetools-7.0.5 caio-0.9.25 certifi-2026.2.25 cffi-2.0.0 click-8.3.1 coverage-7.13.4 cryptography-46.0.5 cyclopts-4.10.0 defusedxml-0.7.1 dnspython-2.8.0 docstring-parser-0.17.0 docutils-0.22.4 email-validator-2.3.0 exceptiongroup-1.3.1 fastjsonschema-2.21.2 fastmcp-3.1.1 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 httpx-sse-0.4.3 idna-3.11 importlib-metadata-8.7.1 iniconfig-2.3.0 isort-8.0.1 jaraco.classes-3.4.0 jaraco.context-6.1.1 jaraco.functools-4.4.0 jeepney-0.9.0 jinja2-3.1.6 jsonref-1.1.0 jsonschema-4.26.0 jsonschema-path-0.4.5 jsonschema-specifications-2025.9.1 jupyter-client-8.8.0 jupyter-core-5.9.1 jupyterlab-pygments-0.3.0 keyring-25.7.0 librt-0.8.1 markdown-it-py-4.0.0 markupsafe-3.0.3 maturin-1.12.6 mcp-1.26.0 mdurl-0.1.2 mistune-3.2.0 more-itertools-10.8.0 mypy-1.19.1 mypy-extensions-1.1.0 nbclient-0.10.4 nbconvert-7.17.0 nbformat-5.10.4 openapi-pydantic-0.5.1 opentelemetry-api-1.40.0 packaging-26.0 pandocfilters-1.5.1 pathable-0.5.0 pathspec-1.0.4 platformdirs-4.9.4 pluggy-1.6.0 py-key-value-aio-0.4.4 pycparser-3.0 pydantic-2.12.5 pydantic-core-2.41.5 pydantic-settings-2.13.1 pygments-2.19.2 pyjwt-2.12.1 pyperclip-1.11.0 pytest-9.0.2 pytest-asyncio-1.3.0 pytest-cov-7.0.0 pytest-timeout-2.4.0 python-dateutil-2.9.0.post0 python-dotenv-1.2.2 python-multipart-0.0.22 pytokens-0.4.1 pyyaml-6.0.3 pyzmq-27.1.0 referencing-0.37.0 rich-14.3.3 rich-rst-1.3.2 rpds-py-0.30.0 ruff-0.15.6 six-1.17.0 soupsieve-2.8.3 sse-starlette-3.3.2 starlette-0.52.1 tinycss2-1.4.0 tornado-6.5.5 traitlets-5.14.3 typing-extensions-4.15.0 typing-inspection-0.4.2 uncalled-for-0.2.0 uvicorn-0.42.0 watchfiles-1.1.1 webencodings-0.5.1 websockets-16.0 whitemagic-18.1.0 zipp-3.23.0
+Extras (mcp+cli)	Doctor Check	﻿2026-03-16T20:13:21.5370633Z ##[group]Run # Run doctor and fail if health check fails
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5371113Z [36;1m# Run doctor and fail if health check fails[0m
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5371409Z [36;1mwm doctor[0m
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5421399Z shell: /usr/bin/bash -e {0}
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5421657Z env:
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5421827Z   WM_SILENT_INIT: 1
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5422052Z   WM_STATE_ROOT: /tmp/whitemagic_state_extras
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5422404Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5422826Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib/pkgconfig
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5423237Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5423591Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5423954Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5424315Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:21.5424615Z ##[endgroup]
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.3320329Z Warning: Failed to load plugins: 'NoneType' object has no attribute 'plugins'
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7221800Z ╭──────────────────────────── 🏥 WhiteMagic Doctor ────────────────────────────╮
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7222844Z │ Health: degraded (60%)                                                       │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7223642Z │                                                                              │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7224304Z │ Version: 20.0.0                                                              │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7224952Z │ Tools: 438                                                                   │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7225629Z │ DB: ? memories, ? MB                                                         │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7226246Z │                                                                              │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7226856Z │ Bridges:                                                                     │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7227492Z │   ❌ Rust                                                                    │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7228110Z │   ✅ Julia                                                                   │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7228717Z │   ✅ Haskell                                                                 │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7229965Z │                                                                              │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7230623Z │ Gardens: 9 registered                                                        │
+Extras (mcp+cli)	Doctor Check	2026-03-16T20:13:22.7231385Z ╰──────────────────────────────────────────────────────────────────────────────╯
+Extras (mcp+cli)	MCP Import Check	﻿2026-03-16T20:13:22.7661290Z ##[group]Run python -c "import fastmcp; print('fastmcp ok')"
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7661788Z [36;1mpython -c "import fastmcp; print('fastmcp ok')"[0m
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7711374Z shell: /usr/bin/bash -e {0}
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7711616Z env:
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7711789Z   WM_SILENT_INIT: 1
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7712010Z   WM_STATE_ROOT: /tmp/whitemagic_state_extras
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7712365Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7712765Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib/pkgconfig
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7713166Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7713542Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7713900Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7714261Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:22.7714559Z ##[endgroup]
+Extras (mcp+cli)	MCP Import Check	2026-03-16T20:13:23.9178523Z fastmcp ok
+Extras (mcp+cli)	CLI JSON Smoke	﻿2026-03-16T20:13:24.0223481Z ##[group]Run python -m whitemagic.cli.cli_app --json status > /tmp/wm_status.json
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0224106Z [36;1mpython -m whitemagic.cli.cli_app --json status > /tmp/wm_status.json[0m
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0224672Z [36;1mpython -c "import json; json.load(open('/tmp/wm_status.json')); print('cli json ok')"[0m
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0274537Z shell: /usr/bin/bash -e {0}
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0274780Z env:
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0274945Z   WM_SILENT_INIT: 1
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0275176Z   WM_STATE_ROOT: /tmp/whitemagic_state_extras
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0275527Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0275971Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib/pkgconfig
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0276388Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0276743Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0277239Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0277596Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.0277927Z ##[endgroup]
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.4498306Z Traceback (most recent call last):
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.4505088Z   File "<string>", line 1, in <module>
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.4505688Z   File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/json/__init__.py", line 293, in load
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.4771986Z     return loads(fp.read(),
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.4772482Z            ^^^^^^^^^^^^^^^^
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.4774779Z   File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/json/__init__.py", line 346, in loads
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.4775447Z     return _default_decoder.decode(s)
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.4775810Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.4776433Z   File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/json/decoder.py", line 338, in decode
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.5048979Z     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.5049966Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.5050724Z   File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/json/decoder.py", line 356, in raw_decode
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.5052138Z     raise JSONDecodeError("Expecting value", s, err.value) from None
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.5053167Z json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+Extras (mcp+cli)	CLI JSON Smoke	2026-03-16T20:13:24.5105910Z ##[error]Process completed with exit code 1.
+Extras (mcp+cli)	Post Run actions/checkout@v4	﻿2026-03-16T20:13:24.5208466Z Post job cleanup.
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6174385Z [command]/usr/bin/git version
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6211887Z git version 2.53.0
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6257130Z Temporarily overriding HOME='/home/runner/work/_temp/0021486e-f7c6-4bb6-ac3b-59f44c54c898' before making global git config changes
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6258971Z Adding repository directory to the temporary git global config as a safe directory
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6264453Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/whitemagic/whitemagic
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6304255Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6340298Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6606707Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6631952Z http.https://github.com/.extraheader
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6649230Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6688020Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.6965842Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Extras (mcp+cli)	Post Run actions/checkout@v4	2026-03-16T20:13:24.7005523Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Extras (mcp+cli)	Complete job	﻿2026-03-16T20:13:24.7395581Z Cleaning up orphan processes
+Extras (mcp+cli)	Complete job	2026-03-16T20:13:24.7784049Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/setup-python@v5. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
