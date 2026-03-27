@@ -31,14 +31,20 @@ ARCHIVE_DIR: Path = PROJECT_ROOT / "archive"
 
 # Canonical Root for STATE/DATA
 # 1. Check for WM_STATE_ROOT or WM_CONFIG_ROOT
-# 2. Default to ~/.whitemagic
-# 3. Fallback to /tmp if the default is not writable (CI/sandbox-safe)
-# 4. As a last resort, fallback to ./.whitemagic
-_intended_root = Path(
+# 2. Check for repo-local state (./memory/whitemagic.db exists)
+# 3. Default to ~/.whitemagic
+_repo_local_root = PROJECT_ROOT
+_intended_root_path = (
     os.getenv("WM_STATE_ROOT")
     or os.getenv("WM_CONFIG_ROOT")
-    or str(Path.home() / ".whitemagic"),
-).expanduser()
+)
+
+if _intended_root_path:
+    _intended_root = Path(_intended_root_path).expanduser()
+elif (_repo_local_root / "memory" / "whitemagic.db").exists():
+    _intended_root = _repo_local_root
+else:
+    _intended_root = (Path.home() / ".whitemagic").expanduser()
 
 def _is_writable(path: Path) -> bool:
     try:
