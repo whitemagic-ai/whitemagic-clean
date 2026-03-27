@@ -2,10 +2,11 @@ services:
   core:
     build: .
     volumes:
-      - whitemagic_data:/data/whitemagic
+      - ./memory:/data/whitemagic/memory
+      - whitemagic_data:/data/whitemagic/state
     environment:
       - REDIS_URL=redis://redis:6379/0
-      - WM_STATE_ROOT=/data/whitemagic
+      - WM_STATE_ROOT=/data/whitemagic/state
       - WM_DB_PATH=/data/whitemagic/memory/whitemagic.db
       - LOG_LEVEL=INFO
     depends_on:
@@ -19,10 +20,11 @@ services:
   cli:
     build: .
     volumes:
-      - whitemagic_data:/data/whitemagic
+      - ./memory:/data/whitemagic/memory
+      - whitemagic_data:/data/whitemagic/state
     environment:
       - REDIS_URL=redis://redis:6379/0
-      - WM_STATE_ROOT=/data/whitemagic
+      - WM_STATE_ROOT=/data/whitemagic/state
       - WM_DB_PATH=/data/whitemagic/memory/whitemagic.db
     entrypoint: ["python", "-m", "whitemagic.cli.cli_app"]
     profiles:
