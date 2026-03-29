@@ -457,25 +457,25 @@ class UnifiedMemory:
         rrf_k: int = 60,
         semantic_weight: float = 1.0,
         lexical_weight: float = 1.0,
+        spatial_weight: float = 0.5,
         include_cold: bool = False,
+        axis_weights: dict[str, float] | None = None,
     ) -> list[Memory]:
         """Hybrid retrieval combining BM25 lexical search + embedding semantic
-        search via Reciprocal Rank Fusion (RRF).
+        search + 5D holographic spatial search via Reciprocal Rank Fusion (RRF).
 
         RRF score = Σ weight_i / (k + rank_i)
-
-        This is the modern retrieval standard used by Pinecone, Weaviate, etc.
-        Falls back gracefully: embedding-only if no BM25, FTS-only if no embeddings.
 
         Args:
             query: Search query text.
             limit: Maximum results to return.
             memory_type: Optional filter by memory type.
-            rrf_k: RRF constant (default 60, standard value).
+            rrf_k: RRF constant (default 60).
             semantic_weight: Weight for semantic (embedding) rankings.
             lexical_weight: Weight for lexical (BM25/FTS) rankings.
-            include_cold: If True, also search cold DB embeddings (v13.6).
-
+            spatial_weight: Weight for 5D spatial rankings (v15.1 Enhancement).
+            include_cold: If True, also search cold DB embeddings.
+            axis_weights: Optional weights for 5D axes (x, y, z, w, v).
         """
         from collections import defaultdict
 
@@ -491,7 +491,6 @@ class UnifiedMemory:
                 search_query,
             )
             if rust_search_available():
-                # Build index from memories if needed
                 candidates = self.backend.search(
                     query=None, memory_type=memory_type, limit=limit * 10,
                 )
@@ -512,7 +511,6 @@ class UnifiedMemory:
         except Exception:
             pass
 
-        # Fallback: standard FTS search
         if not lexical_results:
             lexical_results = self.backend.search(
                 query=query, memory_type=memory_type, limit=limit * 3,
@@ -520,11 +518,10 @@ class UnifiedMemory:
             for m in lexical_results:
                 all_memories[m.id] = m
 
-        # Assign RRF scores for lexical channel
         for rank, mem in enumerate(lexical_results):
             rrf_scores[mem.id] += lexical_weight / (rrf_k + rank + 1)
 
-        # --- Channel 2: Semantic (Embedding cosine, hot + optional cold) ---
+        # --- Channel 2: Semantic (Embedding cosine) ---
         semantic_results = []
         try:
             from whitemagic.core.memory.embeddings import get_embedding_engine
@@ -537,7 +534,6 @@ class UnifiedMemory:
                 for hit in hits:
                     mid = hit["memory_id"]
                     if mid not in all_memories:
-                        # Hydrate memory from backend (hot-first, cold-fallback)
                         recalled = self.backend.recall(mid)
                         if recalled:
                             if hit.get("source") == "cold":
@@ -547,10 +543,28 @@ class UnifiedMemory:
         except Exception:
             pass
 
-        # Assign RRF scores for semantic channel
         for rank, hit in enumerate(semantic_results):
             mid = hit["memory_id"]
             rrf_scores[mid] += semantic_weight / (rrf_k + rank + 1)
+
+        # --- Channel 3: 5D Spatial (Holographic Index) [v15.1 Enhancement] ---
+        spatial_results = []
+        if self.holographic:
+            try:
+                # Use fast 5D lookup
+                hits = self.holographic.query_nearest(
+                    {"content": query}, k=limit * 3, weights=axis_weights
+                )
+                for rank, hit in enumerate(hits):
+                    mid = hit.memory_id
+                    if mid not in all_memories:
+                        recalled = self.backend.recall(mid)
+                        if recalled:
+                            all_memories[mid] = recalled
+                    spatial_results.append(mid)
+                    rrf_scores[mid] += spatial_weight / (rrf_k + rank + 1)
+            except Exception:
+                pass
 
         # --- Fuse and rank ---
         if not rrf_scores:

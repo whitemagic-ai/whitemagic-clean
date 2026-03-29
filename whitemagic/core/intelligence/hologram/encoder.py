@@ -439,21 +439,32 @@ class CoordinateEncoder:
         Range: [0.0, 2.0+].
         """
         # Base importance (v5.0 integration: uses importance OR neuro_score)
-        # Handle None values explicitly - fields may exist but contain None
-        importance = memory.get("importance")
-        if importance is None:
-            importance = 0.5  # Baseline importance for all memories
-        neuro_score = memory.get("neuro_score")
-        if neuro_score is None:
-            neuro_score = 1.0  # Baseline neural strength
+        importance = float(memory.get("importance") or 0.5)
+        neuro_score = float(memory.get("neuro_score") or 1.0)
 
         # Gravity is a combination of importance and neural strength
-        base = (float(importance) * 0.4) + (float(neuro_score) * 0.6)
+        base = (importance * 0.4) + (neuro_score * 0.6)
+
+        # Usage Patterns (v15.1 Enhancement)
+        access_count = int(memory.get("access_count") or 0)
+        recall_count = int(memory.get("recall_count") or 0)
+        usage_boost = min(0.5, (access_count + recall_count * 2) / 20.0)
+        base += usage_boost
+
+        # Reference Density (v15.1 Enhancement)
+        # Check links dict or associations dict
+        links = memory.get("links", {})
+        link_count = len(links) if isinstance(links, dict) else 0
+        assoc_count = len(memory.get("associations", {}))
+        density_boost = min(0.3, (link_count + assoc_count) * 0.05)
+        base += density_boost
 
         # Memory type boost
         mem_type = memory.get("memory_type", memory.get("type", "")).lower()
         if mem_type == "long_term":
             base += 0.3
+        elif mem_type == "pattern":
+            base += 0.4  # Discovered patterns have high gravity
         elif mem_type == "short_term":
             base -= 0.1
 
@@ -492,29 +503,48 @@ class CoordinateEncoder:
         1.0 = Core (active spotlight, high retention)
         0.0 = Far Edge (deep archive, low retention).
         """
-        # Primary source: galactic_distance field (already computed by sweep)
+        # Protected = always at core
+        if memory.get("is_protected") or memory.get("is_core_identity") or memory.get("is_sacred"):
+            return 1.0
+
+        # Base from galactic distance if available
         galactic_distance = memory.get("galactic_distance")
+        v_base = 0.5
         if isinstance(galactic_distance, (int, float)) and galactic_distance > 0.0:
-            # Invert: galactic_distance 0=core, 1=edge -> v 1=core, 0=edge
-            return float(max(0.0, min(1.0, 1.0 - float(galactic_distance))))
+            v_base = 1.0 - float(galactic_distance)
+        else:
+            # Fallback to neuro_score
+            v_base = float(memory.get("neuro_score") or 0.5)
 
-        # Fallback: derive from retention_score
-        retention_score = memory.get("retention_score")
-        if isinstance(retention_score, (int, float)) and retention_score != 0.5:  # 0.5 is default
-            return float(max(0.0, min(1.0, float(retention_score))))
+        # Dynamic Lifecycle (v15.1 Enhancement)
+        # Time since last access (decay toward edge)
+        last_recalled = memory.get("last_recalled") or memory.get("accessed_at")
+        days_since = 0.0
+        if last_recalled:
+            try:
+                from whitemagic.utils.core import parse_datetime
+                if isinstance(last_recalled, str):
+                    dt = parse_datetime(last_recalled)
+                else:
+                    dt = last_recalled
+                days_since = (datetime.now() - dt).total_seconds() / 86400.0
+            except Exception:
+                pass
 
-        # Final fallback: quick heuristic from available signals
-        importance = float(memory.get("importance") or 0.5)
-        neuro_score = float(memory.get("neuro_score") or 1.0)
+        # Decay vitality based on time (half-life of 14 days for vitality)
+        decay = 0.5 ** (days_since / 14.0)
+        v = v_base * decay
+
+        # Rescue Logic: Recent activity boosts vitality back toward core
         access_count = int(memory.get("access_count") or 0)
         recall_count = int(memory.get("recall_count") or 0)
-        is_protected = memory.get("is_protected") or False
+        activity_bonus = min(0.3, (access_count + recall_count) * 0.05)
+        v += activity_bonus
 
-        if is_protected:
-            return 1.0  # Protected = always at core
+        # Consolidation Bonus
+        if memory.get("metadata", {}).get("consolidated"):
+            v += 0.1
 
-        activity = min(1.0, (access_count + recall_count) / 10.0)
-        v = importance * 0.4 + neuro_score * 0.3 + activity * 0.3
         return float(max(0.0, min(1.0, v)))
 
 # Integration helper

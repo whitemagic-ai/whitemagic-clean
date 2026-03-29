@@ -181,13 +181,14 @@ def search_by_coordinates(
     return results
 
 
-def find_neighbors(memory_id: str, k: int = 5, radius: float | None = None) -> list[dict[str, Any]]:
+def find_neighbors(memory_id: str, k: int = 5, radius: float | None = None, weights: dict[str, float] | None = None) -> list[dict[str, Any]]:
     """Find nearest neighbors of a memory in 5D space.
 
     Args:
         memory_id: The reference memory ID
         k: Number of neighbors to return
         radius: Optional max distance (overrides k if specified)
+        weights: Optional axis weights for the query (x, y, z, w, v)
 
     Returns:
         List of neighboring memories with distances
@@ -198,7 +199,7 @@ def find_neighbors(memory_id: str, k: int = 5, radius: float | None = None) -> l
 
     # Get reference memory coordinates
     um = get_unified_memory()
-    ref_mem = um.get(memory_id)
+    ref_mem = um.recall(memory_id)
 
     if not ref_mem:
         return []
@@ -207,17 +208,12 @@ def find_neighbors(memory_id: str, k: int = 5, radius: float | None = None) -> l
     holo = get_holographic_memory()
 
     # Build query from reference memory
-    query_data = {
-        "content": ref_mem.content or "",
-        "title": ref_mem.title or "",
-        "tags": ref_mem.tags or [],
-        "memory_type": ref_mem.memory_type or "unknown",
-    }
+    query_data = ref_mem.to_dict()
 
     if radius:
-        raw_results = holo.query_radius(query_data, radius=radius)
+        raw_results = holo.query_radius(query_data, radius=radius, weights=weights)
     else:
-        raw_results = holo.query_nearest(query_data, k=k + 1)  # +1 to exclude self
+        raw_results = holo.query_nearest(query_data, k=k + 1, weights=weights)  # +1 to exclude self
 
     # Filter out self and fetch details
     results = []
@@ -225,7 +221,7 @@ def find_neighbors(memory_id: str, k: int = 5, radius: float | None = None) -> l
         if result.memory_id == memory_id:
             continue
 
-        neighbor = um.get(result.memory_id)
+        neighbor = um.recall(result.memory_id)
         if neighbor:
             interp = interpret_memory(neighbor.to_dict())
             results.append({
@@ -344,7 +340,7 @@ def analyze_position(memory_id: str) -> dict[str, Any]:
     from whitemagic.tools.coordinate_explainer import explain_coordinates
 
     um = get_unified_memory()
-    mem = um.get(memory_id)
+    mem = um.recall(memory_id)
 
     if not mem:
         return {"error": f"Memory {memory_id} not found"}

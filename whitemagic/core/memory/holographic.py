@@ -122,49 +122,75 @@ class HolographicMemory:
             logger.error(f"Failed to add memory {memory_id} with coords: {e}")
             return False
 
-    def query_nearest(self, query_data: dict[str, Any], k: int = 5) -> list[HolographicResult]:
-        """Find k nearest memories to the query context.
+    def query_nearest(self, query_data: dict[str, Any], k: int = 5, weights: dict[str, float] | None = None) -> list[HolographicResult]:
+        """Find k nearest memories to the query context with optional axis weighting.
+
+        Args:
+            query_data: Dictionary containing content, tags, etc. to encode.
+            k: Number of nearest neighbors to return.
+            weights: Optional dict mapping axis names ('x', 'y', 'z', 'w', 'v') to weights (0.0 to 1.0).
+                    If provided, the query vector is adjusted by these weights.
         """
         if not self._has_index:
             return []
 
         try:
             coord = self._encoder.encode(query_data)
+            vector = [coord.x, coord.y, coord.z, coord.w, coord.v]
+
+            # Apply weights if provided (v15.1 Enhancement)
+            if weights:
+                # Default weight is 1.0 for unspecified axes
+                w_vec = [
+                    weights.get("x", 1.0),
+                    weights.get("y", 1.0),
+                    weights.get("z", 1.0),
+                    weights.get("w", 1.0),
+                    weights.get("v", 1.0)
+                ]
+                # Multiply query vector by weights to shift its position in the search space
+                # toward the prioritized characteristics.
+                vector = [v * w for v, w in zip(vector, w_vec)]
 
             if self._index_5d:
-                results = self._index_5d.query_nearest(
-                    [coord.x, coord.y, coord.z, coord.w, coord.v], k,
-                )
+                results = self._index_5d.query_nearest(vector, k)
             else:
                 assert self._index is not None
-                results = self._index.query_nearest(
-                    coord.x, coord.y, coord.z, coord.w, k,
-                )
+                # Legacy 4D index only uses x, y, z, w
+                results = self._index.query_nearest(vector[0], vector[1], vector[2], vector[3], k)
 
             return [HolographicResult(mid, dist) for mid, dist in results]
         except Exception as e:
             logger.error(f"Holographic query failed: {e}")
             return []
 
-    def query_radius(self, query_data: dict[str, Any], radius: float = 1.0) -> list[HolographicResult]:
-        """Find all memories within radius of the query context.
+    def query_radius(self, query_data: dict[str, Any], radius: float = 1.0, weights: dict[str, float] | None = None) -> list[HolographicResult]:
+        """Find all memories within radius of the query context with optional axis weighting.
         """
         if not self._has_index:
             return []
 
         try:
             coord = self._encoder.encode(query_data)
+            vector = [coord.x, coord.y, coord.z, coord.w, coord.v]
+
+            if weights:
+                w_vec = [
+                    weights.get("x", 1.0),
+                    weights.get("y", 1.0),
+                    weights.get("z", 1.0),
+                    weights.get("w", 1.0),
+                    weights.get("v", 1.0)
+                ]
+                vector = [v * w for v, w in zip(vector, w_vec)]
+
             if self._index_5d:
                 # SpatialIndex5D uses query_nearest; filter by radius
-                results = self._index_5d.query_nearest(
-                    [coord.x, coord.y, coord.z, coord.w, coord.v], 100,
-                )
+                results = self._index_5d.query_nearest(vector, 100)
                 return [HolographicResult(mid, dist) for mid, dist in results if dist <= radius * radius]
             else:
                 assert self._index is not None
-                results = self._index.query_radius(
-                    coord.x, coord.y, coord.z, coord.w, radius,
-                )
+                results = self._index.query_radius(vector[0], vector[1], vector[2], vector[3], radius)
                 return [HolographicResult(mid, dist) for mid, dist in results]
         except Exception as e:
             logger.error(f"Holographic radius query failed: {e}")

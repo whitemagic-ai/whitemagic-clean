@@ -708,17 +708,22 @@ class SQLiteBackend:
             if query:
                 # FTS search with BM25 ranking (lower rank = better match)
                 fts_query = query.strip()
-                # Sanitize FTS5-unsafe characters (brackets, quotes, etc.)
-                for ch in '[]{}()^~*':
-                    fts_query = fts_query.replace(ch, '')
+                # Sanitize FTS5-unsafe characters - keep only alphanumeric and spaces
+                import re
+                fts_query = re.sub(r'[^a-zA-Z0-9\s]', ' ', fts_query)
                 fts_query = fts_query.strip()
+                
                 if not fts_query:
-                    fts_query = query.strip().replace('[', '').replace(']', '')
-                if " " in fts_query and not (fts_query.startswith('"') and fts_query.endswith('"')):
-                    # Multi-word query: try as phrase OR individual keywords
-                    keywords = [k for k in fts_query.split() if k]
-                    if keywords:
-                        fts_query = f'"{fts_query}" OR {" OR ".join(keywords)}'
+                    # Fallback if sanitization stripped everything
+                    fts_query = "memory"
+                
+                # Split into keywords and join with OR for broad matching
+                keywords = [k for k in fts_query.split() if len(k) > 1]
+                if keywords:
+                    # Use a combination of phrase and individual keywords
+                    fts_query = f'"{ " ".join(keywords) }" OR {" OR ".join(keywords)}'
+                else:
+                    fts_query = f'"{fts_query}"'
 
                 sql = """
                     SELECT m.*, fts.rank
