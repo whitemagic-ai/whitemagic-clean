@@ -115,6 +115,9 @@ def gnosis_snapshot(compact: bool = False) -> dict[str, Any]:
     # --- Galactic Map ---
     galactic = _safe(lambda: _galactic_portal())
 
+    # --- Holographic Coordinates ---
+    holographic = _safe(lambda: _holographic_portal())
+
     # --- Emotion & Drive Core ---
     drives = _safe(lambda: _drives_portal())
 
@@ -144,6 +147,7 @@ def gnosis_snapshot(compact: bool = False) -> dict[str, Any]:
         "votes": votes,
         "temporal": temporal,
         "agents": agents,
+        "holographic": holographic,
         "homeostasis": homeostasis,
         "maturity": maturity,
         "galactic": galactic,
@@ -474,6 +478,53 @@ def _galactic_portal() -> dict[str, Any]:
             "far_edge": rows["far_edge"] or 0,
             "protected": rows["protected_count"] or 0,
         }
+
+
+def _holographic_portal() -> dict[str, Any]:
+    """Holographic coordinate system health and sample distributions."""
+    from whitemagic.core.memory.holographic import get_holographic_memory
+    from whitemagic.core.memory.unified import get_unified_memory
+
+    holo = get_holographic_memory()
+    health = holo.check_health()
+
+    # Get sample of recent memory coordinates
+    sample_coords: list[dict[str, Any]] = []
+    try:
+        um = get_unified_memory()
+        with um.backend.pool.connection() as conn:
+            rows = conn.execute("""
+                SELECT hc.memory_id, m.title, hc.x, hc.y, hc.z, hc.w, hc.v
+                FROM holographic_coords hc
+                LEFT JOIN memories m ON hc.memory_id = m.id
+                ORDER BY m.created_at DESC
+                LIMIT 5
+            """).fetchall()
+            for row in rows:
+                sample_coords.append({
+                    "id": row[0][:8] + "...",
+                    "title": row[1][:40] if row[1] else None,
+                    "x": round(row[2], 2) if row[2] else None,
+                    "y": round(row[3], 2) if row[3] else None,
+                    "z": round(row[4], 2) if row[4] else None,
+                    "w": round(row[5], 2) if row[5] else None,
+                    "v": round(row[6], 2) if row[6] else None,
+                })
+    except Exception:
+        pass
+
+    return {
+        "health": health,
+        "axes": {
+            "x": {"name": "Resonance", "range": "-1.0 (Emotion) to +1.0 (Logic)", "meaning": "Head vs Heart"},
+            "y": {"name": "Abstraction", "range": "-1.0 (Micro) to +1.0 (Macro)", "meaning": "Detail vs Big Picture"},
+            "z": {"name": "Chronos", "range": "-1.0 (Past) to +1.0 (Future)", "meaning": "Archive vs Vision"},
+            "w": {"name": "Gravity", "range": "0.0 to 2.0+", "meaning": "Importance/Weight"},
+            "v": {"name": "Vitality", "range": "0.0 (Edge) to 1.0 (Core)", "meaning": "Active vs Archived"},
+        },
+        "sample_memories": sample_coords,
+        "docs": "See docs/5D_COORDINATE_GUIDE.md for full explanation",
+    }
 
 
 def _drives_portal() -> dict[str, Any]:
