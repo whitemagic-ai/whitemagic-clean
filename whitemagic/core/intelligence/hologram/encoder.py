@@ -652,10 +652,7 @@ class CoordinateEncoder:
         w = base + (joy_score * 0.5) + (resonance_score * 0.5)
 
         # --- Importance Jitter (v7.4 Enhancement) ---
-        # Add slight random fluctuation to drive emergent clustering
-        import random
-        jitter = random.uniform(-0.05, 0.05)
-        w += jitter
+        # Removed random jitter to ensure deterministic validation and stable indexing.
         # --------------------------------------------
 
         # Content length as minor importance signal

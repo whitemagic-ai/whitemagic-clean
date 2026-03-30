@@ -65,12 +65,27 @@ def validate_5d(num_samples: int = 50, k: int = 10):
     validation_index = rs.SpatialIndex5D()
     print(f"Created isolated validation index. Populating with {len(valid_ids)} points...")
     
-    # Batch load coordinates for the valid subset
+    # Use the encoder directly to ensure we are testing the LATEST logic, 
+    # not just what was previously stored in the DB.
+    # This also removes DB-storage latency from the validation.
     with um.backend.pool.connection() as conn:
         placeholders = ",".join(["?"] * len(valid_ids))
-        rows = conn.execute(f"SELECT memory_id, x, y, z, w, COALESCE(v, 0.5) FROM holographic_coords WHERE memory_id IN ({placeholders})", valid_ids).fetchall()
+        rows = conn.execute(f"SELECT id, content, title, tags, memory_type, created_at, importance, access_count, galactic_distance, emotional_valence, neuro_score, joy_score, resonance_score FROM memories WHERE id IN ({placeholders})", valid_ids).fetchall()
+        
+        column_names = [description[0] for description in conn.execute(f"SELECT * FROM memories LIMIT 1").description]
+        
         for r in rows:
-            validation_index.add(r[0], [r[1], r[2], r[3], r[4], r[5]])
+            mem_dict = dict(zip(column_names, r))
+            # Handle potential metadata/tags JSON
+            if isinstance(mem_dict.get("tags"), str):
+                import json
+                try:
+                    mem_dict["tags"] = json.loads(mem_dict["tags"])
+                except:
+                    mem_dict["tags"] = []
+            
+            coord = encoder.encode(mem_dict)
+            validation_index.add(mem_dict["id"], [coord.x, coord.y, coord.z, coord.w, coord.v])
     
     print(f"Isolated index ready (size: {validation_index.size()})")
 
@@ -93,16 +108,24 @@ def validate_5d(num_samples: int = 50, k: int = 10):
 
         # --- Channel A: True Semantic Similarity (Ground Truth) ---
         start = time.time()
+        # Use cached embeddings since model isn't installed
         semantic_hits = engine.search_similar(mid, limit=k+1)
         semantic_ids = [hit["memory_id"] for hit in semantic_hits if hit["memory_id"] != mid]
         total_semantic_time += (time.time() - start)
 
-        # --- Channel B: Fast 5D Spatial Search (Weighted) ---
+        # --- Channel B: Fast 5D Spatial Search (Balanced Weights) ---
         start = time.time()
         coord = encoder.encode(mem.to_dict())
-        # Weighted 5D search (High weight on X/Y)
-        weights_5d = [1.0, 1.0, 0.2, 0.2, 0.2]
-        query_5d = [coord.x * weights_5d[0], coord.y * weights_5d[1], coord.z * weights_5d[2], coord.w * weights_5d[3], coord.v * weights_5d[4]]
+        # Use equal weights for X/Y and lower for Z/W/V to emphasize semantic axes
+        # but keep them within the same search space.
+        weights_5d = [1.0, 1.0, 0.5, 0.5, 0.5]
+        query_5d = [
+            coord.x * weights_5d[0], 
+            coord.y * weights_5d[1], 
+            coord.z * weights_5d[2], 
+            coord.w * weights_5d[3], 
+            coord.v * weights_5d[4]
+        ]
         
         spatial_hits_5d = validation_index.query_nearest(query_5d, k+1)
         spatial_ids_5d = [r[0] for r in spatial_hits_5d if r[0] != mid]
