@@ -78,9 +78,127 @@ class HolographicCoordinate:
 class CoordinateEncoder:
     """Encodes memories into holographic coordinates (v2.0)."""
 
+    # --- Semantic Anchors (v2.2 Enhancement) ---
+    # These IDs represent distant poles in the current embedding space to maximize coordinate spread.
+    # Logic/Discovery vs Raw/Benchmark
+    ANCHOR_LOGIC_ID = "94686509-0c62-4eab-8982-f05854b9260c" 
+    ANCHOR_EMOTION_ID = "10d941db3b412bc4"
+    # Macro/Reflection vs Micro/Benchmark
+    ANCHOR_MICRO_ID = "65c71447fca6a036"
+    ANCHOR_MACRO_ID = "7f39ac19-4cfd-4a9f-8d24-d15701321c6c"
+
     def __init__(self) -> None:
         self._cache: dict[str, HolographicCoordinate] = {}
         self._garden_bias_enabled = True
+        self._embedding_engine: Any | None = None
+        self._anchor_embeddings: dict[str, Any] = {} # Now stores numpy arrays
+        self._mean_vector: Any | None = None
+        self._load_mean_vector()
+
+    def _load_mean_vector(self) -> None:
+        """Load the semantic mean vector for centering embeddings."""
+        import json
+        import os
+        import numpy as np
+        path = "/home/lucas/Desktop/whitemagicdev/core_system/data/semantic_mean_vector.json"
+        if os.path.exists(path):
+            try:
+                with open(path, "r") as f:
+                    self._mean_vector = np.array(json.load(f))
+            except Exception:
+                pass
+
+    def _center_vector(self, vec: list[float] | Any) -> Any:
+        """Subtract the mean vector from the given vector to amplify directional signal."""
+        if self._mean_vector is None or vec is None:
+            return vec
+        import numpy as np
+        v = np.array(vec)
+        # Ensure dimensions match
+        if v.shape == self._mean_vector.shape:
+            return v - self._mean_vector
+        return v
+
+    def _get_embedding_engine(self) -> Any:
+        """Lazy-load the embedding engine."""
+        if self._embedding_engine is None:
+            try:
+                from whitemagic.core.memory.embeddings import get_embedding_engine
+                self._embedding_engine = get_embedding_engine()
+            except ImportError:
+                pass
+        return self._embedding_engine
+
+    def _get_anchor_embedding(self, name: str, anchor_id: str) -> Any | None:
+        """Get the cached and centered embedding for a semantic anchor ID."""
+        if name in self._anchor_embeddings:
+            return self._anchor_embeddings[name]
+        
+        engine = self._get_embedding_engine()
+        if engine:
+            vec = engine.get_cached_embedding(anchor_id)
+            if vec:
+                centered = self._center_vector(vec)
+                self._anchor_embeddings[name] = centered
+                return centered
+        return None
+
+    def _calculate_semantic_bias(self, memory: dict[str, Any], axis: str) -> float:
+        """Calculate semantic bias for an axis (x or y) using vector projection.
+        This projects the memory vector onto the axis formed by two anchor poles.
+        """
+        engine = self._get_embedding_engine()
+        if not engine or not engine.available(include_cache=True):
+            return 0.0
+
+        mem_id = memory.get("id")
+        if not mem_id:
+            return 0.0
+            
+        mem_vec = engine.get_cached_embedding(mem_id)
+        if not mem_vec:
+            return 0.0
+
+        import numpy as np
+        # Center the memory vector
+        v = self._center_vector(mem_vec)
+        
+        if axis == "x":
+            # Axis: Logic (+) <---> Emotion (-)
+            p1 = self._get_anchor_embedding("logic", self.ANCHOR_LOGIC_ID)
+            p2 = self._get_anchor_embedding("emotion", self.ANCHOR_EMOTION_ID)
+            
+            if p1 is not None and p2 is not None:
+                # Axis vector from p2 to p1
+                axis_vec = p1 - p2
+                axis_norm = np.linalg.norm(axis_vec)
+                if axis_norm < 1e-6: return 0.0
+                
+                # Project (v - p2) onto axis_vec
+                # Result is in range [0, 1] if v is between p2 and p1
+                projection = np.dot(v - p2, axis_vec) / (axis_norm**2)
+                
+                # Map [0, 1] to [-1, 1]
+                score = (projection * 2.0) - 1.0
+                # Amplify the center to push toward edges if needed, 
+                # but projection is already quite sensitive.
+                return max(-1.0, min(1.0, score * 1.5))
+        
+        elif axis == "y":
+            # Axis: Macro (+) <---> Micro (-)
+            p1 = self._get_anchor_embedding("macro", self.ANCHOR_MACRO_ID)
+            p2 = self._get_anchor_embedding("micro", self.ANCHOR_MICRO_ID)
+            
+            if p1 is not None and p2 is not None:
+                axis_vec = p1 - p2
+                axis_norm = np.linalg.norm(axis_vec)
+                if axis_norm < 1e-6: return 0.0
+                
+                projection = np.dot(v - p2, axis_vec) / (axis_norm**2)
+                score = (projection * 2.0) - 1.0
+                return max(-1.0, min(1.0, score * 1.5))
+
+        return 0.0
 
     def encode(self, memory: dict[str, Any]) -> HolographicCoordinate:
         """Encode a memory dictionary into a HolographicCoordinate."""
@@ -322,6 +440,11 @@ class CoordinateEncoder:
         # Add hash-based variation to prevent clustering
         score += self._content_hash_bias(memory, "x")
 
+        # --- Semantic Bias (v2.1 Enhancement) ---
+        # Inject semantic signal from embeddings (0.7 weight)
+        semantic_bias = self._calculate_semantic_bias(memory, "x")
+        score = (score * 0.2) + (semantic_bias * 0.8)
+
         return max(-1.0, min(1.0, score))
 
     def _calculate_y(self, memory: dict[str, Any]) -> float:
@@ -370,6 +493,11 @@ class CoordinateEncoder:
 
         # Hash variation
         score += self._content_hash_bias(memory, "y")
+
+        # --- Semantic Bias (v2.1 Enhancement) ---
+        # Inject semantic signal from embeddings (0.7 weight)
+        semantic_bias = self._calculate_semantic_bias(memory, "y")
+        score = (score * 0.2) + (semantic_bias * 0.8)
 
         return max(-1.0, min(1.0, score))
 

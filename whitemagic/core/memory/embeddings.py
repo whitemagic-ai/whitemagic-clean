@@ -162,8 +162,23 @@ class EmbeddingEngine:
         self._cold_vec_cache_lock = threading.Lock()
         self._cold_vec_cache_count: int = 0
 
-    def available(self) -> bool:
-        """Check if embedding backend is available."""
+    def available(self, include_cache: bool = False) -> bool:
+        """Check if embedding backend is available.
+        
+        If include_cache is True, returns True if at least the database 
+        cache of embeddings exists, even if the model cannot be loaded.
+        """
+        if include_cache:
+            db = self._get_db()
+            if db is not None:
+                try:
+                    # Check if there are actually any embeddings
+                    res = db.execute("SELECT COUNT(*) FROM memory_embeddings").fetchone()
+                    return res[0] > 0
+                except Exception:
+                    return False
+            return False
+
         if self._available is not None:
             return self._available
 
@@ -686,7 +701,20 @@ class EmbeddingEngine:
         Sorted by similarity descending.
 
         """
-        query_vec = self.encode(query)
+        query_vec = None
+        # Try to use existing embedding if query is a memory_id
+        is_id = False
+        if len(query) == 32 and all(c in "0123456789abcdef" for c in query.lower()):
+            is_id = True
+        elif len(query) < 50 and "-" in query:
+            is_id = True
+            
+        if is_id:
+            query_vec = self.get_cached_embedding(query)
+            
+        if query_vec is None:
+            query_vec = self.encode(query)
+            
         if query_vec is None:
             return []
 
