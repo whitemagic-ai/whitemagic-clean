@@ -70,11 +70,11 @@ def validate_5d(num_samples: int = 50, k: int = 10):
     # This also removes DB-storage latency from the validation.
     with um.backend.pool.connection() as conn:
         placeholders = ",".join(["?"] * len(valid_ids))
-        # Note: 'tags' is stored inside 'metadata' JSON in the schema
-        rows = conn.execute(f"SELECT id, content, title, metadata, memory_type, created_at, importance, access_count, galactic_distance, emotional_valence, neuro_score, joy_score, resonance_score FROM memories WHERE id IN ({placeholders})", valid_ids).fetchall()
+        # Note: 'tags', 'joy_score', 'resonance_score' are stored inside 'metadata' JSON in the schema
+        rows = conn.execute(f"SELECT id, content, title, metadata, memory_type, created_at, importance, access_count, galactic_distance, emotional_valence, neuro_score FROM memories WHERE id IN ({placeholders})", valid_ids).fetchall()
         
         # Get column names from the cursor description of the actual query
-        column_names = [description[0] for description in conn.execute(f"SELECT id, content, title, metadata, memory_type, created_at, importance, access_count, galactic_distance, emotional_valence, neuro_score, joy_score, resonance_score FROM memories LIMIT 1").description]
+        column_names = [description[0] for description in conn.execute(f"SELECT id, content, title, metadata, memory_type, created_at, importance, access_count, galactic_distance, emotional_valence, neuro_score FROM memories LIMIT 1").description]
         
         for r in rows:
             mem_dict = dict(zip(column_names, r))
@@ -84,13 +84,19 @@ def validate_5d(num_samples: int = 50, k: int = 10):
                 try:
                     meta = json.loads(mem_dict["metadata"])
                     mem_dict["tags"] = meta.get("tags", [])
+                    mem_dict["joy_score"] = meta.get("joy_score", 0.0)
+                    mem_dict["resonance_score"] = meta.get("resonance_score", 0.0)
                     # CoordinateEncoder also looks at 'metadata' for garden bias
                     mem_dict["metadata"] = meta
                 except:
                     mem_dict["tags"] = []
+                    mem_dict["joy_score"] = 0.0
+                    mem_dict["resonance_score"] = 0.0
                     mem_dict["metadata"] = {}
             else:
                 mem_dict["tags"] = []
+                mem_dict["joy_score"] = 0.0
+                mem_dict["resonance_score"] = 0.0
                 mem_dict["metadata"] = {}
             
             coord = encoder.encode(mem_dict)
