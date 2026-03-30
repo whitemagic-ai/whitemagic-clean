@@ -41,8 +41,22 @@ from typing import Any, cast
 
 try:
     import numpy as np
+    _ndarray = np.ndarray
+    _float32 = np.float32
+    _linalg_norm = np.linalg.norm
+    _asarray = np.asarray
+    _zeros = np.zeros
+    _array = np.array
+    _where = np.where
 except ImportError:
     np = None
+    _ndarray = type(None)
+    _float32 = float
+    _linalg_norm = None
+    _asarray = None
+    _zeros = None
+    _array = None
+    _where = None
 
 
 logger = logging.getLogger(__name__)
@@ -69,58 +83,50 @@ def _cosine_similarity(a: list[float], b: list[float]) -> float:
 
 
 def _batch_cosine_similarity_numpy(query_vec: Any, matrix: Any, pre_normalized: bool = False) -> Any:
-    """Vectorized batch cosine similarity using numpy.
-
-    Args:
-        query_vec: 1D numpy array of shape (D,).
-        matrix: 2D numpy array of shape (N, D) — contiguous, float32.
-        pre_normalized: If True, matrix rows are already unit-length.
-            Skips the per-row norm computation — saves ~30% of FLOPS.
-
-    Returns:
-        1D numpy array of shape (N,) with cosine similarities.
-
-    For 5,500 vectors × 384 dims this is one BLAS matrix-vector multiply
-    instead of 5,500 Python loops — typically 20-50× faster.
-    With pre_normalized=True, it's a single matmul: O(N*D) instead of O(2*N*D).
-    """
-    if np is None:
+    """Vectorized batch cosine similarity using numpy."""
+    if np is None or _linalg_norm is None or _zeros is None:
         raise ImportError("numpy is required for _batch_cosine_similarity_numpy")
+    
     # Normalize query
-    query_norm = np.linalg.norm(query_vec)
+    query_norm = _linalg_norm(query_vec)
     if query_norm == 0:
-        return cast(np.ndarray, np.zeros(matrix.shape[0], dtype=np.float32))
+        return _zeros(matrix.shape[0], dtype=_float32)
     q = query_vec / query_norm
 
     if pre_normalized:
-        # Matrix rows already unit-length: dot product == cosine similarity
-        return cast(np.ndarray, matrix @ q)
+        return matrix @ q
 
     # Normalize matrix rows
-    norms = np.linalg.norm(matrix, axis=1)
+    norms = _linalg_norm(matrix, axis=1)
     norms[norms == 0] = 1.0  # avoid division by zero
     dots = matrix @ q
-    return cast(np.ndarray, dots / norms)
+    return dots / norms
 
 
 def _batch_cosine_similarity(query: list[float] | Any, vectors: list[list[float]] | Any) -> list[float] | Any:
     """Batch cosine similarity — numpy fast path, Zig SIMD fallback, then pure Python."""
     # Fast path: if vectors is already a numpy array, use vectorized ops
-    if np is not None and isinstance(vectors, np.ndarray) and vectors.ndim == 2:
-        q = np.asarray(query, dtype=np.float32) if not isinstance(query, np.ndarray) else query
-        return _batch_cosine_similarity_numpy(q, vectors)
+    if np is not None and _asarray is not None:
+        is_ndarray = isinstance(vectors, _ndarray)
+        if is_ndarray and vectors.ndim == 2:
+            q = _asarray(query, dtype=_float32) if not isinstance(query, _ndarray) else query
+            return _batch_cosine_similarity_numpy(q, vectors)
 
     # Zig SIMD path for list inputs
     try:
         from whitemagic.core.acceleration.simd_cosine import batch_cosine as _simd_batch
-        return cast(list[float] | np.ndarray, _simd_batch(query, vectors))  # type: ignore[arg-type]
+        return _simd_batch(query, vectors) # type: ignore
     except Exception:
         pass
-    query_list = cast(list[float], query.tolist()) if isinstance(query, np.ndarray) else query
-    if np is not None and isinstance(vectors, np.ndarray):
-        vector_list = [cast(list[float], row.tolist()) for row in vectors]
-    else:
-        vector_list = vectors
+    
+    query_list = query
+    if np is not None and isinstance(query, _ndarray):
+        query_list = query.tolist()
+        
+    vector_list = vectors
+    if np is not None and isinstance(vectors, _ndarray):
+        vector_list = [row.tolist() for row in vectors]
+        
     return [_cosine_similarity(query_list, v) for v in vector_list]
 
 
@@ -146,10 +152,10 @@ class EmbeddingEngine:
         self._cold_db_conn: sqlite3.Connection | None = None
         self._cold_db_checked = False
         # In-memory vector cache for fast repeated searches (hot DB)
-        # Vectors stored as contiguous numpy array (N, 384) for SIMD-friendly search
+        # Vectors stored as contiguous arrays for SIMD-friendly search
         # Pre-normalized at load time: each row is unit-length, so dot product == cosine
         self._vec_cache_ids: list[str] | None = None
-        self._vec_cache_vecs: np.ndarray | None = None  # shape (N, EMBEDDING_DIM), float32, PRE-NORMALIZED
+        self._vec_cache_vecs: Any | None = None  # shape (N, EMBEDDING_DIM), PRE-NORMALIZED
         self._vec_cache_lock = threading.Lock()
         self._vec_cache_count: int = 0  # DB count at cache time
         # HNSW index (optional, O(log N) search)
@@ -163,7 +169,7 @@ class EmbeddingEngine:
         self._cold_hnsw_count: int = 0
         # Separate vector cache for cold DB
         self._cold_vec_cache_ids: list[str] | None = None
-        self._cold_vec_cache_vecs: np.ndarray | None = None  # shape (N, EMBEDDING_DIM), float32
+        self._cold_vec_cache_vecs: Any | None = None  # shape (N, EMBEDDING_DIM)
         self._cold_vec_cache_lock = threading.Lock()
         self._cold_vec_cache_count: int = 0
 
@@ -223,7 +229,7 @@ class EmbeddingEngine:
                     logger.info(f"Loaded LocalEmbedder (FastEmbed): {embedder.model_name}")
                     self._model = embedder
                     # Monkey-patch or wrap to match expected interface if needed
-                    # LocalEmbedder.embed returns np.ndarray, we need list[float]
+                    # LocalEmbedder.embed returns arrays, we need list[float]
                     return self._model
             except ImportError:
                 pass
@@ -332,7 +338,7 @@ class EmbeddingEngine:
         """Load or return cached vectors from cold DB."""
         cold_db = self._get_cold_db()
         if cold_db is None:
-            return [], (np.empty((0, EMBEDDING_DIM), dtype=np.float32) if np else [])
+            return [], []
 
         with self._cold_vec_cache_lock:
             try:
@@ -343,7 +349,7 @@ class EmbeddingEngine:
                 current_count = 0
 
             if current_count == 0:
-                return [], (np.empty((0, EMBEDDING_DIM), dtype=np.float32) if np else [])
+                return [], []
 
             if (self._cold_vec_cache_ids is not None
                     and self._cold_vec_cache_vecs is not None
@@ -356,21 +362,22 @@ class EmbeddingEngine:
                     "SELECT memory_id, embedding FROM memory_embeddings",
                 ).fetchall()
             except Exception:
-                return [], (np.empty((0, EMBEDDING_DIM), dtype=np.float32) if np else [])
+                return [], []
 
             ids = [r[0] for r in rows]
             valid_vecs = [_unpack_embedding(r[1]) for r in rows]
             
             if np is not None:
-                vecs = np.array(valid_vecs, dtype=np.float32)
+                vecs = _array(valid_vecs, dtype=_float32)
+                size_info = f"{getattr(vecs, 'nbytes', 0) / 1024:.0f} KB contiguous"
             else:
-                vecs = valid_vecs # type: ignore[assignment]
+                vecs = valid_vecs 
+                size_info = f"{len(valid_vecs)} lists"
 
             self._cold_vec_cache_ids = ids
             self._cold_vec_cache_vecs = vecs
             self._cold_vec_cache_count = current_count
             
-            size_info = f"{vecs.nbytes / 1024:.0f} KB contiguous" if np else f"{len(valid_vecs)} lists"
             logger.debug(f"Cold vector cache loaded: {len(ids)} embeddings ({size_info})")
             return ids, vecs
 
@@ -479,7 +486,7 @@ class EmbeddingEngine:
             self._hnsw_available = False
         return self._hnsw_available
 
-    def _build_hnsw_index(self, ids: list[str], vectors: np.ndarray) -> Any:
+    def _build_hnsw_index(self, ids: list[str], vectors: Any) -> Any:
         """Build an HNSW index from vectors.
 
         Parameters tuned for memory workloads:
@@ -545,9 +552,9 @@ class EmbeddingEngine:
     def _hnsw_search(self, query_vec: Any, index: Any, ids: list[str],
                      limit: int, min_similarity: float) -> list[dict[str, Any]]:
         """Search an HNSW index. Returns list of {memory_id, similarity, source}."""
-        if np is None:
+        if np is None or _asarray is None:
             return []
-        q = np.asarray(query_vec, dtype=np.float32).reshape(1, -1)
+        q = _asarray(query_vec, dtype=_float32).reshape(1, -1)
         k = min(limit * 3, len(ids))  # Over-fetch then filter
         labels, distances = index.knn_query(q, k=k)
         results = []
@@ -564,7 +571,7 @@ class EmbeddingEngine:
         """
         db = self._get_db()
         if db is None:
-            return [], (np.empty((0, EMBEDDING_DIM), dtype=np.float32) if np else [])
+            return [], []
 
         with self._vec_cache_lock:
             # Check if cache is still valid
@@ -586,10 +593,10 @@ class EmbeddingEngine:
                     "SELECT memory_id, embedding FROM memory_embeddings",
                 ).fetchall()
             except Exception:
-                return [], (np.empty((0, EMBEDDING_DIM), dtype=np.float32) if np else [])
+                return [], []
 
             if not rows:
-                return [], (np.empty((0, EMBEDDING_DIM), dtype=np.float32) if np else [])
+                return [], []
             # Filter by embedding dimension (avoid inhomogeneous shape errors)
             valid_ids = []
             valid_vecs = []
@@ -599,32 +606,28 @@ class EmbeddingEngine:
                     valid_ids.append(r[0])
                     valid_vecs.append(vec)
 
-            if np is not None:
-                ids = valid_ids
-                # Unpack all blobs into a single contiguous float32 array
-                vecs = np.array(
+            ids = valid_ids
+            if _array is not None and _linalg_norm is not None:
+                # Unpack all blobs into a single contiguous array
+                vecs = _array(
                     valid_vecs,
-                    dtype=np.float32,
+                    dtype=_float32,
                 )
                 if vecs.ndim == 1:
                     vecs = vecs.reshape(-1, EMBEDDING_DIM)
                 # Pre-normalize: each row becomes unit-length
-                norms = np.linalg.norm(vecs, axis=1, keepdims=True)
+                norms = _linalg_norm(vecs, axis=1, keepdims=True)
                 norms[norms == 0] = 1.0
                 vecs = vecs / norms
+                size_info = f"{getattr(vecs, 'nbytes', 0) / 1024:.0f} KB contiguous, pre-normalized"
             else:
-                ids = valid_ids
-                vecs = valid_vecs # type: ignore[assignment]
+                vecs = valid_vecs 
+                size_info = f"{len(valid_vecs)} lists"
 
             self._vec_cache_ids = ids
             self._vec_cache_vecs = vecs
             self._vec_cache_count = current_count
             
-            if np is not None and hasattr(vecs, "nbytes"):
-                size_info = f"{vecs.nbytes / 1024:.0f} KB contiguous, pre-normalized"
-            else:
-                size_info = f"{len(valid_vecs)} lists"
-                
             logger.debug(f"Vector cache loaded: {len(ids)} embeddings ({size_info})")
             return ids, vecs
 
@@ -744,8 +747,8 @@ class EmbeddingEngine:
 
         # HNSW fast path (O(log N) per query)
         hnsw_result = self._get_hnsw_index()
-        if hnsw_result is not None and np is not None:
-            q_np = np.asarray(query_vec, dtype=np.float32)
+        if hnsw_result is not None and np is not None and _asarray is not None:
+            q_np = _asarray(query_vec, dtype=_float32)
             hnsw_index, hnsw_ids = hnsw_result
             hits = self._hnsw_search(q_np, hnsw_index, hnsw_ids, limit, min_similarity)
             for hit in hits:
@@ -755,12 +758,18 @@ class EmbeddingEngine:
             # Brute-force fallback (O(N) per query)
             ids, vectors = self._load_vec_cache()
             if ids:
-                if np is not None and isinstance(vectors, np.ndarray):
-                    q_np = np.asarray(query_vec, dtype=np.float32)
+                if np is not None and _asarray is not None and isinstance(vectors, _ndarray):
+                    q_np = _asarray(query_vec, dtype=_float32)
                     scores = _batch_cosine_similarity_numpy(q_np, vectors, pre_normalized=True)
                     mask = scores >= min_similarity
-                    for idx in np.where(mask)[0]:
-                        results.append({"memory_id": ids[idx], "similarity": round(float(scores[idx]), 4), "source": "hot"})
+                    if _where is not None:
+                        for idx in _where(mask)[0]:
+                            results.append({"memory_id": ids[idx], "similarity": round(float(scores[idx]), 4), "source": "hot"})
+                    else:
+                        # Fallback for where if somehow not aliased
+                        for idx, m_val in enumerate(mask):
+                            if m_val:
+                                results.append({"memory_id": ids[idx], "similarity": round(float(scores[idx]), 4), "source": "hot"})
                 else:
                     # Pure Python fallback
                     for mid, vec in zip(ids, vectors):
@@ -774,8 +783,8 @@ class EmbeddingEngine:
 
             # HNSW fast path for cold
             cold_hnsw = self._get_cold_hnsw_index()
-            if cold_hnsw is not None and np is not None:
-                q_np = np.asarray(query_vec, dtype=np.float32)
+            if cold_hnsw is not None and np is not None and _asarray is not None:
+                q_np = _asarray(query_vec, dtype=_float32)
                 cold_index, cold_hnsw_ids = cold_hnsw
                 cold_hits = self._hnsw_search(q_np, cold_index, cold_hnsw_ids, limit, min_similarity)
                 for hit in cold_hits:
@@ -786,14 +795,21 @@ class EmbeddingEngine:
                 # Brute-force fallback for cold
                 cold_ids, cold_vectors = self._load_cold_vec_cache()
                 if cold_ids:
-                    if np is not None and isinstance(cold_vectors, np.ndarray):
-                        q_np = np.asarray(query_vec, dtype=np.float32)
+                    if np is not None and _asarray is not None and isinstance(cold_vectors, _ndarray):
+                        q_np = _asarray(query_vec, dtype=_float32)
                         cold_scores = _batch_cosine_similarity(q_np, cold_vectors)
                         mask = cold_scores >= min_similarity
-                        for idx in np.where(mask)[0]:
-                            mid = cold_ids[idx]
-                            if mid not in hot_id_set:
-                                results.append({"memory_id": mid, "similarity": round(float(cold_scores[idx]), 4), "source": "cold"})
+                        if _where is not None:
+                            for idx in _where(mask)[0]:
+                                mid = cold_ids[idx]
+                                if mid not in hot_id_set:
+                                    results.append({"memory_id": mid, "similarity": round(float(cold_scores[idx]), 4), "source": "cold"})
+                        else:
+                            for idx, m_val in enumerate(mask):
+                                if m_val:
+                                    mid = cold_ids[idx]
+                                    if mid not in hot_id_set:
+                                        results.append({"memory_id": mid, "similarity": round(float(cold_scores[idx]), 4), "source": "cold"})
                     else:
                         # Pure Python fallback
                         for mid, vec in zip(cold_ids, cold_vectors):
@@ -826,25 +842,36 @@ class EmbeddingEngine:
         n = len(ids)
 
         # Batch approach: for each vector, compute cosine against all subsequent
-        # With numpy arrays, vectors[i] is a view and vectors[i+1:] is a slice
-        # — no copying, just pointer arithmetic on the contiguous buffer
         for i in range(n):
             if len(pairs) >= max_pairs * 3:  # collect extra, trim later
                 break
             remaining = vectors[i + 1:]
             if len(remaining) == 0:
                 break
-            scores = _batch_cosine_similarity(vectors[i], remaining)
-            if isinstance(scores, np.ndarray):
+            
+            # Check if we are in numpy mode or list mode
+            if np is not None and isinstance(vectors, _ndarray):
+                scores = _batch_cosine_similarity(vectors[i], remaining)
                 mask = scores >= min_similarity
-                for j_offset in np.where(mask)[0]:
-                    pairs.append({
-                        "source_id": ids[i],
-                        "target_id": ids[i + 1 + int(j_offset)],
-                        "similarity": round(float(scores[j_offset]), 4),
-                    })
+                if _where is not None:
+                    for j_offset in _where(mask)[0]:
+                        pairs.append({
+                            "source_id": ids[i],
+                            "target_id": ids[i + 1 + int(j_offset)],
+                            "similarity": round(float(scores[j_offset]), 4),
+                        })
+                else:
+                    for j_offset, m_val in enumerate(mask):
+                        if m_val:
+                            pairs.append({
+                                "source_id": ids[i],
+                                "target_id": ids[i + 1 + j_offset],
+                                "similarity": round(float(scores[j_offset]), 4),
+                            })
             else:
-                for j_offset, sim in enumerate(scores):
+                # Pure Python fallback
+                for j_offset, other_vec in enumerate(remaining):
+                    sim = _cosine_similarity(vectors[i], other_vec)
                     if sim >= min_similarity:
                         pairs.append({
                             "source_id": ids[i],
