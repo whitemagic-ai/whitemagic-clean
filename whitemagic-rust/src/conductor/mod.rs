@@ -11,7 +11,8 @@ use std::sync::{
 use std::time::{Duration, Instant};
 
 pub mod dag;
-pub mod event_bus;
+pub mod webhooks;
+pub mod management;
 pub mod health;
 pub mod lifecycle;
 pub mod nervous_system;
