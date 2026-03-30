@@ -8,16 +8,16 @@ pub const compute = struct {
     pub const holographic = @import("compute/holographic.zig");
     pub const simd_cosine = @import("compute/simd_cosine.zig");
     pub const holographic_5d = @import("compute/holographic_5d.zig");
-pub const compute = struct {
-    pub const holographic = @import("compute/holographic.zig");
-    pub const simd_cosine = @import("compute/simd_cosine.zig");
-    pub const holographic_5d = @import("compute/holographic_5d.zig");
     pub const constellation = @import("compute/constellation.zig");
     pub const vector_batch = @import("compute/vector_batch.zig");
     pub const keyword_extract = @import("compute/keyword_extract.zig");
     pub const distance_matrix = @import("compute/distance_matrix.zig");
     pub const graph_transitions = @import("compute/graph_transitions.zig");
     pub const embedding_quant = @import("compute/embedding_quant.zig");
+};
+pub const iching = @import("iching.zig");
+pub const genomics = struct {
+    pub const metabolic = @import("genomics/metabolic.zig");
 };
 pub const io = struct {
     pub const bridge = @import("io/bridge.zig");

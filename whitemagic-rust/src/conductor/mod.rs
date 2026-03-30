@@ -11,14 +11,21 @@ use std::sync::{
 use std::time::{Duration, Instant};
 
 pub mod dag;
-pub mod webhooks;
-pub mod management;
+pub mod event_bus;
 pub mod health;
 pub mod lifecycle;
 pub mod nervous_system;
 pub mod primitives;
 pub mod registry;
 pub mod sangha_bridge;
+pub mod spatial_index;
+pub mod webhooks;
+pub mod management;
+
+use crate::conductor::spatial_index::Point5D;
+use crate::conductor::webhooks::WebhookDispatcher;
+use crate::conductor::management::GalaxyManager;
+use crate::conductor::sangha_bridge::SanghaBridge;
 
 #[cfg(test)]
 pub mod stress_tests;
