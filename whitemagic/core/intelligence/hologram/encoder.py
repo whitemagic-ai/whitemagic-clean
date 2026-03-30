@@ -91,20 +91,19 @@ class CoordinateEncoder:
         self._cache: dict[str, HolographicCoordinate] = {}
         self._garden_bias_enabled = True
         self._embedding_engine: Any | None = None
-        self._anchor_embeddings: dict[str, Any] = {} # Now stores numpy arrays
-        self._mean_vector: Any | None = None
+        self._anchor_embeddings: dict[str, Any] = {} # Now stores list[float]
+        self._mean_vector: list[float] | None = None
         self._load_mean_vector()
 
     def _load_mean_vector(self) -> None:
         """Load the semantic mean vector for centering embeddings."""
         import json
         import os
-        import numpy as np
         path = "/home/lucas/Desktop/whitemagicdev/core_system/data/semantic_mean_vector.json"
         if os.path.exists(path):
             try:
                 with open(path, "r") as f:
-                    self._mean_vector = np.array(json.load(f))
+                    self._mean_vector = json.load(f)
             except Exception:
                 pass
 
@@ -112,12 +111,10 @@ class CoordinateEncoder:
         """Subtract the mean vector from the given vector to amplify directional signal."""
         if self._mean_vector is None or vec is None:
             return vec
-        import numpy as np
-        v = np.array(vec)
-        # Ensure dimensions match
-        if v.shape == self._mean_vector.shape:
-            return v - self._mean_vector
-        return v
+        # Pure Python implementation to avoid numpy dependency on VPS
+        if len(vec) == len(self._mean_vector):
+            return [v - m for v, m in zip(vec, self._mean_vector)]
+        return vec
 
     def _get_embedding_engine(self) -> Any:
         """Lazy-load the embedding engine."""
@@ -159,10 +156,19 @@ class CoordinateEncoder:
         if not mem_vec:
             return 0.0
 
-        import numpy as np
+        import math
         # Center the memory vector
         v = self._center_vector(mem_vec)
         
+        def dot_product(v1, v2):
+            return sum(x * y for x, y in zip(v1, v2))
+        
+        def vec_norm(v1):
+            return math.sqrt(sum(x * x for x in v1))
+            
+        def vec_sub(v1, v2):
+            return [x - y for x, y in zip(v1, v2)]
+
         if axis == "x":
             # Axis: Logic (+) <---> Emotion (-)
             p1 = self._get_anchor_embedding("logic", self.ANCHOR_LOGIC_ID)
@@ -170,18 +176,18 @@ class CoordinateEncoder:
             
             if p1 is not None and p2 is not None:
                 # Axis vector from p2 to p1
-                axis_vec = p1 - p2
-                axis_norm = np.linalg.norm(axis_vec)
+                axis_vec = vec_sub(p1, p2)
+                axis_norm = vec_norm(axis_vec)
                 if axis_norm < 1e-6: return 0.0
                 
                 # Project (v - p2) onto axis_vec
                 # Result is in range [0, 1] if v is between p2 and p1
-                projection = np.dot(v - p2, axis_vec) / (axis_norm**2)
+                v_minus_p2 = vec_sub(v, p2)
+                projection = dot_product(v_minus_p2, axis_vec) / (axis_norm**2)
                 
                 # Map [0, 1] to [-1, 1]
                 score = (projection * 2.0) - 1.0
-                # Amplify the center to push toward edges if needed, 
-                # but projection is already quite sensitive.
+                # Amplify the center to push toward edges if needed
                 return max(-1.0, min(1.0, score * 1.5))
         
         elif axis == "y":
@@ -190,11 +196,12 @@ class CoordinateEncoder:
             p2 = self._get_anchor_embedding("micro", self.ANCHOR_MICRO_ID)
             
             if p1 is not None and p2 is not None:
-                axis_vec = p1 - p2
-                axis_norm = np.linalg.norm(axis_vec)
+                axis_vec = vec_sub(p1, p2)
+                axis_norm = vec_norm(axis_vec)
                 if axis_norm < 1e-6: return 0.0
                 
-                projection = np.dot(v - p2, axis_vec) / (axis_norm**2)
+                v_minus_p2 = vec_sub(v, p2)
+                projection = dot_product(v_minus_p2, axis_vec) / (axis_norm**2)
                 score = (projection * 2.0) - 1.0
                 return max(-1.0, min(1.0, score * 1.5))
 
