@@ -70,19 +70,28 @@ def validate_5d(num_samples: int = 50, k: int = 10):
     # This also removes DB-storage latency from the validation.
     with um.backend.pool.connection() as conn:
         placeholders = ",".join(["?"] * len(valid_ids))
-        rows = conn.execute(f"SELECT id, content, title, tags, memory_type, created_at, importance, access_count, galactic_distance, emotional_valence, neuro_score, joy_score, resonance_score FROM memories WHERE id IN ({placeholders})", valid_ids).fetchall()
+        # Note: 'tags' is stored inside 'metadata' JSON in the schema
+        rows = conn.execute(f"SELECT id, content, title, metadata, memory_type, created_at, importance, access_count, galactic_distance, emotional_valence, neuro_score, joy_score, resonance_score FROM memories WHERE id IN ({placeholders})", valid_ids).fetchall()
         
-        column_names = [description[0] for description in conn.execute(f"SELECT * FROM memories LIMIT 1").description]
+        # Get column names from the cursor description of the actual query
+        column_names = [description[0] for description in conn.execute(f"SELECT id, content, title, metadata, memory_type, created_at, importance, access_count, galactic_distance, emotional_valence, neuro_score, joy_score, resonance_score FROM memories LIMIT 1").description]
         
         for r in rows:
             mem_dict = dict(zip(column_names, r))
-            # Handle potential metadata/tags JSON
-            if isinstance(mem_dict.get("tags"), str):
+            # Extract tags and other fields from metadata JSON
+            if isinstance(mem_dict.get("metadata"), str):
                 import json
                 try:
-                    mem_dict["tags"] = json.loads(mem_dict["tags"])
+                    meta = json.loads(mem_dict["metadata"])
+                    mem_dict["tags"] = meta.get("tags", [])
+                    # CoordinateEncoder also looks at 'metadata' for garden bias
+                    mem_dict["metadata"] = meta
                 except:
                     mem_dict["tags"] = []
+                    mem_dict["metadata"] = {}
+            else:
+                mem_dict["tags"] = []
+                mem_dict["metadata"] = {}
             
             coord = encoder.encode(mem_dict)
             validation_index.add(mem_dict["id"], [coord.x, coord.y, coord.z, coord.w, coord.v])
