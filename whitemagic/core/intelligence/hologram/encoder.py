@@ -81,11 +81,11 @@ class CoordinateEncoder:
     # --- Semantic Anchors (v2.2 Enhancement) ---
     # These IDs represent distant poles in the current embedding space to maximize coordinate spread.
     # Logic/Discovery vs Raw/Benchmark
-    ANCHOR_LOGIC_ID = "94686509-0c62-4eab-8982-f05854b9260c" 
-    ANCHOR_EMOTION_ID = "10d941db3b412bc4"
+    ANCHOR_LOGIC_ID = "d6b2744b046b393d"
+    ANCHOR_EMOTION_ID = "2c5f053e-7e48-4c36-864c-2ffa56a41b8b"
     # Macro/Reflection vs Micro/Benchmark
-    ANCHOR_MICRO_ID = "65c71447fca6a036"
-    ANCHOR_MACRO_ID = "7f39ac19-4cfd-4a9f-8d24-d15701321c6c"
+    ANCHOR_MICRO_ID = "4014f885772414b2107d57fb42a34518"
+    ANCHOR_MACRO_ID = "a565d6e0667bbbc6af43292ce0b53dd0"
 
     def __init__(self) -> None:
         self._cache: dict[str, HolographicCoordinate] = {}
