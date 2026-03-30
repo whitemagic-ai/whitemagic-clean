@@ -81,11 +81,11 @@ class CoordinateEncoder:
     # --- Semantic Anchors (v2.2 Enhancement) ---
     # These IDs represent distant poles in the current embedding space to maximize coordinate spread.
     # Logic/Discovery vs Raw/Benchmark
-    ANCHOR_LOGIC_ID = "d6b2744b046b393d"
-    ANCHOR_EMOTION_ID = "2c5f053e-7e48-4c36-864c-2ffa56a41b8b"
+    ANCHOR_LOGIC_ID = "3c9afb8e-bca0-4ef1-bc1d-64dd5595b93f"
+    ANCHOR_EMOTION_ID = "33c01076f2580558"
     # Macro/Reflection vs Micro/Benchmark
-    ANCHOR_MICRO_ID = "4014f885772414b2107d57fb42a34518"
-    ANCHOR_MACRO_ID = "a565d6e0667bbbc6af43292ce0b53dd0"
+    ANCHOR_MICRO_ID = "34d35ecd387033af270bdcbd973dd0fc"
+    ANCHOR_MACRO_ID = "1d2d36b19b9b0757"
 
     def __init__(self) -> None:
         self._cache: dict[str, HolographicCoordinate] = {}
@@ -93,7 +93,9 @@ class CoordinateEncoder:
         self._embedding_engine: Any | None = None
         self._anchor_embeddings: dict[str, Any] = {} # Now stores list[float]
         self._mean_vector: list[float] | None = None
+        self._pca_components: dict[str, list[float]] | None = None
         self._load_mean_vector()
+        self._load_pca_components()
 
     def _load_mean_vector(self) -> None:
         """Load the semantic mean vector for centering embeddings."""
@@ -104,6 +106,18 @@ class CoordinateEncoder:
             try:
                 with open(path, "r") as f:
                     self._mean_vector = json.load(f)
+            except Exception:
+                pass
+
+    def _load_pca_components(self) -> None:
+        """Load the PCA components for direct axis projection."""
+        import json
+        import os
+        path = "/home/lucas/Desktop/whitemagicdev/core_system/data/semantic_pca_components.json"
+        if os.path.exists(path):
+            try:
+                with open(path, "r") as f:
+                    self._pca_components = json.load(f)
             except Exception:
                 pass
 
@@ -141,8 +155,8 @@ class CoordinateEncoder:
         return None
 
     def _calculate_semantic_bias(self, memory: dict[str, Any], axis: str) -> float:
-        """Calculate semantic bias for an axis (x or y) using vector projection.
-        This projects the memory vector onto the axis formed by two anchor poles.
+        """Calculate semantic bias for an axis (x or y) using PCA projection or vector projection.
+        PCA projection is preferred as it captures the maximum variance of the dataset.
         """
         engine = self._get_embedding_engine()
         if not engine or not engine.available(include_cache=True):
@@ -169,6 +183,17 @@ class CoordinateEncoder:
         def vec_sub(v1, v2):
             return [x - y for x, y in zip(v1, v2)]
 
+        # --- PCA Projection Path (Preferred) ---
+        if self._pca_components:
+            pc_vec = self._pca_components.get(f"{axis}_axis")
+            if pc_vec:
+                # Direct projection onto the principal component
+                score = dot_product(v, pc_vec)
+                # PCA scores can be large, but for MiniLM they are usually in [-0.5, 0.5] after centering
+                # We normalize to [-1, 1] with some amplification
+                return max(-1.0, min(1.0, score * 3.0))
+
+        # --- Anchor-based Fallback ---
         if axis == "x":
             # Axis: Logic (+) <---> Emotion (-)
             p1 = self._get_anchor_embedding("logic", self.ANCHOR_LOGIC_ID)

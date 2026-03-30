@@ -5,7 +5,7 @@ import numpy as np
 from whitemagic.core.memory.embeddings import _unpack_embedding, EMBEDDING_DIM
 
 def find_poles():
-    print("🔍 Analyzing embedding space for semantic poles...")
+    print("🔍 Performing SVD-based PCA on embedding space for optimal 5D alignment...")
     
     db_path = "memory/whitemagic.db"
     conn = sqlite3.connect(db_path)
@@ -27,78 +27,50 @@ def find_poles():
     X = np.array(vecs)
     print(f"Loaded {len(ids)} embeddings.")
     
-    # Calculate mean vector
+    # 1. Calculate and save mean vector
     mean_vec = np.mean(X, axis=0)
-    
-    # Save mean vector
     mean_path = "core_system/data/semantic_mean_vector.json"
     with open(mean_path, "w") as f:
         json.dump(mean_vec.tolist(), f)
     print(f"✅ Updated semantic mean vector at {mean_path}")
     
-    # Center X
+    # 2. Perform SVD for Principal Components
     X_centered = X - mean_vec
+    # full_matrices=False gives us the economy SVD
+    u, s, vh = np.linalg.svd(X_centered, full_matrices=False)
     
-    # Find poles using PCA or just max variance directions
-    # For now, let's find the vectors furthest from the mean in opposite directions
-    # 1. Logic vs Emotion (we'll look for keywords to find the initial seed, then find neighbors)
+    # Principal components are the rows of vh
+    pc1 = vh[0]
+    pc2 = vh[1]
     
-    def find_extreme_by_keywords(pos_kws, neg_kws):
-        # Find memories matching keywords to get a direction
-        pos_indices = []
-        neg_indices = []
-        
-        for i, mid in enumerate(ids):
-            # Fetch content for keywords
-            row = conn.execute("SELECT title, content FROM memories WHERE id = ?", (mid,)).fetchone()
-            if not row: continue
-            text = (row[0] or "") + " " + (row[1] or "")
-            text = text.lower()
-            
-            if any(kw in text for kw in pos_kws):
-                pos_indices.append(i)
-            if any(kw in text for kw in neg_kws):
-                neg_indices.append(i)
-        
-        if not pos_indices or not neg_indices:
-            return None, None
-            
-        # Get mean direction for pos and neg
-        pos_dir = np.mean(X_centered[pos_indices], axis=0)
-        neg_dir = np.mean(X_centered[neg_indices], axis=0)
-        
-        # Normalize
-        pos_dir /= np.linalg.norm(pos_dir)
-        neg_dir /= np.linalg.norm(neg_dir)
-        
-        # Find furthest in these directions
-        pos_scores = X_centered @ pos_dir
-        neg_scores = X_centered @ neg_dir
-        
-        best_pos_idx = np.argmax(pos_scores)
-        best_neg_idx = np.argmax(neg_scores)
-        
-        return ids[best_pos_idx], ids[best_neg_idx]
+    # Calculate explained variance ratio
+    total_var = np.sum(s**2)
+    explained_variance = (s**2) / total_var
+    
+    # Save PCA components
+    pca_path = "core_system/data/semantic_pca_components.json"
+    with open(pca_path, "w") as f:
+        json.dump({
+            "x_axis": pc1.tolist(),
+            "y_axis": pc2.tolist(),
+            "explained_variance": explained_variance[:2].tolist()
+        }, f)
+    print(f"✅ Saved PCA components to {pca_path}")
+    print(f"   Explained Variance: X={explained_variance[0]*100:.1f}%, Y={explained_variance[1]*100:.1f}%")
 
-    print("📍 Finding Logic <-> Emotion poles...")
-    logic_id, emotion_id = find_extreme_by_keywords(
-        ["logic", "strategy", "algorithm", "code", "technical", "implementation", "audit"],
-        ["emotion", "feeling", "joy", "fear", "love", "wonder", "sacred", "intuition"]
-    )
+    # 3. Find the "extreme" memories for these PCA axes
+    projections = X_centered @ vh[:2].T # Shape (N, 2)
     
-    print(f"   Logic Anchor:   {logic_id}")
-    print(f"   Emotion Anchor: {emotion_id}")
+    best_x_pos = np.argmax(projections[:, 0])
+    best_x_neg = np.argmin(projections[:, 0])
+    best_y_pos = np.argmax(projections[:, 1])
+    best_y_neg = np.argmin(projections[:, 1])
     
-    print("📍 Finding Macro <-> Micro poles...")
-    macro_id, micro_id = find_extreme_by_keywords(
-        ["macro", "pattern", "principle", "wisdom", "overview", "philosophy", "insight"],
-        ["micro", "detail", "specific", "log", "raw", "debug", "traceback", "line"]
-    )
+    logic_id = ids[best_x_pos]
+    emotion_id = ids[best_x_neg]
+    macro_id = ids[best_y_pos]
+    micro_id = ids[best_y_neg]
     
-    print(f"   Macro Anchor:   {macro_id}")
-    print(f"   Micro Anchor:   {micro_id}")
-    
-    # Output the constants for encoder.py
     print("\n🚀 Updated Constants for CoordinateEncoder in whitemagic/core/intelligence/hologram/encoder.py:")
     print(f"    ANCHOR_LOGIC_ID = \"{logic_id}\"")
     print(f"    ANCHOR_EMOTION_ID = \"{emotion_id}\"")
