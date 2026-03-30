@@ -3,8 +3,8 @@
 //! This module implements the bridge to the Zig-based lock-free queue for 
 //! ultra-low latency message passing in the Sangha Galaxy.
 
-use std::sync::{Arc, OnceLock};
-use std::ffi::{CStr, CString};
+use std::sync::OnceLock;
+use std::ffi::CString;
 use std::os::raw::c_char;
 
 #[repr(C)]
@@ -31,6 +31,9 @@ pub struct SanghaBridge {
     queue: *mut std::ffi::c_void,
 }
 
+unsafe impl Send for SanghaBridge {}
+unsafe impl Sync for SanghaBridge {}
+
 impl SanghaBridge {
     pub fn new(capacity: usize) -> Self {
         unsafe {
@@ -51,7 +54,7 @@ impl SanghaBridge {
         let content_c = CString::new(content).unwrap();
         let channel_c = CString::new(channel).unwrap();
         
-        let mut signal = Box::new(SanghaSignal {
+        let signal = Box::new(SanghaSignal {
             id_ptr: id_c.into_raw(),
             sender_id_ptr: sender_c.into_raw(),
             content_ptr: content_c.into_raw(),
