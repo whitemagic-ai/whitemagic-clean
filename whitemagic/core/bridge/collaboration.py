@@ -53,14 +53,14 @@ def sangha_lock_list(**kwargs: Any) -> dict[str, Any]:
 def sangha_chat_read(channel: str = "general", limit: int = 10, **kwargs: Any) -> dict[str, Any]:
     """Read messages from Sangha chat."""
     try:
-        from whitemagic.gardens.sangha.chat import SanghaChat
-        chat = SanghaChat()
+        from whitemagic.gardens.sangha.chat import get_chat
+        chat = get_chat()
         messages = chat.read_messages(channel=channel, limit=limit)
         return {
             "status": "success",
             "messages": [
                 {
-                    "sender": getattr(m, "sender", None) or getattr(m, "sender_id", None),
+                    "sender": getattr(m, "sender_id", None),
                     "content": getattr(m, "content", ""),
                     "time": (m.timestamp.isoformat() if getattr(m, "timestamp", None) else None),
                 }
@@ -72,3 +72,33 @@ def sangha_chat_read(channel: str = "general", limit: int = 10, **kwargs: Any) -
     except Exception as e:
         logger.error(f"Failed to read sangha chat: {e}")
         return {"status": "error", "error": str(e), "messages": [], "count": 0}
+
+
+def sangha_chat_send(content: str, channel: str = "general", sender_id: str = "system", **kwargs: Any) -> dict[str, Any]:
+    """Send a message to Sangha chat."""
+    try:
+        from whitemagic.gardens.sangha.chat import get_chat
+        chat = get_chat()
+        
+        tags = kwargs.get("tags")
+        priority = kwargs.get("priority", "normal")
+        reply_to = kwargs.get("reply_to")
+        
+        msg = chat.send_message(
+            sender_id=sender_id,
+            content=content,
+            channel=channel,
+            tags=tags,
+            priority=priority,
+            reply_to=reply_to
+        )
+        
+        return {
+            "status": "success",
+            "message_id": msg.id,
+            "channel": channel,
+            "timestamp": msg.timestamp.isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Failed to send sangha chat message: {e}")
+        return {"status": "error", "error": str(e)}
