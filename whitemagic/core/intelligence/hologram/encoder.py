@@ -189,9 +189,9 @@ class CoordinateEncoder:
             if pc_vec:
                 # Direct projection onto the principal component
                 score = dot_product(v, pc_vec)
-                # PCA scores can be large, but for MiniLM they are usually in [-0.5, 0.5] after centering
-                # We normalize to [-1, 1] with some amplification
-                return max(-1.0, min(1.0, score * 3.0))
+                # Amplified scaling to ensure coordinates occupy the full [-1, 1] range
+                # After centering, MiniLM PCA scores are typically in [-0.15, 0.15]
+                return max(-1.0, min(1.0, score * 6.0))
 
         # --- Anchor-based Fallback ---
         if axis == "x":
@@ -236,7 +236,16 @@ class CoordinateEncoder:
         """Encode a memory dictionary into a HolographicCoordinate."""
         import time
 
-        # 0. Try Rust v13.1 accelerated encoding (fastest path)
+        # 1. Base calculations (always do these for fallback/verification)
+        x = self._calculate_x(memory)
+        y = self._calculate_y(memory)
+        z = self._calculate_z(memory)
+        w = self._calculate_w(memory)
+        v = self._calculate_v(memory)
+
+        # 2. Try Rust v13.1 accelerated encoding (fastest path)
+        # If Rust provides coordinates, we BLEND the semantic bias into them
+        # to ensure the high-variance signal is preserved even on stale binaries.
         try:
             from whitemagic.optimization.rust_accelerators import (
                 holographic_encode_single,
@@ -245,24 +254,25 @@ class CoordinateEncoder:
             if rust_v131_available():
                 result = holographic_encode_single(memory)
                 if result:
-                    return HolographicCoordinate(
-                        result.get("x", 0.0),
-                        result.get("y", 0.0),
-                        result.get("z", 0.0),
-                        result.get("w", 0.5),
-                        result.get("v", 0.5),
-                    )
+                    # Blend Rust base with Python semantic bias (0.8 weight for semantics)
+                    x_rust = result.get("x", 0.0)
+                    y_rust = result.get("y", 0.0)
+                    
+                    # Apply semantic bias (X/Y) to the Rust result
+                    bias_x = self._calculate_semantic_bias(memory, "x")
+                    bias_y = self._calculate_semantic_bias(memory, "y")
+                    
+                    x = (x_rust * 0.2) + (bias_x * 0.8)
+                    y = (y_rust * 0.2) + (bias_y * 0.8)
+                    z = result.get("z", z)
+                    w = result.get("w", w)
+                    v = result.get("v", v)
+                    
+                    return HolographicCoordinate(x, y, z, w, v)
         except Exception:
             pass
 
-        # 1. Base calculations (always do these first for fallback/verification)
-        x = self._calculate_x(memory)
-        y = self._calculate_y(memory)
-        z = self._calculate_z(memory)
-        w = self._calculate_w(memory)
-        v = self._calculate_v(memory)
-
-        # 2. Try polyglot routing for Mojo/Zig acceleration (v2.1 optimization)
+        # 3. Try polyglot routing for Mojo/Zig acceleration
         # Avoid circular imports by checking if we are already in a fallback
         if getattr(self, "_routing_active", False):
             # Already in target calculation, don't route again
