@@ -8,6 +8,13 @@ fn maybe_link_python() {
         return;
     }
 
+    // Extension-module builds must not link libpython, otherwise maturin's
+    // manylinux compliance check will fail.
+    if env::var("CARGO_FEATURE_PYO3_EXTENSION_MODULE").is_ok() {
+        println!("cargo:warning=Skipping libpython linkage for pyo3 extension-module build");
+        return;
+    }
+
     // Query Python's build config for libdir + ldlibrary.
     let output = Command::new("python3")
         .arg("-c")
@@ -104,6 +111,6 @@ fn main() {
     // Rerun if build script changes
     println!("cargo:rerun-if-changed=build.rs");
 
-    // Ensure libpython is linkable for Rust test binaries that include PyO3 code.
+    // Link libpython only for non-extension-module Python builds.
     maybe_link_python();
 }
