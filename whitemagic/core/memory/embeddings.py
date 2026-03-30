@@ -39,7 +39,10 @@ import threading
 import time
 from typing import Any, cast
 
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    np = None
 
 
 logger = logging.getLogger(__name__)
@@ -65,7 +68,7 @@ def _cosine_similarity(a: list[float], b: list[float]) -> float:
     return dot / (norm_a * norm_b)
 
 
-def _batch_cosine_similarity_numpy(query_vec: np.ndarray, matrix: np.ndarray, pre_normalized: bool = False) -> np.ndarray:
+def _batch_cosine_similarity_numpy(query_vec: Any, matrix: Any, pre_normalized: bool = False) -> Any:
     """Vectorized batch cosine similarity using numpy.
 
     Args:
@@ -81,6 +84,8 @@ def _batch_cosine_similarity_numpy(query_vec: np.ndarray, matrix: np.ndarray, pr
     instead of 5,500 Python loops — typically 20-50× faster.
     With pre_normalized=True, it's a single matmul: O(N*D) instead of O(2*N*D).
     """
+    if np is None:
+        raise ImportError("numpy is required for _batch_cosine_similarity_numpy")
     # Normalize query
     query_norm = np.linalg.norm(query_vec)
     if query_norm == 0:
@@ -98,10 +103,10 @@ def _batch_cosine_similarity_numpy(query_vec: np.ndarray, matrix: np.ndarray, pr
     return cast(np.ndarray, dots / norms)
 
 
-def _batch_cosine_similarity(query: list[float] | np.ndarray, vectors: list[list[float]] | np.ndarray) -> list[float] | np.ndarray:
+def _batch_cosine_similarity(query: list[float] | Any, vectors: list[list[float]] | Any) -> list[float] | Any:
     """Batch cosine similarity — numpy fast path, Zig SIMD fallback, then pure Python."""
     # Fast path: if vectors is already a numpy array, use vectorized ops
-    if isinstance(vectors, np.ndarray) and vectors.ndim == 2:
+    if np is not None and isinstance(vectors, np.ndarray) and vectors.ndim == 2:
         q = np.asarray(query, dtype=np.float32) if not isinstance(query, np.ndarray) else query
         return _batch_cosine_similarity_numpy(q, vectors)
 
@@ -112,7 +117,7 @@ def _batch_cosine_similarity(query: list[float] | np.ndarray, vectors: list[list
     except Exception:
         pass
     query_list = cast(list[float], query.tolist()) if isinstance(query, np.ndarray) else query
-    if isinstance(vectors, np.ndarray):
+    if np is not None and isinstance(vectors, np.ndarray):
         vector_list = [cast(list[float], row.tolist()) for row in vectors]
     else:
         vector_list = vectors
