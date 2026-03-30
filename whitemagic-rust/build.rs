@@ -8,10 +8,9 @@ fn maybe_link_python() {
         return;
     }
 
-    // Extension-module builds must not link libpython, otherwise maturin's
-    // manylinux compliance check will fail.
-    if env::var("CARGO_FEATURE_PYO3_EXTENSION_MODULE").is_ok() {
-        println!("cargo:warning=Skipping libpython linkage for pyo3 extension-module build");
+    // Only link libpython when explicitly requested for local test binaries.
+    // Maturin extension-module wheels must not link libpython.
+    if env::var("WHITEMAGIC_LINK_LIBPYTHON").ok().as_deref() != Some("1") {
         return;
     }
 
@@ -111,6 +110,6 @@ fn main() {
     // Rerun if build script changes
     println!("cargo:rerun-if-changed=build.rs");
 
-    // Link libpython only for non-extension-module Python builds.
+    // Link libpython only when explicitly opted in.
     maybe_link_python();
 }
