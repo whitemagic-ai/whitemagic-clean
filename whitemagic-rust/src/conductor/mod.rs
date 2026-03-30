@@ -17,6 +17,7 @@ pub mod lifecycle;
 pub mod nervous_system;
 pub mod primitives;
 pub mod registry;
+pub mod sangha_bridge;
 
 #[cfg(test)]
 pub mod stress_tests;

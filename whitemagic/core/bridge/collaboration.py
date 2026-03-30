@@ -93,6 +93,27 @@ def sangha_chat_send(content: str, channel: str = "general", sender_id: str = "s
             reply_to=reply_to
         )
         
+        # --- Sangha Galaxy Integration ---
+        # 1. Encode message into 5D coordinates
+        try:
+            from whitemagic.core.intelligence.hologram.encoder import CoordinateEncoder
+            encoder = CoordinateEncoder()
+            coords = encoder.encode(msg.to_dict())
+            
+            # 2. Broadcast high-speed signal via PolyglotRouter
+            from whitemagic.optimization.polyglot_router import get_router
+            router = get_router()
+            router.send_sangha_signal(
+                id=msg.id,
+                sender_id=sender_id,
+                content=content,
+                channel=channel,
+                coords=coords.to_vector()
+            )
+        except Exception as e:
+            logger.warning(f"Failed to broadcast 5D sangha signal: {e}")
+        # ---------------------------------
+        
         return {
             "status": "success",
             "message_id": msg.id,

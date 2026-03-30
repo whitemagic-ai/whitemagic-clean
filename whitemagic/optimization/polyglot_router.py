@@ -261,6 +261,21 @@ class PolyglotRouter:
 
         return self._route_operation("iching_cast", python_impl, zig_fn=zig_impl)
 
+    def send_sangha_signal(self, id: str, sender_id: str, content: str, channel: str, coords: list[float]) -> bool:
+        """Tier 3/5: Send a high-speed Sangha Signal (Rust -> Zig Optimized)"""
+        def rust_impl() -> bool:
+            import whitemagic_rs
+            if hasattr(whitemagic_rs, "sangha_push_signal"):
+                return bool(whitemagic_rs.sangha_push_signal(id, sender_id, content, channel, coords))
+            raise AttributeError("whitemagic_rs has no sangha_push_signal implementation")
+
+        def python_impl() -> bool:
+            # Fallback: Just log it for now
+            logger.info(f"Sangha Signal (Python Fallback) - {sender_id} in #{channel}: {content[:50]}... @ {coords}")
+            return True
+
+        return self._route_operation("send_sangha_signal", python_impl, rust_fn=rust_impl)
+
     def encode_holographic(self, memory_data: dict[str, Any], current_time: int) -> dict[str, float]:
         """Tier 1: Holographic Core (Mojo Optimized)"""
         def mojo_impl() -> dict[str, float]:
