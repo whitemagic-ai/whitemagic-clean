@@ -367,7 +367,7 @@ class EmbeddingEngine:
             ids = [r[0] for r in rows]
             valid_vecs = [_unpack_embedding(r[1]) for r in rows]
             
-            if np is not None:
+            if np is not None and _array is not None:
                 vecs = _array(valid_vecs, dtype=_float32)
                 size_info = f"{getattr(vecs, 'nbytes', 0) / 1024:.0f} KB contiguous"
             else:
