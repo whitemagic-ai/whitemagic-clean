@@ -23,6 +23,9 @@ pub const io = struct {
     pub const bridge = @import("io/bridge.zig");
     pub const network = @import("io/network.zig");
 };
+pub const concurrency = struct {
+    pub const sangha_queue = @import("concurrency/sangha_queue.zig");
+};
 pub const dispatch_core = @import("dispatch_core.zig");
 pub const graph = struct {
     pub const parallel_walk = @import("graph/parallel_walk.zig");
@@ -183,6 +186,7 @@ comptime {
     _ = genomics.metabolic;
     _ = io.bridge;
     _ = io.network;
+    _ = concurrency.sangha_queue;
     _ = dispatch_core;
     _ = graph.parallel_walk;
     _ = graph.edge_index;
