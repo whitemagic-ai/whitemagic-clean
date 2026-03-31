@@ -5,6 +5,8 @@
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 
+use crate::conductor::sangha_bridge::SanghaBridge;
+
 /// Native galactic batch scoring - accepts PyList of dicts, returns PyList of scored dicts
 /// 50× faster than JSON path by operating directly on PyObjects
 #[pyfunction]
@@ -194,9 +196,37 @@ fn association_mine_native<'py>(
     Ok(result)
 }
 
+/// Native Sangha signal push - accepts message metadata plus a 5D coordinate vector
+#[pyfunction]
+fn sangha_push_signal(
+    id: String,
+    sender_id: String,
+    content: String,
+    channel: String,
+    coords: Vec<f32>,
+) -> PyResult<bool> {
+    if coords.len() != 5 {
+        return Err(pyo3::exceptions::PyValueError::new_err(format!(
+            "Sangha coordinates must contain exactly 5 values, got {}",
+            coords.len()
+        )));
+    }
+
+    if coords.iter().any(|value| !value.is_finite()) {
+        return Err(pyo3::exceptions::PyValueError::new_err(
+            "Sangha coordinates must contain only finite values",
+        ));
+    }
+
+    let coords = [coords[0], coords[1], coords[2], coords[3], coords[4]];
+    let sent = SanghaBridge::global().push_signal(&id, &sender_id, &content, &channel, coords);
+    Ok(sent)
+}
+
 /// Register native FFI functions with Python module
 pub fn register_native_ffi(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(galactic_batch_score_native, m)?)?;
     m.add_function(wrap_pyfunction!(association_mine_native, m)?)?;
+    m.add_function(wrap_pyfunction!(sangha_push_signal, m)?)?;
     Ok(())
 }
