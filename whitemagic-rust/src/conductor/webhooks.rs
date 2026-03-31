@@ -3,8 +3,7 @@
 //! Handles high-speed notification of agents based on spatial triggers
 //! in the 5D Sangha Galaxy.
 
-use std::sync::Arc;
-use crate::conductor::spatial_index::{Point5D, GalaxyCore};
+use crate::conductor::spatial_index::Point5D;
 use reqwest::Client;
 use serde_json::json;
 

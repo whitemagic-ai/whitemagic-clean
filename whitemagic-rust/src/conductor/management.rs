@@ -4,16 +4,16 @@
 //! for the 5D memory core.
 
 use std::time::{SystemTime, UNIX_EPOCH};
-use crate::conductor::spatial_index::{GalaxyCore, Point5D};
+use crate::conductor::spatial_index::GalaxyCore;
 
 pub struct GalaxyManager {
-    core: GalaxyCore,
+    _core: GalaxyCore,
 }
 
 impl GalaxyManager {
     pub fn new() -> Self {
         Self {
-            core: GalaxyCore::new(),
+            _core: GalaxyCore::new(),
         }
     }
 

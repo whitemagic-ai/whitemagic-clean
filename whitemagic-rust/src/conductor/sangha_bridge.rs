@@ -24,6 +24,7 @@ pub struct SanghaSignal {
 extern "C" {
     fn sangha_queue_create(capacity: usize) -> *mut std::ffi::c_void;
     fn sangha_queue_push(queue: *mut std::ffi::c_void, signal: *mut SanghaSignal) -> bool;
+    #[allow(dead_code)]
     fn sangha_queue_pop(queue: *mut std::ffi::c_void) -> *mut SanghaSignal;
 }
 
