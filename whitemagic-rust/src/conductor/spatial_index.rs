@@ -3,9 +3,11 @@
 //! Implements a 5D spatial index (penta-tree) for efficient 
 //! spherical subscription queries across the Sangha Galaxy.
 
-use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 
+/// 5D Sangha coordinate:
+/// x = logic/emotion, y = micro/macro, z = time/chronos,
+/// w = importance/gravity, v = vitality/distance.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Point5D {
     pub x: f32,
@@ -49,6 +51,18 @@ impl PentaNode {
         }
     }
 
+    fn bounds_intersects_sphere(&self, center: &Point5D, radius: f32) -> bool {
+        let closest = Point5D {
+            x: center.x.clamp(self.bounds_min.x, self.bounds_max.x),
+            y: center.y.clamp(self.bounds_min.y, self.bounds_max.y),
+            z: center.z.clamp(self.bounds_min.z, self.bounds_max.z),
+            w: center.w.clamp(self.bounds_min.w, self.bounds_max.w),
+            v: center.v.clamp(self.bounds_min.v, self.bounds_max.v),
+        };
+
+        center.distance_to(&closest) <= radius
+    }
+
     pub fn insert(&mut self, signal: SpatialSignal) -> bool {
         // Check bounds
         if signal.origin.x < self.bounds_min.x || signal.origin.x > self.bounds_max.x ||
@@ -80,14 +94,13 @@ impl PentaNode {
     }
 
     fn subdivide(&mut self) {
-        let mut children = Vec::with_capacity(32);
         let mid_x = (self.bounds_min.x + self.bounds_max.x) / 2.0;
         let mid_y = (self.bounds_min.y + self.bounds_max.y) / 2.0;
         let mid_z = (self.bounds_min.z + self.bounds_max.z) / 2.0;
         let mid_w = (self.bounds_min.w + self.bounds_max.w) / 2.0;
         let mid_v = (self.bounds_min.v + self.bounds_max.v) / 2.0;
 
-        for i in 0..32 {
+        let mut child_array: [PentaNode; 32] = std::array::from_fn(|i| {
             let mut min = self.bounds_min;
             let mut max = Point5D { x: mid_x, y: mid_y, z: mid_z, w: mid_w, v: mid_v };
 
@@ -97,17 +110,8 @@ impl PentaNode {
             if (i & 8) != 0 { min.w = mid_w; max.w = self.bounds_max.w; }
             if (i & 16) != 0 { min.v = mid_v; max.v = self.bounds_max.v; }
 
-            children.push(PentaNode::new(min, max));
-        }
-
-        let mut child_array: [PentaNode; 32] = unsafe {
-            let mut arr: std::mem::MaybeUninit<[PentaNode; 32]> = std::mem::MaybeUninit::uninit();
-            let ptr = arr.as_mut_ptr() as *mut PentaNode;
-            for (idx, child) in children.into_iter().enumerate() {
-                std::ptr::write(ptr.add(idx), child);
-            }
-            arr.assume_init()
-        };
+            PentaNode::new(min, max)
+        });
 
         // Re-insert existing signals into children
         let signals = std::mem::take(&mut self.signals);
@@ -123,9 +127,10 @@ impl PentaNode {
     }
 
     pub fn query_sphere(&self, center: Point5D, radius: f32, results: &mut Vec<String>) {
-        // Check if node intersects with sphere
-        // Simplified check: distance to center point
-        
+        if !self.bounds_intersects_sphere(&center, radius) {
+            return;
+        }
+
         for signal in &self.signals {
             if signal.origin.distance_to(&center) <= radius {
                 results.push(signal.id.clone());
@@ -134,7 +139,9 @@ impl PentaNode {
 
         if let Some(ref children) = self.children {
             for child in children.iter() {
-                child.query_sphere(center, radius, results);
+                if child.bounds_intersects_sphere(&center, radius) {
+                    child.query_sphere(center, radius, results);
+                }
             }
         }
     }

@@ -263,6 +263,13 @@ class PolyglotRouter:
 
     def send_sangha_signal(self, id: str, sender_id: str, content: str, channel: str, coords: list[float]) -> bool:
         """Tier 3/5: Send a high-speed Sangha Signal (Rust -> Zig Optimized)"""
+        if len(coords) != 5:
+            raise ValueError(f"Sangha coordinates must contain exactly 5 values, got {len(coords)}")
+
+        coords = [float(value) for value in coords]
+        if not all(math.isfinite(value) for value in coords):
+            raise ValueError(f"Sangha coordinates must be finite values, got {coords}")
+
         def rust_impl() -> bool:
             import whitemagic_rs
             if hasattr(whitemagic_rs, "sangha_push_signal"):

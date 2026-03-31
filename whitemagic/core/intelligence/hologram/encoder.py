@@ -1,7 +1,7 @@
 """Holographic Coordinate Encoder v2.0.
 ===================================
 
-Converts Memory objects into 4D coordinate vectors [x, y, z, w].
+Converts Memory objects into 5D coordinate vectors [x, y, z, w, v].
 
 Axis Definitions:
 -----------------
@@ -203,7 +203,8 @@ class CoordinateEncoder:
                 # Axis vector from p2 to p1
                 axis_vec = vec_sub(p1, p2)
                 axis_norm = vec_norm(axis_vec)
-                if axis_norm < 1e-6: return 0.0
+                if axis_norm < 1e-6:
+                    return 0.0
                 
                 # Project (v - p2) onto axis_vec
                 # Result is in range [0, 1] if v is between p2 and p1
@@ -223,7 +224,8 @@ class CoordinateEncoder:
             if p1 is not None and p2 is not None:
                 axis_vec = vec_sub(p1, p2)
                 axis_norm = vec_norm(axis_vec)
-                if axis_norm < 1e-6: return 0.0
+                if axis_norm < 1e-6:
+                    return 0.0
                 
                 v_minus_p2 = vec_sub(v, p2)
                 projection = dot_product(v_minus_p2, axis_vec) / (axis_norm**2)
