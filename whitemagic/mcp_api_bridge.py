@@ -22,6 +22,9 @@ from whitemagic.core.bridge.wisdom import *
 from whitemagic.core.bridge.reasoning import *
 from whitemagic.core.bridge.pattern import *
 from whitemagic.core.bridge.dharma import *
+from whitemagic.core.bridge.web_research import *
+from whitemagic.core.bridge.kaizen import analyze_wu_xing_phase, kaizen_analyze
+from whitemagic.core.bridge.web_research import research_topic
 from whitemagic.core.bridge.inference import (
     bitnet_infer,
     bitnet_status,
@@ -35,6 +38,9 @@ __all__ = [
     'local_ml_infer',
     'local_ml_status',
     'run_local_inference',
+    'kaizen_analyze',
+    'analyze_wu_xing_phase',
+    'research_topic',
     'check_integrations_health',
     'check_memory_health',
     'check_resonance_health',

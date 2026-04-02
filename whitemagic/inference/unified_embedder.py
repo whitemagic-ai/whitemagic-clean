@@ -14,9 +14,11 @@ Usage:
 
 from __future__ import annotations
 
+import json
 import logging
 import os
-from typing import TYPE_CHECKING
+import numpy as np
+from typing import TYPE_CHECKING, Any, cast
 
 if TYPE_CHECKING:
     import numpy as np
@@ -92,7 +94,8 @@ class UnifiedEmbedder:
         """Check if Rust ONNX is available."""
         try:
             import whitemagic_rs
-            return hasattr(whitemagic_rs, "arrow_onnx_embed")
+            rs = cast(Any, whitemagic_rs)
+            return hasattr(rs, "arrow_onnx_embed")
         except ImportError:
             return False
 
@@ -100,7 +103,7 @@ class UnifiedEmbedder:
         self,
         texts: list[str],
         batch_size: int = 2048
-    ) -> "np.ndarray":
+    ) -> np.ndarray:
         """Encode batch with automatic polyglot routing.
 
         Args:
@@ -124,9 +127,9 @@ class UnifiedEmbedder:
             all_embeddings.append(batch_embeddings)
 
         # Concatenate all batches
-        return np.vstack(all_embeddings)
+        return cast(np.ndarray, np.vstack(all_embeddings))
 
-    def _encode_single_batch(self, texts: list[str]) -> "np.ndarray":
+    def _encode_single_batch(self, texts: list[str]) -> np.ndarray:
         """Encode a single batch using the best available backend."""
 
         # Route 1: Mojo GPU via Iceoryx2 (fastest)
@@ -146,7 +149,7 @@ class UnifiedEmbedder:
         # Route 3: Python FastEmbed (slow but reliable)
         return self._encode_python_fastembed(texts)
 
-    def _encode_mojo_gpu(self, texts: list[str]) -> "np.ndarray":
+    def _encode_mojo_gpu(self, texts: list[str]) -> np.ndarray:
         """Encode using Mojo GPU via Iceoryx2 shared memory.
 
         Not yet implemented — requires Iceoryx2 IPC channel to Mojo GPU process.
@@ -154,23 +157,24 @@ class UnifiedEmbedder:
         """
         raise NotImplementedError("Mojo GPU path not yet implemented (requires Iceoryx2 IPC)")
 
-    def _encode_rust_onnx(self, texts: list[str]) -> "np.ndarray":
+    def _encode_rust_onnx(self, texts: list[str]) -> np.ndarray:
         """Encode using Rust ONNX with Arrow."""
         import whitemagic_rs
+        rs = cast(Any, whitemagic_rs)
 
         # Convert texts to Arrow IPC (zero-copy)
-        texts_arrow = whitemagic_rs.arrow_encode_memories([
+        texts_arrow = rs.arrow_encode_memories(json.dumps([
             {"id": str(i), "title": "", "content": t}
             for i, t in enumerate(texts)
-        ])
+        ]))
 
         # Call Rust ONNX embedder
-        result_arrow = whitemagic_rs.arrow_onnx_embed(texts_arrow, self.model_path)
+        result_arrow = rs.arrow_onnx_embed(texts_arrow, self.model_path)
 
         # Convert back to numpy
-        return self._arrow_to_numpy(result_arrow)
+        return self._arrow_to_numpy(cast(bytes, result_arrow))
 
-    def _encode_python_fastembed(self, texts: list[str]) -> "np.ndarray":
+    def _encode_python_fastembed(self, texts: list[str]) -> np.ndarray:
         """Encode using Python FastEmbed (fallback)."""
         try:
             from fastembed import TextEmbedding
@@ -178,17 +182,15 @@ class UnifiedEmbedder:
             model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
             embeddings = list(model.embed(texts))
 
-            import numpy as np
-            return np.array(embeddings)
+            return cast(np.ndarray, np.array(embeddings))
 
         except ImportError:
             # Ultimate fallback: random embeddings for testing
-            import numpy as np
             logger.warning("FastEmbed not available, using random embeddings")
             embedding_dim = 384
-            return np.random.randn(len(texts), embedding_dim).astype(np.float32)
+            return cast(np.ndarray, np.random.randn(len(texts), embedding_dim).astype(np.float32))
 
-    def _arrow_to_numpy(self, arrow_bytes: bytes) -> "np.ndarray":
+    def _arrow_to_numpy(self, arrow_bytes: bytes) -> np.ndarray:
         """Convert Arrow IPC to numpy (zero-copy).
 
         Args:
@@ -197,13 +199,13 @@ class UnifiedEmbedder:
         Returns:
             NumPy array viewing the Arrow buffer
         """
-        import pyarrow as pa
+        import pyarrow as pa  # type: ignore[import-untyped]
 
         reader = pa.ipc.open_stream(arrow_bytes)
         batch = reader.read_next_batch()
 
         # Zero-copy: numpy array views Arrow buffer
-        return batch.column(0).to_numpy(zero_copy_only=True)
+        return cast(np.ndarray, batch.column(0).to_numpy(zero_copy_only=True))
 
 
 def batch_embed_memories(

@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
 from threading import Lock
-from typing import Any
+from typing import Any, cast, Optional, List, Tuple
 
 from whitemagic.config.paths import WM_ROOT
 from whitemagic.utils.fileio import atomic_write, file_lock
@@ -185,15 +185,15 @@ class MemoryMatrix:
 
     def have_seen(self, path: str) -> bool:
         """Check if we've seen a file before."""
-        return self.seen.have_seen(path)
+        return cast(bool, self.seen.have_seen(path))
 
     def when_seen(self, path: str) -> str | None:
         """Get when we last saw a file."""
-        return self.seen.when_seen(path)
+        return cast(Optional[str], self.seen.when_seen(path))
 
     def has_changed(self, path: str) -> bool:
         """Check if file has changed since we last saw it."""
-        return self.seen.has_changed(path)
+        return cast(bool, self.seen.has_changed(path))
 
     def search_semantic(
         self,
@@ -202,12 +202,12 @@ class MemoryMatrix:
     ) -> list[tuple[str, float, str]]:
         """Semantic search across embedded content."""
         self.record_interaction("search", query, {"type": "semantic", "limit": limit})
-        return self.embeddings.search(query, limit)
+        return cast(List[Tuple[str, float, str]], self.embeddings.search(query, limit))
 
     def search_timeline(self, query: str) -> list[Any]:
         """Search timeline events."""
         self.record_interaction("search", query, {"type": "timeline"})
-        return self.timeline.search(query)
+        return cast(List[Any], self.timeline.search(query))
 
     def get_today_summary(self) -> dict[str, Any]:
         """Get summary of today's activity."""

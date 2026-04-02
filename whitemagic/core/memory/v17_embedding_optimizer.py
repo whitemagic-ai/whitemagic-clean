@@ -20,7 +20,8 @@ import sqlite3
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from typing import Any
+from collections.abc import Callable
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +55,7 @@ class V17EmbeddingOptimizer:
 
     def __init__(self, engine: Any) -> None:
         self.engine = engine
-        self._model = None
+        self._model: Any | None = None
         self._model_lock = asyncio.Lock()
 
         # Thread pool for model.encode() - releases GIL
@@ -130,12 +131,8 @@ class V17EmbeddingOptimizer:
                 return self._model
 
             # Load model in thread pool (may block on I/O)
-            def load_model():
-                return self.engine._get_model()
-
-            self._model = await asyncio.get_event_loop().run_in_executor(
-                None, load_model
-            )
+            load_model: Callable[[], Any] = cast(Callable[[], Any], self.engine._get_model)
+            self._model = await asyncio.to_thread(load_model)
             return self._model
 
     async def _encode_single(self, task: EmbeddingTask) -> EmbeddingTask:
@@ -175,7 +172,7 @@ class V17EmbeddingOptimizer:
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 tasks[i].error = result
-            else:
+            elif isinstance(result, EmbeddingTask):
                 tasks[i] = result
 
         return tasks
@@ -193,13 +190,13 @@ class V17EmbeddingOptimizer:
         try:
             # Prepare bulk insert data
             from whitemagic.core.memory.embeddings import MODEL_NAME
-            insert_data = [
-                (t.memory_id, self._pack_embedding(t.result), MODEL_NAME)
-                for t in successful_tasks
-            ]
+            insert_data = []
+            for t in successful_tasks:
+                if t.result is not None:
+                    insert_data.append((t.memory_id, self._pack_embedding(t.result), MODEL_NAME))
 
             # Bulk insert in executor (SQLite is synchronous)
-            def do_insert():
+            def do_insert() -> int:
                 conn.executemany(
                     "INSERT OR REPLACE INTO memory_embeddings (memory_id, embedding, model) VALUES (?, ?, ?)",
                     insert_data
@@ -211,7 +208,7 @@ class V17EmbeddingOptimizer:
                 None, do_insert
             )
 
-            return inserted
+            return cast(int, inserted)
         except Exception as e:
             logger.debug(f"Bulk insert failed: {e}")
             return 0
@@ -308,7 +305,7 @@ class V17EmbeddingOptimizer:
             return []
 
         try:
-            def fetch():
+            def fetch() -> list[EmbeddingTask]:
                 sql = "SELECT id, title, content FROM memories"
                 params: list = []
                 conditions = ["memory_type != 'quarantined'"]
@@ -338,8 +335,8 @@ class V17EmbeddingOptimizer:
 
                 return tasks
 
-            tasks = await asyncio.get_event_loop().run_in_executor(None, fetch)
-            return tasks
+            tasks_result = await asyncio.get_event_loop().run_in_executor(None, fetch)
+            return cast(list[EmbeddingTask], tasks_result)
         finally:
             await self._release_db_connection(conn)
 

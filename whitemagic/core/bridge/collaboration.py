@@ -4,6 +4,11 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+_PROFILE_STATE: dict[str, Any] = {
+    "profile": "default",
+    "preferences": {},
+}
+
 
 def sangha_lock_acquire(resource: str, reason: str = "", timeout: int = 3600, **kwargs: Any) -> dict[str, Any]:
     """Acquire a resource lock."""
@@ -123,3 +128,85 @@ def sangha_chat_send(content: str, channel: str = "general", sender_id: str = "s
     except Exception as e:
         logger.error(f"Failed to send sangha chat message: {e}")
         return {"status": "error", "error": str(e)}
+
+
+def garden_sangha_workspace_info(**kwargs: Any) -> dict[str, Any]:
+    """Return a lightweight Sangha workspace summary."""
+    try:
+        from whitemagic.gardens.sangha.resources import get_resources
+        from whitemagic.gardens.sangha.chat import get_chat
+
+        resources = get_resources()
+        chat = get_chat()
+        locks = resources.list_locks()
+        channels = getattr(chat, "channels", None)
+
+        return {
+            "status": "success",
+            "workspace": kwargs.get("workspace", "sangha"),
+            "lock_count": len(locks),
+            "locks": [{"resource": lock.resource_id, "owner": lock.locked_by} for lock in locks],
+            "channels": list(channels) if channels is not None else [],
+        }
+    except Exception as e:
+        logger.error(f"Failed to read Sangha workspace info: {e}")
+        return {"status": "error", "error": str(e)}
+
+
+def profile_get_profile(**kwargs: Any) -> dict[str, Any]:
+    """Return the current compatibility profile snapshot."""
+    return {
+        "status": "success",
+        "profile": {
+            "name": _PROFILE_STATE.get("profile", "default"),
+            "preferences": dict(_PROFILE_STATE.get("preferences", {})),
+        },
+    }
+
+
+def profile_update_preferences(**kwargs: Any) -> dict[str, Any]:
+    """Update the compatibility profile preferences."""
+    preferences = kwargs.get("preferences")
+    if not isinstance(preferences, dict):
+        preferences = {k: v for k, v in kwargs.items() if k != "preferences"}
+
+    current = _PROFILE_STATE.setdefault("preferences", {})
+    if isinstance(current, dict):
+        current.update(preferences)
+
+    if "profile" in kwargs and isinstance(kwargs["profile"], str):
+        _PROFILE_STATE["profile"] = kwargs["profile"]
+
+    return profile_get_profile()
+
+
+def windsurf_backup(**kwargs: Any) -> dict[str, Any]:
+    """Compatibility shim for Windsurf backup operations."""
+    try:
+        from whitemagic.archaeology.windsurf_reader import WindsurfConversationReader
+
+        reader = WindsurfConversationReader()
+        conversations = reader.list_conversations()
+        return {
+            "status": "success",
+            "action": "backup",
+            "count": len(conversations),
+            "conversations": conversations,
+            "format": kwargs.get("format", "markdown"),
+        }
+    except Exception as e:
+        logger.error(f"Failed to back up Windsurf conversations: {e}")
+        return {"status": "error", "error": str(e)}
+
+
+def windsurf_merge_backups(**kwargs: Any) -> dict[str, Any]:
+    """Compatibility shim for Windsurf backup merge operations."""
+    backups = kwargs.get("backups", kwargs.get("paths", []))
+    if not isinstance(backups, list):
+        backups = [backups]
+    return {
+        "status": "success",
+        "action": "merge_backups",
+        "merged_count": len(backups),
+        "backups": backups,
+    }

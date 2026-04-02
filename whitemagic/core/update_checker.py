@@ -16,11 +16,11 @@ from __future__ import annotations
 import logging
 import os
 import time
+from typing import Optional, cast, Any
 
 from whitemagic.config.paths import UPDATE_CHECK_PATH
 from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ _TIMEOUT_SECONDS = 3  # don't slow down startup
 
 def _cache_path() -> Path:
     """Return path to the update-check cache file."""
-    return UPDATE_CHECK_PATH
+    return cast(Path, UPDATE_CHECK_PATH)
 
 
 def _read_cache() -> Optional[dict]:
@@ -40,7 +40,7 @@ def _read_cache() -> Optional[dict]:
         p = _cache_path()
         if not p.exists():
             return None
-        data = _json_loads(p.read_text(encoding="utf-8"))
+        data = cast(dict[str, Any], _json_loads(p.read_text(encoding="utf-8")))
         if time.time() - data.get("ts", 0) < _CACHE_TTL_SECONDS:
             return data
     except Exception:
@@ -68,8 +68,8 @@ def _fetch_latest_version() -> Optional[str]:
 
         req = Request(_PYPI_URL, headers={"Accept": "application/json"})
         with urlopen(req, timeout=_TIMEOUT_SECONDS) as resp:
-            data = _json_loads(resp.read())
-            return data.get("info", {}).get("version")
+            data = cast(dict[str, Any], _json_loads(resp.read()))
+            return cast(Optional[str], data.get("info", {}).get("version"))
     except Exception:
         return None
 

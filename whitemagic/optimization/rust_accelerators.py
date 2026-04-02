@@ -47,7 +47,8 @@ try:
     _HAS_RUST = True
 except ImportError:
     try:
-        import whitemagic_rs as _rs
+        import whitemagic_rs as _rs_alt
+        _rs = _rs_alt
         _HAS_RUST = True
     except ImportError:
         _rs = None
@@ -129,7 +130,7 @@ def galactic_batch_score(
             logger.debug(f"Rust galactic scoring failed, using Python: {e}")
 
     # Python fallback
-    return _galactic_batch_score_python(memories, quick)
+    return cast(list[dict[str, Any]], _galactic_batch_score_python(memories, quick))
 
 
 # ---------------------------------------------------------------------------
@@ -186,7 +187,7 @@ def association_mine(
             logger.debug(f"Rust association mining failed, using Python: {e}")
 
     # Python fallback
-    return _association_mine_python(texts, max_keywords, min_score, max_results)
+    return cast(dict[str, Any], _association_mine_python(texts, max_keywords, min_score, max_results))
 
 
 # ---------------------------------------------------------------------------

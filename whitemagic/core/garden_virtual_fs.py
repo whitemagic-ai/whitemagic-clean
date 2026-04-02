@@ -216,7 +216,7 @@ class GardenVirtualFS:
         if not self._tree:
             return {}
 
-        summary = {
+        summary: dict[str, Any] = {
             "gardens": {},
             "total_files": 0,
             "total_directories": 0,

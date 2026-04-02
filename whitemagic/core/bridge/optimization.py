@@ -1,6 +1,6 @@
 
 import os
-from typing import Any
+from typing import Any, cast
 
 from whitemagic.core.bridge.utils import logger
 
@@ -104,7 +104,7 @@ def optimize_models(
         # Export current edge inference rules
         try:
             result = exporter.export(out, format="onnx")
-            return result
+            return cast(dict[str, Any], result)
         except Exception as e:
             return {"error": f"ONNX export failed: {str(e)}"}
 

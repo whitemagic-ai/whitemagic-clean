@@ -18,6 +18,7 @@ import os
 import sqlite3
 from datetime import datetime
 from pathlib import Path
+from typing import cast
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +60,8 @@ def _decrypt(ciphertext_with_tag: bytes, nonce: bytes, key: bytes) -> bytes:
     try:
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
         aesgcm = AESGCM(key)
-        return aesgcm.decrypt(nonce, ciphertext_with_tag, None)
+        result = aesgcm.decrypt(nonce, ciphertext_with_tag, None)
+        return cast(bytes, result)
     except ImportError:
         # Fallback: HMAC-based authenticated decryption
         ct = ciphertext_with_tag[:-_TAG_SIZE]

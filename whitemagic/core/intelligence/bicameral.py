@@ -248,7 +248,10 @@ class BicameralReasoner:
         army._generate_strategies = biased_strategies  # type: ignore[method-assign]
 
         start = time.perf_counter()
-        best_path = await army.parallel_explore(query, num_clones)
+        # Force the Python path here so the hemisphere-specific strategy bias
+        # is respected; the Rust/Tokio fast-path generates its own generic
+        # strategies and collapses left/right exploration into the same shape.
+        best_path = await army.parallel_explore(query, num_clones, use_tokio=False)
         elapsed = (time.perf_counter() - start) * 1000
 
         return HemisphereResult(

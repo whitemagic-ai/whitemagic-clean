@@ -8,6 +8,7 @@ import subprocess
 
 from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 from pathlib import Path
+from typing import Any, cast, Tuple, List, Dict
 
 import numpy as np
 
@@ -18,8 +19,17 @@ class CausalNet:
     Infers directed edges between memory clusters using 4D holographic coordinates.
     """
 
-    def __init__(self, db_path: Path):
-        self.db_path = db_path
+    def mine_causal_patterns(self, query: str = "", max_patterns: int = 10) -> list[dict[str, Any]]:
+        """Placeholder for causal mining logic."""
+        return []
+
+    def get_stats(self) -> dict[str, Any]:
+        """Placeholder for causal stats logic."""
+        return {"total_patterns": 0, "active_causal_chains": 0}
+
+    def __init__(self, db_path: Path | None = None):
+        from whitemagic.config.paths import DB_PATH
+        self.db_path = db_path or Path(DB_PATH)
 
     def infer_dependencies(self, active_clusters: dict[tuple[int, int], list[str]]) -> dict[str, list[str]]:
         """Infer a Directed Acyclic Graph (DAG) between clusters.
@@ -30,9 +40,10 @@ class CausalNet:
         # Phase B: Rust Fast-Path for v20
         try:
             import whitemagic_rust as rs
-            if hasattr(rs, 'synthesis_engine') and hasattr(rs.synthesis_engine, 'infer_dag_from_coords'):
+            synthesis_engine = getattr(rs, 'synthesis_engine', None)
+            if synthesis_engine and hasattr(synthesis_engine, 'infer_dag_from_coords'):
                 # Build cluster_data dict for Rust
-                cluster_data = {}
+                cluster_data: Dict[str, Any] = {}
                 conn = sqlite3.connect(str(self.db_path))
                 for key, mids in active_clusters.items():
                     placeholders = ",".join("?" for _ in mids)
@@ -47,19 +58,19 @@ class CausalNet:
                 conn.close()
 
                 # Call Rust fast-path
-                edges = rs.synthesis_engine.infer_dag_from_coords(
+                edges = synthesis_engine.infer_dag_from_coords(
                     cluster_data,
                     dist_threshold=0.5,
                     w_threshold=0.001
                 )
                 if edges:
                     logger.info(f"Rust fast-path: {len(edges)} edges from {len(active_clusters)} clusters")
-                    return edges
+                    return cast(Dict[str, List[str]], edges)
         except Exception as e:
             logger.debug(f"Rust fast-path unavailable, using Python fallback: {e}")
 
         # Python fallback
-        cluster_data = {}
+        cluster_data_py: Dict[str, Dict[str, Any]] = {}
         conn = sqlite3.connect(str(self.db_path))
 
         for key, mids in active_clusters.items():
@@ -69,7 +80,7 @@ class CausalNet:
                 continue
 
             arr = np.array(rows)
-            cluster_data[key] = {
+            cluster_data_py[str(key)] = {
                 "centroid": np.mean(arr, axis=0),
                 "ids": mids,
             }
@@ -77,30 +88,37 @@ class CausalNet:
         conn.close()
 
         # Build edges
-        edges = []
-        keys = list(cluster_data.keys())
+        edges_list: List[Tuple[str, str]] = []
+        keys = list(cluster_data_py.keys())
         for i in range(len(keys)):
             for j in range(len(keys)):
                 if i == j:
                     continue
-                c1 = cluster_data[keys[i]]
-                c2 = cluster_data[keys[j]]
+                c1 = cluster_data_py[keys[i]]
+                c2 = cluster_data_py[keys[j]]
 
                 dist_xyz = np.linalg.norm(c1["centroid"][:3] - c2["centroid"][:3])
                 w_diff = c2["centroid"][3] - c1["centroid"][3]
 
                 if dist_xyz < 0.5 and abs(w_diff) > 0.001:
                     if w_diff > 0:
-                        edges.append((str(keys[i]), str(keys[j])))
+                        edges_list.append((str(keys[i]), str(keys[j])))
                     else:
-                        edges.append((str(keys[j]), str(keys[i])))
+                        edges_list.append((str(keys[j]), str(keys[i])))
 
         # Phase 2: Julia Resonance Verification
         self.resonance_scores: dict[str, float] = {}
-        if edges:
-            edges, self.resonance_scores = self._verify_with_julia(nodes=[str(k) for k in cluster_data.keys()], edges=edges)
+        if edges_list:
+            edges_list, self.resonance_scores = self._verify_with_julia(nodes=[str(k) for k in cluster_data_py.keys()], edges=edges_list)
 
-        return edges  # type: ignore[return-value]
+        # Convert list of tuples to dict for return type compatibility
+        result_dict: Dict[str, List[str]] = {}
+        for src, dst in edges_list:
+            if src not in result_dict:
+                result_dict[src] = []
+            result_dict[src].append(dst)
+
+        return result_dict
 
     def _verify_with_julia(self, nodes: list[str], edges: list[tuple[str, str]]) -> tuple[list[tuple[str, str]], dict[str, float]]:
         """Invokes Julia to verify logical 'Ganying' (resonance) across the edges."""
@@ -126,6 +144,8 @@ class CausalNet:
         except Exception as e:
             logger.error(f"Julia resonance verification failed: {e}")
             return edges, {}
+
+CausalNetMiner = CausalNet
 
 if __name__ == "__main__":
     pass

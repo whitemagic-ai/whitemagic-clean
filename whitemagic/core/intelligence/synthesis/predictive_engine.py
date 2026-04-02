@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 
 class PredictionType(Enum):
@@ -511,7 +511,9 @@ class PredictiveEngine:
 
         # Predict based on garden patterns
         # 1. If milestone count is high but automation is low -> suggest automation
-        if garden_activity["milestone"]["count"] > 10 and garden_activity["automation"]["count"] < 5:
+        milestone_count = cast(int, garden_activity["milestone"]["count"])
+        automation_count = cast(int, garden_activity["automation"]["count"])
+        if milestone_count > 10 and automation_count < 5:
             predictions.append(Prediction(
                 id="garden_automation_opportunity",
                 prediction_type=PredictionType.OPPORTUNITY,
@@ -529,7 +531,8 @@ class PredictiveEngine:
             ))
 
         # 2. If roadmap is stale (no recent activity) -> suggest roadmap update
-        if garden_activity["roadmap"]["count"] > 0:
+        roadmap_count = cast(int, garden_activity["roadmap"]["count"])
+        if roadmap_count > 0:
             cur.execute("""
                 SELECT COUNT(*) FROM memories m
                 JOIN tags t ON m.id = t.memory_id
@@ -592,9 +595,10 @@ class PredictiveEngine:
             AND m.created_at > datetime('now', '-7 days')
             AND m.memory_type != 'quarantined'
         """)
-        recent_prod_ready = cur.fetchone()[0]
+        recent_prod_ready = cast(int, cur.fetchone()[0])
 
-        if recent_prod_ready == 0 and garden_activity["production_ready"]["count"] > 0:
+        production_ready_count = cast(int, garden_activity["production_ready"]["count"])
+        if recent_prod_ready == 0 and production_ready_count > 0:
             predictions.append(Prediction(
                 id="garden_prod_readiness",
                 prediction_type=PredictionType.MAINTENANCE,

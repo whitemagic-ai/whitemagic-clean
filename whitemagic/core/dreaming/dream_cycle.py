@@ -35,7 +35,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -625,7 +625,7 @@ class DreamCycle:
             from whitemagic.core.dreaming.narrative_compressor import get_narrative_compressor
             nc = get_narrative_compressor()
             result = nc.compress(max_clusters=3, sample_limit=200)
-            return result.to_dict()
+            return cast(dict[str, Any], result.to_dict())
         except Exception as e:
             return {"skipped": True, "reason": str(e)}
 
@@ -786,15 +786,16 @@ class DreamCycle:
             detector = get_constellation_detector()
 
             # Detect current constellations
-            constellations = detector.detect(sample_limit=5000)
-            result["inspected"] = len(constellations)
+            report = detector.detect(sample_limit=5000)
+            const_list = report.constellations
+            result["inspected"] = len(const_list)
 
             # Look for merge candidates (simplified logic)
             merge_count = 0
-            for i, c1 in enumerate(constellations):
-                for c2 in constellations[i+1:]:
-                    overlap = len(set(c1.members) & set(c2.members))
-                    if overlap > len(c1.members) * 0.5:  # 50% overlap threshold
+            for i, c1 in enumerate(const_list):
+                for c2 in const_list[i+1:]:
+                    overlap = len(set(c1.member_ids) & set(c2.member_ids))
+                    if overlap > len(c1.member_ids) * 0.5:  # 50% overlap threshold
                         merge_count += 1
 
             result["merges"] = merge_count

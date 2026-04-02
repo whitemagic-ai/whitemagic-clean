@@ -35,7 +35,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 
@@ -160,7 +160,7 @@ class KokaBatchClient:
 
                 # Read startup banner
                 banner = self._readline_with_timeout(proc, timeout=2.0)
-                if "started" in banner or "batch_ipc" in banner:
+                if banner and ("started" in banner or "batch_ipc" in banner):
                     self._processes.append(proc)
                     self._available.append(proc)
                     self._started = True
@@ -272,7 +272,7 @@ class KokaBatchClient:
             if response_line:
                 result = _json_loads(response_line)
                 self._stats["total_commands"] += 1
-                return result
+                return cast(dict[str, Any], result)
             else:
                 self._stats["errors"] += 1
                 self._discard_process(proc)

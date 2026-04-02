@@ -125,8 +125,8 @@ def search_by_coordinates(
     um = get_unified_memory()
 
     # Build WHERE clause dynamically
-    conditions = []
-    params = []
+    conditions: list[str] = []
+    params: list[float] = []
 
     if x_range:
         conditions.append("hc.x >= ? AND hc.x <= ?")

@@ -1,6 +1,6 @@
 
 from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 
 from whitemagic.core.bridge.adaptive import (
     adapt_response,
@@ -65,7 +65,7 @@ from whitemagic.core.bridge.inference import (
     local_ml_status,
     run_local_inference,
 )
-from whitemagic.core.bridge.kaizen import analyze_wu_xing_phase
+from whitemagic.core.bridge.kaizen import analyze_wu_xing_phase, kaizen_analyze
 from whitemagic.core.bridge.meditation import (
     meditation_meditate,
     meditation_pause,
@@ -122,6 +122,8 @@ from whitemagic.core.bridge.wisdom import (
     consult_iching,
     synthesize_wisdom,
 )
+from whitemagic.core.bridge.web_research import research_topic
+
 
 # Import all domain modules
 from whitemagic.core.bridge.zodiac import (
@@ -142,11 +144,11 @@ def manage_locks_router(operation: str = "list", **kwargs: Any) -> dict[str, Any
         kwargs["timeout"] = kwargs.pop("timeout_seconds")
 
     if operation == "acquire":
-        return sangha_lock_acquire(**kwargs)
+        return cast(dict[str, Any], sangha_lock_acquire(**kwargs))
     elif operation == "release":
-        return sangha_lock_release(**kwargs)
+        return cast(dict[str, Any], sangha_lock_release(**kwargs))
     else:
-        return sangha_lock_list(**kwargs)
+        return cast(dict[str, Any], sangha_lock_list(**kwargs))
 
 def enable_acceleration_router(operation: str = "edge_infer", **kwargs: Any) -> dict[str, Any]:
     """Route enable_acceleration operations."""
@@ -159,15 +161,15 @@ def enable_acceleration_router(operation: str = "edge_infer", **kwargs: Any) -> 
         # Legacy edge_infer - mapping to local_inference
         if "prompt" in kwargs and "query" not in kwargs:
             kwargs["query"] = kwargs.pop("prompt")
-        return run_local_inference(operation="quick_recall", **kwargs)
+        return cast(dict[str, Any], run_local_inference(operation="quick_recall", **kwargs))
     elif operation == "batch_infer":
-        return run_local_inference(operation="batch", **kwargs)
+        return cast(dict[str, Any], run_local_inference(operation="batch", **kwargs))
     elif operation == "rust" or operation == "enable_rust":
-        return enable_rust_acceleration(**kwargs)
+        return cast(dict[str, Any], enable_rust_acceleration(**kwargs))
     elif operation == "benchmark":
-        return run_benchmarks(**kwargs)
+        return cast(dict[str, Any], run_benchmarks(**kwargs))
     else:
-        return run_local_inference(**kwargs)
+        return cast(dict[str, Any], run_local_inference(**kwargs))
 
 def consolidate_router(operation: str = "consolidate_memories", **kwargs: Any) -> dict[str, Any]:
     """Route consolidate operations."""
@@ -177,14 +179,14 @@ def consolidate_router(operation: str = "consolidate_memories", **kwargs: Any) -
         operation = "finalize_scratchpad"
     elif operation == "wisdom":
         operation = "process_wisdom"
-    return execute_mcp_tool(f"consolidate_{operation}", **kwargs)
+    return cast(dict[str, Any], execute_mcp_tool(f"consolidate_{operation}", **kwargs))
 
 def track_metrics_router(operation: str = "track", **kwargs: Any) -> dict[str, Any]:
     """Route track_metrics operations."""
     if operation == "track":
-        return track_metric(**kwargs)
+        return cast(dict[str, Any], track_metric(**kwargs))
     else:
-        return get_metrics_summary(**kwargs)
+        return cast(dict[str, Any], get_metrics_summary(**kwargs))
 
 def invoke_prat_router(operation: str | None = None, **kwargs: Any) -> dict[str, Any]:
     """Route invoke_prat operations."""
@@ -206,53 +208,53 @@ def invoke_prat_router(operation: str | None = None, **kwargs: Any) -> dict[str,
             operation = "status"
 
     if operation == "invoke":
-        return prat_invoke(target_tool=target_tool, **kwargs)
+        return cast(dict[str, Any], prat_invoke(target_tool=target_tool, **kwargs))
     elif operation == "get_context":
-        return prat_get_context(**kwargs)
+        return cast(dict[str, Any], prat_get_context(**kwargs))
     elif operation == "list_morphologies" or operation == "list":
-        return prat_list_morphologies(tool=target_tool, **kwargs)
+        return cast(dict[str, Any], prat_list_morphologies(tool=target_tool, **kwargs))
     else:
-        return prat_status(target_tool=target_tool, **kwargs)
+        return cast(dict[str, Any], prat_status(target_tool=target_tool, **kwargs))
 
 def parallel_execute_router(operation: str = "parallel_search", **kwargs: Any) -> dict[str, Any]:
     """Route parallel_execute operations."""
     if operation == "parallel_search":
-        return parallel_search(**kwargs)
+        return cast(dict[str, Any], parallel_search(**kwargs))
     elif operation == "batch_read":
-        return rust_read_files_batch(**kwargs)
+        return cast(dict[str, Any], rust_read_files_batch(**kwargs))
     else:
         # Cascade Not Implemented fully yet, but mapping exists
-        return detect_patterns(**kwargs) # Fallback
+        return cast(dict[str, Any], detect_patterns(**kwargs)) # Fallback
 
 def share_resources_router(operation: str = "backup", **kwargs: Any) -> dict[str, Any]:
     """Route share_resources operations."""
     if operation == "backup":
-        return windsurf_backup(**kwargs)
+        return cast(dict[str, Any], windsurf_backup(**kwargs))
     elif operation == "restore":
         return {"status": "restore_not_implemented"}
     else:
-        return windsurf_merge_backups(**kwargs)
+        return cast(dict[str, Any], windsurf_merge_backups(**kwargs))
 
 def manage_profile_router(operation: str = "get", **kwargs: Any) -> dict[str, Any]:
     """Route manage_profile operations."""
     if operation == "get":
-        return profile_get_profile(**kwargs)
+        return cast(dict[str, Any], profile_get_profile(**kwargs))
     else:
-        return profile_update_preferences(**kwargs)
+        return cast(dict[str, Any], profile_update_preferences(**kwargs))
 
 def enter_stillness_router(operation: str = "pause", **kwargs: Any) -> dict[str, Any]:
     """Route enter_stillness operations."""
     if operation == "pause":
-        return meditation_pause(**kwargs)
+        return cast(dict[str, Any], meditation_pause(**kwargs))
     elif operation == "reflect":
-        return meditation_reflect(**kwargs)
+        return cast(dict[str, Any], meditation_reflect(**kwargs))
     else:
-        return meditation_meditate(**kwargs)
+        return cast(dict[str, Any], meditation_meditate(**kwargs))
 
 def manage_cache_router(operation: str = "stats", **kwargs: Any) -> dict[str, Any]:
     """Route manage_cache operations."""
     if operation == "optimize":
-        return optimize_cache(**kwargs)
+        return cast(dict[str, Any], optimize_cache(**kwargs))
     elif operation == "clear":
         # Default clear cache
         return {"cleared": True}
@@ -263,63 +265,63 @@ def manage_cache_router(operation: str = "stats", **kwargs: Any) -> dict[str, An
 def monitor_status_router(operation: str = "garden_status", **kwargs: Any) -> dict[str, Any]:
     """Route monitor_status operations."""
     if operation == "garden_status":
-        return garden_garden_status(**kwargs)
+        return cast(dict[str, Any], garden_garden_status(**kwargs))
     elif operation == "garden_activate":
-        return garden_garden_activate(**kwargs)
+        return cast(dict[str, Any], garden_garden_activate(**kwargs))
     else:
-        return garden_sangha_workspace_info(**kwargs)
+        return cast(dict[str, Any], garden_sangha_workspace_info(**kwargs))
 
 def send_notification_router(operation: str = "send", **kwargs: Any) -> dict[str, Any]:
     """Route send_notification operations."""
     if operation == "send" or operation == "sangha_chat_send":
-        return sangha_chat_send(**kwargs)
-    return sangha_chat_read(**kwargs)
+        return cast(dict[str, Any], sangha_chat_send(**kwargs))
+    return cast(dict[str, Any], sangha_chat_read(**kwargs))
 
 def manage_archaeology_router(operation: str = "stats", **kwargs: Any) -> dict[str, Any]:
     """Route manage_archaeology operations."""
     if operation == "stats":
-        return archaeology_stats(**kwargs)
+        return cast(dict[str, Any], archaeology_stats(**kwargs))
     elif operation == "mark_read":
-        return archaeology_mark_read(**kwargs)
+        return cast(dict[str, Any], archaeology_mark_read(**kwargs))
     elif operation == "report":
-        return archaeology_report(**kwargs)
+        return cast(dict[str, Any], archaeology_report(**kwargs))
     elif operation == "search":
-        return archaeology_search(**kwargs)
+        return cast(dict[str, Any], archaeology_search(**kwargs))
     else:
-        return archaeology_stats(**kwargs)
+        return cast(dict[str, Any], archaeology_stats(**kwargs))
 
 def search_memories_router(operation: str = "search", **kwargs: Any) -> dict[str, Any]:
     """Route search_memories operations."""
     if operation == "deep":
-        return parallel_search(**kwargs)
+        return cast(dict[str, Any], parallel_search(**kwargs))
     else:
-        return memory_search(**kwargs)
+        return cast(dict[str, Any], memory_search(**kwargs))
 
 def search_deep_router(operation: str = "search", **kwargs: Any) -> dict[str, Any]:
     """Route search_deep operations."""
-    return parallel_search(**kwargs)
+    return cast(dict[str, Any], parallel_search(**kwargs))
 
 def consult_wisdom_router(operation: str = "council", **kwargs: Any) -> dict[str, Any]:
     """Route consult_wisdom operations."""
     if operation == "iching":
-        return consult_iching(**kwargs)
+        return cast(dict[str, Any], consult_iching(**kwargs))
     elif operation == "art_of_war":
-        return consult_art_of_war(**kwargs)
+        return cast(dict[str, Any], consult_art_of_war(**kwargs))
     else:
-        return consult_full_council(**kwargs)
+        return cast(dict[str, Any], consult_full_council(**kwargs))
 
 def evaluate_dharma_router(operation: str = "evaluate", **kwargs: Any) -> dict[str, Any]:
     """Route evaluate_dharma operations."""
     if operation == "boundaries":
-        return dharma_check_boundaries(**kwargs)
+        return cast(dict[str, Any], dharma_check_boundaries(**kwargs))
     elif operation == "consent":
-        return dharma_verify_consent(**kwargs)
+        return cast(dict[str, Any], dharma_verify_consent(**kwargs))
     else:
-        return dharma_evaluate_ethics(**kwargs)
+        return cast(dict[str, Any], dharma_evaluate_ethics(**kwargs))
 
 # Consolidate router stubs
 def consolidate_consolidate_memories(**kwargs: Any) -> dict[str, Any]:
-    return rust_consolidate_memories(**kwargs)
+    return cast(dict[str, Any], rust_consolidate_memories(**kwargs))
 
 
 def consolidate_finalize_scratchpad(**kwargs: Any) -> dict[str, Any]:
@@ -327,11 +329,11 @@ def consolidate_finalize_scratchpad(**kwargs: Any) -> dict[str, Any]:
 
 
 def consolidate_process_wisdom(**kwargs: Any) -> dict[str, Any]:
-    return archaeology_process_wisdom(**kwargs)
+    return cast(dict[str, Any], archaeology_process_wisdom(**kwargs))
 
 
 def execute_cascade(**kwargs: Any) -> dict[str, Any]:
-    return detect_patterns(**kwargs)
+    return cast(dict[str, Any], detect_patterns(**kwargs))
 
 
 def list_patterns(**kwargs: Any) -> dict[str, Any]:
@@ -339,7 +341,7 @@ def list_patterns(**kwargs: Any) -> dict[str, Any]:
 
 
 def cache_optimize_cache(**kwargs: Any) -> dict[str, Any]:
-    return optimize_cache(**kwargs)
+    return cast(dict[str, Any], optimize_cache(**kwargs))
 
 
 def cache_clear_cache(**kwargs: Any) -> dict[str, Any]:
@@ -480,6 +482,7 @@ def execute_mcp_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
         # NEW FIXES
         "manage_zodiac_cores": manage_zodiac_cores,
         "analyze_wu_xing_phase": analyze_wu_xing_phase,
+        "kaizen_analyze": kaizen_analyze,
         "validate_integrations": validate_integrations,
         "protect_context": protect_context,
 
@@ -531,6 +534,7 @@ def execute_mcp_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
         "session_handoff": session_handoff,
         "sangha_chat_send": sangha_chat_send,
         "sangha_chat_read": sangha_chat_read,
+        "research_topic": research_topic,
         "garden_sangha_workspace_info": garden_sangha_workspace_info,
         "profile_get_profile": profile_get_profile,
         "profile_update_preferences": profile_update_preferences,
@@ -546,7 +550,7 @@ def execute_mcp_tool(tool_name: str, **kwargs: Any) -> dict[str, Any]:
 
     try:
         result = handler(**kwargs)
-        return result
+        return cast(dict[str, Any], result)
     except Exception as e:
         import os
         import traceback

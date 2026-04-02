@@ -1,12 +1,14 @@
 import logging
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
 # Try to load Rust Sutra Kernel
 try:
     import whitemagic_rust
-    if hasattr(whitemagic_rust, 'sutra_kernel'):
-        _RustDharmaEngine = whitemagic_rust.sutra_kernel.DharmaEngine
+    _sutra_kernel = getattr(whitemagic_rust, "sutra_kernel", None)
+    if _sutra_kernel is not None and hasattr(_sutra_kernel, "DharmaEngine"):
+        _RustDharmaEngine: Any | None = getattr(_sutra_kernel, "DharmaEngine")
         RUST_SUTRA_AVAILABLE = True
     else:
         _RustDharmaEngine = None
@@ -23,7 +25,10 @@ class SutraKernelBridge:
     def evaluate_action(self, action_type: str, intent_score: float = 1.0, karma_debt: float = 0.0) -> str:
         """Evaluates an action using the Rust Dharma Kernel or Python fallback."""
         if self._rust_engine:
-            return self._rust_engine.evaluate_action(action_type, intent_score, karma_debt)
+            return cast(
+                str,
+                self._rust_engine.evaluate_action(action_type, intent_score, karma_debt),
+            )
 
         # v20 Hardened Fallback: Use Dharma System instead of passive string
         try:

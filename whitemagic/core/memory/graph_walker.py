@@ -29,7 +29,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import Any, cast, Optional, List
 
 logger = logging.getLogger(__name__)
 
@@ -204,7 +204,7 @@ class GraphWalker:
             ).fetchone()
             if row and row[0]:
                 from whitemagic.core.memory.embeddings import _unpack_embedding
-                return _unpack_embedding(row[0])
+                return cast(Optional[List[float]], _unpack_embedding(row[0]))
         except Exception:
             pass
         return None
@@ -213,14 +213,18 @@ class GraphWalker:
         """Cosine similarity between two vectors."""
         try:
             import whitemagic_rust as rs
-            return rs.rust_cosine_similarity(a, b)
+            rust_cosine_similarity = getattr(rs, "rust_cosine_similarity", None)
+            if rust_cosine_similarity:
+                return cast(float, rust_cosine_similarity(a, b))
         except (ImportError, AttributeError):
-            dot = sum(x * y for x, y in zip(a, b))
-            norm_a = math.sqrt(sum(x * x for x in a))
-            norm_b = math.sqrt(sum(x * x for x in b))
-            if norm_a == 0 or norm_b == 0:
-                return 0.0
-            return dot / (norm_a * norm_b)
+            pass
+        
+        dot = sum(x * y for x, y in zip(a, b))
+        norm_a = math.sqrt(sum(x * x for x in a))
+        norm_b = math.sqrt(sum(x * x for x in b))
+        if norm_a == 0 or norm_b == 0:
+            return 0.0
+        return dot / (norm_a * norm_b)
 
     def _get_pagerank(self, memory_id: str) -> float:
         """Get cached PageRank for a memory (refreshed every 5 min)."""

@@ -1,5 +1,6 @@
 """MCP handlers for Dream Cycle control."""
 
+import asyncio
 from typing import Any
 
 
@@ -62,7 +63,17 @@ def handle_dream_now(**kwargs: Any) -> dict[str, Any]:
 
     dc = get_dream_cycle()
     dc._dreaming = True
-    dc._run_phase()
+    
+    # Run phase asynchronously
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            loop.create_task(dc._run_phase())
+        else:
+            asyncio.run(dc._run_phase())
+    except Exception:
+        # Fallback if loop logic fails
+        pass
 
     # Return the most recent dream report
     if dc._history:

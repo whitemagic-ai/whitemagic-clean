@@ -30,7 +30,7 @@ from collections.abc import Callable
 
 from whitemagic.runtime_status import get_runtime_status
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -241,7 +241,7 @@ def mw_input_sanitizer(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] 
         try:
             result = _sanitize_tool_args(ctx.tool_name, ctx.kwargs)
             if result is not None:
-                return result
+                return cast(dict[str, Any], result)
         except Exception:
             pass
     return next_fn(ctx)
@@ -255,8 +255,10 @@ def mw_circuit_breaker(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] 
         try:
             breaker = _get_breaker_registry().get(ctx.tool_name)
             # Skip pre-check if Zig dispatch already validated circuit state
-            if not ctx.zig_prevalidated and breaker.is_open():
-                return breaker.calm_response()
+            if breaker is not None and not ctx.zig_prevalidated and breaker.is_open():
+                calm = breaker.calm_response()
+                if calm is not None:
+                    return cast(dict[str, Any], calm)
         except Exception:
             breaker = None
 
@@ -318,7 +320,7 @@ def mw_rate_limiter(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | N
         try:
             rate_result = _get_rate_limiter().check(ctx.agent_id, ctx.tool_name)
             if rate_result is not None:
-                return rate_result
+                return cast(dict[str, Any], rate_result)
         except Exception:
             pass
     return next_fn(ctx)
@@ -331,7 +333,7 @@ def mw_tool_permissions(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any]
         try:
             perm_result = _check_tool_permission(ctx.agent_id, ctx.tool_name)
             if perm_result is not None:
-                return perm_result
+                return cast(dict[str, Any], perm_result)
         except Exception:
             pass
     return next_fn(ctx)
@@ -346,7 +348,7 @@ def mw_maturity_gate(ctx: DispatchContext, next_fn: NextFn) -> dict[str, Any] | 
         try:
             gate_result = _check_maturity_for_tool(ctx.tool_name)
             if gate_result is not None:
-                return gate_result
+                return cast(dict[str, Any], gate_result)
         except Exception:
             pass
     return next_fn(ctx)

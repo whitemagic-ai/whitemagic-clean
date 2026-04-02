@@ -78,9 +78,9 @@ def search_title_boosted(
         return []
 
     if query_embedding is None:
-        from whitemagic.core.memory.embeddings import get_embedder
-        embedder = get_embedder()
-        query_embedding = embedder.encode(query)
+        from whitemagic.core.memory.embeddings import get_embedding_engine
+        engine_obj = get_embedding_engine()
+        query_embedding = engine_obj.encode(query)
         if hasattr(query_embedding, 'tolist'):
             query_embedding = query_embedding.tolist()
 
@@ -152,7 +152,7 @@ def hybrid_search_with_dedup(
 
     # Final dedup by embedding similarity
     final_results = []
-    seen_embeddings = []
+    seen_embeddings: list[list[float]] = []
 
     for r in results:
         emb = r.get('embedding')

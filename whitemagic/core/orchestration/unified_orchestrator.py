@@ -22,7 +22,7 @@ import threading
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum, auto
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
 logger = logging.getLogger(__name__)
 
@@ -73,6 +73,7 @@ class UnifiedOrchestrator:
 
     _instance: UnifiedOrchestrator | None = None
     _lock = threading.Lock()
+    _initialized: bool = False
 
     def __new__(cls) -> UnifiedOrchestrator:
         with cls._lock:
@@ -671,7 +672,7 @@ reconsolidating with each retrieval, growing in wisdom through each dream cycle.
         """Manually trigger a garden resonance cascade."""
         try:
             from whitemagic.gardens.garden_resonance import trigger_garden_cascade
-            return trigger_garden_cascade(starting_garden, f"Orchestrated cascade from {starting_garden}", energy)
+            return cast(list[str], trigger_garden_cascade(starting_garden, f"Orchestrated cascade from {starting_garden}", energy))
         except ImportError:
             return []
 

@@ -39,6 +39,15 @@ import threading
 import time
 from typing import Any, cast
 
+np: Any = None
+_ndarray: Any = type(None)
+_float32: Any = float
+_linalg_norm: Any = None
+_asarray: Any = None
+_zeros: Any = None
+_array: Any = None
+_where: Any = None
+
 try:
     import numpy as np
     _ndarray = np.ndarray
@@ -50,13 +59,6 @@ try:
     _where = np.where
 except ImportError:
     np = None
-    _ndarray = type(None)
-    _float32 = float
-    _linalg_norm = None
-    _asarray = None
-    _zeros = None
-    _array = None
-    _where = None
 
 
 logger = logging.getLogger(__name__)
@@ -103,7 +105,7 @@ def _batch_cosine_similarity_numpy(query_vec: Any, matrix: Any, pre_normalized: 
     return dots / norms
 
 
-def _batch_cosine_similarity(query: list[float] | Any, vectors: list[list[float]] | Any) -> list[float] | Any:
+def _batch_cosine_similarity(query: Any, vectors: Any) -> Any:
     """Batch cosine similarity — numpy fast path, Zig SIMD fallback, then pure Python."""
     # Fast path: if vectors is already a numpy array, use vectorized ops
     if np is not None and _asarray is not None:
@@ -185,7 +187,9 @@ class EmbeddingEngine:
                 try:
                     # Check if there are actually any embeddings
                     res = db.execute("SELECT COUNT(*) FROM memory_embeddings").fetchone()
-                    return res[0] > 0
+                    if res is None:
+                        return False
+                    return cast(int, res[0]) > 0
                 except Exception:
                     return False
             return False
@@ -209,7 +213,7 @@ class EmbeddingEngine:
         except ImportError:
             self._available = False
             logger.debug("Neither fastembed nor sentence-transformers installed — embedding engine unavailable")
-        return self._available
+        return bool(self._available)
 
     def _get_model(self) -> Any:
         """Lazy-load the embedding model (FastEmbed or SentenceTransformer)."""
@@ -463,7 +467,19 @@ class EmbeddingEngine:
 
     def cache_embedding(self, memory_id: str, embedding: list[float]) -> bool:
         """Cache an embedding for a memory (sync version)."""
-        return self.cache_embedding_async(memory_id, embedding)
+        db = self._get_db()
+        if db is None:
+            return False
+        try:
+            db.execute(
+                "INSERT OR REPLACE INTO memory_embeddings (memory_id, embedding, model) VALUES (?, ?, ?)",
+                (memory_id, _pack_embedding(embedding), MODEL_NAME),
+            )
+            db.commit()
+            self._invalidate_vec_cache()
+            return True
+        except Exception:
+            return False
 
     def _invalidate_vec_cache(self) -> None:
         """Invalidate the in-memory vector cache and HNSW index."""
@@ -916,7 +932,11 @@ class EmbeddingEngine:
             # Call Rust SimHash LSH duplicate finder (H001 optimization)
             # Uses random hyperplane LSH to preserve cosine similarity
             # Pure Rust hot path - no DB queries, no keyword extraction
-            result_json = whitemagic_rust.simhash_lsh.simhash_find_duplicates(
+            simhash_lsh = getattr(whitemagic_rust, "simhash_lsh", None)
+            if simhash_lsh is None or not hasattr(simhash_lsh, "simhash_find_duplicates"):
+                raise AttributeError("simhash_lsh not available")
+
+            result_json = simhash_lsh.simhash_find_duplicates(
                 embeddings_flat,
                 embedding_dim,
                 threshold,
@@ -1023,7 +1043,36 @@ class EmbeddingEngine:
 
     def embedding_stats(self) -> dict[str, Any]:
         """Get stats about the embedding cache (hot + cold)."""
-        return self.embedding_stats_async()
+        db = self._get_db()
+        if db is None:
+            return {"status": "unavailable"}
+
+        try:
+            hot_total = cast(int, db.execute("SELECT COUNT(*) FROM memory_embeddings").fetchone()[0])
+            cold_total = 0
+            cold_db = self._get_cold_db()
+            if cold_db:
+                try:
+                    cold_total = cast(int, cold_db.execute("SELECT COUNT(*) FROM memory_embeddings").fetchone()[0])
+                except Exception:
+                    pass
+            hnsw_status = "active" if self._hnsw_index is not None else (
+                "available" if self._hnsw_is_available() else "not_installed"
+            )
+            return {
+                "status": "ok",
+                "hot_embeddings": hot_total,
+                "cold_embeddings": cold_total,
+                "total_embeddings": hot_total + cold_total,
+                "model": MODEL_NAME,
+                "dims": EMBEDDING_DIM,
+                "engine_available": self.available(),
+                "hnsw_index": hnsw_status,
+                "hnsw_hot_count": self._hnsw_count,
+                "hnsw_cold_count": self._cold_hnsw_count,
+            }
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
 
 
 # ---------------------------------------------------------------------------

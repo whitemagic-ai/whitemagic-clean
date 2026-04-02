@@ -8,11 +8,11 @@ import hashlib
 from typing import Any
 
 # Try to load Rust module
-_rs = None
 try:
-    import whitemagic_rs as _rs
+    import whitemagic_rs as _rs_mod
+    _rs = _rs_mod
 except Exception:
-    pass
+    _rs = None
 
 
 def fast_content_hash(content: str | bytes) -> str:
@@ -58,11 +58,12 @@ class UnifiedMemoryBridge:
     ) -> tuple[bool, str | None]:
         """Check if content hash exists in set with Rust acceleration."""
         # Try Rust fast path for large sets
-        if self._rust_available and len(existing_hashes) > 10000:
+        if _rs is not None and len(existing_hashes) > 10000:
             try:
-                if hasattr(_rs, 'bloom_filter_check'):
+                bloom_filter_check = getattr(_rs, 'bloom_filter_check', None)
+                if bloom_filter_check is not None:
                     # Use Bloom filter for probabilistic fast check
-                    result = _rs.bloom_filter_check(content_hash, list(existing_hashes))
+                    result = bloom_filter_check(content_hash, list(existing_hashes))
                     if result["probably_exists"] and result["confirmed"]:
                         return True, result.get("matched_id")
             except Exception:
@@ -83,7 +84,7 @@ class UnifiedMemoryBridge:
             backend_store_fn: Function to call for actual storage
         """
         # Compute all hashes
-        contents = [str(m.get('content', '')) for m in memories]
+        contents: list[str | bytes] = [str(m.get('content', '')) for m in memories]
         hashes = batch_content_hash(contents)
 
         # Deduplicate

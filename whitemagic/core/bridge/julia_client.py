@@ -8,7 +8,7 @@ import subprocess
 import time
 import atexit
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any, cast
 import logging
 
 logger = logging.getLogger(__name__)
@@ -22,8 +22,8 @@ class JuliaPersistentClient:
 
     def __init__(self, bind_addr: str = "tcp://127.0.0.1:5555"):
         self.bind_addr = bind_addr
-        self.context: Optional[zmq.Context] = None
-        self.socket: Optional[zmq.Socket] = None
+        self.context: Optional[Any] = None
+        self.socket: Optional[Any] = None
         self.server_process: Optional[subprocess.Popen] = None
         self._connected = False
 
@@ -58,7 +58,8 @@ class JuliaPersistentClient:
                 atexit.register(self.stop)
                 return True
             if self.server_process.poll() is not None:
-                stderr = self.server_process.stderr.read().decode()
+                stderr_stream = self.server_process.stderr
+                stderr = stderr_stream.read().decode() if stderr_stream else "Unknown error"
                 logger.error(f"Julia server failed: {stderr}")
                 return False
 
@@ -70,32 +71,36 @@ class JuliaPersistentClient:
         if self._connected:
             return
 
-        self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.REQ)
+        zmq_any: Any = zmq
+        self.context = zmq_any.Context()
+        self.socket = self.context.socket(zmq_any.REQ)
         self.socket.connect(self.bind_addr)
-        self.socket.setsockopt(zmq.RCVTIMEO, 5000)  # 5 second timeout
+        self.socket.setsockopt(zmq_any.RCVTIMEO, 5000)  # 5 second timeout
         self._connected = True
 
     def _ping(self) -> bool:
         """Check if server is responsive."""
         try:
-            ctx = zmq.Context()
-            sock = ctx.socket(zmq.REQ)
+            zmq_any: Any = zmq
+            ctx: Any = zmq_any.Context()
+            sock: Any = ctx.socket(zmq_any.REQ)
             sock.connect(self.bind_addr)
-            sock.setsockopt(zmq.RCVTIMEO, 1000)
+            sock.setsockopt(zmq_any.RCVTIMEO, 1000)
             sock.send_json({"command": "ping"})
             response = sock.recv_json()
             sock.close()
             ctx.term()
-            return response.get("pong", False)
+            return cast(bool, response.get("pong", False))
         except Exception:
             return False
 
     def _send_request(self, request: Dict) -> Dict:
         """Send request to Julia server."""
         self._connect()
+        if self.socket is None:
+            raise RuntimeError("Julia socket not initialized")
         self.socket.send_json(request)
-        return self.socket.recv_json()
+        return cast(Dict, self.socket.recv_json())
 
     def rrf_fuse(self, lists: List[List[str]], weights: Optional[List[float]] = None, k: float = 60.0) -> List[str]:
         """Reciprocal Rank Fusion for merging multiple result lists.
@@ -117,7 +122,7 @@ class JuliaPersistentClient:
             request["weights"] = weights
 
         response = self._send_request(request)
-        return response.get("fused", [])
+        return cast(List[str], response.get("fused", []))
 
     def pagerank(self, node_ids: List[str], edges: List[tuple], damping: float = 0.85) -> Dict[str, float]:
         """Calculate PageRank scores for a graph.
@@ -138,7 +143,7 @@ class JuliaPersistentClient:
         }
 
         response = self._send_request(request)
-        return response.get("pagerank", {})
+        return cast(Dict[str, float], response.get("pagerank", {}))
 
     def score_walk_paths(self, paths: List[List[str]], weights: Dict[str, float]) -> List[float]:
         """Score graph walk paths based on edge weights.
@@ -157,7 +162,7 @@ class JuliaPersistentClient:
         }
 
         response = self._send_request(request)
-        return response.get("scored_paths", [])
+        return cast(List[float], response.get("scored_paths", []))
 
     def community_gravity(self, vector: np.ndarray, centroids: List[np.ndarray],
                           community_ids: List[str]) -> Dict[str, float]:
@@ -179,7 +184,7 @@ class JuliaPersistentClient:
         }
 
         response = self._send_request(request)
-        return response.get("gravity", {})
+        return cast(Dict[str, float], response.get("gravity", {}))
 
     def stop(self):
         """Stop the Julia server and clean up resources."""

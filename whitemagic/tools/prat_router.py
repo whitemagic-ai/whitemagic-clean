@@ -17,7 +17,7 @@ preserving all middleware (circuit breaker, rate limiter, RBAC, etc.).
 
 import logging
 import os
-from typing import Any
+from typing import Any, cast
 from uuid import uuid4
 
 from whitemagic.tools.gana_native_contract import (
@@ -66,10 +66,13 @@ def _normalize_gana_native_result(gana_name: str, raw: dict[str, Any]) -> dict[s
             }
         },
     )
-    return normalize_native_gana_result(
-        gana_name,
-        request_id=str(uuid4()),
-        details=details,
+    return cast(
+        dict[str, Any],
+        normalize_native_gana_result(
+            gana_name,
+            request_id=str(uuid4()),
+            details=details,
+        ),
     )
 
 # ──────────────────────────────────────────────────────────
@@ -177,6 +180,7 @@ TOOL_TO_GANA: dict[str, str] = {
     # ═══ WINGS — Deployment & Export ═══
     "export_memories":         "gana_wings",
     "audit.export":            "gana_wings",
+    "mesh.connect":            "gana_wings",
     "mesh.broadcast":          "gana_wings",
     "mesh.status":             "gana_wings",
 
@@ -705,7 +709,7 @@ def _try_koka_handler(gana_name: str, tool: str | None, args: dict | None) -> di
             # we should fall back to Python
             if result.get("status") == "error" or "error" in result:
                 return None
-            return result
+            return cast(dict[str, Any], result)
     except Exception as e:
         logger.debug(f"Koka handler fallback for {gana_name}: {e}")
 

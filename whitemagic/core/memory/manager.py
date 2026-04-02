@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Union, cast
 
 from whitemagic.core.memory.unified import get_unified_memory
-from whitemagic.core.memory.unified_types import MemoryType
+from whitemagic.core.memory.unified_types import Memory, MemoryType
 from whitemagic.core.resonance.gan_ying_enhanced import EventType
 
 
@@ -41,6 +41,15 @@ class MemoryManager:
         # This is expensive but needed for legacy test compatibility
         all_mems = self.unified.list_recent(limit=1000)
         return {m.id: self._memory_to_dict(m) for m in all_mems}
+
+    def _memory_to_dict(self, memory: Memory) -> dict[str, Any]:
+        """Convert a unified memory object into the legacy dict shape."""
+        data = cast(dict[str, Any], memory.to_dict())
+        data.setdefault("created", data.get("created_at"))
+        data.setdefault("modified", data.get("last_modified"))
+        data.setdefault("type", memory.memory_type.name.lower())
+        data.setdefault("body", str(memory.content))
+        return data
 
     def create_memory(
         self,
@@ -251,11 +260,11 @@ class MemoryManager:
 
     def consolidate(self) -> int:
         """Consolidate memories - strengthen important, decay unimportant."""
-        return self.unified.consolidate()
+        return cast(int, self.unified.consolidate())
 
     def get_stats(self) -> dict[str, Any]:
         """Get memory system statistics."""
-        return self.unified.get_stats()
+        return cast(dict[str, Any], self.unified.get_stats())
 
     def _parse_memory_type(self, type_str: str) -> MemoryType:
         try:

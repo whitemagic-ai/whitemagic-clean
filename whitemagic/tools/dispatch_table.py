@@ -395,6 +395,7 @@ DISPATCH_TABLE: dict[str, Callable[..., dict[str, Any]]] = {
     # --- Explain This, Agent Trust & Mesh ---
     "explain_this": LazyHandler("agent_ergonomics", "handle_explain_this"),
     "agent.trust": LazyHandler("agent_ergonomics", "handle_agent_trust"),
+    "mesh.connect": LazyHandler("agent_ergonomics", "handle_mesh_connect"),
     "mesh.status": LazyHandler("agent_ergonomics", "handle_mesh_status"),
     "mesh.broadcast": LazyHandler("agent_ergonomics", "handle_mesh_broadcast"),
 

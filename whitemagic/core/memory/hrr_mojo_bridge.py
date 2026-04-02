@@ -6,6 +6,7 @@ import logging
 import os
 import subprocess
 import numpy as np
+from typing import cast
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ class HRRMojoBridge:
 
     def _bind_python(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         """FFT-based binding (Python fallback)."""
-        return np.real(np.fft.ifft(np.fft.fft(a) * np.fft.fft(b))).astype(np.float32)
+        return cast(np.ndarray, np.real(np.fft.ifft(np.fft.fft(a) * np.fft.fft(b))).astype(np.float32))
 
     def _bind_mojo(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         """Call Mojo implementation via subprocess."""
@@ -76,7 +77,7 @@ class HRRMojoBridge:
             )
 
             if result.returncode == 0:
-                return np.load(out_path)
+                return cast(np.ndarray, np.load(out_path))
             else:
                 raise RuntimeError(f"Mojo execution failed: {result.stderr}")
         finally:
@@ -99,9 +100,9 @@ class HRRMojoBridge:
 
     def _unbind_python(self, bound: np.ndarray, b: np.ndarray) -> np.ndarray:
         """FFT-based unbinding (Python fallback)."""
-        return np.real(np.fft.ifft(
+        return cast(np.ndarray, np.real(np.fft.ifft(
             np.conj(np.fft.fft(b)) * np.fft.fft(bound)
-        )).astype(np.float32)
+        )).astype(np.float32))
 
     def _unbind_mojo(self, bound: np.ndarray, b: np.ndarray) -> np.ndarray:
         """Call Mojo unbind via subprocess."""
@@ -125,7 +126,7 @@ class HRRMojoBridge:
             )
 
             if result.returncode == 0:
-                return np.load(out_path)
+                return cast(np.ndarray, np.load(out_path))
             else:
                 raise RuntimeError(f"Mojo execution failed: {result.stderr}")
         finally:

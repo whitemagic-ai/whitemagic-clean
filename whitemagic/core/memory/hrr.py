@@ -40,7 +40,7 @@ from __future__ import annotations
 
 import logging
 import threading
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -95,7 +95,7 @@ class HRREngine:
         arr = np.asarray(vec, dtype=np.float32)
         if arr.shape != (self._dim,):
             raise ValueError(f"Expected dim={self._dim}, got shape={arr.shape}")
-        return arr
+        return cast(np.ndarray, arr)
 
     # ------------------------------------------------------------------
     # Core HRR operations
@@ -113,10 +113,11 @@ class HRREngine:
         
         try:
             from whitemagic.core.acceleration.simd_holographic import circular_convolution
-            return circular_convolution(a_arr, b_arr)
+            result = circular_convolution(a_arr, b_arr)
+            return cast(np.ndarray, result)
         except (ImportError, Exception):
             result = np.real(np.fft.ifft(np.fft.fft(a_arr) * np.fft.fft(b_arr)))
-            return result.astype(np.float32)
+            return cast(np.ndarray, result.astype(np.float32))
 
     def unbind(
         self, bound: list[float] | np.ndarray, b: list[float] | np.ndarray,
@@ -130,12 +131,13 @@ class HRREngine:
         
         try:
             from whitemagic.core.acceleration.simd_holographic import circular_correlation
-            return circular_correlation(bound_arr, b_arr)
+            result = circular_correlation(bound_arr, b_arr)
+            return cast(np.ndarray, result)
         except (ImportError, Exception):
             result = np.real(np.fft.ifft(
                 np.conj(np.fft.fft(b_arr)) * np.fft.fft(bound_arr),
             ))
-            return result.astype(np.float32)
+            return cast(np.ndarray, result.astype(np.float32))
 
     def superpose(self, *vectors: list[float] | np.ndarray) -> np.ndarray:
         """Superposition: element-wise sum of multiple HRR vectors.
@@ -177,7 +179,7 @@ class HRREngine:
         """
         rel_upper = relation.upper()
         if rel_upper in self._relation_vectors:
-            return self._relation_vectors[rel_upper]
+            return cast(np.ndarray, self._relation_vectors[rel_upper])
 
         # Generate a deterministic vector from the relation name
         seed = hash(rel_upper) % (2**31)
@@ -185,7 +187,7 @@ class HRREngine:
         vec = rng.standard_normal(self._dim).astype(np.float32)
         vec /= np.linalg.norm(vec)
         self._relation_vectors[rel_upper] = vec
-        return vec
+        return cast(np.ndarray, vec)
 
     def project(
         self,

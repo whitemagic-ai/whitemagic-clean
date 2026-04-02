@@ -1,5 +1,7 @@
 """Acceleration modules — SIMD, FFI, and polyglot-accelerated operations."""
 
+from typing import Any
+
 try:
     from .elixir_bridge import (
         elixir_bridge_status,
@@ -10,13 +12,22 @@ try:
 except ImportError:
     has_elixir = False
 
-    def elixir_bridge_status() -> dict:
+    def elixir_bridge_status() -> dict[str, Any]:
         return {"status": "error", "message": "Elixir bridge not available or archived."}
 
-    def elixir_cascade_execute(*args, **kwargs):
+    def elixir_cascade_execute(
+        tool_name: str,
+        args: dict[str, Any],
+        timeout_ms: int = 30000,
+        priority: str = "normal",
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Elixir bridge not available or archived.")
 
-    def elixir_cascade_pipeline(*args, **kwargs):
+    def elixir_cascade_pipeline(
+        tasks: list[dict[str, Any]],
+        mode: str = "parallel",
+        max_failures: int = -1,
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Elixir bridge not available or archived.")
 
 try:
@@ -27,16 +38,23 @@ try:
         mesh_sync_memory,
     )
 except ImportError:
-    def go_mesh_status() -> dict:
+    def go_mesh_status() -> dict[str, Any]:
         return {"status": "error", "message": "Go mesh bridge not available."}
 
-    def mesh_agent_status(*args, **kwargs):
+    def mesh_agent_status() -> dict[str, Any] | None:
         raise NotImplementedError("Go mesh bridge not available.")
 
-    def mesh_distribute_task(*args, **kwargs):
+    def mesh_distribute_task(
+        task: dict[str, Any],
+        strategy: str = "least_loaded",
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Go mesh bridge not available.")
 
-    def mesh_sync_memory(*args, **kwargs):
+    def mesh_sync_memory(
+        memory_id: str,
+        content: str,
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Go mesh bridge not available.")
 
 try:
@@ -47,16 +65,35 @@ try:
         haskell_maturity_assess,
     )
 except ImportError:
-    def haskell_bridge_status() -> dict:
+    def haskell_bridge_status() -> dict[str, Any]:
         return {"status": "error", "message": "Haskell bridge not available."}
 
-    def haskell_check_boundaries(*args, **kwargs):
+    def haskell_check_boundaries(
+        tool_name: str,
+        description: str = "",
+        args_str: str = "",
+    ) -> list[dict[str, Any]] | None:
         raise NotImplementedError("Haskell bridge not available.")
 
-    def haskell_evaluate_rules(*args, **kwargs):
+    def haskell_evaluate_rules(
+        tool_name: str,
+        description: str = "",
+        safety_level: str = "",
+        category: str = "",
+        profile: str = "default",
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Haskell bridge not available.")
 
-    def haskell_maturity_assess(*args, **kwargs):
+    def haskell_maturity_assess(
+        stage: int,
+        tools_executed: int,
+        session_count: int,
+        dharma_score: float,
+        harmony_score: float,
+        consolidations: int = 0,
+        agents_registered: int = 0,
+        error_rate: float = 0.0,
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Haskell bridge not available.")
 
 try:
@@ -67,16 +104,26 @@ try:
         julia_importance_distribution,
     )
 except ImportError:
-    def julia_batch_forecast(*args, **kwargs):
+    def julia_batch_forecast(
+        metrics: dict[str, list[float]],
+        steps: int = 5,
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Julia bridge not available.")
 
-    def julia_bridge_status() -> dict:
+    def julia_bridge_status() -> dict[str, Any]:
         return {"status": "error", "message": "Julia bridge not available."}
 
-    def julia_forecast_metric(*args, **kwargs):
+    def julia_forecast_metric(
+        values: list[float],
+        steps: int = 5,
+        alpha: float = 0.3,
+        beta: float = 0.1,
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Julia bridge not available.")
 
-    def julia_importance_distribution(*args, **kwargs):
+    def julia_importance_distribution(
+        scores: list[float],
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Julia bridge not available.")
 
 try:
@@ -87,16 +134,23 @@ try:
         mojo_status,
     )
 except ImportError:
-    def mojo_batch_encode(*args, **kwargs):
+    def mojo_batch_encode(
+        memories: list[dict[str, Any]],
+    ) -> list[tuple[float, float, float, float, float]] | None:
         raise NotImplementedError("Mojo bridge not available.")
 
-    def mojo_neuro_score(*args, **kwargs):
+    def mojo_neuro_score(
+        memories: list[dict[str, Any]],
+    ) -> list[dict[str, Any]] | None:
         raise NotImplementedError("Mojo bridge not available.")
 
-    def mojo_quantize(*args, **kwargs):
+    def mojo_quantize(
+        vectors: list[list[float]],
+        mode: str = "int8",
+    ) -> dict[str, Any] | None:
         raise NotImplementedError("Mojo bridge not available.")
 
-    def mojo_status() -> dict:
+    def mojo_status() -> dict[str, Any]:
         return {"status": "error", "message": "Mojo bridge not available."}
 
 from .mojo_bridge import (

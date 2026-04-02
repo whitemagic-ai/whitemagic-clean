@@ -138,11 +138,11 @@ class QuantumGraphEngine:
             
             current_state = list(next_state_map.values())
             # Normalize state
-            total_prob = sum(n.amplitude**2 for n in current_state)
+            total_prob = sum(node_prob.amplitude**2 for node_prob in current_state)
             if total_prob > 0:
                 norm = math.sqrt(total_prob)
-                for n in current_state:
-                    n.amplitude /= norm
+                for node_obj in current_state:
+                    node_obj.amplitude /= norm
                     
         return sorted(current_state, key=lambda x: x.amplitude**2, reverse=True)
 

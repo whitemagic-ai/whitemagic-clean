@@ -20,7 +20,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Any, cast
 
 KOKA_DIR = Path(__file__).parent.parent.parent.parent / "whitemagic-koka"
 _DEFAULT_PARALLEL_CALL_TIMEOUT_S = 8.0
@@ -158,20 +158,23 @@ class PythonFastPath:
 
     @classmethod
     def circuit_check(cls) -> str:
-        return cls.circuit_state["state"]
+        return cast(str, cls.circuit_state["state"])
 
     @classmethod
     def circuit_record_success(cls) -> str:
-        cls.circuit_state["successes"] += 1
-        if cls.circuit_state["state"] == "half-open" and cls.circuit_state["successes"] >= 3:
+        successes = cast(int, cls.circuit_state["successes"])
+        cls.circuit_state["successes"] = successes + 1
+        if cls.circuit_state["state"] == "half-open" and cast(int, cls.circuit_state["successes"]) >= 3:
             cls.circuit_state["state"] = "closed"
             cls.circuit_state["failures"] = 0
         return "ok"
 
     @classmethod
     def circuit_record_failure(cls) -> str:
-        cls.circuit_state["failures"] += 1
-        if cls.circuit_state["state"] == "closed" and cls.circuit_state["failures"] >= cls.circuit_state["threshold"]:
+        failures = cast(int, cls.circuit_state["failures"])
+        cls.circuit_state["failures"] = failures + 1
+        threshold = cast(int, cls.circuit_state["threshold"])
+        if cls.circuit_state["state"] == "closed" and cast(int, cls.circuit_state["failures"]) >= threshold:
             cls.circuit_state["state"] = "open"
         elif cls.circuit_state["state"] == "half-open":
             cls.circuit_state["state"] = "open"
@@ -211,14 +214,20 @@ class KokaProcess:
         return self._proc is not None
 
     def _readline_with_timeout(self, timeout: float = _DEFAULT_KOKA_PROCESS_TIMEOUT_S) -> str | None:
-        if self._proc is None or self._proc.stdout is None:
+        proc = self._proc
+        if proc is None or proc.stdout is None:
             return None
 
         result_queue: queue.Queue[str | None] = queue.Queue(maxsize=1)
 
         def _reader() -> None:
             try:
-                result_queue.put(self._proc.stdout.readline())
+                # Use local reference to avoid None check after start
+                stdout = proc.stdout
+                if stdout is not None:
+                    result_queue.put(stdout.readline())
+                else:
+                    result_queue.put(None)
             except Exception:
                 result_queue.put(None)
 
@@ -245,17 +254,22 @@ class KokaProcess:
     def call(self, request: dict) -> dict:
         """Send request and get response."""
         with self._lock:
-            if self._proc is None:
+            proc = self._proc
+            if proc is None:
                 if not self.start():
                     return {"error": "Process not available", "healthy": False}
+                proc = self._proc
+            
+            if proc is None or proc.stdin is None:
+                return {"error": "Process or stdin not available", "healthy": False}
 
             try:
-                self._proc.stdin.write(json.dumps(request) + '\n')
-                self._proc.stdin.flush()
+                proc.stdin.write(json.dumps(request) + '\n')
+                proc.stdin.flush()
                 response = self._readline_with_timeout()
                 self._call_count += 1
                 if response:
-                    return json.loads(response)
+                    return cast(dict, json.loads(response))
                 self._healthy = False
                 self._last_error = "timeout/no response"
                 self._reset_process()
@@ -270,13 +284,18 @@ class KokaProcess:
         """Send multiple requests in sequence (single IPC overhead)."""
         results = []
         with self._lock:
-            if self._proc is None and not self.start():
+            proc = self._proc
+            if proc is None and not self.start():
                 return [{"error": "Process not available"} for _ in requests]
+            
+            proc = self._proc
+            if proc is None or proc.stdin is None:
+                return [{"error": "Process or stdin not available"} for _ in requests]
 
             try:
                 for req in requests:
-                    self._proc.stdin.write(json.dumps(req) + '\n')
-                    self._proc.stdin.flush()
+                    proc.stdin.write(json.dumps(req) + '\n')
+                    proc.stdin.flush()
                     response = self._readline_with_timeout()
                     if response:
                         results.append(json.loads(response))
@@ -364,8 +383,8 @@ class KokaProcessPool:
         if not self._processes:
             self.start()
 
-        futures: list[Future] = []
-        results = [None] * len(requests)
+        futures: list[tuple[int, Future]] = []
+        results: list[Any] = [None] * len(requests)
 
         for i, req in enumerate(requests):
             proc_idx = i % len(self._processes)
@@ -378,7 +397,7 @@ class KokaProcessPool:
             except Exception as e:
                 results[i] = {"error": f"parallel call failed: {e}"}
 
-        return results
+        return cast(list[dict], results)
 
     def stop(self) -> None:
         for proc in self._processes:
@@ -574,7 +593,11 @@ class HybridDispatcherV2:
         start = time.perf_counter()
 
         try:
-            result = rs.prat_route(tool)
+            prat_route_fn = getattr(rs, "prat_route", None)
+            if prat_route_fn:
+                result = str(prat_route_fn(tool))
+            else:
+                result = PythonFastPath.prat_route(tool)
         except Exception:
             result = PythonFastPath.prat_route(tool)
 
@@ -586,7 +609,11 @@ class HybridDispatcherV2:
         """Route multiple tools in batch"""
         start = time.perf_counter()
         try:
-            results = rs.prat_route_batch(tools)
+            prat_route_batch_fn = getattr(rs, "prat_route_batch", None)
+            if prat_route_batch_fn:
+                results = cast(list[str], prat_route_batch_fn(tools))
+            else:
+                results = [PythonFastPath.prat_route(t) for t in tools]
         except Exception:
             results = [PythonFastPath.prat_route(t) for t in tools]
 
@@ -600,7 +627,11 @@ class HybridDispatcherV2:
         operation = "resonance_predecessor"
         start = time.perf_counter()
         try:
-            result = rs.resonance_predecessor(gana)
+            resonance_predecessor_fn = getattr(rs, "resonance_predecessor", None)
+            if resonance_predecessor_fn:
+                result = str(resonance_predecessor_fn(gana))
+            else:
+                result = PythonFastPath.get_predecessor(gana)
         except Exception:
             result = PythonFastPath.get_predecessor(gana)
 
@@ -612,7 +643,11 @@ class HybridDispatcherV2:
         operation = "resonance_successor"
         start = time.perf_counter()
         try:
-            result = rs.resonance_successor(gana)
+            resonance_successor_fn = getattr(rs, "resonance_successor", None)
+            if resonance_successor_fn:
+                result = str(resonance_successor_fn(gana))
+            else:
+                result = PythonFastPath.get_successor(gana)
         except Exception:
             result = PythonFastPath.get_successor(gana)
 
@@ -628,15 +663,15 @@ class HybridDispatcherV2:
 
         start = time.perf_counter()
         if use_koka:
-            result = self._get_pool("circuit").call({"op": "check"})
+            result_dict = self._get_pool("circuit").call({"op": "check"})
             latency = (time.perf_counter() - start) * 1_000_000
             self._record_latency(True, latency, operation)
-            return result.get("state", "closed")
+            return cast(str, result_dict.get("state", "closed"))
         else:
-            result = PythonFastPath.circuit_check()
+            result_str = PythonFastPath.circuit_check()
             latency = (time.perf_counter() - start) * 1_000_000
             self._record_latency(False, latency, operation)
-            return result
+            return result_str
 
     def circuit_record_failure(self) -> str:
         operation = "circuit_record"
@@ -644,15 +679,15 @@ class HybridDispatcherV2:
 
         start = time.perf_counter()
         if use_koka:
-            result = self._get_pool("circuit").call({"op": "failure"})
+            result_dict = self._get_pool("circuit").call({"op": "failure"})
             latency = (time.perf_counter() - start) * 1_000_000
             self._record_latency(True, latency, operation)
-            return result.get("result", "ok")
+            return cast(str, result_dict.get("result", "ok"))
         else:
-            result = PythonFastPath.circuit_record_failure()
+            result_str = PythonFastPath.circuit_record_failure()
             latency = (time.perf_counter() - start) * 1_000_000
             self._record_latency(False, latency, operation)
-            return result
+            return result_str
 
     def circuit_record_success(self) -> str:
         operation = "circuit_record"

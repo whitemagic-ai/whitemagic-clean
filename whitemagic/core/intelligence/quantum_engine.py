@@ -16,7 +16,7 @@ class QuantumEngine:
         self.coherence_time = 1.0
         self.interference_threshold = 0.1
 
-    def grover_search(self, items: List[Any], oracle: Callable[[Any], bool], iterations: int = None) -> List[Any]:
+    def grover_search(self, items: List[Any], oracle: Callable[[Any], bool], iterations: int | None = None) -> List[Any]:
         """
         Grover's Amplification algorithm for O(√N) search.
         
@@ -46,7 +46,7 @@ class QuantumEngine:
             amplitudes = 2 * mean - amplitudes
             
         # Select top probability candidates
-        probabilities = amplitudes ** 2
+        probabilities: np.ndarray = amplitudes ** 2
         indices = np.argsort(probabilities)[::-1]
         
         return [items[i] for i in indices if probabilities[i] > (1.0 / N)]
@@ -64,7 +64,7 @@ class QuantumEngine:
         state = {start_node: 1.0 + 0j}
         
         for _ in range(hops):
-            next_state = {}
+            next_state: Dict[str, complex] = {}
             for node, amplitude in state.items():
                 neighbors = graph.get(node, [])
                 if not neighbors:
@@ -86,7 +86,7 @@ class QuantumEngine:
         """
         Fuses multiple search/walk results using constructive interference.
         """
-        fused = {}
+        fused: Dict[str, float] = {}
         for res in results:
             for node, prob in res.items():
                 # Weighted interference: stronger signals amplify exponentially

@@ -14,7 +14,7 @@ import struct
 import threading
 from collections import Counter
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from whitemagic.config.paths import DB_PATH, MEMORY_DIR
 
@@ -80,7 +80,7 @@ def _cosine(a: list[float], b: list[float]) -> float:
         from whitemagic.core.acceleration.simd_cosine import (
             cosine_similarity as _simd_cos,
         )
-        return _simd_cos(a, b)
+        return cast(float, _simd_cos(a, b))
     except Exception:
         pass
     d=sum(x*y for x,y in zip(a,b))
@@ -139,11 +139,12 @@ class VectorSearch:
             self._cache[memory_id]=vec
             self._meta[memory_id]={"title":title,"snippet":snip}
 
+            import numpy as np
             # Sync to Koka SHM Engine
             try:
                 from whitemagic.core.memory.shm_manager import get_shm_manager
                 shm = get_shm_manager()
-                shm.add_or_update(memory_id, vec)
+                shm.add_or_update(memory_id, np.array(vec, dtype=np.float32))
             except Exception as e:
                 import logging
                 logging.getLogger(__name__).warning(f"Failed to sync embedding to SHM: {e}")
@@ -168,16 +169,17 @@ class VectorSearch:
                     shm.sync_from_db(pool)
 
                 if bridge.is_available("shm_search") and shm.get_count() > 0:
+                    import numpy as np
                     # We need to write the query vector into the SHM segment
                     # We'll use index count + 1 as the temporary query slot
                     query_idx = shm.get_count() + 1
-                    shm.write_query(query_idx, qvec)
+                    shm.write_query(query_idx, np.array(qvec, dtype=np.float32))
 
                     # Dispatch to Koka
                     res = bridge.dispatch("shm_search", "search", {"query_id": query_idx})
 
                     if res and res.get("status") == "ok":
-                        results = []
+                        results: list[VSearchResult] = []
                         for item in res.get("results", []):
                             int_id = item["id"]
                             score = item["score"]

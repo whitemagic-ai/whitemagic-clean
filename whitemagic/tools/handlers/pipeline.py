@@ -42,7 +42,7 @@ def _pipelines_dir() -> Path:
 
     d = paths_mod.WM_ROOT / "pipelines"
     d.mkdir(parents=True, exist_ok=True)
-    return d
+    return cast(Path, d)
 
 
 def _pipeline_path(pipeline_id: str) -> Path:
@@ -338,22 +338,22 @@ def handle_pipeline_status(**kwargs: Any) -> dict[str, Any]:
             "recent": pipelines[-10:] if pipelines else [],
         }
 
-    pipeline = _load_pipeline(pipeline_id)
-    if not pipeline:
+    pipeline_data = _load_pipeline(pipeline_id)
+    if not pipeline_data:
         return {"status": "error", "error": f"Pipeline {pipeline_id} not found", "error_code": "not_found"}
 
     return {
         "status": "success",
         "pipeline": {
-            "id": pipeline["id"],
-            "name": pipeline.get("name"),
-            "pipeline_status": pipeline.get("status"),
-            "current_step": pipeline.get("current_step", 0),
-            "total_steps": len(pipeline.get("steps", [])),
-            "created_at": pipeline.get("created_at"),
-            "completed_at": pipeline.get("completed_at"),
+            "id": pipeline_data["id"],
+            "name": pipeline_data.get("name"),
+            "pipeline_status": pipeline_data.get("status"),
+            "current_step": pipeline_data.get("current_step", 0),
+            "total_steps": len(pipeline_data.get("steps", [])),
+            "created_at": pipeline_data.get("created_at"),
+            "completed_at": pipeline_data.get("completed_at"),
         },
-        "results": pipeline.get("results", []),
+        "results": pipeline_data.get("results", []),
     }
 
 

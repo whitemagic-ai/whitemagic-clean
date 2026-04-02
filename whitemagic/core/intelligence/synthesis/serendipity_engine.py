@@ -7,10 +7,9 @@ Uses weighted sampling favoring high-gravity, low-access memories.
 import logging
 import sqlite3
 import random
-import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, List
 
 from whitemagic.utils.core import parse_datetime
 
@@ -137,7 +136,7 @@ class SerendipityEngine:
             
             # 5. Map back to SurfacedMemory objects
             sorted_mids = sorted(fused_probs.items(), key=lambda x: x[1], reverse=True)
-            surfaced = []
+            surfaced: List[SurfacedMemory] = []
             for mid, prob in sorted_mids:
                 if len(surfaced) >= count:
                     break

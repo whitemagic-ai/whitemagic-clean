@@ -141,7 +141,7 @@ def handle_garden_search(**kwargs: Any) -> dict[str, Any]:
         return {"status": "error", "error": "query parameter required"}
 
     try:
-        results = {"files": [], "functions": []}
+        results: dict[str, list[dict[str, Any]]] = {"files": [], "functions": []}
 
         # Search files
         if search_type in ("files", "all"):
@@ -307,7 +307,8 @@ def handle_garden_map_system(**kwargs: Any) -> dict[str, Any]:
         directory = get_garden_directory()
 
         # Get files for primary garden
-        primary_files = directory.get_garden_files(mapping["primary"])
+        primary_garden = str(mapping["primary"])
+        primary_files = directory.get_garden_files(primary_garden)
         system_files = [f for f in primary_files if system_id in f.lower()][:20]
 
         return {

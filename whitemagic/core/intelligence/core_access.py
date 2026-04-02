@@ -35,7 +35,7 @@ import sqlite3
 import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -823,7 +823,7 @@ class CoreAccessLayer:
         try:
             from whitemagic.core.memory.constellations import get_constellation_detector
             detector = get_constellation_detector()
-            return detector.get_drift_vectors(window_days=window_days)
+            return cast(list[dict[str, Any]], detector.get_drift_vectors(window_days=window_days))
         except Exception as e:
             logger.debug(f"Drift query failed: {e}")
             return []

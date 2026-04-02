@@ -49,8 +49,8 @@ logger = logging.getLogger(__name__)
 # Rust acceleration (S026 VC6)
 try:
     import whitemagic_rust as _wr
-    _rust_holographic = _wr.holographic_encoder_5d
-    RUST_HOLOGRAPHIC_AVAILABLE = True
+    _rust_holographic: Any = getattr(_wr, "holographic_encoder_5d", None)
+    RUST_HOLOGRAPHIC_AVAILABLE = _rust_holographic is not None
 except ImportError:
     _rust_holographic = None
     RUST_HOLOGRAPHIC_AVAILABLE = False
@@ -191,7 +191,7 @@ class CoordinateEncoder:
                 score = dot_product(v, pc_vec)
                 # Amplified scaling to ensure coordinates occupy the full [-1, 1] range
                 # After centering, MiniLM PCA scores are typically in [-0.15, 0.15]
-                return max(-1.0, min(1.0, score * 6.0))
+                return float(max(-1.0, min(1.0, score * 6.0)))
 
         # --- Anchor-based Fallback ---
         if axis == "x":
@@ -214,7 +214,7 @@ class CoordinateEncoder:
                 # Map [0, 1] to [-1, 1]
                 score = (projection * 2.0) - 1.0
                 # Amplify the center to push toward edges if needed
-                return max(-1.0, min(1.0, score * 1.5))
+                return float(max(-1.0, min(1.0, score * 1.5)))
         
         elif axis == "y":
             # Axis: Macro (+) <---> Micro (-)
@@ -230,7 +230,7 @@ class CoordinateEncoder:
                 v_minus_p2 = vec_sub(v, p2)
                 projection = dot_product(v_minus_p2, axis_vec) / (axis_norm**2)
                 score = (projection * 2.0) - 1.0
-                return max(-1.0, min(1.0, score * 1.5))
+                return float(max(-1.0, min(1.0, score * 1.5)))
 
         return 0.0
 

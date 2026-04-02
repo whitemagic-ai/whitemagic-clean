@@ -22,7 +22,7 @@ import logging
 import math
 import threading
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -139,7 +139,7 @@ def circular_convolution(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     lib = _load_lib()
     if lib is not None and hasattr(lib, "simd_circular_convolution"):
         try:
-            out = np.zeros(dim, dtype=np.float32)
+            out: np.ndarray = np.zeros(dim, dtype=np.float32)
             a_ptr = a.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
             b_ptr = b.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
             out_ptr = out.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
@@ -149,7 +149,8 @@ def circular_convolution(a: np.ndarray, b: np.ndarray) -> np.ndarray:
             logger.debug("Zig circular_convolution failed: %s", e)
     
     # Fallback to FFT
-    return np.real(np.fft.ifft(np.fft.fft(a) * np.fft.fft(b))).astype(np.float32)
+    result: np.ndarray = np.real(np.fft.ifft(np.fft.fft(a) * np.fft.fft(b))).astype(np.float32)
+    return cast(np.ndarray, result)
 
 
 def circular_correlation(a: np.ndarray, b: np.ndarray) -> np.ndarray:
@@ -158,7 +159,7 @@ def circular_correlation(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     lib = _load_lib()
     if lib is not None and hasattr(lib, "simd_circular_correlation"):
         try:
-            out = np.zeros(dim, dtype=np.float32)
+            out: np.ndarray = np.zeros(dim, dtype=np.float32)
             a_ptr = a.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
             b_ptr = b.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
             out_ptr = out.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
@@ -168,7 +169,8 @@ def circular_correlation(a: np.ndarray, b: np.ndarray) -> np.ndarray:
             logger.debug("Zig circular_correlation failed: %s", e)
             
     # Fallback to FFT correlation
-    return np.real(np.fft.ifft(np.conj(np.fft.fft(b)) * np.fft.fft(a))).astype(np.float32)
+    result = np.real(np.fft.ifft(np.conj(np.fft.fft(b)) * np.fft.fft(a))).astype(np.float32)
+    return cast(np.ndarray, result)
 
 
 def _py_weighted_distance(

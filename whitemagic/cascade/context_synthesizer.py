@@ -71,6 +71,7 @@ class UnifiedContext:
     session_intention: str | None = None
     session_duration_minutes: int = 0
     recent_events: list[dict[str, Any]] = field(default_factory=list)
+    attributes: dict[str, Any] = field(default_factory=dict)
 
     # Temporal
     timestamp: datetime = field(default_factory=datetime.now)

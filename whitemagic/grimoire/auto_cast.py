@@ -269,11 +269,13 @@ Spells Cast: {len(self.cast_history)}
         return status
 
 
-# Convenience function
-def auto_suggest(task: str) -> list[str]:
-    """Get spell suggestions for a task"""
-    caster = AutoCaster(mode=CastMode.SUGGEST_ONLY)
-    caster.activate()
-    suggestions = caster.suggest(task)
-    caster.deactivate()
-    return suggestions
+
+# Singleton
+_auto_caster: AutoCaster | None = None
+
+def get_auto_caster(mode: CastMode = CastMode.HIGH_CONFIDENCE) -> AutoCaster:
+    """Get the global AutoCaster singleton."""
+    global _auto_caster
+    if _auto_caster is None:
+        _auto_caster = AutoCaster(mode=mode)
+    return _auto_caster

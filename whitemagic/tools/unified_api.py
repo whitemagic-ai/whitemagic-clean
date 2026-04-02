@@ -169,7 +169,7 @@ GANA_TOOL_TIMEOUTS: dict[str, int] = {
     "oms_inspect": 45, "galactic_dashboard": 60,
 
     # Wings (gana_wings)
-    "export_memories": 75, "audit_export": 75, "mesh_status": 20, "mesh_broadcast": 45,
+    "export_memories": 75, "audit_export": 75, "mesh_connect": 20, "mesh_status": 20, "mesh_broadcast": 45,
 
     # Mound (gana_mound)
     "get_metrics_summary": 20, "view_hologram": 45, "get_yin_yang_balance": 20,
@@ -576,6 +576,7 @@ _TOOL_ALIASES: dict[str, str] = {
     "repo_summary": "repo.summary",
     "ship_check": "ship.check",
     # Underscore aliases for dot-notation tools
+    "mesh_connect": "mesh.connect",
     "broker_publish": "broker.publish",
     "broker_history": "broker.history",
     "broker_status": "broker.status",

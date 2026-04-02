@@ -13,7 +13,7 @@ import logging
 import re
 from importlib.util import find_spec
 from pathlib import Path
-from typing import Callable, Any
+from typing import Callable, Any, cast
 
 from whitemagic.runtime_status import get_runtime_status
 
@@ -64,6 +64,9 @@ def register_resources() -> None:
     prologue_path = ROOT_DIR / "grimoire" / "00_PROLOGUE.md"
     ai_primary_path = CORE_SYSTEM_DIR / "AI_PRIMARY.md"
     grimoire_index_path = ROOT_DIR / "grimoire" / "00_INDEX.md"
+
+    if mcp is None:
+        return
 
     @mcp.resource(
         "whitemagic://orientation/prologue",
@@ -189,7 +192,8 @@ def _register_prat_tools(mcp_client: str) -> int:
         ]
         wrapper.__signature__ = inspect.Signature(params)  # type: ignore[attr-defined]
 
-        mcp.tool(name=gana_name, description=description)(wrapper)
+        if mcp is not None:
+            mcp.tool(name=gana_name, description=description)(wrapper)
         count += 1
 
     return count
@@ -200,7 +204,7 @@ def get_registered_tool_definitions(*, lite_mode: bool = False) -> list[Any]:
 
     tool_defs = get_callable_tool_definitions()
     if not lite_mode:
-        return tool_defs
+        return cast(list[Any], tool_defs)
 
     filtered: list[Any] = []
     for tool_def in tool_defs:
@@ -289,7 +293,8 @@ def register_tools() -> None:
             wrapper.__signature__ = inspect.Signature(params)  # type: ignore[attr-defined]
 
             # Register with FastMCP
-            mcp.tool(name=name, description=description)(wrapper)
+            if mcp is not None:
+                mcp.tool(name=name, description=description)(wrapper)
 
             count += 1
 
@@ -307,4 +312,5 @@ if __name__ == "__main__":
     lifecycle.startup()
     register_resources()
     register_tools()
-    mcp.run()
+    if mcp is not None:
+        mcp.run()

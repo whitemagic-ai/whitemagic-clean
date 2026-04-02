@@ -3,6 +3,7 @@ import posix_ipc
 import mmap
 import logging
 import threading
+from typing import Any
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -20,10 +21,10 @@ class SharedMemoryManager:
     def __init__(self, name: str = "/whitemagic_embed_bridge_real"):
         self.name = name
         self._lock = threading.Lock()
-        self._map_file = None
-        self._shm = None
-        self._id_to_uuid = {}
-        self._uuid_to_id = {}
+        self._map_file: Any | None = None
+        self._shm: Any | None = None
+        self._id_to_uuid: dict[int, str] = {}
+        self._uuid_to_id: dict[str, int] = {}
         self._count = 0
         self._next_id = 1 # Reserve 0 for "query" or null
 
@@ -40,26 +41,38 @@ class SharedMemoryManager:
                 # Create new
                 self._shm = posix_ipc.SharedMemory(self.name, posix_ipc.O_CREAT | posix_ipc.O_EXCL, size=SEGMENT_SIZE)
 
-            self._map_file = mmap.mmap(self._shm.fd, self._shm.size)
-            self._shm.close_fd() # Safe to close FD after mmap
+            shm = self._shm
+            if shm is None:
+                raise RuntimeError("Shared memory handle was not initialized.")
+
+            self._map_file = mmap.mmap(shm.fd, shm.size)
+            shm.close_fd() # Safe to close FD after mmap
+            map_file = self._get_map_file()
 
             # Initialize header if it's a new segment or corrupted
-            magic = struct.unpack_from("=i", self._map_file, 0)[0]
+            magic = struct.unpack_from("=i", map_file, 0)[0]
             if magic != MAGIC:
-                struct.pack_into("=iiiiii", self._map_file, 0, MAGIC, 1, CAPACITY, 0, 0, 0)
+                struct.pack_into("=iiiiii", map_file, 0, MAGIC, 1, CAPACITY, 0, 0, 0)
                 self._count = 0
             else:
-                self._count = struct.unpack_from("=i", self._map_file, 12)[0]
+                self._count = struct.unpack_from("=i", map_file, 12)[0]
+
+    def _get_map_file(self) -> Any:
+        if self._map_file is None:
+            raise RuntimeError("Shared memory segment has not been initialized.")
+        return self._map_file
 
     def _write_memory_item(self, index: int, int_id: int, vector: np.ndarray) -> None:
         if index >= CAPACITY:
             raise ValueError("Shared memory capacity exceeded.")
         offset = HEADER_SIZE + (index * SLOT_SIZE)
-        struct.pack_into("=i", self._map_file, offset, int_id)
-        struct.pack_into(f"={DIM}f", self._map_file, offset + 4, *vector)
+        map_file = self._get_map_file()
+        struct.pack_into("=i", map_file, offset, int_id)
+        struct.pack_into(f"={DIM}f", map_file, offset + 4, *vector)
 
     def _update_count(self, count: int) -> None:
-        struct.pack_into("=i", self._map_file, 12, count)
+        map_file = self._get_map_file()
+        struct.pack_into("=i", map_file, 12, count)
 
     def sync_from_db(self, db_pool) -> None:
         """Load all embeddings from DB and populate SHM."""

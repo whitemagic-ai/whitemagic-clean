@@ -46,16 +46,19 @@ class PolyglotSpecialists:
     def distance_matrix(self, vectors: List[List[float]]) -> SpecialistResult:
         start = time.time()
         try:
-            from whitemagic.core.acceleration.simd_distance import compute_distance_matrix
-            matrix = compute_distance_matrix(vectors)
+            from whitemagic.core.acceleration.simd_distance import pairwise_distance_matrix
+            # Cast list[list[float]] to list[Sequence[float]] for mypy
+            from collections.abc import Sequence
+            matrix = pairwise_distance_matrix(cast(List[Sequence[float]], vectors))
             self.stats["zig"] += 1
             return SpecialistResult("SIMDProcessor", "zig", True, matrix,
                                    (time.time() - start) * 1000, False)
         except Exception:
             import numpy as np
-            matrix = np.zeros((len(vectors), len(vectors)))
+            # SpecialistResult expects Any, but we should be careful with types if we can
+            matrix_fallback = np.zeros((len(vectors), len(vectors)))
             self.stats["python"] += 1
-            return SpecialistResult("SIMDProcessor", "python", True, matrix,
+            return SpecialistResult("SIMDProcessor", "python", True, matrix_fallback,
                                    (time.time() - start) * 1000, True)
 
     # Specialist 3: Tensor Operations (Mojo)
@@ -95,7 +98,7 @@ class PolyglotSpecialists:
     def mesh_discovery(self) -> SpecialistResult:
         start = time.time()
         # Go P2P mesh (placeholder)
-        peers = []
+        peers: list[dict[str, Any]] = []
         self.stats["python"] += 1
         return SpecialistResult("NetworkManager", "python", True, peers,
                                (time.time() - start) * 1000, True)
@@ -104,8 +107,8 @@ class PolyglotSpecialists:
     def statistical_analysis(self, data: List[float]) -> SpecialistResult:
         start = time.time()
         try:
-            from whitemagic.core.acceleration.julia_bridge import memory_stats
-            stats = memory_stats(data)
+            from whitemagic.core.acceleration.julia_bridge import julia_importance_distribution
+            stats = julia_importance_distribution(data)
             self.stats["julia"] += 1
             return SpecialistResult("StatisticalAnalyzer", "julia", True, stats,
                                    (time.time() - start) * 1000, False)

@@ -9,7 +9,7 @@ import random
 from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -38,8 +38,8 @@ class ToolDiscovery:
 
         # Try to connect to Gan Ying bus
         try:
-            from whitemagic.core.resonance.gan_ying_enhanced import get_gan_ying_bus
-            self.gan_ying = get_gan_ying_bus()
+            from whitemagic.core.resonance.gan_ying_enhanced import get_bus, ResonanceEvent, EventType
+            self.gan_ying: Any = get_bus()
             self.gan_ying_enabled = True
             logger.debug("Tool discovery connected to Gan Ying bus")
         except Exception as e:
@@ -52,7 +52,7 @@ class ToolDiscovery:
         latency_ms: float,
         success: bool,
         context_tags: list[str] | None = None,
-    ):
+    ) -> None:
         """Record a tool call for pattern analysis."""
         now = datetime.now()
 
@@ -97,18 +97,21 @@ class ToolDiscovery:
         self.recent_calls.append((tool_name, now))
 
         # Emit to Gan Ying bus
-        if self.gan_ying_enabled:
+        if self.gan_ying_enabled and self.gan_ying:
             try:
-                self.gan_ying.emit(
-                    "tool.called",
-                    {
+                from whitemagic.core.resonance.gan_ying_enhanced import ResonanceEvent, EventType
+                event = ResonanceEvent(
+                    source="tool_discovery",
+                    event_type=EventType.SYSTEM_HEARTBEAT, # Defaulting to heartbeat for usage
+                    data={
                         "tool": tool_name,
                         "latency_ms": latency_ms,
                         "success": success,
                         "context": context_tags or [],
                     },
-                    confidence=0.8,
+                    confidence=0.8
                 )
+                self.gan_ying.emit(event, cascade=True)
             except Exception:
                 pass
 
@@ -231,7 +234,7 @@ class ToolDiscovery:
 
         if underutilized:
             # Pick top 2 underutilized
-            underutilized.sort(key=lambda x: self.metrics[x["tool"]].last_called or datetime.min)
+            underutilized.sort(key=lambda x: self.metrics[cast(str, x["tool"])].last_called or datetime.min)
             suggestions.extend(underutilized[:2])
 
         # Strategy 4: Random exploration (10% weight)
@@ -264,7 +267,7 @@ class ToolDiscovery:
                 seen.add(s["tool"])
                 unique_suggestions.append(s)
 
-        unique_suggestions.sort(key=lambda x: x["confidence"], reverse=True)
+        unique_suggestions.sort(key=lambda x: cast(float, x["confidence"]), reverse=True)
 
         # Return top N
         return unique_suggestions[:num_suggestions]

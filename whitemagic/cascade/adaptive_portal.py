@@ -611,7 +611,11 @@ class AdaptiveToolPortal:
             memory_root = MEMORY_DIR
 
             if memory_root.exists():
-                results = whitemagic_rs.parallel_grep(
+                parallel_grep = getattr(whitemagic_rs, "parallel_grep", None)
+                if parallel_grep is None:
+                    raise AttributeError("parallel_grep not available")
+
+                results = parallel_grep(
                     str(memory_root),
                     query,
                     extensions=["md", "json"],

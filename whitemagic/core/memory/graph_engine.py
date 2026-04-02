@@ -50,8 +50,8 @@ except ImportError:
 # Rust acceleration (S026 VC2)
 try:
     import whitemagic_rust as _wr
-    _rust_graph = _wr.graph_engine
-    _RUST_AVAILABLE = True
+    _rust_graph: Any = getattr(_wr, "graph_engine", None)
+    _RUST_AVAILABLE = _rust_graph is not None
 except ImportError:
     _rust_graph = None  # type: ignore[assignment]
     _RUST_AVAILABLE = False

@@ -6,7 +6,7 @@ import numpy as np
 import sqlite3
 import pickle
 from pathlib import Path
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple, Optional, Dict, Any
 import logging
 
 from whitemagic.config.paths import MEMORY_DIR
@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 # Rust acceleration (S026 VC3)
 try:
     import whitemagic_rust as _wr
-    _rust_hnsw = _wr.hnsw_index
-    RUST_HNSW_AVAILABLE = True
+    _rust_hnsw: Any = getattr(_wr, "hnsw_index", None)
+    RUST_HNSW_AVAILABLE = _rust_hnsw is not None
 except ImportError:
     _rust_hnsw = None
     RUST_HNSW_AVAILABLE = False
@@ -84,7 +84,10 @@ class HNSWIndex:
 
     def _distance(self, a: np.ndarray, b: np.ndarray) -> float:
         """Cosine distance (1 - cosine similarity)."""
-        return 1.0 - np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+        dot_product = np.dot(a, b)
+        norm_a = np.linalg.norm(a)
+        norm_b = np.linalg.norm(b)
+        return float(1.0 - dot_product / (norm_a * norm_b))
 
     def _get_random_level(self) -> int:
         """Generate random level with exponential decay."""

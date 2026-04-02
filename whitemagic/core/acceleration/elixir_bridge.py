@@ -31,14 +31,14 @@ logger = logging.getLogger(__name__)
 
 _redis_client: Any | None = None
 _redis_lock = threading.Lock()
-_HAS_ELIXIR = False
+has_elixir = False
 _ELIXIR_CHANNEL = "whitemagic_elixir"
 _RESPONSE_TIMEOUT = 5.0
 
 
 def _get_redis() -> Any:
     """Lazy-load Redis client for Elixir bridge."""
-    global _redis_client, _HAS_ELIXIR
+    global _redis_client, has_elixir
     if _redis_client is not None:
         return _redis_client
     with _redis_lock:
@@ -55,7 +55,7 @@ def _get_redis() -> Any:
             client.publish(test_channel, _json_dumps({"type": "ping"}))
 
             _redis_client = client
-            _HAS_ELIXIR = True
+            has_elixir = True
             logger.info("Elixir bridge connected via Redis: %s", url)
             return client
         except Exception as e:
@@ -227,14 +227,14 @@ def elixir_bridge_status() -> dict[str, Any]:
     """Get Elixir bridge status."""
     _get_redis()
     return {
-        "has_elixir": _HAS_ELIXIR,
+        "has_elixir": has_elixir,
         "redis_connected": _redis_client is not None,
         "channel": _ELIXIR_CHANNEL,
         "modules": {
-            "cascade_executor": _HAS_ELIXIR,
-            "garden_pubsub": _HAS_ELIXIR,
-            "harmony_monitor": _HAS_ELIXIR,
-            "redis_bridge": _HAS_ELIXIR,
+            "cascade_executor": has_elixir,
+            "garden_pubsub": has_elixir,
+            "harmony_monitor": has_elixir,
+            "redis_bridge": has_elixir,
         },
-        "backend": "elixir_otp" if _HAS_ELIXIR else "python_fallback",
+        "backend": "elixir_otp" if has_elixir else "python_fallback",
     }

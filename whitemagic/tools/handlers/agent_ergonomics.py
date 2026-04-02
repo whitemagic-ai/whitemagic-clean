@@ -93,6 +93,21 @@ def handle_mesh_status(**kwargs: Any) -> dict[str, Any]:
     return cast("dict[str, Any]", get_mesh_awareness().status())
 
 
+def handle_mesh_connect(**kwargs: Any) -> dict[str, Any]:
+    """Connect or reconnect the local mesh client using the provided config."""
+    from whitemagic.mesh.client import get_mesh_client
+
+    address = kwargs.get("address")
+    node_id = kwargs.get("node_id")
+    return cast(
+        "dict[str, Any]",
+        get_mesh_client().connect(
+            address=address if isinstance(address, str) else None,
+            node_id=node_id if isinstance(node_id, str) else None,
+        ),
+    )
+
+
 def handle_mesh_broadcast(**kwargs: Any) -> dict[str, Any]:
     """Broadcast a signal to all mesh peers via gRPC or Redis."""
     from whitemagic.mesh.client import get_mesh_client

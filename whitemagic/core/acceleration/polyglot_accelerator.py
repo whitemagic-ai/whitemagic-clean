@@ -114,7 +114,7 @@ class PolyglotAccelerator:
         if self._zig_available:
             try:
                 from whitemagic.core.acceleration import cosine_similarity_zig
-                result = float(cosine_similarity_zig(a, b))
+                result = float(cosine_similarity_zig(list(a), list(b)))
                 self.zig_calls += 1
                 self.total_time_ms += (time.time() - start) * 1000
                 return result
@@ -158,7 +158,7 @@ class PolyglotAccelerator:
                 result = zig_batch(query, vectors)
                 self.zig_calls += 1
                 self.total_time_ms += (time.time() - start) * 1000
-                return result
+                return cast(list[float], result)
             except Exception as e:
                 logger.debug(f"Zig batch cosine failed: {e}")
 

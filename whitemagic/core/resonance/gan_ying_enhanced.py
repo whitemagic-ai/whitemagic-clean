@@ -70,6 +70,7 @@ class EventType(Enum):
     SYSTEM_STOPPED = "system_stopped"
     SYSTEM_HEALTH_CHANGED = "system_health_changed"
     SYSTEM_STATE_CHANGE = "system_state_change"
+    SYSTEM_HEARTBEAT = "system_heartbeat"
     INTERNAL_STATE_CHANGED = "internal_state_changed"
     MESH_SIGNAL = "mesh_signal"  # Signal from Go Mesh Node
 
@@ -220,6 +221,9 @@ class EventType(Enum):
     BALANCE_CHECKED = "balance_checked"
     OPTIMIZATION_SUGGESTED = "optimization_suggested"
     PHASE_TRANSITION = "phase_transition"
+    ELEMENT_SHIFT = "element_shift"
+    ZODIAC_PHASE_CHANGE = "zodiac_phase_change"
+    BALANCE_SHIFT = "balance_shift"
 
     # === DHARMA EVENTS ===
     HARMONY_CHANGED = "harmony_changed"

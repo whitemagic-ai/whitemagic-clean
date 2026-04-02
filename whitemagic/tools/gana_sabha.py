@@ -268,7 +268,7 @@ def _calculate_gratitude_boost(quadrants: set[str]) -> float:
         boost = 1.0 + (total_xrp / 100.0)
         
         # Cap at 1.5x (50% boost)
-        return min(1.5, boost)
+        return float(min(1.5, boost))
     except Exception:
         return 1.0
 

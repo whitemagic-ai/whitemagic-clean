@@ -98,3 +98,4 @@ def get_practice_garden() -> PracticeGarden:
     global _instance
     if _instance is None:
         _instance = PracticeGarden()
+    return _instance

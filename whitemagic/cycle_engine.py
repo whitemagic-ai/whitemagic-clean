@@ -27,7 +27,7 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import Any, cast
 
 # Lazy imports to avoid circular dependencies
 _yy_tracker = None
@@ -373,14 +373,14 @@ class CycleEngine:
                         pass
 
         self.metrics.elapsed_s = time.monotonic() - self.metrics.start_time
-        return self.metrics
+        return cast(CycleMetrics, self.metrics)
 
     def should_pause(self) -> bool:
         """Check if yin-yang balance suggests a pause (burnout prevention)."""
         if self.yy:
             try:
                 summary = self.yy.get_summary()
-                return summary.get("burnout_risk", 0.0) > 0.7
+                return cast(bool, summary.get("burnout_risk", 0.0) > 0.7)
             except Exception:
                 pass
         return False

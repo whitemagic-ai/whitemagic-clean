@@ -20,17 +20,18 @@ class JuliaZMQClient:
     def __init__(self, host: str = "127.0.0.1", port: int = 5555):
         self.host = host
         self.port = port
-        self._context: Optional[zmq.Context] = None
-        self._socket: Optional[zmq.Socket] = None
+        self._context: Optional[Any] = None
+        self._socket: Optional[Any] = None
         self._server_process: Optional[subprocess.Popen] = None
         
     def connect(self) -> bool:
         """Connect to Julia server, starting it if needed."""
         # Try to connect to existing server
         try:
-            self._context = zmq.Context()
-            self._socket = self._context.socket(zmq.REQ)
-            self._socket.setsockopt(zmq.RCVTIMEO, 5000)  # 5s timeout
+            zmq_any: Any = zmq
+            self._context = zmq_any.Context()
+            self._socket = self._context.socket(zmq_any.REQ)
+            self._socket.setsockopt(zmq_any.RCVTIMEO, 5000)  # 5s timeout
             self._socket.connect(f"tcp://{self.host}:{self.port}")
             
             # Test with health check
@@ -83,9 +84,10 @@ class JuliaZMQClient:
             time.sleep(8.0)
             
             # Try to connect
-            self._context = zmq.Context()
-            self._socket = self._context.socket(zmq.REQ)
-            self._socket.setsockopt(zmq.RCVTIMEO, 15000)  # 15s timeout for startup
+            zmq_any: Any = zmq
+            self._context = zmq_any.Context()
+            self._socket = self._context.socket(zmq_any.REQ)
+            self._socket.setsockopt(zmq_any.RCVTIMEO, 15000)  # 15s timeout for startup
             self._socket.connect(f"tcp://{self.host}:{self.port}")
             
             response = self._send_request({"method": "health"})

@@ -9,7 +9,7 @@ import sqlite3
 from whitemagic.utils.fast_json import loads as _json_loads
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any, Generator, cast
 
 from whitemagic.core.memory.db_manager import get_db_pool
 from whitemagic.core.memory.unified_types import Memory, MemoryType
@@ -534,18 +534,20 @@ class SQLiteBackend:
         except Exception:
             pass
 
-        return memory.id
+        return cast(str, memory.id)
 
     def get_memory(self, memory_id: str) -> Memory | None:
         """Retrieve a memory by ID (hot DB first, then cold) with caching."""
         # Try cache first
+        cache = None
+        cache_key = ""
         try:
             from whitemagic.core.memory.query_cache import get_query_cache
             cache = get_query_cache()
             cache_key = f"get_memory:{memory_id}"
             cached = cache.get(cache_key)
             if cached is not None:
-                return cached
+                return cast(Memory, cached)
         except Exception:
             pass
 
@@ -554,7 +556,8 @@ class SQLiteBackend:
         if mem:
             # Cache the result
             try:
-                cache.set(cache_key, mem, ttl=60)
+                if cache is not None and cache_key:
+                    cache.set(cache_key, mem, ttl=60)
             except Exception:
                 pass
             return mem
@@ -565,7 +568,8 @@ class SQLiteBackend:
             mem = self._get_memory_from_pool(memory_id, cold_pool)
             if mem:
                 try:
-                    cache.set(cache_key, mem, ttl=120)  # Longer TTL for cold storage
+                    if cache is not None and cache_key:
+                        cache.set(cache_key, mem, ttl=120)  # Longer TTL for cold storage
                 except Exception:
                     pass
             return mem
@@ -1100,13 +1104,13 @@ class SQLiteBackend:
     def get_tag_counts(self, limit: int = 10) -> list[tuple[str, int]]:
         """Get most common tags."""
         with self.pool.connection() as conn:
-            return conn.execute("""
+            return cast(list[tuple[str, int]], conn.execute("""
                 SELECT tag, COUNT(*) as count
                 FROM tags
                 GROUP BY tag
                 ORDER BY count DESC
                 LIMIT ?
-            """, (limit,)).fetchall()
+            """, (limit,)).fetchall())
 
     def consolidate(self) -> int:
         """Consolidate memories efficiently using SQL and Neural/Hebbian logic.
@@ -1134,7 +1138,7 @@ class SQLiteBackend:
                         neuro_score = MIN(1.0, neuro_score + 0.1)
                     WHERE access_count > 5
                 """)
-                consolidated_count += cursor.rowcount
+                consolidated_count += cast(int, cursor.rowcount)
 
                 # 3. Decay rarely accessed short-term
                 cursor = conn.execute("""
@@ -1143,7 +1147,7 @@ class SQLiteBackend:
                         neuro_score = MAX(0.1, neuro_score - 0.05)
                     WHERE memory_type = 'SHORT_TERM' AND access_count < 2 AND is_protected = 0
                 """)
-                consolidated_count += cursor.rowcount
+                consolidated_count += cast(int, cursor.rowcount)
 
                 # 4. Promote important short-term to long-term
                 cursor = conn.execute("""
@@ -1151,7 +1155,7 @@ class SQLiteBackend:
                     SET memory_type = 'LONG_TERM'
                     WHERE memory_type = 'SHORT_TERM' AND (importance > 0.8 OR neuro_score > 0.8)
                 """)
-                consolidated_count += cursor.rowcount
+                consolidated_count += cast(int, cursor.rowcount)
                 conn.commit()
             except Exception as e:
                 conn.rollback()
@@ -1449,14 +1453,14 @@ class SQLiteBackend:
                         SELECT GROUP_CONCAT(tag, ' ') FROM tags WHERE tags.memory_id = memories_fts.id
                     ) WHERE id IN (SELECT memory_id FROM tags WHERE tag = ?)
                 """, (new_tag,))
-                return count
+                return cast(int, count)
 
     def delete_tag(self, tag: str) -> int:
         """Delete a tag from all memories. Returns count of deleted rows."""
         with self.pool.connection() as conn:
             with conn:
                 cursor = conn.execute("DELETE FROM tags WHERE tag = ?", (tag,))
-                return cursor.rowcount
+                return cast(int, cursor.rowcount)
 
     def hebbian_strengthen(self, source_id: str, target_id: str) -> None:
         """Hebbian strengthening: co-accessed memories get stronger edges.

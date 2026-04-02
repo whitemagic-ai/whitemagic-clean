@@ -10,8 +10,37 @@ def handle_working_memory_attend(**kwargs: Any) -> dict[str, Any]:
     from whitemagic.core.intelligence.working_memory import WorkingMemory
     wm = WorkingMemory()
     items = kwargs.get("items", [])
-    wm.attend(items)
-    return {"status": "success", "attended": len(items)}
+    
+    count = 0
+    if isinstance(items, list):
+        for item in items:
+            if isinstance(item, dict):
+                mid = item.get("memory_id") or item.get("id")
+                content = item.get("content")
+                if mid and content:
+                    wm.attend(
+                        memory_id=str(mid),
+                        content=str(content),
+                        title=str(item.get("title", "")),
+                        importance=float(item.get("importance", 0.5)),
+                        tags=item.get("tags")
+                    )
+                    count += 1
+    elif isinstance(kwargs, dict):
+        # Single item in kwargs
+        mid = kwargs.get("memory_id") or kwargs.get("id")
+        content = kwargs.get("content")
+        if mid and content:
+            wm.attend(
+                memory_id=str(mid),
+                content=str(content),
+                title=str(kwargs.get("title", "")),
+                importance=float(kwargs.get("importance", 0.5)),
+                tags=kwargs.get("tags")
+            )
+            count = 1
+            
+    return {"status": "success", "attended": count}
 
 
 def handle_working_memory_context(**kwargs: Any) -> dict[str, Any]:

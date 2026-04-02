@@ -4,7 +4,7 @@ Fast search, compression, and memory consolidation via Rust.
 """
 
 import logging
-from typing import Any, cast
+from typing import Any
 
 from whitemagic.utils.fast_json import dumps_str as _json_dumps
 

@@ -50,6 +50,23 @@ ToolDefinition(
     input_schema={"type": "object", "properties": {}},
 ),
 ToolDefinition(
+    name="mesh.connect",
+    description=(
+        "Connect or reconnect the local mesh client. Optionally provide an "
+        "address and node_id to override the current mesh endpoint before "
+        "reporting connection status."
+    ),
+    category=ToolCategory.BROKER,
+    safety=ToolSafety.WRITE,
+    input_schema={
+        "type": "object",
+        "properties": {
+            "address": {"type": "string", "description": "Optional mesh address, e.g. localhost:50051"},
+            "node_id": {"type": "string", "description": "Optional node identifier"},
+        },
+    },
+),
+ToolDefinition(
     name="mesh.broadcast",
     description=(
         "Broadcast a signal to all mesh peers via gRPC (if connected) "

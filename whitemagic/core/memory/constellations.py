@@ -31,7 +31,7 @@ import time
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import Any, cast
 
 try:
     import hdbscan as _hdbscan
@@ -57,8 +57,8 @@ except ImportError:
 # Rust acceleration (S026 VC1)
 try:
     import whitemagic_rust as _wr
-    _rust_const = _wr.constellations
-    _RUST_AVAILABLE = True
+    _rust_const: Any = getattr(_wr, "constellations", None)
+    _RUST_AVAILABLE = _rust_const is not None
 except ImportError:
     _rust_const = None  # type: ignore[assignment]
     _RUST_AVAILABLE = False
@@ -187,10 +187,10 @@ class ConstellationDetector:
         """Euclidean distance in 5D space. Uses Rust when available."""
         if _RUST_AVAILABLE:
             try:
-                return _rust_const.py_distance_5d(
+                return cast(float, _rust_const.py_distance_5d(
                     (a[0], a[1], a[2], a[3], a[4]),
                     (b[0], b[1], b[2], b[3], b[4]),
-                )
+                ))
             except Exception:
                 pass  # Fall back to Python
         # Zig SIMD fallback
@@ -407,10 +407,10 @@ class ConstellationDetector:
             try:
                 # Convert to format expected by Rust
                 coords_5d = [(c[0], c[1], c[2], c[3], c[4]) for c in coords]
-                groups = _rust_const.py_detect_grid(
+                groups_rust = _rust_const.py_detect_grid(
                     coords_5d, self._bins, self._min_size, self._max_constellations
                 )
-                return groups, [0.0] * len(groups)
+                return groups_rust, [0.0] * len(groups_rust)
             except Exception:
                 pass  # Fall back to Python
 
@@ -700,7 +700,7 @@ class ConstellationDetector:
             um = get_unified_memory()
             result = um.backend.get_constellation_membership(memory_id)
             if result:
-                return result
+                return cast(dict[str, Any], result)
         except Exception:
             pass
 
@@ -739,12 +739,20 @@ class ConstellationDetector:
             um = get_unified_memory()
             count = um.backend.update_constellation_membership(memberships)
             logger.info(f"Persisted {count} constellation memberships to DB index")
-            return count
+            return cast(int, count)
         except Exception as e:
             logger.debug(f"Failed to persist constellation memberships: {e}")
             return 0
 
+    def list_constellations(self) -> list[Constellation]:
+        """List all discovered constellations from the last report."""
+        with self._lock:
+            if not self._last_report:
+                return []
+            return list(self._last_report.constellations)
+
     def get_last_report(self) -> dict[str, Any] | None:
+        """Get the last detection report as a dictionary."""
         with self._lock:
             return self._last_report.to_dict() if self._last_report else None
 
@@ -796,9 +804,9 @@ class ConstellationDetector:
                 dist = self._distance_5d(a.centroid, b.centroid)
                 if dist >= max_distance:
                     continue
-                shared = set(a.dominant_tags) & set(b.dominant_tags)
-                if len(shared) >= min_shared_tags:
-                    merge_pairs.append((i, j, dist, sorted(shared)))
+                shared_tags_set = set(a.dominant_tags) & set(b.dominant_tags)
+                if len(shared_tags_set) >= min_shared_tags:
+                    merge_pairs.append((i, j, dist, sorted(shared_tags_set)))
 
         if not merge_pairs:
             return {"status": "no_candidates", "merges": 0, "checked": len(constellations)}
@@ -1054,20 +1062,20 @@ class ConstellationDetector:
 
         # Build cost matrix: n_new × n_old (distances)
         import numpy as np
-        cost = np.zeros((n_new, n_old), dtype=np.float64)
+        cost: np.ndarray = np.zeros((n_new, n_old), dtype=np.float64)
         for i, nn in enumerate(new_names):
             for j, on in enumerate(old_names):
                 cost[i, j] = self._distance_5d(new_centroids[nn], old_centroids[on])
 
         row_ind, col_ind = _hungarian(cost)
 
-        matched: dict[str, str] = {}
+        matched_dict: dict[str, str] = {}
         matched_old: set[str] = set()
         matched_new: set[str] = set()
 
         for r, c in zip(row_ind, col_ind):
             if cost[r, c] <= max_match_distance:
-                matched[new_names[r]] = old_names[c]
+                matched_dict[new_names[r]] = old_names[c]
                 matched_new.add(new_names[r])
                 matched_old.add(old_names[c])
 
@@ -1076,10 +1084,10 @@ class ConstellationDetector:
 
         if novel or forgotten:
             logger.info(
-                f"Drift tracking: {len(matched)} matched, "
+                f"Drift tracking: {len(matched_dict)} matched, "
                 f"{len(novel)} novel, {len(forgotten)} forgotten",
             )
-        return matched, novel, forgotten
+        return matched_dict, novel, forgotten
 
     @staticmethod
     def _emit_concept_events(novel: list[str], forgotten: list[str]) -> None:

@@ -92,6 +92,32 @@ class MeshClient:
         if HAS_GRPC:
             self._try_connect()
 
+    def connect(self, address: str | None = None, node_id: str | None = None) -> dict[str, Any]:
+        """Attempt to connect or reconnect the mesh client."""
+        if address is not None:
+            self._address = address
+        if node_id is not None:
+            self._node_id = node_id
+
+        if HAS_GRPC:
+            self._try_connect()
+        else:
+            self._connected = False
+
+        status = self.status()
+        status.update(
+            {
+                "status": "success",
+                "message": (
+                    "mesh connected"
+                    if self._connected
+                    else "mesh client ready in local-only mode"
+                ),
+                "mode": "grpc" if self._connected else "local",
+            }
+        )
+        return status
+
     def _try_connect(self) -> None:
         """Attempt gRPC connection."""
         if not HAS_GRPC:

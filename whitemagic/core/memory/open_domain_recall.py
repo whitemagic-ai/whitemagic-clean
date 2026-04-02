@@ -173,7 +173,7 @@ class OpenDomainRecall:
                 all_ids.add(r.memory_id)
 
         # Calculate RRF scores
-        rrf_scores = {}
+        rrf_scores: dict[str, float] = {}
         id_to_result = {}
 
         for results in [vector_results, title_results, keyword_results]:

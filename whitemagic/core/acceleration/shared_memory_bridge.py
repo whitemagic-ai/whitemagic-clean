@@ -15,7 +15,7 @@ import struct
 import threading
 import time
 from multiprocessing import shared_memory
-from typing import Optional
+from typing import Optional, cast, Any
 
 import numpy as np
 
@@ -75,7 +75,10 @@ class SharedMemoryBridge:
                 pass
 
             self._shm = shared_memory.SharedMemory(name=self.name, create=True, size=SEGMENT_SIZE)
-            self._header = SharedMemoryHeader.from_buffer(self._shm.buf)
+            buf = self._shm.buf
+            if buf is None:
+                raise RuntimeError("Shared memory buffer is None")
+            self._header = SharedMemoryHeader.from_buffer(buf)
             self._header.magic = 0x574D454D
             self._header.version = 1
             self._header.capacity = DEFAULT_CAPACITY
@@ -94,7 +97,10 @@ class SharedMemoryBridge:
     def _open_segment(self) -> None:
         try:
             self._shm = shared_memory.SharedMemory(name=self.name)
-            self._header = SharedMemoryHeader.from_buffer(self._shm.buf)
+            buf = self._shm.buf
+            if buf is None:
+                raise RuntimeError("Shared memory buffer is None")
+            self._header = SharedMemoryHeader.from_buffer(buf)
             if self._header.magic != 0x574D454D:
                 raise ValueError(f"Invalid segment magic: {hex(self._header.magic)}")
             logger.debug(f"Opened shared memory: {self.name}")
@@ -116,10 +122,14 @@ class SharedMemoryBridge:
             offset = HEADER_SIZE + (pos * SLOT_SIZE)
 
             # Write directly to buffer
+            shm = self._shm
+            if shm is None or shm.buf is None:
+                return False
+                
             header_bytes = struct.pack("<II", memory_id, 1)
             vector_bytes = struct.pack(f"<{EMBEDDING_DIM}f", *vector)
-            self._shm.buf[offset:offset + 8] = header_bytes
-            self._shm.buf[offset + 8:offset + SLOT_SIZE] = vector_bytes
+            shm.buf[offset:offset + 8] = header_bytes
+            shm.buf[offset + 8:offset + SLOT_SIZE] = vector_bytes
 
             self._header.write_pos = (pos + 1) % self._header.capacity
             if self._header.count < self._header.capacity:
@@ -136,7 +146,8 @@ class SharedMemoryBridge:
         written = 0
 
         with self._lock:
-            if self._header is None:
+            shm = self._shm
+            if self._header is None or shm is None or shm.buf is None:
                 return 0
 
             for i in range(n):
@@ -148,8 +159,8 @@ class SharedMemoryBridge:
 
                 header_bytes = struct.pack("<II", int(ids[i]), 1)
                 vec_bytes = vectors[i].astype(np.float32).tobytes()
-                self._shm.buf[offset:offset + 8] = header_bytes
-                self._shm.buf[offset + 8:offset + SLOT_SIZE] = vec_bytes
+                shm.buf[offset:offset + 8] = header_bytes
+                shm.buf[offset + 8:offset + SLOT_SIZE] = vec_bytes
 
                 self._header.write_pos = (pos + 1) % self._header.capacity
                 if self._header.count < self._header.capacity:
@@ -162,22 +173,23 @@ class SharedMemoryBridge:
 
     def read_embedding(self) -> Optional[tuple[int, list[float]]]:
         with self._lock:
-            if self._header is None or self._header.count == 0:
+            shm = self._shm
+            if self._header is None or self._header.count == 0 or shm is None or shm.buf is None:
                 return None
 
             pos = self._header.read_pos
             offset = HEADER_SIZE + (pos * SLOT_SIZE)
 
-            header_bytes = bytes(self._shm.buf[offset:offset + 8])
+            header_bytes = bytes(shm.buf[offset:offset + 8])
             memory_id, flags = struct.unpack("<II", header_bytes)
 
             if flags != 1:
                 return None
 
-            vector_bytes = bytes(self._shm.buf[offset + 8:offset + SLOT_SIZE])
+            vector_bytes = bytes(shm.buf[offset + 8:offset + SLOT_SIZE])
             vector = list(struct.unpack(f"<{EMBEDDING_DIM}f", vector_bytes))
 
-            self._shm.buf[offset + 4:offset + 8] = struct.pack("<I", 0)
+            shm.buf[offset + 4:offset + 8] = struct.pack("<I", 0)
 
             self._header.read_pos = (pos + 1) % self._header.capacity
             self._header.count -= 1
@@ -187,7 +199,8 @@ class SharedMemoryBridge:
 
     def read_batch_numpy(self, max_count: int = 1000) -> tuple[np.ndarray, np.ndarray]:
         with self._lock:
-            if self._header is None or self._header.count == 0:
+            shm = self._shm
+            if self._header is None or self._header.count == 0 or shm is None or shm.buf is None:
                 return np.array([], dtype=np.int32), np.zeros((0, EMBEDDING_DIM), dtype=np.float32)
 
             count = min(max_count, self._header.count)
@@ -198,13 +211,13 @@ class SharedMemoryBridge:
                 pos = (self._header.read_pos + i) % self._header.capacity
                 offset = HEADER_SIZE + (pos * SLOT_SIZE)
 
-                header_bytes = bytes(self._shm.buf[offset:offset + 8])
+                header_bytes = bytes(shm.buf[offset:offset + 8])
                 ids[i], _ = struct.unpack("<II", header_bytes)
 
-                vector_bytes = bytes(self._shm.buf[offset + 8:offset + SLOT_SIZE])
+                vector_bytes = bytes(shm.buf[offset + 8:offset + SLOT_SIZE])
                 vectors[i] = np.frombuffer(vector_bytes, dtype=np.float32)
 
-                self._shm.buf[offset + 4:offset + 8] = struct.pack("<I", 0)
+                shm.buf[offset + 4:offset + 8] = struct.pack("<I", 0)
 
             self._header.read_pos = (self._header.read_pos + count) % self._header.capacity
             self._header.count -= count
@@ -260,8 +273,8 @@ def open_bridge() -> SharedMemoryBridge:
     return SharedMemoryBridge(create=False)
 
 
-def benchmark_transfer(n_embeddings: int = 1000) -> dict:
-    ids = np.arange(n_embeddings, dtype=np.int32)
+def benchmark_transfer(n_embeddings: int = 1000) -> dict[str, Any]:
+    ids: np.ndarray = np.arange(n_embeddings, dtype=np.int32)
     vectors = np.random.randn(n_embeddings, EMBEDDING_DIM).astype(np.float32)
 
     bridge = create_bridge()

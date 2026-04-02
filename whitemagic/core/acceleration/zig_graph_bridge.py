@@ -106,10 +106,10 @@ def _init_lib() -> None:
             logger.debug("zig_graph_bridge: load failed: %s", e)
 
 
-def _to_f32_ptr(vec: list[float] | np.ndarray) -> tuple[ctypes.POINTER, int]:
+def _to_f32_ptr(vec: list[float] | np.ndarray) -> tuple[Any, int, np.ndarray]:
     """Convert a Python list or numpy array to a ctypes f32 pointer + length."""
     if isinstance(vec, np.ndarray):
-        arr = vec.astype(np.float32, copy=False)
+        arr: np.ndarray = vec.astype(np.float32, copy=False)
     else:
         arr = np.array(vec, dtype=np.float32)
     ptr = arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float))

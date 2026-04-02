@@ -1,5 +1,5 @@
 
-from typing import Any
+from typing import Any, cast, List, Tuple, Optional
 
 from whitemagic.core.bridge.utils import ensure_string
 
@@ -167,7 +167,7 @@ def memory_read(memory_id: str | None = None, filename: str | None = None, **kwa
         return {"error": "memory_id or filename required"}
 
     result = manager.get_memory(target, include_metadata=True)
-    return result
+    return cast(dict[str, Any], result)
 
 
 def memory_update(
@@ -204,7 +204,7 @@ def memory_update(
             "warning": result.get("error", "Memory not found"),
             "message": result.get("error", "Memory not found"),
         }
-    return result
+    return cast(dict[str, Any], result)
 
 
 def memory_delete(
@@ -230,7 +230,7 @@ def memory_delete(
             "message": result.get("error", "Memory not found"),
         }
 
-    return result
+    return cast(dict[str, Any], result)
 
 
 def memory_list(limit: int = 20, memory_type: str | None = None, **kwargs: Any) -> dict[str, Any]:
@@ -281,12 +281,13 @@ def parallel_search(
         from whitemagic.core.bridge.rust import rust_parallel_grep
         # If parameters align with rust_parallel_grep (path, patterns/query)
         if query:
-            return rust_parallel_grep(
+            result = rust_parallel_grep(
                 patterns=[query],
                 paths=[path] if path else ["./whitemagic"], # Default to core
                 extensions=extensions,
                 **kwargs,
             )
+            return cast(dict[str, Any], result)
     except (ImportError, Exception):
         pass
 

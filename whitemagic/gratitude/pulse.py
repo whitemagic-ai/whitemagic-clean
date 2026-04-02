@@ -115,7 +115,7 @@ class GratitudePulse:
                 
             # Skip if we already have this in the ledger
             # (In a real implementation, we'd check a local seen_tx database)
-            if any(e.tx_hash == tx_hash for e in self.ledger.get_recent(limit=50)):
+            if any(e.get("tx_hash") == tx_hash for e in self.ledger.get_recent(limit=50)):
                 continue
 
             # Verify it's actually for us (could be outgoing if user uses same wallet)

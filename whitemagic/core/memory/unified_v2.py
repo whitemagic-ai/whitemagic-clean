@@ -11,7 +11,7 @@ Expected overall speedup: 20-50× vs unified.py
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ class UnifiedMemoryV2:
         """
         if not RUST_AVAILABLE:
             # Fallback to Python
-            return self._fallback.hybrid_recall(query, final_limit=limit)
+            return cast(list[dict[str, Any]], self._fallback.hybrid_recall(query, final_limit=limit))
 
         # Route query with Zig (if available) or use provided strategy
         if strategy is None and ZIG_AVAILABLE:
@@ -111,11 +111,11 @@ class UnifiedMemoryV2:
             # Rust MemoryEngine uses its own strategy selection (Zig router)
             # Don't pass strategy string, let Rust handle it
             results = self.engine.search_hybrid(query, limit)
-            return results
+            return cast(list[dict[str, Any]], results)
         except Exception as e:
             logger.error(f"Rust search failed: {e}, falling back to Python")
             if hasattr(self, '_fallback'):
-                return self._fallback.hybrid_recall(query, final_limit=limit)
+                return cast(list[dict[str, Any]], self._fallback.hybrid_recall(query, final_limit=limit))
             raise
 
     def store(
@@ -142,7 +142,7 @@ class UnifiedMemoryV2:
         # Future: Implement in Rust for consistency
         from whitemagic.core.memory.unified import UnifiedMemory
         um = UnifiedMemory()
-        return um.store(content, memory_type=memory_type, tags=tags or [], **metadata)
+        return cast(str, um.store(content, memory_type=memory_type, tags=tags or [], **metadata))
 
     def recall(self, query: str, **kwargs: Any) -> list[dict[str, Any]]:
         """Backward compatibility with old API.
@@ -167,7 +167,7 @@ class UnifiedMemoryV2:
                 "total_misses": 0,
             }
 
-        return self.engine.cache_stats()
+        return cast(dict[str, float], self.engine.cache_stats())
 
     def clear_cache(self) -> None:
         """Clear all caches in Rust engine."""

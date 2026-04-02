@@ -20,7 +20,7 @@ import subprocess
 import threading
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from whitemagic.utils.fast_json import dumps_str as _json_dumps, loads as _json_loads
 
@@ -224,7 +224,12 @@ class KokaNativeBridge:
 
         def _reader() -> None:
             try:
-                result_queue.put(proc.stdout.readline())
+                stdout = proc.stdout
+                if stdout is not None:
+                    line = stdout.readline()
+                    result_queue.put(line)
+                else:
+                    result_queue.put(None)
             except Exception:
                 result_queue.put(None)
 

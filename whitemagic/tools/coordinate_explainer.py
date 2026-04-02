@@ -13,7 +13,7 @@ Usage:
     print(interpretation)
 """
 
-from typing import Any
+from typing import Any, cast
 
 
 def explain_coordinates(x: float, y: float, z: float, w: float, v: float) -> dict[str, Any]:
@@ -199,9 +199,9 @@ def quick_lookup(memory_or_coords: dict[str, Any] | list[float]) -> str:
         if len(memory_or_coords) != 5:
             return "Error: Need exactly 5 coordinates [x, y, z, w, v]"
         x, y, z, w, v = memory_or_coords
-        return explain_coordinates(x, y, z, w, v)["summary"]
+        return cast(str, explain_coordinates(x, y, z, w, v)["summary"])
     else:
-        return interpret_memory(memory_or_coords)["summary"]
+        return cast(str, interpret_memory(memory_or_coords)["summary"])
 
 
 # CLI support

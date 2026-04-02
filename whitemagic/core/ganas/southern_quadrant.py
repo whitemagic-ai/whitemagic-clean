@@ -594,8 +594,12 @@ The journey changes the traveler.
                     mark_read(file_path, call.state_vector.get("notes"))
                     return {"mansion": self.mansion.name, "garden": self.garden, "action": "mark_read", "file": file_path, "status": "marked"}
             elif op == "extract_wisdom":
-                wisdom = extract_wisdom()
-                return {"mansion": self.mansion.name, "garden": self.garden, "action": "extract_wisdom", "wisdom_count": len(wisdom.quotes), "status": "extracted"}
+                content = str(call.state_vector.get("content", ""))
+                source = str(call.state_vector.get("source", "unknown"))
+                wisdom = extract_wisdom(content, source)
+                # Wisdom is a dict with 'chapters' and 'gana' keys
+                count = len(wisdom.get("chapters", []))
+                return {"mansion": self.mansion.name, "garden": self.garden, "action": "extract_wisdom", "wisdom_count": count, "status": "extracted"}
 
         return {
             "mansion": self.mansion.name,

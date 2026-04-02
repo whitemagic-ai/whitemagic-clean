@@ -3,9 +3,10 @@ import logging
 import threading
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 from whitemagic.config import PROJECT_ROOT
+from whitemagic.core.memory.unified_types import MemoryType
 from .dig import ChariotArchaeologist, Grimoire, Ganas
 
 logger = logging.getLogger("Chariot")
@@ -25,19 +26,19 @@ def get_archaeologist() -> 'ChariotArchaeologist':
     return _archaeologist
 
 def mark_read(path: str, context: Optional[str] = None, note: Optional[str] = None, insight: Optional[str] = None) -> Dict[str, Any]:
-    return get_archaeologist().mark_read(path, context, note, insight)
+    return cast(Dict[str, Any], get_archaeologist().mark_read(path, context, note, insight))
 
 def mark_written(path: str, context: Optional[str] = None, note: Optional[str] = None) -> Dict[str, Any]:
-    return get_archaeologist().mark_written(path, context, note)
+    return cast(Dict[str, Any], get_archaeologist().mark_written(path, context, note))
 
 def have_read(path: str) -> bool:
-    return get_archaeologist().have_read(path)
+    return cast(bool, get_archaeologist().have_read(path))
 
 def find_unread(directory: str = ".", patterns: Optional[List[str]] = None) -> List[Any]:
-    return get_archaeologist().find_unread(directory, patterns)
+    return cast(List[Any], get_archaeologist().find_unread(directory, patterns))
 
 def stats(scan_disk: bool = False) -> Dict[str, Any]:
-    return get_archaeologist().stats(scan_disk=scan_disk)
+    return cast(Dict[str, Any], get_archaeologist().stats(scan_disk=scan_disk))
 
 # Bridge for WisdomExtractor (placeholder for now using Chariot logic)
 class WisdomExtractor:
@@ -83,9 +84,9 @@ def process_wisdom_archives(limit_files: int = 1000, memory_type: str = "long_te
                 extractor.extract_wisdom(content, path.name)
                 
                 # Create memory entry
-                tags = ["archaeology", "recovered"]
+                tags = {"archaeology", "recovered"}
                 if finding.get("anthropology", {}).get("gana"):
-                    tags.append(f"gana:{finding['anthropology']['gana']}")
+                    tags.add(f"gana:{finding['anthropology']['gana']}")
                 
                 unified.store(
                     content=content,
@@ -109,7 +110,7 @@ def create_daily_wisdom_digest() -> str:
     from whitemagic.core.memory.unified import get_unified_memory
     unified = get_unified_memory()
     
-    recent = unified.search(query="recovered", limit=5, memory_type="long_term")
+    recent = unified.search(query="recovered", limit=5, memory_type=MemoryType.LONG_TERM)
     if not recent:
         return "No new wisdom recovered today."
         
@@ -124,7 +125,7 @@ def create_daily_wisdom_digest() -> str:
     return str(output_path)
 
 def wisdom_report() -> str:
-    return get_archaeologist().reading_report()
+    return cast(str, get_archaeologist().reading_report())
 
 __all__ = [
     "ChariotArchaeologist",
