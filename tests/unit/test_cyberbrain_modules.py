@@ -546,6 +546,35 @@ class TestBicameralReasoning:
         assert "dominant_hemisphere" in d
 
     @pytest.mark.asyncio
+    async def test_left_right_hemisphere_divergence(self):
+        """Regression: left and right hemispheres must produce different outputs.
+        
+        This test verifies the fix that disabled the Rust/Tokio fast-path
+        in hemisphere exploration to preserve left/right strategy bias.
+        See: bicameral._explore_hemisphere with use_tokio=False.
+        """
+        from whitemagic.core.intelligence.bicameral import BicameralReasoner
+
+        reasoner = BicameralReasoner(left_clones=3, right_clones=3)
+        result = await reasoner.reason("Analyze this from multiple angles")
+
+        # Left and right analyses should be different
+        left_paths = result.left_analysis.explored_paths
+        right_paths = result.right_analysis.explored_paths
+
+        # The analyses should not be identical
+        assert left_paths != right_paths, (
+            "Left and right hemispheres produced identical paths - "
+            "this indicates the Rust/Tokio fast-path is bypassing strategy bias"
+        )
+
+        # Tension score should reflect actual divergence
+        assert result.tension_score > 0.01, (
+            f"Tension score {result.tension_score} too low - "
+            f"hemispheres may be converging to identical outputs"
+        )
+
+    @pytest.mark.asyncio
     async def test_stats_tracking(self):
         from whitemagic.core.intelligence.bicameral import BicameralReasoner
 
